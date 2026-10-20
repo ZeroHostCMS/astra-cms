@@ -1,0 +1,49 @@
+quarkus:
+  application:
+    name: astra
+  http:
+    port: 8080
+  datasource:
+    db-kind: postgresql
+    username: ${ASTRA_DB_USER:astra_app}     # non-superuser role; see deploy/docker/init/01-app-role.sql
+    password: ${ASTRA_DB_PASSWORD:astra_app}
+    jdbc:
+      min-size: 2
+      max-size: 20
+  flyway:
+    migrate-at-start: true
+  log:
+    category:
+      "io.astra":
+        level: INFO
+
+astra:
+  tenancy:
+    mode: ${ASTRA_TENANCY_MODE:multi}      # single | multi
+    default-tenant: default
+    # base-domain: astra.localhost         # enables tenant resolution from subdomains
+
+# The JDBC URL is set only for dev and prod so that the test profile keeps Dev Services
+# (an automatic PostgreSQL container) enabled.
+"%dev":
+  quarkus:
+    datasource:
+      jdbc:
+        url: ${ASTRA_DB_URL:jdbc:postgresql://localhost:5432/astra}   # deploy/docker compose stack
+
+"%prod":
+  quarkus:
+    datasource:
+      jdbc:
+        url: ${ASTRA_DB_URL:jdbc:postgresql://localhost:5432/astra}
+
+"%test":
+  quarkus:
+    datasource:
+      devservices:
+        enabled: true
+        image-name: pgvector/pgvector:pg16
+        db-name: astra
+        username: astra                        # container superuser, used only to bootstrap
+        password: astra
+        init-script-path: db/init-app-role.sql # creates astra_app, which the kernel connects as

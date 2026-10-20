@@ -1,0 +1,16 @@
+# Build first: ./mvnw -q package -DskipTests
+# Then:        docker build -f astra-server/src/main/docker/Dockerfile.jvm -t astra/server:dev .
+FROM eclipse-temurin:25-jre
+
+ENV LANGUAGE='en_US:en' \
+    JAVA_OPTS_APPEND="-XX:+UseZGC -XX:MaxRAMPercentage=75.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+
+WORKDIR /deployments
+COPY --chown=1000:1000 astra-server/target/quarkus-app/lib/ ./lib/
+COPY --chown=1000:1000 astra-server/target/quarkus-app/*.jar ./
+COPY --chown=1000:1000 astra-server/target/quarkus-app/app/ ./app/
+COPY --chown=1000:1000 astra-server/target/quarkus-app/quarkus/ ./quarkus/
+
+EXPOSE 8080
+USER 1000
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS_APPEND -jar quarkus-run.jar"]

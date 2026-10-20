@@ -1,0 +1,87 @@
+# Demo-grade PostgreSQL. Production uses an operator (CloudNativePG, Patroni) or a managed service.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: astra-db
+type: Opaque
+stringData:
+  # Bootstrap superuser (never used by the kernel)
+  superuser: astra
+  superuser-password: astra-local-demo
+  # Application role created by the init script; subject to row-level security
+  username: astra_app
+  password: astra_app
+  url: jdbc:postgresql://postgres:5432/astra
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+data:
+  01-app-role.sql: |
+    CREATE ROLE astra_app LOGIN PASSWORD 'astra_app' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE NOINHERIT;
+    GRANT CONNECT ON DATABASE astra TO astra_app;
+    GRANT USAGE, CREATE ON SCHEMA public TO astra_app;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: pgvector/pgvector:pg16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: astra
+            - name: POSTGRES_USER
+              valueFrom: { secretKeyRef: { name: astra-db, key: superuser } }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: astra-db, key: superuser-password } }
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "astra", "-d", "astra"]
+            periodSeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: init
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+      volumes:
+        - name: init
+          configMap:
+            name: postgres-init
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 2Gi

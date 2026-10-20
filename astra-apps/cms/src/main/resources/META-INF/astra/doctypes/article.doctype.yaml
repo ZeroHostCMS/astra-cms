@@ -1,0 +1,11 @@
+name: Article
+module: cms
+kind: content
+naming: { series: "ART-.#####" }
+
+fields:
+  - { name: title,   type: Data,   required: true, in-list: true }
+  - { name: slug,    type: Data,   read-only: true, in-list: true, projected: true }
+  - { name: body,    type: Text }
+  - { name: status,  type: Select, options: [Draft, Published], default: Draft, in-list: true, projected: true }
+  - { name: tags,    type: JSON }

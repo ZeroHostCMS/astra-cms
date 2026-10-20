@@ -1,0 +1,19 @@
+# k3d (k3s in Docker) cluster for the local demo on macOS.
+# Create with: k3d cluster create --config deploy/k3d/k3d-config.yaml
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: astra
+servers: 1
+agents: 1
+ports:
+  - port: 8080:80          # host 8080 -> traefik ingress inside the cluster
+    nodeFilters:
+      - loadbalancer
+options:
+  k3d:
+    wait: true
+    timeout: "120s"
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true

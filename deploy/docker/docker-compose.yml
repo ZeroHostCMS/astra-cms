@@ -1,0 +1,33 @@
+# Local infrastructure for `./mvnw quarkus:dev`. Redis is part of the target stack
+# (L2 cache, TCC) and is provisioned now so later phases need no compose changes.
+name: astra
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: astra
+      POSTGRES_USER: astra
+      POSTGRES_PASSWORD: astra
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro   # creates the non-superuser application role
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U astra -d astra"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:

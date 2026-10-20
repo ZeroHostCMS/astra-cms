@@ -17,7 +17,7 @@ Astra lấy ý tưởng đó và xây lại cho ba ràng buộc mà Frappe khôn
 3. **AI là tác giả và người dùng hạng nhất.** Agent xây app trên SPI nhỏ có kiểu với sandbox và testkit; agent dùng nền tảng qua MCP tool sinh từ chính DocType, dưới cùng quyền và audit.
 4. **Tuân thủ là thuộc tính của metadata, không phải dự án làm cuối.** Mỗi field DocType mang phân loại, thời hạn lưu, cơ sở pháp lý, nơi lưu trữ. Hồ sơ xử lý dữ liệu, yêu cầu của chủ thể dữ liệu, lịch xoá, audit trail, rà soát truy cập đều sinh từ metadata đó. Nhà vận hành đi tới SOC 2 Type II, ISO 27001, GDPR, Luật Bảo vệ dữ liệu cá nhân Việt Nam mà không phải làm lại mô hình dữ liệu.
 
-> **Nói rõ hai điều ngay đầu:** (1) Astra đang ở giai đoạn thiết kế, chưa có code module. (2) **Clean-room:** Frappe là MIT, ERPNext là GPL-3.0, Astra là MIT. Astra không dùng một dòng code, schema hay asset nào của cả hai; chỉ mượn khái niệm và từ vựng ("DocType"). Nói điều này trước để không ai hiểu nhầm là port.
+> **Nói rõ hai điều ngay đầu:** (1) Astra đang ở giai đoạn thiết kế; đã có một **lát cắt mỏng chạy thật** (DocType CMS, tenancy bằng ScopedValue + row-level security, REST sinh ra, hook tầng 0, chạy trên k3d hai pod), phần còn lại là blueprint. (2) **Clean-room:** Frappe là MIT, ERPNext là GPL-3.0, Astra là MIT. Astra không dùng một dòng code, schema hay asset nào của cả hai; chỉ mượn khái niệm và từ vựng ("DocType"). Nói điều này trước để không ai hiểu nhầm là port.
 
 **Một câu tóm tắt:** *Astra là nền tảng ứng dụng metadata-driven kiểu Frappe, viết lại từ đầu bằng Java 25, nơi mọi thứ là plugin; ứng dụng đầu tiên là CMS, ứng dụng thứ hai là ERP; đổi mỗi ngày, không downtime, và mọi DocType đồng thời là tool cho AI agent.*
 
@@ -58,11 +58,15 @@ Frappe tạo một bảng mỗi DocType và chạy DDL khi thêm Custom Field. A
 
 | `storage` | Dùng cho | Cách làm | DDL |
 | --- | --- | --- | --- |
-| `jsonb` (mặc định) | Master, chứng từ, cấu hình, nội dung | Metadata lõi ở cột quan hệ có index; field ở JSONB với GIN. Field đánh dấu `projected` thành **generated column** có B-Tree để lọc, sắp xếp, báo cáo với tốc độ quan hệ. Chiếu và index tạo `CONCURRENTLY`, online. | Không bao giờ cho field; chiếu là online, additive, đảo ngược được |
+| `jsonb` (mặc định) | Master, chứng từ, cấu hình, nội dung | Metadata lõi ở cột quan hệ có index; field ở JSONB với GIN. Field đánh dấu `projected` nhận **expression index** (`CREATE INDEX CONCURRENTLY` trên `(data->>'field')`), online thật sự; truy vấn sinh ra dùng đúng biểu thức đó. Workload sort/aggregate nặng dùng `projected: materialised`: thêm cột nullable (chỉ metadata), backfill theo batch bằng job, kernel đồng bộ khi ghi, rồi index `CONCURRENTLY`. **Không dùng stored generated column** trên bảng có dữ liệu vì PostgreSQL phải rewrite cả bảng. | Không bao giờ cho field; expression index online, additive, đảo ngược được; cột materialised online nhưng cần thời gian backfill |
 | `ledger` | GL Entry, Stock Ledger Entry, bút toán lương, audit | Bảng quan hệ append-only, phân vùng theo kỳ, cột cố định. Không bao giờ update; sửa bằng bút toán đảo. Chỉ ghi trong `@AstraGlobalTransactional` bởi app sở hữu. | App sở hữu, tiến hóa bằng expand/contract |
 | `virtual` | Hệ thống ngoài | `DocTypeAdapter` ánh xạ DocType lên ERP/CRM/DB cũ. Cùng API, quyền, tool. | n/a |
 
 **Câu để nói:** "Một hoá đơn ở JSONB để tùy biến tự do; bút toán của nó ở ledger để bất biến và kiểm toán được. Hai chiến lược, một DocType engine."
+
+**Hai quy tắc để linh hoạt không ăn hiệu năng:**
+* **Quota chiếu và index.** Mỗi DocType có hạn mức chiếu và index (mặc định 8 và 12), mỗi tenant có hạn mức chiếu qua overlay; chiếu materialised trên bảng lớn cần bước phê duyệt. Vượt hạn mức thì fail lúc kiểm tra metadata, không phải lúc 3 giờ sáng trên database.
+* **DocType "nóng" không đặt JSONB-first.** `UPDATE` trong PostgreSQL ghi lại cả dòng, nên DocType có vài field đổi nhiều lần mỗi ngày (tồn kho, công nợ, bộ đếm, trạng thái) sẽ phình và làm vacuum quá tải nếu chỉ nằm trong JSONB. Quy tắc: field nóng để ở cột materialised cho JSONB lớn nằm yên trong TOAST; field nóng không index nếu có thể để update là HOT, đặt `fillfactor` dưới 100; bộ đếm và số dư ở `ledger` hoặc Redis; trạng thái đổi cực nhiều thì tách thành DocType phụ hẹp. `jsonb` là mặc định cho linh hoạt, không phải câu trả lời cho mọi thứ.
 
 ### 2.3 Vòng đời chứng từ, phiên bản, amend
 
@@ -301,15 +305,25 @@ Tính năng nền tảng mà ERP cần và kernel đã có sẵn:
 
 Không reflection trên đường nóng; đọc DocType từ cache L1/L2 theo phiên bản metadata; ghi qua cột chiếu để báo cáo không quét JSONB; bulkhead theo app; không tốn gì khi rảnh; cô lập trong tiến trình; structured concurrency cho fan-out.
 
-| Chỉ số | Mục tiêu (kiểm chứng bằng benchmark công khai) |
-| --- | --- |
-| Lấy DocType theo id (L1 hit) p99 | < 2 ms |
-| List DocType có lọc trên cột chiếu, 1 triệu dòng/tenant, p99 | < 20 ms |
-| Ghi sổ hoá đơn bán (GL + kho + giữ hàng Redis, Seata) p99 | < 40 ms cùng region |
-| Overhead dispatch tầng 1 | < 1 µs |
-| Server script tầng 2 p99 | < 5 ms kể cả vào sandbox |
-| Lan truyền hot-swap, 50 pod | < 500 ms |
-| Pod kernel sẵn sàng | < 2 s |
+Mục tiêu đi kèm **điều kiện đo**. Số không có điều kiện là marketing.
+
+| Chỉ số | Điều kiện | Mục tiêu (kiểm chứng bằng benchmark công khai) |
+| --- | --- | --- |
+| Lấy DocType theo id | metadata ở L1, document ở L2 hoặc PostgreSQL theo khoá chính | p99 < 2 ms |
+| List 1 triệu dòng/tenant | lọc bằng/khoảng trên tối đa 2 chiếu có index, không join, trang 50 | p99 < 20 ms |
+| Lưu document, một kho | smart bypass, không giao dịch toàn cục, 1 hook | p99 < 15 ms |
+| Ghi sổ hoá đơn, giao dịch toàn cục | Seata AT trên PostgreSQL + TCC trên Redis, TC Raft cùng region, 2 nhánh | p50 < 40 ms, p99 < 150 ms |
+| Hook tầng 1, chỉ dispatch | `MethodHandle` so với gọi trực tiếp | < 1 µs |
+| Hook tầng 1, đầu cuối | dispatch + kiểm tra capability + truyền ngữ cảnh + span audit | < 50 µs |
+| Script tầng 2, ấm | module đã compile, pool sẵn, input nhỏ | p99 < 5 ms |
+| Script tầng 2, compile lạnh | Chicory Wasm→bytecode, làm lúc warm-up rollout, ngoài đường request | < 500 ms/module |
+| Rollout app, lan truyền | announce → mọi pod đã nạp và warm bản mới ở trạng thái chờ, 50 pod | < 2 s |
+| Rollout app, cutover | trỏ lại dispatch nguyên tử trên một pod | < 10 ms |
+| Rollout app, drain | lời gọi đang bay kết thúc trên bản cũ | giới hạn bởi timeout request |
+| Pod kernel sẵn sàng, JVM | tầng 0 wire lúc build, Flyway no-op, registry ấm | < 5 s |
+| Pod kernel sẵn sàng, native | như trên | < 1 s |
+
+Thêm ba điều nói thẳng: mật độ "hàng nghìn tenant mỗi pod" là **giả thuyết cho đến khi benchmark** với footprint thật của overlay, cache, ClassLoader; Seata TC là thành phần tập trung, giữ ngoài đường nóng bằng smart bypass và **shard theo transaction service group** (mỗi nhóm một cụm Raft) nên throughput TC tăng theo số nhóm chứ không theo số pod; heap JVM theo app tầng 1 **quan sát được nhưng không cưỡng chế được**, thêm một lý do để code không tin cậy ở tầng 2.
 
 **Java 25 và Quarkus (ngắn):** virtual thread không pin (JEP 491), Scoped Values final (JEP 506), Structured Concurrency preview 5 (JEP 505, bọc sau executor), Generational ZGC mặc định (JEP 490, `-XX:+UseZGC`). Quarkus build-time augmentation là cơ chế tầng 0; hỗ trợ đầy đủ JDK 25 từ 3.31, LTS 3.27. Java 21 chưa đủ; Spring Boot dựa reflection runtime, đi ngược tầng 0; cái giá là tự viết extension Seata.
 
@@ -317,7 +331,7 @@ Không reflection trên đường nóng; đọc DocType từ cache L1/L2 theo ph
 
 ## 7. AI-native: AI xây, AI dùng
 
-**Cho agent xây app:** SPI nhỏ có kiểu và DocType YAML có JSON Schema là hợp đồng agent cài đặt đáng tin. Testkit cho vòng lặp pass/fail (contract test, assertion capability, ngân sách, **assertion overlay sống qua nâng cấp**). Code AI sinh mặc định tầng 2 Wasm; `provenance.generator` ghi lại; policy bắt buộc sandbox. Canary + auto-rollback bắt lỗi dưới traffic thật. Repo có `AGENTS.md`, `CLAUDE.md`, `llms.txt`; `astra mcp --dev` introspect kernel.
+**Cho agent xây app:** nói thật, SPI tổng thể **không nhỏ**: hơn hai mươi extension point, mô hình DocType, manifest, overlay, metadata tuân thủ. Thứ làm nó dùng được cho agent là mỗi **việc thì hẹp**: một hook chạm hai interface, một DocType là một file YAML, một script Wasm là một hàm export. `AGENTS.md` tổ chức theo từng extension point để agent chỉ nạp lát cắt cần, `astra mcp --dev` trả lời "có gì" từ kernel đang chạy, và testkit cho vòng lặp pass/fail. Testkit, không phải kích thước SPI, là thứ làm app do agent viết đáng tin. Hai kỷ luật thêm cho bề mặt tool: namespace (`doc.<doctype>.<op>`, `app.<id>.<tool>`), chỉ phơi DocType tenant khai báo, gói tool theo role, `tools/list` phân trang; và **grounding**: câu trả lời về dữ liệu nghiệp vụ phải trích dẫn DocType và id bút toán đã dùng, gateway từ chối câu trả lời không nguồn cho DocType tài chính. Testkit cho vòng lặp pass/fail (contract test, assertion capability, ngân sách, **assertion overlay sống qua nâng cấp**). Code AI sinh mặc định tầng 2 Wasm; `provenance.generator` ghi lại; policy bắt buộc sandbox. Canary + auto-rollback bắt lỗi dưới traffic thật. Repo có `AGENTS.md`, `CLAUDE.md`, `llms.txt`; `astra mcp --dev` introspect kernel.
 
 **Cho agent dùng ứng dụng:** mọi DocType (search, get, create, submit, cancel), event, job, `ToolContributor` chiếu thành MCP tool với JSON Schema của DocType, theo role và tenant, audit như mọi lời gọi. `AgentContributor` chạy agent có ngân sách với bộ nhớ phạm vi (DocType + pgvector). `ModelProvider` trừu tượng Claude, OpenAI, Gemini, model local. Prompt và eval là artifact có phiên bản đi cùng đường rollout.
 
@@ -361,10 +375,14 @@ Không reflection trên đường nóng; đọc DocType từ cache L1/L2 theo ph
 
 ## 10. Lộ trình
 
+**Đây là một chương trình, không phải một dự án.** Xây lại nền tảng cỡ Frappe cộng sandbox ba tầng, giao dịch phân tán, đa tenant, engine tuân thủ và bề mặt AI là nhiều năm làm việc của một đội, không phải danh sách tuyến tính một repo làm xong trong một năm. Vì vậy lộ trình đọc theo hai cách: **lát cắt mỏng** là thứ được xây và demo trước, đầu cuối; các phase sau xếp sao cho mỗi phase tự nó dùng được. Bảng tuân thủ là catalogue **profile bật dần**, không phải deliverable trọn gói của Phase 5.
+
+**Lát cắt mỏng (demo đầu tiên, đang làm):** một app DocType-driven (CMS `Article`), tenancy bằng `ScopedValue` và row-level security, lưu trữ JSONB zero-DDL với REST sinh ra, một hook tầng 0, chạy trên Docker Compose và k3d. Các bước kế tiếp theo thứ tự: ledger `GL Entry` tối thiểu với hoá đơn submittable; spike Seata chứng minh AT trên PostgreSQL + TCC trên Redis trên virtual thread; một script Wasm tầng 2; một canary rollout qua hai pod; MCP mỏng với `doc.search / get / create`. Mỗi bước kèm benchmark công khai.
+
 1. **Phase 1 (đang làm):** khung Maven, `astra-spi`, mô hình DocType và YAML schema **kèm thuộc tính tuân thủ**, manifest, mức trưởng thành, deprecation, `AGENTS.md`/`llms.txt`, `SECURITY.md`, khung catalogue OSCAL.
-2. **Phase 2:** kernel, plugin host ba tầng, **lõi tenancy** (Tenant DocType, nhận diện, ngữ cảnh `ScopedValue`, RLS, profile `shared-rls`, bulkhead), DocType engine lõi (JSONB, chiếu, naming, link, child table, quyền, submittable, phiên bản), **audit ledger chống sửa từ lần ghi đầu tiên**, REST sinh ra, testkit, pipeline build SLSA Level 3, benchmark đầu tiên.
+2. **Phase 2:** kernel, plugin host ba tầng **có đếm lệnh cho tầng 2**, **lõi tenancy** (Tenant DocType, nhận diện, ngữ cảnh `ScopedValue`, RLS, profile `shared-rls`, bulkhead), DocType engine lõi (JSONB, chiếu bằng expression index có quota, naming, link, child table, quyền, submittable, phiên bản), **audit ledger chống sửa từ lần ghi đầu tiên**, REST sinh ra, **MCP mỏng** (`doc.search / get / create`), **spike Seata** (AT + TCC + virtual thread, quyết định go/no-go cho Phase 4), testkit, pipeline build SLSA Level 3, benchmark đầu tiên.
 3. **Phase 3:** control plane và tương thích: registry, chữ ký, SBOM, phê duyệt bốn mắt, canary, shim, conformance suite có overlay, data patch, DORA.
-4. **Phase 4:** extension Seata, ledger storage, cache bus, upcaster, API theo ngày.
+4. **Phase 4:** extension Seata (hoặc phương án dự phòng do spike Phase 2 chọn: transactional outbox cộng TCC idempotent không cần coordinator tập trung), ledger storage, chiếu materialised có job backfill, cache bus, upcaster, API theo ngày.
 5. **Phase 5: Gói tuân thủ và tenancy.** Danh tính (OIDC/SAML, MFA, SCIM theo tenant), rà soát truy cập, SoD, profile `database-per-tenant` và `cluster-per-tenant`, migrate tenant, tổ chức và policy chia sẻ, quota và đo đếm, `KeyProvider` với BYOK và mã hoá cấp field, `ResidencyPolicy` và profile region (eu, us, vn, sg), privacy engine (RoPA, DSAR, đồng ý, retention, crypto-shredding, workflow vi phạm), `AuditSink` ra SIEM và nền tảng tuân thủ, CLI xuất bằng chứng, công bố ánh xạ SOC 2 / ISO 27001 / GDPR / PDPL.
 6. **Phase 6:** Desk theo WCAG 2.2 AA, overlay, workflow, report, print, notification.
 7. **Phase 7:** AI surface và quản trị AI: MCP, LLM gateway có che PII và ghim region, agent runtime có ngân sách và cổng phê duyệt, prompt registry, kiểm kê AI.
@@ -408,4 +426,6 @@ Không reflection trên đường nóng; đọc DocType từ cache L1/L2 theo ph
 
 **"Đa tenant có làm chậm hay rủi ro rò rỉ không?"** — Ranh giới tenant do kernel áp qua `ScopedValue` và RLS, không API nào nhận tenant từ người gọi. Bulkhead theo tenant nên tenant ồn chỉ làm chậm chính mình. Khách hàng cần tách biệt hơn chọn DB riêng hoặc cụm riêng mà không đổi code.
 
-**"Code đâu? Số hiệu năng đâu?"** — Chưa có. Đây là blueprint; benchmark ở Phase 2. Minh bạch quan trọng hơn gây ấn tượng.
+**"Code đâu? Số hiệu năng đâu?"** — Có lát cắt mỏng chạy được trong repo: `make k3d-up && make demo` dựng cụm k3d hai pod và chứng minh cô lập tenant đầu cuối. Phần còn lại là blueprint; benchmark ở Phase 2. Minh bạch quan trọng hơn gây ấn tượng.
+
+**"Một bài học từ chính demo?"** — Bản đầu tiên bỏ qua row-level security mà không có lỗi nào, vì ứng dụng kết nối bằng superuser của PostgreSQL. Giờ kernel từ chối khởi động nếu role có quyền bypass RLS. Đó là lý do "fail-closed" phải là mặc định, không phải tuỳ chọn.
