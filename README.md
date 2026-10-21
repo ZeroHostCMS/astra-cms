@@ -2,9 +2,13 @@
 
 # Astra CMS
 
-<a href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4" title="Xem video: Astra trong 5 phút">
-  <img src="docs/astra-intro-poster.jpg" width="820" alt="Xem video: Astra trong 5 phút (phụ đề tiếng Việt)">
+<p><b>English</b> · <a href="README.vi.md">Tiếng Việt</a></p>
+
+<a href="https://media.zerohostcms.com/astra-cms/astra-intro.en.mp4" title="Watch: Astra in 5 minutes">
+  <img src="docs/astra-intro-poster-en.jpg" width="820" alt="Watch: Astra in 5 minutes (English subtitles)">
 </a>
+
+<sub>▶ <b>Astra in 5 minutes</b> (English subtitles) · <a href="https://media.zerohostcms.com/astra-cms/astra-intro-en.mp4">MP4</a> · <a href="docs/video/astra-intro.en.srt">subtitles .srt</a> · Vietnamese version: <a href="README.vi.md">README.vi.md</a></sub>
 
 **A metadata-driven, plugin-first application platform for enterprises that change constantly and cannot afford downtime.**  
 *Inspired by Frappe / ERPNext, rebuilt from scratch on Java 25 and Quarkus. DocTypes define schema, form, API, permissions, workflow and compliance metadata as data. Three plugin isolation tiers: shared, isolated JVM, Wasm. Versioned apps run side by side with canary rollout and automatic rollback. Distributed transactions are built in. AI-native: every DocType and extension point is a tool. Compliance metadata is part of the data model, so the audit evidence for SOC 2, ISO 27001, GDPR and regional privacy laws is generated instead of assembled later. First apps: Astra CMS, then Astra ERP.*
@@ -42,7 +46,7 @@
 > It shares **no code, schema, or assets** with either. Concepts such as "DocType" are used as common vocabulary;
 > every implementation is original, in Java, under MIT. Nothing from ERPNext may be copied into this repository.
 
-Vietnamese readers: [docs/explain.md](docs/explain.md) explains why each choice was made.
+Why each choice was made, written as a 40-minute talk: [docs/explain.en.md](docs/explain.en.md). Vietnamese readers: [README.vi.md](README.vi.md) is the full Vietnamese README with a Vietnamese-subtitled intro video, and [docs/explain.md](docs/explain.md) is the Vietnamese original of the explainer.
 
 ---
 

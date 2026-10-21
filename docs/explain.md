@@ -1,5 +1,7 @@
 # Astra: Vì sao chọn nền tảng metadata-driven kiểu Frappe/ERPNext, viết lại bằng Java, thay đổi liên tục không downtime, và AI-native?
 
+[English](explain.en.md) · **Tiếng Việt** · Về [README](../README.vi.md)
+
 > Tài liệu để trình bày trước công chúng (meetup, talk, bài viết). Nói liền mạch trong 40 phút. Mỗi phần có **ý chính để nói**, **tham chiếu nền tảng lớn**, **lý do**, và **đánh đổi**. Số liệu hiệu năng của Astra là **mục tiêu thiết kế**, chưa đo; số của nền tảng khác là tuyên bố của chính họ.
 
 ---
