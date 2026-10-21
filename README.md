@@ -1,17 +1,15 @@
 <div align="center">
 
-# Astra
+# Astra CMS
 
 <a href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4" title="Xem video: Astra trong 5 phút">
-  <img src="docs/astra-intro-poster.jpg" width="820" alt="▶ Xem video: Astra trong 5 phút (phụ đề tiếng Việt)">
+  <img src="docs/astra-intro-poster.jpg" width="820" alt="Xem video: Astra trong 5 phút (phụ đề tiếng Việt)">
 </a>
 
-<sub>▶ <b>Astra trong 5 phút</b> (5:29, phụ đề tiếng Việt): nỗi đau của app enterprise, chia việc kỹ sư lõi và AI agent, hot-swap, giao dịch 2PC Seata, demo hai tenant chạy thật · <a href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4">MP4</a>
+**A metadata-driven, plugin-first application platform for enterprises that change constantly and cannot afford downtime.**  
+*Inspired by Frappe / ERPNext, rebuilt from scratch on Java 25 and Quarkus. DocTypes define schema, form, API, permissions, workflow and compliance metadata as data. Three plugin isolation tiers: shared, isolated JVM, Wasm. Versioned apps run side by side with canary rollout and automatic rollback. Distributed transactions are built in. AI-native: every DocType and extension point is a tool. Compliance metadata is part of the data model, so the audit evidence for SOC 2, ISO 27001, GDPR and regional privacy laws is generated instead of assembled later. First apps: Astra CMS, then Astra ERP.*
 
-**A metadata-driven, plugin-first application platform for enterprises that must change every day without ever going down.**  
-*In the spirit of Frappe / ERPNext, rebuilt from a clean sheet on Java 25 + Quarkus • DocTypes define schema, form, API, permissions, workflow **and compliance metadata** as data • Three plugin isolation tiers (shared / isolated JVM / Wasm) • Versioned, side-by-side apps with canary rollout and auto-rollback • Distributed transactions built in • AI-native: every DocType and extension point is a tool • Compliance by design: audit-ready for SOC 2, ISO 27001, GDPR and regional privacy laws from day one • First apps: Astra CMS, then Astra ERP.*
-
-[![Compliance](https://img.shields.io/badge/Compliance-SOC%202%20%7C%20ISO%2027001%20%7C%20GDPR%20ready-2e7d32.svg)](#%EF%B8%8F-compliance-by-design-go-global-ready)
+[![Compliance](https://img.shields.io/badge/Compliance-SOC%202%20%7C%20ISO%2027001%20%7C%20GDPR%20ready-2e7d32.svg)](#compliance-built-into-the-metadata)
 
 [![Java Version](https://img.shields.io/badge/Java-25%20LTS%20(Gen%20ZGC)-orange.svg)](https://openjdk.org/projects/jdk/25/)
 [![Quarkus](https://img.shields.io/badge/Quarkus-3.27%20LTS%20%2F%203.31%2B-blue.svg)](https://quarkus.io/)
@@ -21,21 +19,21 @@
 [![Apache Seata](https://img.shields.io/badge/Apache%20Seata-2.6%20(incubating)%20Raft%20AT%2FTCC-red.svg)](https://seata.apache.org/)
 [![Wasm](https://img.shields.io/badge/WebAssembly-Chicory%20%2B%20Extism%20ABI-654ff0.svg)](https://chicory.dev/)
 [![MCP](https://img.shields.io/badge/MCP-Agent%20Tool%20Surface-111.svg)](https://modelcontextprotocol.io/)
-[![Status](https://img.shields.io/badge/Status-Design%20%26%20Spec%20Phase-yellow.svg)](#-project-status)
+[![Status](https://img.shields.io/badge/Status-Design%20%26%20Spec%20Phase-yellow.svg)](#project-status)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
 
 ---
 
-## 📌 Project Status
+## Project Status
 
 > **Astra is in the architecture & specification phase, with a running thin slice.** The repository
 > holds this blueprint plus the first vertical slice of the platform: a Maven multi-module build
 > (`astra-spi`, `astra-kernel`, `astra-doctype`, `astra-apps/cms`, `astra-server`), tenancy by
 > `ScopedValue` and PostgreSQL row-level security with a fail-closed guard, a zero-DDL JSONB DocType
 > store with generated REST, one Tier 0 lifecycle hook, a Docker Compose dev stack and a local k3d
-> deployment with two kernel pods. See [Run the thin slice today](#-run-the-thin-slice-today).
+> deployment with two kernel pods. See [Run the thin slice today](#run-the-thin-slice-today).
 > Everything else below describes the **target architecture and the intended public API**; those code
 > samples do not compile yet. Performance figures are **design targets** to be validated by public
 > benchmarks, not measurements.
@@ -44,26 +42,26 @@
 > It shares **no code, schema, or assets** with either. Concepts such as "DocType" are used as common vocabulary;
 > every implementation is original, in Java, under MIT. Nothing from ERPNext may be copied into this repository.
 
-🇻🇳 Vietnamese readers: [docs/explain.md](docs/explain.md) explains *why* each choice was made, written for a public talk.
+Vietnamese readers: [docs/explain.md](docs/explain.md) explains why each choice was made.
 
 ---
 
-## The Thesis
+## Why Astra Exists
 
-ERPNext proved something the enterprise software industry had mostly given up on: **one open platform can run a company's content, commerce, accounting, inventory, manufacturing, HR and projects**, and small teams can customise it without forking it. The reason is not any single module. It is Frappe's core idea: **the application is metadata**. A DocType defines a document's fields, validation, permissions, form, list, API and workflow as data, and everything else (REST, UI, reports, print, notifications) is generated from it.
+ERPNext proved something the enterprise software industry had mostly given up on: one open platform can run a company's content, commerce, accounting, inventory, manufacturing, HR and projects, and small teams can customise it without forking it. The reason is Frappe's core idea, not any single module: **the application is metadata**. A DocType defines a document's fields, validation, permissions, form, list, API and workflow as data, and everything else (REST, UI, reports, print, notifications) is generated from it.
 
-Astra takes that idea and rebuilds it for three constraints Frappe was never designed for:
+Astra takes that idea and rebuilds it for four constraints Frappe was never designed for:
 
 1. **Throughput and latency at cluster scale.** Java 25 virtual threads, Generational ZGC, Quarkus build-time wiring, in-process plugin isolation. High tenant density per pod instead of per-site processes, a goal to be proven by benchmark rather than assumed.
 2. **Change every day without breaking yesterday.** Zero-DDL DocTypes (customising a form never locks a table), side-by-side app versions, per-tenant pinning, canary rollout with auto-rollback, a versioned SPI with a written deprecation policy, and tenant customisations stored as overlays that survive every upgrade.
-3. **AI as a first-class author and user.** Agents build apps against typed extension points with a sandbox and a test kit; agents use the platform through an MCP tool surface generated from the same DocTypes, under the same permissions and audit.
-4. **Compliance as a property of the metadata, not a project at the end.** Every DocType field carries classification, retention, legal basis and residency. Records of processing, data-subject requests, retention schedules, audit trails and access reviews are generated from that metadata, so an operator can reach SOC 2 Type II, ISO 27001 and GDPR readiness without retrofitting the data model.
+3. **Agents as authors and users.** Agents build apps against typed extension points with a sandbox and a test kit; agents use the platform through an MCP tool surface generated from the same DocTypes, under the same permissions and audit.
+4. **Compliance as a property of the metadata.** Every DocType field carries classification, retention, legal basis and residency. Records of processing, data-subject requests, retention schedules, audit trails and access reviews are generated from that metadata, so an operator can reach SOC 2 Type II, ISO 27001 and GDPR readiness without reworking the data model later.
 
-**An Astra application is a kernel plus a declared set of plugins ("apps") whose DocTypes compose into one system.** `astra build` turns that declaration into an immutable image. **Astra CMS** is the first app. **Astra ERP** (accounts, stock, selling, buying, manufacturing, HR, projects, CRM) is the second, built entirely on the same platform the way ERPNext is built on Frappe, and sharing nothing with it but the vocabulary.
+An Astra application is a kernel plus a declared set of plugins ("apps") whose DocTypes compose into one system. `astra build` turns that declaration into an immutable image. Astra CMS is the first app. Astra ERP (accounts, stock, selling, buying, manufacturing, HR, projects, CRM) is the second, built on the same platform in the way ERPNext is built on Frappe, with no shared code between the two.
 
 ---
 
-## Design References: What We Borrowed From Platforms That Survive Change
+## Design References
 
 | Platform | What they do | What Astra borrows |
 | --- | --- | --- |
@@ -196,14 +194,14 @@ Frappe creates one table per DocType and runs DDL when you add a Custom Field. A
 | `ledger` | General Ledger entries, Stock Ledger entries, payroll postings, audit trails | Append-only, partitioned relational tables with fixed columns. Rows are never updated; corrections are reversing entries. Written only inside `@AstraGlobalTransactional` by the owning app. Partition by period for closing and archival. | Schema owned by the app, evolved with expand/contract |
 | `virtual` | External systems | A `DocTypeAdapter` maps the DocType onto an ERP, CRM, or legacy database. Same API, permissions, and tools. | n/a |
 
-**Projection budgets.** Flexibility must not eat performance. Each DocType has a projection and index quota (default 8 projections, 12 indexes), each tenant has an overlay projection quota, and materialised projections on DocTypes above a row threshold require an approval step. Over-quota requests fail at metadata validation, not at 3 a.m. on the database.
+**Projection budgets.** Flexibility must not cost performance. Each DocType has a projection and index quota (default 8 projections, 12 indexes), each tenant has an overlay projection quota, and materialised projections on DocTypes above a row threshold require an approval step. Over-quota requests fail during metadata validation, before they reach a production database.
 
-**Hot DocTypes are not JSONB-first.** A PostgreSQL `UPDATE` rewrites the whole row, so a DocType whose few fields change many times a day (stock levels, outstanding amounts, counters, status churn) bloats and churns vacuum if it lives only in JSONB. Rules the kernel enforces and the DocType linter reports: keep hot fields as materialised columns so the large JSONB stays TOASTed and untouched; leave hot fields unindexed where possible so updates stay heap-only (HOT) and set `fillfactor` below 100; put counters and balances in `ledger` storage or Redis; and split a hot status field into a narrow side DocType when churn is extreme. `jsonb` is the default for flexibility, not a blanket answer.
+**Hot DocTypes need materialised columns.** A PostgreSQL `UPDATE` rewrites the whole row, so a DocType whose few fields change many times a day (stock levels, outstanding amounts, counters, status churn) bloats and churns vacuum if every field lives in JSONB. Rules the kernel enforces and the DocType linter reports: keep hot fields as materialised columns so the large JSONB stays TOASTed and untouched; leave hot fields unindexed where possible so updates stay heap-only (HOT) and set `fillfactor` below 100; put counters and balances in `ledger` storage or Redis; and split a hot status field into a narrow side DocType when churn is extreme. `jsonb` is the flexible default, not a universal choice.
 
 ### 3. Document lifecycle, versions, and amendments
 
-* **Submittable DocTypes** carry `docstatus`: draft, submitted, cancelled. Submitted documents are immutable except for fields marked `allow-on-submit`. Cancelling reverses postings; **amend** creates a new revision (`INV-0001-1`) linked to the original. This is what makes an invoice an invoice and not a blog post.
-* **Track changes** stores a diff per save; **versions** are first-class and queryable.
+* **Submittable DocTypes** carry `docstatus`: draft, submitted, cancelled. Submitted documents are immutable except for fields marked `allow-on-submit`. Cancelling reverses postings; **amend** creates a new revision (`INV-0001-1`) linked to the original. That is why an invoice is handled as a financial record rather than a content item.
+* **Track changes** stores a diff per save; **versions** are queryable.
 * **Links** are validated on write and protect referential integrity across JSONB and ledger storage; `fetch-from` copies denormalised values at write time, the way ERP documents expect.
 * **Child tables** are ordered sub-documents stored inline (JSONB) or projected (ledger) by the parent's strategy.
 * **Naming series** are cluster-safe (Redis-backed counters with gap-free mode for fiscal documents).
@@ -229,7 +227,7 @@ client:
   form: acme-vn/sales-invoice.form.js       # sandboxed client script for Desk
 ```
 
-Overlays are data, versioned, pinned per tenant, and applied at metadata-load time. An app upgrade that removes a field an overlay depends on is caught by the **conformance check** before rollout, not by a user at month-end.
+Overlays are data, versioned, pinned per tenant, and applied at metadata-load time. An app upgrade that removes a field an overlay depends on is caught by the **conformance check** before rollout.
 
 ### 5. Everything generated from metadata
 
@@ -374,9 +372,9 @@ Every rollout is an event correlated with metrics. **DORA metrics per app** (dep
 
 ---
 
-## 🏢 Multi-Tenancy
+## Multi-Tenancy
 
-Multi-tenancy is a kernel property, not an app feature. Every kernel service applies the tenant boundary itself, so an app or agent cannot cross it even if it tries.
+Multi-tenancy is a kernel property, not an app feature. Every kernel service applies the tenant boundary itself, so an app or agent cannot cross it.
 
 ### 1. Tenant model
 
@@ -464,9 +462,9 @@ An `Organisation` groups tenants (a holding company with subsidiaries, a franchi
 
 ---
 
-## 🛡️ Compliance by Design: Go-Global Ready
+## Compliance Built Into the Metadata
 
-**Honest framing first.** SOC 2 Type II and ISO 27001 certify an *operator* (the organisation running the service) over an observation period. GDPR and its regional counterparts bind *controllers and processors*. No open-source codebase is "SOC 2 certified". What a platform can do is make those outcomes cheap: ship the controls, generate the evidence, and keep the data model compliant by construction. That is the goal here. A hosted Astra Cloud would pursue the certifications itself; self-hosting operators inherit the controls and the evidence pipeline.
+SOC 2 Type II and ISO 27001 certify an *operator* (the organisation running the service) over an observation period. GDPR and its regional counterparts bind *controllers and processors*. No open-source codebase is "SOC 2 certified". A platform can still make those outcomes cheaper: ship the controls, generate the evidence, and keep the data model compliant by construction. A hosted Astra Cloud would pursue the certifications itself; self-hosting operators inherit the controls and the evidence pipeline.
 
 ### 1. Frameworks in scope and how Astra maps to them
 
@@ -480,7 +478,7 @@ An `Organisation` groups tenants (a holding company with subsidiaries, a franchi
 | **SOX ITGC** (for ERP customers) | Change management, access, segregation of duties, audit trail | Signed, approved, audited rollouts; SoD rules on DocType actions; immutable ledgers; period locks; access reviews. |
 | **PCI DSS 4.0.1** | Card data | Designed to keep cardholder data **out of scope**: tokenisation via payment providers, no PAN storage, network and secrets policies for payment apps. |
 | **HIPAA** (optional profile) | US health data | Field-level encryption, access logging, BAA-ready controls for apps that declare PHI. |
-| **EU AI Act** (phased 2025–2027; high-risk dates being deferred by the Digital Omnibus) + **ISO/IEC 42001**, **NIST AI RMF** | AI systems and governance | Agent action logging, human-in-the-loop gates, model and prompt versioning, transparency notices, PII redaction before external model calls, tenant opt-out, AI inventory. |
+| **EU AI Act** (phased 2025-2027; high-risk dates being deferred by the Digital Omnibus) + **ISO/IEC 42001**, **NIST AI RMF** | AI systems and governance | Agent action logging, human-in-the-loop gates, model and prompt versioning, transparency notices, PII redaction before external model calls, tenant opt-out, AI inventory. |
 | **EU DORA** (financial entities, since Jan 2025), **NIS2** | Operational resilience, ICT third-party risk | Resilience testing hooks, incident reporting workflow, RTO/RPO evidence, sub-processor register. |
 | **EU Cyber Resilience Act** (reporting from Sept 2026, full application Dec 2027) | Products with digital elements | SBOM per release, vulnerability handling process, coordinated disclosure, security update policy; Astra project operates as an open-source steward. |
 | **WCAG 2.2 AA**, **EU Accessibility Act** (June 2025), **Section 508** | Accessibility | Desk UI built to WCAG 2.2 AA; automated and manual audits in CI. |
@@ -544,7 +542,7 @@ Astra ERP is the proof that the platform is general. It is built the way ERPNext
 
 | Module (app) | Core DocTypes | Ledgers | Notes |
 | --- | --- | --- | --- |
-| `erp.core` | Company, Fiscal Year, Currency, Exchange Rate, UoM, Address, Contact | | Multi-company, multi-currency from day one |
+| `erp.core` | Company, Fiscal Year, Currency, Exchange Rate, UoM, Address, Contact | | Multi-company and multi-currency in the first release |
 | `erp.accounts` | Account (chart tree), Journal Entry, Payment Entry, Sales Invoice, Purchase Invoice, Tax Template, Cost Center, Period Closing | **GL Entry** | Double-entry; postings are reversing, never edited; closing freezes periods |
 | `erp.stock` | Item, Warehouse (tree), Stock Entry, Delivery Note, Purchase Receipt, Batch, Serial No, Valuation | **Stock Ledger Entry** | FIFO / moving average, backdated repost as a job, reservation via Redis TCC for flash-sale paths |
 | `erp.selling` | Customer, Quotation, Sales Order, Pricing Rule | | Pricing rules are an extension point other apps and tenants implement |
@@ -555,7 +553,7 @@ Astra ERP is the proof that the platform is general. It is built the way ERPNext
 | `erp.crm` | Lead, Opportunity, Campaign | | |
 | `erp.assets` | Asset, Depreciation Schedule | GL via `erp.accounts` | |
 
-Platform features that ERP specifically needs, and why they already exist in the kernel:
+Platform features that ERP needs and the kernel already provides:
 
 * **Posting a Sales Invoice** touches GL Entry, Stock Ledger Entry, customer outstanding, and inventory reservations in Redis. That is one `@AstraGlobalTransactional` method: Postgres via Seata AT, Redis via TCC, all-or-nothing.
 * **Month-end close** on 50 pods: period locks are DocType state, enforced by the kernel's lifecycle hooks, not by application code remembering to check.
@@ -574,7 +572,7 @@ Platform features that ERP specifically needs, and why they already exist in the
 * The Seata transaction coordinator is a central component. It is kept off the hot path by smart bypass (most requests never touch it) and is **sharded by transaction service group** (per app or per tenant shard, each a Raft cluster) so coordinator throughput scales with the number of groups, not the number of kernel pods.
 * Plugin host memory is budgeted where the JVM allows it: Metaspace per ClassLoader is tracked and capped by `keep-previous`; Wasm linear memory is a hard cap per instance; **JVM heap per Tier 1 app is observable (per-plugin allocation metrics) but not enforceable**, which is one more reason untrusted code belongs in Tier 2.
 
-Targets are stated with the conditions under which they are measured. Numbers without conditions are marketing.
+Every target is stated with the conditions under which it is measured.
 
 | Metric | Condition | Target (to be validated by public benchmarks) |
 | --- | --- | --- |
@@ -601,7 +599,7 @@ Java 25 runtime: unpinned virtual threads (JEP 491), `ScopedValue` (JEP 506, fin
 
 ## AI-Native: Built By Agents, Used By Agents
 
-**For agents that build apps.** The SPI as a whole is **not** small: twenty-plus extension points, the DocType model, manifests, overlays and compliance metadata. What makes it workable for an agent is that each task is **narrow**: a lifecycle hook touches two interfaces, a DocType is one YAML file, a Wasm script is one exported function. `AGENTS.md` is organised per extension point so an agent loads only the slice it needs, `astra mcp --dev` answers "what exists" from the live kernel, and `astra-plugin-testkit` contract tests, capability assertions and budget assertions give a pass/fail loop. The test kit, not the size of the SPI, is what makes agent-written apps trustworthy. AI-generated code defaults to Tier 2 Wasm; `provenance.generator` is recorded and environment policy can require the sandbox tier. Canary and auto-rollback revert a change that passes tests but misbehaves under traffic. The repository ships `AGENTS.md`, `CLAUDE.md`, `llms.txt`, and `astra mcp --dev` exposes live kernel introspection.
+**For agents that build apps.** The SPI is large: twenty-plus extension points, the DocType model, manifests, overlays and compliance metadata. What makes it workable for an agent is that each task is **narrow**: a lifecycle hook touches two interfaces, a DocType is one YAML file, a Wasm script is one exported function. `AGENTS.md` is organised per extension point so an agent loads only the slice it needs, `astra mcp --dev` answers "what exists" from the live kernel, and `astra-plugin-testkit` contract tests, capability assertions and budget assertions give a pass/fail loop. The test kit is what makes agent-written apps trustworthy. AI-generated code defaults to Tier 2 Wasm; `provenance.generator` is recorded and environment policy can require the sandbox tier. Canary and auto-rollback revert a change that passes tests but misbehaves under traffic. The repository ships `AGENTS.md`, `CLAUDE.md` and `llms.txt`.
 
 **For agents that use an Astra application.** Every DocType (search, get, create, submit, cancel), event, job and `ToolContributor` is projected as an MCP tool with the DocType's JSON Schema, scoped by role and tenant, audited like any call. `AgentContributor` runs budgeted agents inside the platform with scoped memory (DocTypes + pgvector). `ModelProvider` abstracts Claude, OpenAI, Gemini and local models behind a gateway with fallback and cost accounting. Prompts and evals are versioned artifacts on the same rollout path as code.
 
@@ -609,7 +607,7 @@ Java 25 runtime: unpinned virtual threads (JEP 491), `ScopedValue` (JEP 506, fin
 
 ---
 
-## 💻 Developer Experience (Target API)
+## Developer Experience (Target API)
 
 ### 1. Compose an application, pin per tenant
 
@@ -709,7 +707,7 @@ class VnLocalisationContractTest {
 
 ---
 
-## 📂 Planned Repository & Module Structure
+## Planned Repository and Module Structure
 
 ```text
 astra/
@@ -744,7 +742,7 @@ astra/
 
 ---
 
-## 🧪 Run the thin slice today
+## Run the Thin Slice Today
 
 Requirements: JDK 25, Docker Desktop, `kubectl`, and `k3d` (k3s in Docker). The Maven wrapper is included.
 
@@ -761,7 +759,7 @@ make demo            # two tenants, hooks, naming series, row-level security, va
 make k3d-down
 ```
 
-What the demo exercises, all of it real code in this repository:
+What the demo exercises, all from real code in this repository:
 
 | Mechanism | Where |
 | --- | --- |
@@ -774,7 +772,7 @@ What the demo exercises, all of it real code in this repository:
 
 Not in the thin slice yet: overlays, permissions, submittable lifecycle, projections, Tier 1/2 loaders, rollout control plane, Seata, MCP, Desk. The roadmap below sequences them.
 
-## 🚀 Getting Started (Target Workflow)
+## Getting Started (Target Workflow)
 
 > Intended workflow once the modules above are published. The commands in this section will not work against the current repository; use the thin-slice commands above.
 
@@ -815,28 +813,28 @@ astra:
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
-**This is a programme, not a project.** Rebuilding a Frappe-class platform plus a three-tier sandbox, distributed transactions, multi-tenancy, a compliance engine and an AI surface is years of work for a team, not a linear list a single repository finishes in a year. The roadmap below is therefore read in two ways: the **thin slice** is what gets built and demonstrated first, end to end, and everything after it is sequenced so that each phase ships something usable on its own. The compliance table is a catalogue of **profiles enabled over time**, not a Phase 5 deliverable in full.
+Rebuilding a Frappe-class platform with a three-tier sandbox, distributed transactions, multi-tenancy, a compliance engine and an AI surface is years of work for a team, and a single repository cannot finish it in a year. The roadmap therefore has two readings. The **thin slice** is what gets built and demonstrated first, end to end. Everything after it is sequenced so each phase ships something usable on its own. The compliance table is a catalogue of **profiles enabled over time**, not a single Phase 5 deliverable.
 
-**Thin slice (done, see "Run the thin slice today"):** one DocType-driven app (CMS `Article`), tenancy by `ScopedValue` and row-level security with a fail-closed guard, zero-DDL JSONB storage with generated REST, one Tier 0 hook, running on Docker Compose and a local k3d cluster with two kernel pods. Next increments, in order: a minimal `GL Entry` ledger with a submittable invoice; a Seata spike proving AT on PostgreSQL + TCC on Redis on virtual threads; one Tier 2 Wasm script; one canary rollout across two pods; a thin MCP server exposing `doc.search / get / create`. Each increment comes with a public benchmark against the targets above.
+**Thin slice (done, see "Run the Thin Slice Today"):** one DocType-driven app (CMS `Article`), tenancy by `ScopedValue` and row-level security with a fail-closed guard, zero-DDL JSONB storage with generated REST, one Tier 0 hook, running on Docker Compose and a local k3d cluster with two kernel pods. Next increments, in order: a minimal `GL Entry` ledger with a submittable invoice; a Seata spike proving AT on PostgreSQL + TCC on Redis on virtual threads; one Tier 2 Wasm script; one canary rollout across two pods; a thin MCP server exposing `doc.search / get / create`. Each increment comes with a public benchmark against the targets above.
 
-* [ ] **Phase 1: Architecture & SPI** — *In progress.* Blueprint (this README). Next: Maven skeleton, `astra-spi` with extension points, DocType model and YAML schema **including compliance attributes**, manifest schema, maturity levels, deprecation policy, `AGENTS.md` / `llms.txt`, `SECURITY.md`, OSCAL control catalogue skeleton.
-* [ ] **Phase 2: Kernel, Plugin Host & DocType Engine core** — Registry with side-by-side versions and tenant pins; **tenancy core** (Tenant DocType, resolution, `ScopedValue` context, RLS, `shared-rls` profile, bulkheads); Tier 0/1/2 loaders **with instruction counting for Tier 2**; DocType metadata registry, JSONB storage, expression-index projections with quotas, naming, links, child tables, permissions, submittable lifecycle, versions; **tamper-evident audit ledger from the first write**; generated REST; **thin MCP server (`doc.search / get / create`)**; **Seata spike** (AT + TCC + virtual threads, go/no-go for Phase 4); `astra-plugin-testkit`; SLSA Level 3 build pipeline; first public benchmarks.
-* [ ] **Phase 3: Control Plane & Compatibility** — Registry, signatures, SBOM, provenance policy, four-eyes production approvals, canary rollout, pod join; `astra-compat` shims; conformance suite including tenant overlays; data patches; DORA metrics.
-* [ ] **Phase 4: Transactions, Ledgers & Cache** — Quarkus Seata extension (or the fallback chosen by the Phase 2 spike: transactional outbox plus idempotent TCC without a central coordinator); `ledger` storage with expand/contract; materialised projections with backfill jobs; L1/L2 cache bus; upcasters; date-versioned APIs.
-* [ ] **Phase 5: Compliance & Tenancy Pack** — Identity (OIDC/SAML, MFA, SCIM per tenant), access reviews, SoD policies, `database-per-tenant` and `cluster-per-tenant` profiles, tenant migration, organisations and sharing policies, quotas and metering, `KeyProvider` with BYOK and field-level encryption, `ResidencyPolicy` and region profiles (eu, us, vn, sg), privacy engine (classification-driven RoPA, DSAR, consent, retention, crypto-shredding, breach workflow), `AuditSink` to SIEM and compliance platforms, evidence export CLI, SOC 2 / ISO 27001 / GDPR / PDPL control mappings published.
-* [ ] **Phase 6: Desk, Overlays, Workflow, Reports, Print** — Generated UI to WCAG 2.2 AA, overlays with client scripts, workflow engine, report builder, query and script reports, print/PDF, notifications.
-* [ ] **Phase 7: AI Surface & AI Governance** — MCP projection of DocTypes and tools, LLM gateway with PII redaction and region pinning, agent runtime with budgets and human-approval gates, prompt registry, AI inventory and transparency notices, `astra mcp --dev`.
-* [ ] **Phase 8: Kubernetes, Observability & Resilience** — CIS-hardened Helm, rollout CRDs/Operator, Seata Raft StatefulSet, OpenTelemetry and Prometheus per app and agent, backup/restore evidence jobs, failover testing, third-party penetration test of the reference deployment.
-* [ ] **Phase 9: Astra CMS** — content, media, publishing apps composed into `apps/astra-cms`; Admin Studio on Desk.
-* [ ] **Phase 10: Astra ERP** — `erp.core`, `erp.accounts` (GL), `erp.stock` (SLE), then selling, buying, manufacturing, hr, projects, crm, assets; SOX ITGC evidence; Vietnam localisation (e-invoice, VAT, PDPL dossiers) as the reference Tier 1 app; signed marketplace.
+* [ ] **Phase 1: Architecture & SPI** (in progress). Blueprint (this README). Next: Maven skeleton, `astra-spi` with extension points, DocType model and YAML schema **including compliance attributes**, manifest schema, maturity levels, deprecation policy, `AGENTS.md` / `llms.txt`, `SECURITY.md`, OSCAL control catalogue skeleton.
+* [ ] **Phase 2: Kernel, Plugin Host & DocType Engine core**. Registry with side-by-side versions and tenant pins; **tenancy core** (Tenant DocType, resolution, `ScopedValue` context, RLS, `shared-rls` profile, bulkheads); Tier 0/1/2 loaders **with instruction counting for Tier 2**; DocType metadata registry, JSONB storage, expression-index projections with quotas, naming, links, child tables, permissions, submittable lifecycle, versions; **tamper-evident audit ledger from the first write**; generated REST; **thin MCP server (`doc.search / get / create`)**; **Seata spike** (AT + TCC + virtual threads, go/no-go for Phase 4); `astra-plugin-testkit`; SLSA Level 3 build pipeline; first public benchmarks.
+* [ ] **Phase 3: Control Plane & Compatibility**. Registry, signatures, SBOM, provenance policy, four-eyes production approvals, canary rollout, pod join; `astra-compat` shims; conformance suite including tenant overlays; data patches; DORA metrics.
+* [ ] **Phase 4: Transactions, Ledgers & Cache**. Quarkus Seata extension (or the fallback chosen by the Phase 2 spike: transactional outbox plus idempotent TCC without a central coordinator); `ledger` storage with expand/contract; materialised projections with backfill jobs; L1/L2 cache bus; upcasters; date-versioned APIs.
+* [ ] **Phase 5: Compliance & Tenancy Pack**. Identity (OIDC/SAML, MFA, SCIM per tenant), access reviews, SoD policies, `database-per-tenant` and `cluster-per-tenant` profiles, tenant migration, organisations and sharing policies, quotas and metering, `KeyProvider` with BYOK and field-level encryption, `ResidencyPolicy` and region profiles (eu, us, vn, sg), privacy engine (classification-driven RoPA, DSAR, consent, retention, crypto-shredding, breach workflow), `AuditSink` to SIEM and compliance platforms, evidence export CLI, SOC 2 / ISO 27001 / GDPR / PDPL control mappings published.
+* [ ] **Phase 6: Desk, Overlays, Workflow, Reports, Print**. Generated UI to WCAG 2.2 AA, overlays with client scripts, workflow engine, report builder, query and script reports, print/PDF, notifications.
+* [ ] **Phase 7: AI Surface & AI Governance**. MCP projection of DocTypes and tools, LLM gateway with PII redaction and region pinning, agent runtime with budgets and human-approval gates, prompt registry, AI inventory and transparency notices, `astra mcp --dev`.
+* [ ] **Phase 8: Kubernetes, Observability & Resilience**. CIS-hardened Helm, rollout CRDs/Operator, Seata Raft StatefulSet, OpenTelemetry and Prometheus per app and agent, backup/restore evidence jobs, failover testing, third-party penetration test of the reference deployment.
+* [ ] **Phase 9: Astra CMS**. Content, media, publishing apps composed into `apps/astra-cms`; Admin Studio on Desk.
+* [ ] **Phase 10: Astra ERP**. `erp.core`, `erp.accounts` (GL), `erp.stock` (SLE), then selling, buying, manufacturing, hr, projects, crm, assets; SOX ITGC evidence; Vietnam localisation (e-invoice, VAT, PDPL dossiers) as the reference Tier 1 app; signed marketplace.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-Most valuable right now: challenge the DocType model (storage strategies, overlays, submittable lifecycle), the compatibility contract, the three-tier model, and the ERP module boundaries. Prior art and benchmarks on Seata with Quarkus, Chicory sandboxing, JSONB projections at scale, ledger partitioning, and MCP server patterns. Real ERP and back-office use cases that stress continuous change.
+The most useful contributions right now are challenges to the DocType model (storage strategies, overlays, submittable lifecycle), the compatibility contract, the three-tier model and the ERP module boundaries. Also useful: prior art and benchmarks on Seata with Quarkus, Chicory sandboxing, JSONB projections at scale, ledger partitioning and MCP server patterns, plus real ERP and back-office use cases that stress continuous change.
 
 **Contributors must not copy code, schema, fixtures, or UI assets from ERPNext (GPL-3.0) or any GPL project.** Frappe concepts may be referenced; implementations must be original.
 
@@ -846,6 +844,6 @@ Security issues go through the coordinated disclosure process in `SECURITY.md` (
 
 ---
 
-## 📄 License
+## License
 
 Released under the **MIT License**. See [LICENSE](LICENSE).

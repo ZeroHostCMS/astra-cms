@@ -1,4 +1,4 @@
-# Astra — Vì sao chọn nền tảng metadata-driven kiểu Frappe/ERPNext, viết lại bằng Java, thay đổi liên tục không downtime, và AI-native?
+# Astra: Vì sao chọn nền tảng metadata-driven kiểu Frappe/ERPNext, viết lại bằng Java, thay đổi liên tục không downtime, và AI-native?
 
 > Tài liệu để trình bày trước công chúng (meetup, talk, bài viết). Nói liền mạch trong 40 phút. Mỗi phần có **ý chính để nói**, **tham chiếu nền tảng lớn**, **lý do**, và **đánh đổi**. Số liệu hiệu năng của Astra là **mục tiêu thiết kế**, chưa đo; số của nền tảng khác là tuyên bố của chính họ.
 
@@ -8,14 +8,14 @@
 
 **Ý chính để nói:** ERPNext chứng minh một điều ngành phần mềm doanh nghiệp gần như đã bỏ cuộc: **một nền tảng mở có thể chạy nội dung, bán hàng, kế toán, kho, sản xuất, nhân sự, dự án của cả một công ty**, và team nhỏ tùy biến được mà không phải fork.
 
-Lý do không nằm ở module nào. Lý do là ý tưởng lõi của Frappe: **ứng dụng là metadata**. Một DocType định nghĩa field, validation, quyền, form, list, API và workflow của một loại chứng từ dưới dạng dữ liệu; mọi thứ còn lại (REST, UI, báo cáo, in, thông báo) được sinh ra từ đó.
+Lý do không nằm ở một module cụ thể mà ở ý tưởng lõi của Frappe: **ứng dụng là metadata**. Một DocType định nghĩa field, validation, quyền, form, list, API và workflow của một loại chứng từ dưới dạng dữ liệu; mọi thứ còn lại (REST, UI, báo cáo, in, thông báo) được sinh ra từ đó.
 
-Astra lấy ý tưởng đó và xây lại cho ba ràng buộc mà Frappe không được thiết kế để giải:
+Astra lấy ý tưởng đó và xây lại cho bốn ràng buộc mà Frappe không được thiết kế để giải:
 
 1. **Thông lượng và độ trễ ở quy mô cụm.** Java 25 virtual thread, Generational ZGC, Quarkus wiring lúc build, cô lập plugin trong tiến trình. Hàng nghìn tenant và tùy biến của họ trên một pod, không phải mỗi site một tiến trình.
 2. **Đổi mỗi ngày mà không phá hôm qua.** DocType zero-DDL (tùy biến form không bao giờ khóa bảng), phiên bản app chạy song song, ghim theo tenant, canary tự rollback, SPI có chính sách deprecation, và tùy biến của tenant lưu dạng overlay sống sót qua mọi lần nâng cấp.
-3. **AI là tác giả và người dùng hạng nhất.** Agent xây app trên SPI nhỏ có kiểu với sandbox và testkit; agent dùng nền tảng qua MCP tool sinh từ chính DocType, dưới cùng quyền và audit.
-4. **Tuân thủ là thuộc tính của metadata, không phải dự án làm cuối.** Mỗi field DocType mang phân loại, thời hạn lưu, cơ sở pháp lý, nơi lưu trữ. Hồ sơ xử lý dữ liệu, yêu cầu của chủ thể dữ liệu, lịch xoá, audit trail, rà soát truy cập đều sinh từ metadata đó. Nhà vận hành đi tới SOC 2 Type II, ISO 27001, GDPR, Luật Bảo vệ dữ liệu cá nhân Việt Nam mà không phải làm lại mô hình dữ liệu.
+3. **AI vừa xây app vừa dùng app.** Agent xây app trên SPI nhỏ có kiểu với sandbox và testkit; agent dùng nền tảng qua MCP tool sinh từ chính DocType, dưới cùng quyền và audit.
+4. **Tuân thủ là thuộc tính của metadata.** Mỗi field DocType mang phân loại, thời hạn lưu, cơ sở pháp lý, nơi lưu trữ. Hồ sơ xử lý dữ liệu, yêu cầu của chủ thể dữ liệu, lịch xoá, audit trail, rà soát truy cập đều sinh từ metadata đó. Nhà vận hành đi tới SOC 2 Type II, ISO 27001, GDPR, Luật Bảo vệ dữ liệu cá nhân Việt Nam mà không phải làm lại mô hình dữ liệu.
 
 > **Nói rõ hai điều ngay đầu:** (1) Astra đang ở giai đoạn thiết kế; đã có một **lát cắt mỏng chạy thật** (DocType CMS, tenancy bằng ScopedValue + row-level security, REST sinh ra, hook tầng 0, chạy trên k3d hai pod), phần còn lại là blueprint. (2) **Clean-room:** Frappe là MIT, ERPNext là GPL-3.0, Astra là MIT. Astra không dùng một dòng code, schema hay asset nào của cả hai; chỉ mượn khái niệm và từ vựng ("DocType"). Nói điều này trước để không ai hiểu nhầm là port.
 
@@ -65,12 +65,12 @@ Frappe tạo một bảng mỗi DocType và chạy DDL khi thêm Custom Field. A
 **Câu để nói:** "Một hoá đơn ở JSONB để tùy biến tự do; bút toán của nó ở ledger để bất biến và kiểm toán được. Hai chiến lược, một DocType engine."
 
 **Hai quy tắc để linh hoạt không ăn hiệu năng:**
-* **Quota chiếu và index.** Mỗi DocType có hạn mức chiếu và index (mặc định 8 và 12), mỗi tenant có hạn mức chiếu qua overlay; chiếu materialised trên bảng lớn cần bước phê duyệt. Vượt hạn mức thì fail lúc kiểm tra metadata, không phải lúc 3 giờ sáng trên database.
-* **DocType "nóng" không đặt JSONB-first.** `UPDATE` trong PostgreSQL ghi lại cả dòng, nên DocType có vài field đổi nhiều lần mỗi ngày (tồn kho, công nợ, bộ đếm, trạng thái) sẽ phình và làm vacuum quá tải nếu chỉ nằm trong JSONB. Quy tắc: field nóng để ở cột materialised cho JSONB lớn nằm yên trong TOAST; field nóng không index nếu có thể để update là HOT, đặt `fillfactor` dưới 100; bộ đếm và số dư ở `ledger` hoặc Redis; trạng thái đổi cực nhiều thì tách thành DocType phụ hẹp. `jsonb` là mặc định cho linh hoạt, không phải câu trả lời cho mọi thứ.
+* **Quota chiếu và index.** Mỗi DocType có hạn mức chiếu và index (mặc định 8 và 12), mỗi tenant có hạn mức chiếu qua overlay; chiếu materialised trên bảng lớn cần bước phê duyệt. Vượt hạn mức thì bị chặn lúc kiểm tra metadata, trước khi tới database production.
+* **DocType "nóng" cần cột materialised.** `UPDATE` trong PostgreSQL ghi lại cả dòng, nên DocType có vài field đổi nhiều lần mỗi ngày (tồn kho, công nợ, bộ đếm, trạng thái) sẽ phình và làm vacuum quá tải nếu mọi field nằm trong JSONB. Quy tắc: field nóng để ở cột materialised cho JSONB lớn nằm yên trong TOAST; field nóng không index nếu có thể để update là HOT, đặt `fillfactor` dưới 100; bộ đếm và số dư ở `ledger` hoặc Redis; trạng thái đổi cực nhiều thì tách thành DocType phụ hẹp. `jsonb` là mặc định linh hoạt, không phải lựa chọn cho mọi trường hợp.
 
 ### 2.3 Vòng đời chứng từ, phiên bản, amend
 
-* **Submittable** mang `docstatus`: nháp, đã ghi sổ, hủy. Đã ghi sổ thì bất biến trừ field `allow-on-submit`. Hủy thì đảo bút toán; **amend** tạo bản mới (`INV-0001-1`) liên kết bản gốc. Đây là thứ làm hoá đơn khác bài blog.
+* **Submittable** mang `docstatus`: nháp, đã ghi sổ, hủy. Đã ghi sổ thì bất biến trừ field `allow-on-submit`. Hủy thì đảo bút toán; **amend** tạo bản mới (`INV-0001-1`) liên kết bản gốc. Đó là lý do hoá đơn được xử lý như chứng từ tài chính chứ không như bài viết.
 * **Track changes** lưu diff mỗi lần save; phiên bản truy vấn được.
 * **Link** kiểm tra khi ghi, bảo vệ toàn vẹn tham chiếu xuyên JSONB và ledger; `fetch-from` sao chép giá trị denormalized lúc ghi như chứng từ ERP cần.
 * **Child table** là sub-document có thứ tự.
@@ -78,7 +78,7 @@ Frappe tạo một bảng mỗi DocType và chạy DDL khi thêm Custom Field. A
 
 ### 2.4 Tùy biến là overlay, sống qua nâng cấp
 
-Tenant tùy biến DocType của app mà không fork, và tùy biến **sống qua mọi lần nâng cấp app**: thêm field, đổi thuộc tính field, thêm quyền, gắn server script Wasm, gắn client script cho Desk. Overlay là dữ liệu, có phiên bản, ghim theo tenant, áp lúc nạp metadata. App nâng cấp mà bỏ field overlay phụ thuộc thì **conformance check** bắt được trước rollout, không phải người dùng bắt được lúc chốt sổ cuối tháng.
+Tenant tùy biến DocType của app mà không fork, và tùy biến **sống qua mọi lần nâng cấp app**: thêm field, đổi thuộc tính field, thêm quyền, gắn server script Wasm, gắn client script cho Desk. Overlay là dữ liệu, có phiên bản, ghim theo tenant, áp lúc nạp metadata. App nâng cấp mà bỏ field overlay phụ thuộc thì **conformance check** bắt được trước rollout.
 
 Đây chính là bài học lớn nhất từ Frappe: Custom Field và Property Setter là lý do khách hàng ERPNext nâng cấp được. Astra giữ ý tưởng, làm chặt hơn bằng kiểm tra tự động.
 
@@ -128,7 +128,7 @@ Publish → xác minh (chữ ký, SPI, xuất xứ) → announce qua Redis Pub/S
 
 ## 4. Thay đổi liên tục không phá cái cũ: hợp đồng tương thích
 
-**Ý chính để nói:** Kiến trúc sư doanh nghiệp nên nghe phần này đầu tiên. *Ship hàng ngày thì tính năng hôm qua còn chạy không, và downtime bằng không bằng cách nào?*
+**Ý chính để nói:** Kiến trúc sư doanh nghiệp nên nghe phần này đầu tiên. *Ship hàng ngày thì tính năng hôm qua còn chạy không, và làm sao giữ downtime bằng không?*
 
 ### 4.1 SPI là ABI
 
@@ -212,9 +212,9 @@ Provision (tạo Tenant, khoá, đặt region, bật app, chạy fixture và pat
 
 ---
 
-## 4B. Tuân thủ từ thiết kế: sẵn sàng go global
+## 4B. Tuân thủ từ thiết kế
 
-**Nói thẳng trước:** SOC 2 Type II và ISO 27001 chứng nhận *nhà vận hành* (tổ chức chạy dịch vụ) qua một kỳ quan sát, không chứng nhận phần mềm. GDPR và các luật tương đương ràng buộc *bên kiểm soát và bên xử lý*. Không có mã nguồn mở nào "được chứng nhận SOC 2". Việc một nền tảng làm được là **khiến các kết quả đó rẻ**: có sẵn control, tự sinh bằng chứng, và giữ mô hình dữ liệu tuân thủ ngay từ cấu trúc. Astra Cloud (nếu có) sẽ tự theo đuổi chứng nhận; người tự host thừa hưởng control và đường ống bằng chứng.
+SOC 2 Type II và ISO 27001 chứng nhận *nhà vận hành* (tổ chức chạy dịch vụ) qua một kỳ quan sát, không chứng nhận phần mềm. GDPR và các luật tương đương ràng buộc *bên kiểm soát và bên xử lý*. Không có mã nguồn mở nào "được chứng nhận SOC 2". Điều một nền tảng có thể làm là **khiến các kết quả đó rẻ hơn**: có sẵn control, tự sinh bằng chứng, và giữ mô hình dữ liệu tuân thủ ngay từ cấu trúc. Astra Cloud (nếu có) sẽ tự theo đuổi chứng nhận; người tự host thừa hưởng control và đường ống bằng chứng.
 
 **Ý chính để nói:** Phần lớn công sức tuân thủ là thu thập bằng chứng và biết dữ liệu nào nằm ở đâu, vì sao, bao lâu. Nếu DocType đã trả lời sẵn bốn câu đó cho từng field, thì RoPA, DSAR, retention, residency là **sinh ra**, không phải **làm tay**.
 
@@ -230,7 +230,7 @@ Provision (tạo Tenant, khoá, đặt region, bật app, chạy fixture và pat
 | **SOX ITGC** (khách hàng ERP) | Quản lý thay đổi, truy cập, phân tách nhiệm vụ, audit trail | Rollout có ký, có phê duyệt, có audit; quy tắc SoD trên hành động DocType; ledger bất biến; khoá kỳ; rà soát truy cập |
 | **PCI DSS 4.0.1** | Dữ liệu thẻ | Thiết kế để dữ liệu thẻ **nằm ngoài phạm vi**: token hoá qua nhà cung cấp thanh toán, không lưu PAN |
 | **HIPAA** (profile tuỳ chọn) | Dữ liệu y tế Mỹ | Mã hoá cấp field, log truy cập, control sẵn cho BAA |
-| **EU AI Act** (theo giai đoạn 2025–2027; mốc high-risk đang được lùi theo Digital Omnibus) + **ISO/IEC 42001**, **NIST AI RMF** | Hệ thống AI và quản trị | Log hành động agent, cổng phê duyệt của con người, phiên bản model và prompt, thông báo minh bạch, che PII trước khi gọi model ngoài, tenant opt-out, kiểm kê AI |
+| **EU AI Act** (theo giai đoạn 2025-2027; mốc high-risk đang được lùi theo Digital Omnibus) + **ISO/IEC 42001**, **NIST AI RMF** | Hệ thống AI và quản trị | Log hành động agent, cổng phê duyệt của con người, phiên bản model và prompt, thông báo minh bạch, che PII trước khi gọi model ngoài, tenant opt-out, kiểm kê AI |
 | **EU DORA** (tài chính, từ 1/2025), **NIS2** | Khả năng phục hồi vận hành, rủi ro bên thứ ba ICT | Hook kiểm thử phục hồi, workflow báo cáo sự cố, bằng chứng RTO/RPO, sổ nhà xử lý phụ |
 | **EU Cyber Resilience Act** (báo cáo từ 9/2026, áp dụng đầy đủ 12/2027) | Sản phẩm có yếu tố số | SBOM mỗi bản phát hành, quy trình xử lý lỗ hổng, công bố có phối hợp, chính sách cập nhật bảo mật; dự án Astra hoạt động như open-source steward |
 | **WCAG 2.2 AA**, **EU Accessibility Act** (6/2025), **Section 508** | Khả năng tiếp cận | Desk UI xây theo WCAG 2.2 AA; kiểm tra tự động và thủ công trong CI |
@@ -305,7 +305,7 @@ Tính năng nền tảng mà ERP cần và kernel đã có sẵn:
 
 Không reflection trên đường nóng; đọc DocType từ cache L1/L2 theo phiên bản metadata; ghi qua cột chiếu để báo cáo không quét JSONB; bulkhead theo app; không tốn gì khi rảnh; cô lập trong tiến trình; structured concurrency cho fan-out.
 
-Mục tiêu đi kèm **điều kiện đo**. Số không có điều kiện là marketing.
+Mỗi mục tiêu đi kèm **điều kiện đo**.
 
 | Chỉ số | Điều kiện | Mục tiêu (kiểm chứng bằng benchmark công khai) |
 | --- | --- | --- |
@@ -331,7 +331,7 @@ Thêm ba điều nói thẳng: mật độ "hàng nghìn tenant mỗi pod" là *
 
 ## 7. AI-native: AI xây, AI dùng
 
-**Cho agent xây app:** nói thật, SPI tổng thể **không nhỏ**: hơn hai mươi extension point, mô hình DocType, manifest, overlay, metadata tuân thủ. Thứ làm nó dùng được cho agent là mỗi **việc thì hẹp**: một hook chạm hai interface, một DocType là một file YAML, một script Wasm là một hàm export. `AGENTS.md` tổ chức theo từng extension point để agent chỉ nạp lát cắt cần, `astra mcp --dev` trả lời "có gì" từ kernel đang chạy, và testkit cho vòng lặp pass/fail. Testkit, không phải kích thước SPI, là thứ làm app do agent viết đáng tin. Hai kỷ luật thêm cho bề mặt tool: namespace (`doc.<doctype>.<op>`, `app.<id>.<tool>`), chỉ phơi DocType tenant khai báo, gói tool theo role, `tools/list` phân trang; và **grounding**: câu trả lời về dữ liệu nghiệp vụ phải trích dẫn DocType và id bút toán đã dùng, gateway từ chối câu trả lời không nguồn cho DocType tài chính. Testkit cho vòng lặp pass/fail (contract test, assertion capability, ngân sách, **assertion overlay sống qua nâng cấp**). Code AI sinh mặc định tầng 2 Wasm; `provenance.generator` ghi lại; policy bắt buộc sandbox. Canary + auto-rollback bắt lỗi dưới traffic thật. Repo có `AGENTS.md`, `CLAUDE.md`, `llms.txt`; `astra mcp --dev` introspect kernel.
+**Cho agent xây app:** SPI tổng thể khá lớn, gồm hơn hai mươi extension point, mô hình DocType, manifest, overlay và metadata tuân thủ. Điều làm nó dùng được cho agent là mỗi việc đều hẹp: một hook chạm hai interface, một DocType là một file YAML, một script Wasm là một hàm export. `AGENTS.md` tổ chức theo từng extension point để agent chỉ nạp lát cắt cần, `astra mcp --dev` trả lời "có gì" từ kernel đang chạy. Testkit là thứ làm app do agent viết đáng tin. Hai kỷ luật thêm cho bề mặt tool: namespace (`doc.<doctype>.<op>`, `app.<id>.<tool>`), chỉ phơi DocType tenant khai báo, gói tool theo role, `tools/list` phân trang; và **grounding**: câu trả lời về dữ liệu nghiệp vụ phải trích dẫn DocType và id bút toán đã dùng, gateway từ chối câu trả lời không nguồn cho DocType tài chính. Testkit cho vòng lặp pass/fail (contract test, assertion capability, ngân sách, **assertion overlay sống qua nâng cấp**). Code AI sinh mặc định tầng 2 Wasm; `provenance.generator` ghi lại; policy bắt buộc sandbox. Canary + auto-rollback bắt lỗi dưới traffic thật. Repo có `AGENTS.md`, `CLAUDE.md` và `llms.txt`.
 
 **Cho agent dùng ứng dụng:** mọi DocType (search, get, create, submit, cancel), event, job, `ToolContributor` chiếu thành MCP tool với JSON Schema của DocType, theo role và tenant, audit như mọi lời gọi. `AgentContributor` chạy agent có ngân sách với bộ nhớ phạm vi (DocType + pgvector). `ModelProvider` trừu tượng Claude, OpenAI, Gemini, model local. Prompt và eval là artifact có phiên bản đi cùng đường rollout.
 
@@ -362,7 +362,7 @@ Thêm ba điều nói thẳng: mật độ "hàng nghìn tenant mỗi pod" là *
 | JSONB cho ERP có đủ không | Trung bình | Cột chiếu cho lọc/báo cáo; ledger quan hệ append-only cho GL/SLE; benchmark 1 triệu dòng/tenant |
 | Chicory thiếu fuel metering; Extism Chicory SDK thử nghiệm | Trung bình | Deadline + memory cap; tự cài ABI |
 | Structured Concurrency preview | Trung bình | Bọc sau executor |
-| Rò rỉ ClassLoader tầng 1 | Thấp–Trung bình | Theo dõi lifecycle, khuyến nghị tầng 2 |
+| Rò rỉ ClassLoader tầng 1 | Thấp đến trung bình | Theo dõi lifecycle, khuyến nghị tầng 2 |
 | SPI và DocType model phải ổn định sớm | Trung bình | Mức trưởng thành, deprecation, shim, conformance suite có overlay |
 | Mục tiêu hiệu năng chưa đo | Trung bình | Benchmark Phase 2, sửa theo số thật |
 | Code AI sinh ra trong production | Trung bình | Sandbox mặc định, provenance, contract test, canary |
@@ -375,7 +375,7 @@ Thêm ba điều nói thẳng: mật độ "hàng nghìn tenant mỗi pod" là *
 
 ## 10. Lộ trình
 
-**Đây là một chương trình, không phải một dự án.** Xây lại nền tảng cỡ Frappe cộng sandbox ba tầng, giao dịch phân tán, đa tenant, engine tuân thủ và bề mặt AI là nhiều năm làm việc của một đội, không phải danh sách tuyến tính một repo làm xong trong một năm. Vì vậy lộ trình đọc theo hai cách: **lát cắt mỏng** là thứ được xây và demo trước, đầu cuối; các phase sau xếp sao cho mỗi phase tự nó dùng được. Bảng tuân thủ là catalogue **profile bật dần**, không phải deliverable trọn gói của Phase 5.
+Xây lại nền tảng cỡ Frappe cùng sandbox ba tầng, giao dịch phân tán, đa tenant, engine tuân thủ và bề mặt AI là nhiều năm làm việc của một đội; một repo không thể hoàn thành trong một năm. Lộ trình vì vậy đọc theo hai cách: **lát cắt mỏng** là thứ được xây và demo trước, đầu cuối; các phase sau xếp sao cho mỗi phase tự nó dùng được. Bảng tuân thủ là catalogue **profile bật dần**, không phải deliverable trọn gói của Phase 5.
 
 **Lát cắt mỏng (demo đầu tiên, đang làm):** một app DocType-driven (CMS `Article`), tenancy bằng `ScopedValue` và row-level security, lưu trữ JSONB zero-DDL với REST sinh ra, một hook tầng 0, chạy trên Docker Compose và k3d. Các bước kế tiếp theo thứ tự: ledger `GL Entry` tối thiểu với hoá đơn submittable; spike Seata chứng minh AT trên PostgreSQL + TCC trên Redis trên virtual thread; một script Wasm tầng 2; một canary rollout qua hai pod; MCP mỏng với `doc.search / get / create`. Mỗi bước kèm benchmark công khai.
 
@@ -394,38 +394,38 @@ Thêm ba điều nói thẳng: mật độ "hàng nghìn tenant mỗi pod" là *
 
 ## 11. Câu kết
 
-> *"Astra là nền tảng ứng dụng metadata-driven kiểu Frappe, viết lại từ đầu bằng Java 25. Mọi thứ là plugin, kể cả CMS và ERP. DocType là dữ liệu, tùy biến là overlay sống qua nâng cấp, bút toán là ledger bất biến, và tuân thủ là thuộc tính của metadata. App có phiên bản chạy song song, ghim theo tenant, hot-swap toàn cụm với canary tự rollback. Mọi thao tác ghi xuyên PostgreSQL – Redis là một giao dịch thật. Mọi DocType đồng thời là tool cho AI agent, dưới cùng quyền và audit. Ship mỗi ngày, không bao giờ phá hôm qua, và sẵn sàng cho auditor ở bất kỳ nước nào."*
+> *"Astra là nền tảng ứng dụng metadata-driven kiểu Frappe, viết lại từ đầu bằng Java 25. Mọi thứ là plugin, kể cả CMS và ERP. DocType là dữ liệu, tùy biến là overlay sống qua nâng cấp, bút toán là ledger bất biến, và tuân thủ là thuộc tính của metadata. App có phiên bản chạy song song, ghim theo tenant, hot-swap toàn cụm với canary tự rollback. Mọi thao tác ghi xuyên PostgreSQL và Redis là một giao dịch thật. Mọi DocType đồng thời là tool cho AI agent, dưới cùng quyền và audit. Ship mỗi ngày, không bao giờ phá hôm qua, và sẵn sàng cho auditor ở bất kỳ nước nào."*
 
 ---
 
 ## Phụ lục: câu hỏi thường gặp dự kiến
 
-**"Đây có phải port ERPNext sang Java không?"** — Không. Frappe là MIT, ERPNext là GPL-3.0, Astra là MIT. Không dùng code, schema, fixture hay asset nào. Chỉ mượn khái niệm DocType, app, overlay, submittable, và hình dạng module ERP. Mọi cài đặt là nguyên bản.
+**"Đây có phải port ERPNext sang Java không?"** Không. Frappe là MIT, ERPNext là GPL-3.0, Astra là MIT. Không dùng code, schema, fixture hay asset nào. Chỉ mượn khái niệm DocType, app, overlay, submittable, và hình dạng module ERP. Mọi cài đặt là nguyên bản.
 
-**"Sao không dùng luôn ERPNext?"** — ERPNext rất tốt cho SME. Astra nhắm quy mô cụm, đa tenant mật độ cao, zero-DDL khi tùy biến, cô lập nhiều tầng cho code bên thứ ba và AI, giao dịch xuyên Postgres–Redis, và AI surface. Nếu bạn không cần những thứ đó, ERPNext là lựa chọn hợp lý hơn.
+**"Sao không dùng luôn ERPNext?"** ERPNext rất tốt cho SME. Astra nhắm quy mô cụm, đa tenant mật độ cao, zero-DDL khi tùy biến, cô lập nhiều tầng cho code bên thứ ba và AI, giao dịch xuyên Postgres và Redis, và AI surface. Nếu bạn không cần những thứ đó, ERPNext là lựa chọn hợp lý hơn.
 
-**"JSONB có chịu được ERP không?"** — Field linh hoạt ở JSONB, field lọc/báo cáo ở cột chiếu có index, bút toán ở ledger quan hệ append-only. Không có truy vấn báo cáo nào quét JSONB. Sẽ benchmark 1 triệu dòng/tenant ở Phase 2.
+**"JSONB có chịu được ERP không?"** Field linh hoạt ở JSONB, field lọc/báo cáo ở cột chiếu có index, bút toán ở ledger quan hệ append-only. Không có truy vấn báo cáo nào quét JSONB. Sẽ benchmark 1 triệu dòng/tenant ở Phase 2.
 
-**"Nâng app có phá tùy biến của tenant không?"** — Overlay là dữ liệu có phiên bản, áp lúc nạp metadata; conformance suite chạy overlay của mọi tenant trước rollout; phá thì không ship.
+**"Nâng app có phá tùy biến của tenant không?"** Overlay là dữ liệu có phiên bản, áp lúc nạp metadata; conformance suite chạy overlay của mọi tenant trước rollout; phá thì không ship.
 
-**"Zero downtime thật không?"** — Tầng 1/2, overlay, DocType, prompt: 0 và rollback trong giây. Tầng 0 và kernel: rolling dưới PDB. Failover hạ tầng: dưới giây cho ghi, nói thẳng.
+**"Zero downtime thật không?"** Tầng 1/2, overlay, DocType, prompt: 0 và rollback trong giây. Tầng 0 và kernel: rolling dưới PDB. Failover hạ tầng: dưới giây cho ghi, nói thẳng.
 
-**"Code AI sinh chạy production có an toàn không?"** — Sandbox Wasm mặc định với ngân sách; xuất xứ ghi lại; contract test; canary + auto-rollback. Nhiều lớp hơn phần lớn code do người viết.
+**"Code AI sinh chạy production có an toàn không?"** Sandbox Wasm mặc định với ngân sách; xuất xứ ghi lại; contract test; canary + auto-rollback. Nhiều lớp hơn phần lớn code do người viết.
 
-**"Seata production-ready chưa?"** — Vào Apache Incubator 10/2023, bản 2.6 (2/2026), đang graduate, dùng rộng ở TMĐT Trung Quốc. Phần chưa chín là cầu nối Quarkus, và đó là việc Astra làm.
+**"Seata production-ready chưa?"** Vào Apache Incubator 10/2023, bản 2.6 (2/2026), đang graduate, dùng rộng ở TMĐT Trung Quốc. Phần chưa chín là cầu nối Quarkus, và đó là việc Astra làm.
 
-**"MCP có ổn định không?"** — Trao cho Agentic AI Foundation thuộc Linux Foundation 12/2025, đồng sáng lập Anthropic, Block, OpenAI, hậu thuẫn Google, Microsoft, AWS. Chuẩn mở đa nhà cung cấp.
+**"MCP có ổn định không?"** Trao cho Agentic AI Foundation thuộc Linux Foundation 12/2025, đồng sáng lập Anthropic, Block, OpenAI, hậu thuẫn Google, Microsoft, AWS. Chuẩn mở đa nhà cung cấp.
 
-**"Astra có được chứng nhận SOC 2 hay ISO 27001 không?"** — Không có mã nguồn mở nào được chứng nhận; chứng nhận là của nhà vận hành qua kỳ quan sát. Astra cung cấp control, sinh bằng chứng, và giữ mô hình dữ liệu tuân thủ từ cấu trúc, để nhà vận hành tới chứng nhận nhanh và rẻ. Ma trận trách nhiệm chia sẻ công khai trong README.
+**"Astra có được chứng nhận SOC 2 hay ISO 27001 không?"** Không có mã nguồn mở nào được chứng nhận; chứng nhận là của nhà vận hành qua kỳ quan sát. Astra cung cấp control, sinh bằng chứng, và giữ mô hình dữ liệu tuân thủ từ cấu trúc, để nhà vận hành tới chứng nhận nhanh và rẻ. Ma trận trách nhiệm chia sẻ công khai trong README.
 
-**"Dữ liệu khách hàng Việt Nam có phải lưu ở Việt Nam không?"** — Tenant ghim region `vn`; `ResidencyPolicy` cưỡng chế trên lưu trữ, cache, backup, search, và cả lời gọi LLM. Hồ sơ chuyển dữ liệu xuyên biên giới theo Luật 91/2025 và Nghị định 356/2025 sinh từ metadata.
+**"Dữ liệu khách hàng Việt Nam có phải lưu ở Việt Nam không?"** Tenant ghim region `vn`; `ResidencyPolicy` cưỡng chế trên lưu trữ, cache, backup, search, và cả lời gọi LLM. Hồ sơ chuyển dữ liệu xuyên biên giới theo Luật 91/2025 và Nghị định 356/2025 sinh từ metadata.
 
-**"Xoá dữ liệu cá nhân thế nào khi bút toán phải bất biến?"** — Ẩn danh tham chiếu chủ thể và huỷ khoá mã hoá (crypto-shredding); bản ghi tài chính giữ lại theo cơ sở nghĩa vụ pháp lý; ghi rõ trong DPIA. Đây là cách GDPR cho phép và kế toán yêu cầu.
+**"Xoá dữ liệu cá nhân thế nào khi bút toán phải bất biến?"** Ẩn danh tham chiếu chủ thể và huỷ khoá mã hoá (crypto-shredding); bản ghi tài chính giữ lại theo cơ sở nghĩa vụ pháp lý; ghi rõ trong DPIA. Đây là cách GDPR cho phép và kế toán yêu cầu.
 
-**"AI agent ghi bút toán có cần người duyệt không?"** — Mặc định có. Cổng phê duyệt con người cấu hình theo tenant cho hành động tác động lớn; mọi hành động agent log kèm model và phiên bản prompt; PII được che trước khi gọi model ngoài.
+**"AI agent ghi bút toán có cần người duyệt không?"** Mặc định có. Cổng phê duyệt con người cấu hình theo tenant cho hành động tác động lớn; mọi hành động agent log kèm model và phiên bản prompt; PII được che trước khi gọi model ngoài.
 
-**"Đa tenant có làm chậm hay rủi ro rò rỉ không?"** — Ranh giới tenant do kernel áp qua `ScopedValue` và RLS, không API nào nhận tenant từ người gọi. Bulkhead theo tenant nên tenant ồn chỉ làm chậm chính mình. Khách hàng cần tách biệt hơn chọn DB riêng hoặc cụm riêng mà không đổi code.
+**"Đa tenant có làm chậm hay rủi ro rò rỉ không?"** Ranh giới tenant do kernel áp qua `ScopedValue` và RLS, không API nào nhận tenant từ người gọi. Bulkhead theo tenant nên tenant ồn chỉ làm chậm chính mình. Khách hàng cần tách biệt hơn chọn DB riêng hoặc cụm riêng mà không đổi code.
 
-**"Code đâu? Số hiệu năng đâu?"** — Có lát cắt mỏng chạy được trong repo: `make k3d-up && make demo` dựng cụm k3d hai pod và chứng minh cô lập tenant đầu cuối. Phần còn lại là blueprint; benchmark ở Phase 2. Minh bạch quan trọng hơn gây ấn tượng.
+**"Code đâu? Số hiệu năng đâu?"** Có lát cắt mỏng chạy được trong repo: `make k3d-up && make demo` dựng cụm k3d hai pod và chứng minh cô lập tenant đầu cuối. Phần còn lại là blueprint; benchmark ở Phase 2. Minh bạch quan trọng hơn gây ấn tượng.
 
-**"Một bài học từ chính demo?"** — Bản đầu tiên bỏ qua row-level security mà không có lỗi nào, vì ứng dụng kết nối bằng superuser của PostgreSQL. Giờ kernel từ chối khởi động nếu role có quyền bypass RLS. Đó là lý do "fail-closed" phải là mặc định, không phải tuỳ chọn.
+**"Một bài học từ chính demo?"** Bản đầu tiên bỏ qua row-level security mà không có lỗi nào, vì ứng dụng kết nối bằng superuser của PostgreSQL. Giờ kernel từ chối khởi động nếu role có quyền bypass RLS. Đó là lý do "fail-closed" phải là mặc định, không phải tuỳ chọn.

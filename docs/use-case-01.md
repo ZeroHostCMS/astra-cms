@@ -214,7 +214,7 @@ Thêm thuộc tính `db_schema` vào `DocTypeDefinition`. Khi `DocumentStore` ho
 
 
 
-#### Phân hệ 4: `astra-app-scs` (Staff & Compensation System – HRM & Tính lương chuẩn ERPNext)
+#### Phân hệ 4: `astra-app-scs` (Salary Calculation System – HRM & Tính lương chuẩn ERPNext)
 
 * **Schema & Phân tầng:** `schema_scs` | **Tier 0** (Hồ sơ nhân sự, Chấm công, Sổ cái lương) + **Tier 2 Wasm** (Công thức tính KPI/Đơn giá giao hàng cho Bưu tá/Tài xế).
 * Core DocTypes (Theo hình mẫu `erp.hr` của Astra):
