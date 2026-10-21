@@ -1,0 +1,18 @@
+name: Waybill
+module: ops
+kind: transaction
+naming: { series: "WB-.YYMM.-.######" }
+
+fields:
+  - { name: order,         type: Link,   options: CustomerOrder, required: true, in-list: true }
+  - { name: receiver_name, type: Data,   in-list: true, pii: true }
+  - { name: ops_status,    type: Select, options: [Created, Picked Up, At Hub, Out for Delivery, Delivered, Failed Delivery, Returned, Cancelled],
+      default: Created, in-list: true, projected: true, label: Ops status }
+  - { name: current_hub,   type: Data,   in-list: true, projected: true }
+  - { name: scan_log,      type: JSON,   read-only: true }    # appended by WaybillScanHook on every status change
+
+permissions:
+  - { role: admin, read: true, write: true }
+  - { role: ops,   read: true, write: true }    # scanning is an OPS action only
+  - { role: sales, read: true }
+  - { role: care,  read: true }

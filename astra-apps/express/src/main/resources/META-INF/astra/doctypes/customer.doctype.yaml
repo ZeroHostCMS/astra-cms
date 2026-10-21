@@ -1,0 +1,20 @@
+name: Customer
+module: oms
+kind: master
+naming: { field: code }          # the document name is the customer code itself
+
+fields:
+  - { name: code,          type: Data,     required: true, in-list: true, label: Customer code }
+  - { name: customer_name, type: Data,     required: true, in-list: true, label: Customer name }
+  - { name: segment,       type: Select,   options: [Retail, B2B], default: Retail, in-list: true, projected: true }
+  - { name: phone,         type: Data, pii: true }
+  - { name: address,       type: Text, pii: true }
+  - { name: credit_limit,  type: Currency, label: Credit limit (BMS) }   # mirrored to bms.customer_credit
+
+# Roles are per tenant (Keycloak groups /tenants/<tenant>/<role>). No matching rule means no access.
+permissions:
+  - { role: admin,      read: true, create: true, write: true }
+  - { role: sales,      read: true, create: true, write: true }
+  - { role: ops,        read: true }
+  - { role: care,       read: true }
+  - { role: accountant, read: true }

@@ -12,6 +12,8 @@ stringData:
   username: astra_app
   password: astra_app
   url: jdbc:postgresql://postgres:5432/astra
+  # Replication role of the CDC worker, created by deploy/cdc/cdc-setup.sql (scripts/cdc-setup.sh)
+  cdc-url: postgres://astra_cdc:astra_cdc@postgres:5432/astra
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -22,6 +24,10 @@ data:
     CREATE ROLE astra_app LOGIN PASSWORD 'astra_app' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE NOINHERIT;
     GRANT CONNECT ON DATABASE astra TO astra_app;
     GRANT USAGE, CREATE ON SCHEMA public TO astra_app;
+  03-bms.sql: |
+    CREATE ROLE astra_bms LOGIN PASSWORD 'astra_bms' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE;
+    GRANT CONNECT ON DATABASE astra TO astra_bms;
+    CREATE SCHEMA bms AUTHORIZATION astra_bms;
   02-keycloak.sql: |
     CREATE ROLE keycloak LOGIN PASSWORD 'keycloak-local';
     CREATE DATABASE keycloak OWNER keycloak;
@@ -55,6 +61,8 @@ spec:
       containers:
         - name: postgres
           image: pgvector/pgvector:pg16
+          # Logical decoding for the Rust CDC worker (deploy/k8s/base/cdc.yaml).
+          args: ["-c", "wal_level=logical", "-c", "max_replication_slots=10", "-c", "max_wal_senders=10"]
           ports:
             - containerPort: 5432
           env:

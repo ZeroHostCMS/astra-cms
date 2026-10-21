@@ -1,0 +1,27 @@
+name: CustomerOrder
+module: oms
+kind: transaction
+submittable: true                 # Draft (0) -> Submitted (1) -> Cancelled (2) -> Amend
+transaction: global               # submit/cancel span BMS credit (Seata AT) and pickup capacity (Seata TCC)
+naming: { series: "ORD-.YYYYMMDD.-.#####" }
+
+fields:
+  - { name: customer,         type: Link,     options: Customer, required: true, in-list: true, projected: true }
+  - { name: receiver_name,    type: Data,     required: true, in-list: true, pii: true }
+  - { name: receiver_phone,   type: Data,     required: true, pii: true }
+  - { name: receiver_address, type: Text,     required: true, pii: true }
+  - { name: zone,             type: Select,   options: [Same city, Domestic, Remote], default: Domestic, in-list: true, projected: true }
+  - { name: service,          type: Select,   options: [Standard, Express], default: Standard, in-list: true }
+  - { name: weight_kg,        type: Float,    required: true, label: Weight (kg) }
+  - { name: cod_amount,       type: Currency, default: 0, label: COD amount }
+  - { name: shipping_fee,     type: Currency, read-only: true, in-list: true }   # computed by ShippingFeeHook
+  - { name: priced_by,        type: Data,     read-only: true, in-list: true }   # standard tariff or the tenant's Wasm rule
+  - { name: waybill,          type: Link,     options: Waybill, read-only: true, in-list: true }   # created on submit
+  - { name: note,             type: Text }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: sales,      read: true, create: true, write: true, if-owner: true, submit: true }
+  - { role: ops,        read: true }
+  - { role: care,       read: true }
+  - { role: accountant, read: true, cancel: true }

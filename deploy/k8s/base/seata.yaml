@@ -1,0 +1,48 @@
+# Apache Seata transaction coordinator (TC), file store: global transaction and lock state live in the
+# pod, which is enough for a local demo. Production runs Seata with a database or Raft store.
+apiVersion: v1
+kind: Service
+metadata:
+  name: seata-server
+spec:
+  selector:
+    app: seata-server
+  ports:
+    - { name: rpc, port: 8091, targetPort: 8091 }
+    - { name: console, port: 7091, targetPort: 7091 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seata-server
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: seata-server
+  template:
+    metadata:
+      labels:
+        app: seata-server
+    spec:
+      containers:
+        - name: seata
+          image: apache/seata-server:2.6.0.jdk25
+          ports:
+            - containerPort: 8091
+            - containerPort: 7091
+          env:
+            - name: SEATA_IP
+              value: seata-server
+            - name: JVM_XMX
+              value: 256m
+            - name: JVM_XMS
+              value: 256m
+          readinessProbe:
+            tcpSocket: { port: 8091 }
+            periodSeconds: 5
+          resources:
+            requests: { cpu: 100m, memory: 384Mi }
+            limits: { memory: 640Mi }

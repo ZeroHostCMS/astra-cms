@@ -48,6 +48,16 @@
           "name": "globex",
           "attributes": { "display-name": ["Globex"], "public-signup": ["false"] },
           "subGroups": [ { "name": "admin" }, { "name": "editor" }, { "name": "author" }, { "name": "reader" } ]
+        },
+        {
+          "name": "saigon-express",
+          "attributes": { "display-name": ["Saigon Express"], "public-signup": ["false"] },
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" } ]
+        },
+        {
+          "name": "hanoi-express",
+          "attributes": { "display-name": ["Hanoi Express"], "public-signup": ["false"] },
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" } ]
         }
       ]
     }
@@ -103,9 +113,58 @@
       ]
     },
     {
+      "clientId": "astra-desk",
+      "name": "Astra Desk",
+      "description": "Public client for the browser Desk served by astra-server: Authorization Code + PKCE (S256).",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": false,
+      "redirectUris": ["http://localhost:8080/desk/*", "http://localhost:8081/desk/*"],
+      "webOrigins": ["+"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:8080/desk/*##http://localhost:8081/desk/*",
+        "use.refresh.tokens": "true",
+        "oauth2.device.authorization.grant.enabled": "false"
+      },
+      "defaultClientScopes": ["basic", "profile", "email", "roles", "web-origins", "acr"],
+      "optionalClientScopes": [],
+      "protocolMappers": [
+        {
+          "name": "tenant groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "astra-server audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "astra-server",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
       "clientId": "astra-dev-cli",
       "name": "Astra local CLI (local stack only)",
-      "description": "Password grant for scripts/demo-iam.sh. Never enable in a shared or production realm.",
+      "description": "Password grant for scripts/demo-iam.sh and the demo scripts; one-hour tokens so an MCP agent session lasts a recording. Never enable in a shared or production realm.",
       "enabled": true,
       "publicClient": true,
       "protocol": "openid-connect",
@@ -113,7 +172,7 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
-      "attributes": { "use.refresh.tokens": "true" },
+      "attributes": { "use.refresh.tokens": "true", "access.token.lifespan": "3600" },
       "defaultClientScopes": ["basic", "profile", "email", "roles", "acr"],
       "optionalClientScopes": ["offline_access"],
       "protocolMappers": [
@@ -201,6 +260,54 @@
       "username": "john", "email": "john@globex.test", "firstName": "John", "lastName": "Smith",
       "enabled": true, "emailVerified": true,
       "realmRoles": ["default-roles-astra"], "groups": ["/tenants/globex/admin"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "mai", "email": "mai@express.test", "firstName": "Mai", "lastName": "Trần",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/admin"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "tuan", "email": "tuan@express.test", "firstName": "Tuấn", "lastName": "Lê",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/sales"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "quang", "email": "quang@express.test", "firstName": "Quang", "lastName": "Phạm",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/ops"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "ha", "email": "ha@express.test", "firstName": "Hà", "lastName": "Võ",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/care"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "khoa", "email": "khoa@express.test", "firstName": "Khoa", "lastName": "Đỗ",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/accountant"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "thu", "email": "thu@express.test", "firstName": "Thu", "lastName": "Bùi",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/accountant"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "nam", "email": "nam@express.test", "firstName": "Nam", "lastName": "Hoàng",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/hanoi-express/admin"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "demo", "email": "demo@express.test", "firstName": "Demo", "lastName": "Astra",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/admin", "/tenants/hanoi-express/admin"],
       "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
     }
   ]

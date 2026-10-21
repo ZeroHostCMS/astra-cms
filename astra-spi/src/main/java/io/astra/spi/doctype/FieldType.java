@@ -13,5 +13,6 @@ public enum FieldType {
     SELECT,     // one of options
     LINK,       // reference to another DocType by name
     TABLE,      // child table (list of child documents)
-    JSON        // free-form object
+    JSON,       // free-form object
+    ATTACH      // a file, base64-encoded (for example a tenant's WebAssembly module)
 }

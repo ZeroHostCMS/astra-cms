@@ -1,0 +1,30 @@
+# Rust CDC worker (astra-cdc-rust): one consumer per replication slot, so a single replica that is
+# replaced, never doubled. It keeps retrying until the schema and scripts/cdc-setup.sh are in place.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: astra-cdc
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: astra-cdc
+  template:
+    metadata:
+      labels:
+        app: astra-cdc
+    spec:
+      containers:
+        - name: cdc
+          image: astra/cdc:dev
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_URL
+              valueFrom: { secretKeyRef: { name: astra-db, key: cdc-url } }
+            - name: RUST_LOG
+              value: info
+          resources:
+            requests: { cpu: 50m, memory: 16Mi }
+            limits: { memory: 64Mi }

@@ -1,0 +1,15 @@
+name: Account
+module: bms
+kind: master
+naming: { field: account_number }   # Vietnamese chart of accounts numbers: 111, 131, 3388, 511, …
+
+fields:
+  - { name: account_number, type: Data,   required: true, in-list: true }
+  - { name: account_name,   type: Data,   required: true, in-list: true }
+  - { name: root_type,      type: Select, options: [Asset, Liability, Equity, Income, Expense], required: true, in-list: true, projected: true }
+  - { name: parent_account, type: Link,   options: Account }
+
+# The ledger API is readable by whoever may read the chart of accounts.
+permissions:
+  - { role: admin,      read: true, create: true, write: true }
+  - { role: accountant, read: true, create: true, write: true }

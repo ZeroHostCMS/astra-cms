@@ -1,0 +1,12 @@
+# Hanoi Express only: B2B shippers ask for a VAT invoice on each order, deliveries reach islands
+# (Cát Bà, Cô Tô), and dispatchers want delivery notes on every order. The Express app is untouched;
+# applied with: PUT /api/overlay/CustomerOrder (tenant admin), see scripts/demo-seed.sh.
+doctype: CustomerOrder
+fields:
+  add:
+    - { name: vat_invoice,   type: Check, label: "Xuất hóa đơn VAT", in-list: true }
+    - { name: tax_code,      type: Data,  label: "Mã số thuế" }
+    - { name: invoice_email, type: Data,  label: "Email nhận hóa đơn" }
+  modify:
+    - { name: zone, options: [Same city, Domestic, Remote, Island] }
+    - { name: note, label: "Ghi chú giao hàng", required: true }

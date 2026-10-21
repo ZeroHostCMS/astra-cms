@@ -18,10 +18,10 @@ import java.util.Set;
 @ApplicationScoped
 public class DocPermissions {
 
-    public enum Action { READ, CREATE, WRITE }
+    public enum Action { READ, CREATE, WRITE, SUBMIT, CANCEL }
 
     /** What a role set may do with one DocType; {@code write} is {@code all}, {@code own} or {@code none}. */
-    public record Effective(boolean read, boolean create, String write) { }
+    public record Effective(boolean read, boolean create, String write, boolean submit, boolean cancel) { }
 
     @Inject DocTypeRegistry registry;
 
@@ -39,6 +39,18 @@ public class DocPermissions {
         }
     }
 
+    /** Submit check: the role must grant {@code submit}, and under segregation of duties the submitter is not the owner. */
+    public void requireSubmit(String doctype, Set<String> roles, String userId, Document existing) {
+        DocTypeDefinition def = registry.require(doctype);
+        if (!allows(def, roles, Action.SUBMIT, false)) {
+            throw new AccessDeniedException("submit " + doctype);
+        }
+        if (def.segregationOfDuties() && userId != null && userId.equals(existing.owner())) {
+            throw new AccessDeniedException("submit " + doctype + "/" + existing.name()
+                    + ": segregation of duties, the creator cannot submit their own document");
+        }
+    }
+
     /** Effective permissions on every registered DocType, for clients that adapt their UI. */
     public Map<String, Effective> effective(Set<String> roles) {
         Map<String, Effective> out = new LinkedHashMap<>();
@@ -48,7 +60,9 @@ public class DocPermissions {
             out.put(def.name(), new Effective(
                     allows(def, roles, Action.READ, false),
                     allows(def, roles, Action.CREATE, false),
-                    writeAny ? "all" : writeOwn ? "own" : "none"));
+                    writeAny ? "all" : writeOwn ? "own" : "none",
+                    allows(def, roles, Action.SUBMIT, false),
+                    allows(def, roles, Action.CANCEL, false)));
         }
         return out;
     }
@@ -60,6 +74,8 @@ public class DocPermissions {
                 case READ -> rule.read();
                 case CREATE -> rule.create();
                 case WRITE -> rule.write() && (!rule.ifOwner() || owner);
+                case SUBMIT -> rule.submit();
+                case CANCEL -> rule.cancel();
             };
             if (granted) return true;
         }

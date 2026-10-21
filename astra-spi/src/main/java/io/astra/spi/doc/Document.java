@@ -17,6 +17,7 @@ public final class Document {
     private Instant createdAt;
     private Instant modifiedAt;
     private int version;
+    private String amendedFrom;
     private final Map<String, Object> data;
 
     public Document(String doctype, Map<String, Object> data) {
@@ -31,6 +32,8 @@ public final class Document {
     public Instant createdAt() { return createdAt; }
     public Instant modifiedAt() { return modifiedAt; }
     public int version() { return version; }
+    /** The cancelled document this draft amends, or null. */
+    public String amendedFrom() { return amendedFrom; }
     public Map<String, Object> data() { return data; }
 
     public Object get(String field) { return data.get(field); }
@@ -43,4 +46,5 @@ public final class Document {
     public Document createdAt(Instant t) { this.createdAt = t; return this; }
     public Document modifiedAt(Instant t) { this.modifiedAt = t; return this; }
     public Document version(int version) { this.version = version; return this; }
+    public Document amendedFrom(String name) { this.amendedFrom = name; return this; }
 }

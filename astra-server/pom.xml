@@ -24,11 +24,27 @@
     </dependency>
     <dependency>
       <groupId>io.astra</groupId>
+      <artifactId>astra-plugin-host</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.astra</groupId>
+      <artifactId>astra-ai</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.astra</groupId>
+      <artifactId>astra-tx-seata</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.astra</groupId>
       <artifactId>astra-app-cms</artifactId>
     </dependency>
     <dependency>
       <groupId>io.astra</groupId>
       <artifactId>astra-iam</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.astra</groupId>
+      <artifactId>astra-app-express</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -52,6 +68,11 @@
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

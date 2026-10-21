@@ -51,6 +51,14 @@ spec:
               value: http://keycloak:8080/auth
             - name: ASTRA_KEYCLOAK_CLIENT_SECRET
               valueFrom: { secretKeyRef: { name: astra-keycloak, key: astra-server-client-secret } }
+            - name: ASTRA_REDIS_URL
+              value: redis://redis:6379
+            - name: ASTRA_SEATA_ENABLED              # global transactions: BMS credit (AT) + pickup slots (TCC)
+              value: "true"
+            - name: ASTRA_SEATA_SERVER
+              value: seata-server:8091
+            - name: ASTRA_BMS_DB_URL
+              value: jdbc:postgresql://postgres:5432/astra?currentSchema=bms
           readinessProbe:
             httpGet: { path: /q/health/ready, port: 8080 }
             periodSeconds: 5

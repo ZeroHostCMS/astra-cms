@@ -755,11 +755,17 @@ Yêu cầu: JDK 25, Docker Desktop, `kubectl` và `k3d` (k3s trong Docker). Đã
 # Option A: local dev with live reload (PostgreSQL + Redis + Keycloak on :8180 via Docker Compose)
 make infra-up && make dev
 
-# Option B: local Kubernetes (k3d cluster, 2 kernel pods, PostgreSQL, Redis, Keycloak, Traefik ingress)
+# Option B: local Kubernetes (k3d: 2 kernel pods, PostgreSQL, Redis, Keycloak, Seata, Rust CDC worker, Traefik ingress)
 make k3d-up          # API on http://localhost:8080/api, login page under /auth (ASTRA_PUBLIC_URL to change)
 make demo            # two tenants, hooks, naming series, row-level security, validation
 make demo-iam        # sign-in, tenant roles, permissions, member provisioning, self-join
 make k3d-down
+
+# Astra Express: the courier demo from docs/use-case-01.md (full feature set on Option B; scripts need Bash 5)
+make demo-seed       # two tenants of orders, waybills, tickets, ledger and overlays, through the REST API
+open http://localhost:8080/desk/                  # metadata-driven Desk UI (+ /desk/compare.html)
+make demo-express    # 15 scenes, one per video; SCENES="4 5" PAUSE=0 to pick and skip pauses
+scripts/mcp-claude.sh tuan saigon-express          # register Astra's MCP server with Claude Code
 ```
 
 Những gì demo kiểm chứng, tất cả từ code thật trong repository này:
@@ -774,8 +780,18 @@ Những gì demo kiểm chứng, tất cả từ code thật trong repository n�
 | Virtual thread cho mỗi request (`@RunOnVirtualThread`), Quarkus 3.39 trên JDK 25 | `DocResource`, `astra-server` |
 | Đăng nhập qua Keycloak 26 với giao diện đăng nhập Astra (vi/en); server xác minh bearer token; vai trò theo tenant lấy từ nhóm Keycloak `/tenants/<tenant>/<role>`; admin tenant cấp tài khoản thành viên, người dùng công khai tự tham gia | `astra-iam`, `deploy/keycloak`, [docs/iam-mobile-integration.md](docs/iam-mobile-integration.md) |
 | Quyền DocType theo vai trò trong tenant (`read`, `create`, `write`, `if-owner`), áp dụng trong API sinh tự động | `DocPermissions`, `article.doctype.yaml` |
+| Vòng đời submittable (nháp → đã duyệt → đã hủy → sửa đổi) với hook ghi chứng từ khác trong cùng transaction | `DocumentStore.submit/cancel/amend`, `DocumentService`, `astra-apps/express` |
+| Trường `projected: true` thành index biểu thức online (`CREATE INDEX CONCURRENTLY`), được filter danh sách sử dụng | `ProjectionIndexer`, `GET /api/doctype/{name}/projections` |
+| Trường Link được kiểm tra trong phạm vi tenant; trường read-only thuộc về hook; series theo ngày (`ORD-.YYYYMMDD.-.#####`) | `DocumentStore`, `DocumentValidator`, `SeriesService` |
+| Desk UI sinh từ metadata DocType, có API inspector và màn hình so sánh hai tenant | `astra-server` `META-INF/resources/desk` |
+| Sổ cái append-only (chặn bằng trigger), phân vùng theo tháng, bút toán kép cân, bút toán đảo; maker/checker (phân tách nhiệm vụ) khi submit | `V3__ledger.sql`, `LedgerStore`, SPI `GeneralLedger`, `DocPermissions` |
+| Overlay DocType theo tenant, áp dụng lúc chạy, không cần restart | `Overlays`, `DocTypeOverlays`, `tenants/*/overlays` |
+| Sandbox Tier 2: WebAssembly của tenant (viết bằng Rust) chạy trên Chicory, giới hạn bộ nhớ và thời gian | `astra-plugin-host`, `astra-apps/express/wasm` |
+| MCP server (Streamable HTTP) dùng token, tenant và quyền của người gọi; che trường `pii`; tool do app đóng góp | `astra-ai`, SPI `McpTool` |
+| Worker CDC bằng Rust giải mã `pgoutput` vào bảng replica; Sync-Aware LSN (`X-Tx-LSN`, `X-Required-LSN` → `202 Sync Pending`) | `astra-cdc-rust`, `SyncAwareLsnFilter`, `ReplicaResource` |
+| Global transaction Apache Seata 2.6: nhánh AT trên schema của module, nhánh TCC trên Redis, kernel commit cuối | `astra-tx-seata`, `OrderCreditHook`, `PickupCapacity` |
 
-Chưa có trong lát cắt mỏng: overlay, điều kiện quyền theo dòng, submittable lifecycle, projection, loader Tier 1/2, rollout control plane, Seata, MCP, Desk. Lộ trình bên dưới sắp thứ tự cho các phần này.
+Chưa có trong lát cắt mỏng: điều kiện quyền theo dòng, projection materialised, loader Tier 1, rollout control plane, audit hash-chain, mã hoá trường, Apache Doris, AI agent ngoài các tool MCP và Desk đầy đủ (dashboard, báo cáo). Lộ trình bên dưới sắp thứ tự cho các phần này. Bộ kịch bản video đi qua bản demo nằm ở [docs/demo-video-series.md](docs/demo-video-series.md).
 
 ## Bắt đầu (quy trình mục tiêu)
 

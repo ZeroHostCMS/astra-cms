@@ -13,6 +13,7 @@ if JDK25=$(/usr/libexec/java_home -v 25 2>/dev/null); then export JAVA_HOME="$JD
 CLUSTER=astra
 IMAGE=astra/server:dev
 KC_IMAGE=astra/keycloak:dev
+CDC_IMAGE=astra/cdc:dev
 PUBLIC_URL="${ASTRA_PUBLIC_URL:-http://localhost:8080}"
 PUBLIC_URL="${PUBLIC_URL%/}"
 
@@ -25,7 +26,8 @@ fi
 ./mvnw -q -DskipTests package
 docker build -q -f astra-server/src/main/docker/Dockerfile.jvm -t "${IMAGE}" .
 docker build -q -t "${KC_IMAGE}" deploy/keycloak
-k3d image import "${IMAGE}" "${KC_IMAGE}" -c "${CLUSTER}"
+docker build -q -t "${CDC_IMAGE}" astra-cdc-rust
+k3d image import "${IMAGE}" "${KC_IMAGE}" "${CDC_IMAGE}" -c "${CLUSTER}"
 
 kubectl apply -k deploy/k8s/base
 kubectl -n astra create configmap astra-public \
@@ -33,11 +35,17 @@ kubectl -n astra create configmap astra-public \
   --from-literal=oidc-issuer="${PUBLIC_URL}/auth/realms/astra" \
   --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n astra rollout status statefulset/postgres --timeout=180s
+scripts/db-setup.sh k3d                                    # BMS schema and CDC role (publication after migration)
+kubectl -n astra rollout status deployment/seata-server --timeout=180s
 kubectl -n astra rollout status deployment/redis --timeout=120s
 kubectl -n astra rollout restart deployment/keycloak       # pick up a re-imported image or a new public URL
 kubectl -n astra rollout status deployment/keycloak --timeout=420s
+scripts/keycloak-sync-realm.sh "${PUBLIC_URL}"           # the realm persists; add what the realm file gained since
 kubectl -n astra rollout restart deployment/astra-server   # pick up a re-imported image with the same tag
 kubectl -n astra rollout status deployment/astra-server --timeout=300s
+scripts/db-setup.sh k3d                                    # now the CDC publication, on the migrated schema
+kubectl -n astra rollout restart deployment/astra-cdc
+kubectl -n astra rollout status deployment/astra-cdc --timeout=120s
 
 echo
 echo "Astra API:       ${PUBLIC_URL}/api   (try: scripts/demo-iam.sh ${PUBLIC_URL})"

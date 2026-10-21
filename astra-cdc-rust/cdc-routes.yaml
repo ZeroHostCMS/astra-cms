@@ -1,0 +1,24 @@
+# Which DocTypes the CDC worker projects out of astra_doc, into which replica tables, with which columns.
+# `from` is a key of the document's JSON data, or $docstatus for the core column; `transform: length`
+# stores the length of a JSON array; `type` is the SQL type the text value is cast to (default text).
+slot: astra_cdc
+publication: astra_cdc
+poll_ms: 50
+routes:
+  - doctype: Waybill
+    target: replica_waybill
+    columns:
+      - { name: order_name,    from: order }
+      - { name: ops_status,    from: ops_status }
+      - { name: current_hub,   from: current_hub }
+      - { name: receiver_name, from: receiver_name }
+      - { name: scans,         from: scan_log, transform: length, type: integer }
+  - doctype: CustomerOrder
+    target: replica_order
+    columns:
+      - { name: customer,     from: customer }
+      - { name: docstatus,    from: $docstatus, type: integer }
+      - { name: zone,         from: zone }
+      - { name: cod_amount,   from: cod_amount, type: numeric }
+      - { name: shipping_fee, from: shipping_fee, type: numeric }
+      - { name: waybill,      from: waybill }
