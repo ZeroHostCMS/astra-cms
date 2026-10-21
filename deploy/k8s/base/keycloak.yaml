@@ -1,0 +1,94 @@
+# Keycloak served under /auth on the same public origin as the API, so mobile clients use one host.
+# KC_HOSTNAME fixes the token issuer to the public URL; backchannel URLs (token, JWKS) follow the
+# request host, so the server reaches Keycloak in-cluster while validating the public issuer.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: astra-keycloak
+type: Opaque
+stringData:
+  admin-username: admin
+  admin-password: astra-local-admin
+  db-username: keycloak
+  db-password: keycloak-local                             # must match 02-keycloak.sql in postgres.yaml
+  astra-server-client-secret: astra-server-local-secret   # must match deploy/keycloak/realm/astra-realm.json
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: astra-public
+data:
+  # Overridden by scripts/k3d-up.sh from ASTRA_PUBLIC_URL (for example http://192.168.1.20:8080 for a phone on Wi-Fi).
+  public-url: http://localhost:8080
+  oidc-issuer: http://localhost:8080/auth/realms/astra
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: astra/keycloak:dev
+          imagePullPolicy: IfNotPresent
+          args: ["start", "--optimized", "--import-realm"]
+          ports:
+            - containerPort: 8080
+            - containerPort: 9000
+          env:
+            - name: PUBLIC_URL
+              valueFrom: { configMapKeyRef: { name: astra-public, key: public-url } }
+            - name: KC_HOSTNAME
+              value: $(PUBLIC_URL)/auth
+            - name: KC_HOSTNAME_BACKCHANNEL_DYNAMIC
+              value: "true"
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres:5432/keycloak
+            - name: KC_DB_USERNAME
+              valueFrom: { secretKeyRef: { name: astra-keycloak, key: db-username } }
+            - name: KC_DB_PASSWORD
+              valueFrom: { secretKeyRef: { name: astra-keycloak, key: db-password } }
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              valueFrom: { secretKeyRef: { name: astra-keycloak, key: admin-username } }
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              valueFrom: { secretKeyRef: { name: astra-keycloak, key: admin-password } }
+            - name: JAVA_OPTS_KC_HEAP
+              value: "-XX:MaxRAMPercentage=65.0"
+          startupProbe:
+            httpGet: { path: /auth/health/started, port: 9000 }
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet: { path: /auth/health/ready, port: 9000 }
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /auth/health/live, port: 9000 }
+            periodSeconds: 15
+          resources:
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { memory: 1Gi }

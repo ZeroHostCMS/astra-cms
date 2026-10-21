@@ -1,4 +1,4 @@
-.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo
+.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam
 
 export PATH := $(HOME)/.local/bin:$(PATH)
 
@@ -35,3 +35,6 @@ k3d-down:
 
 demo:             ## smoke test against http://localhost:8080 (or BASE=...)
 	scripts/demo.sh $(BASE)
+
+demo-iam:         ## end-to-end IAM checks with real Keycloak tokens (or BASE=...)
+	scripts/demo-iam.sh $(BASE)

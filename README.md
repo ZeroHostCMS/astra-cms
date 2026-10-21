@@ -8,8 +8,6 @@
   <img src="docs/astra-intro-poster-en.jpg" width="820" alt="Watch: Astra in 5 minutes (English subtitles)">
 </a>
 
-<sub>▶ <b>Astra in 5 minutes</b> (English subtitles) · <a href="https://media.zerohostcms.com/astra-cms/astra-intro-en.mp4">MP4</a> · <a href="docs/video/astra-intro.en.srt">subtitles .srt</a> · Vietnamese version: <a href="README.vi.md">README.vi.md</a></sub>
-
 **A metadata-driven, plugin-first application platform for enterprises that change constantly and cannot afford downtime.**  
 *Inspired by Frappe / ERPNext, rebuilt from scratch on Java 25 and Quarkus. DocTypes define schema, form, API, permissions, workflow and compliance metadata as data. Three plugin isolation tiers: shared, isolated JVM, Wasm. Versioned apps run side by side with canary rollout and automatic rollback. Distributed transactions are built in. AI-native: every DocType and extension point is a tool. Compliance metadata is part of the data model, so the audit evidence for SOC 2, ISO 27001, GDPR and regional privacy laws is generated instead of assembled later. First apps: Astra CMS, then Astra ERP.*
 
@@ -754,12 +752,13 @@ Requirements: JDK 25, Docker Desktop, `kubectl`, and `k3d` (k3s in Docker). The 
 # Tests: starts a throwaway PostgreSQL via Dev Services and proves tenant isolation end to end
 ./mvnw -pl astra-server -am test
 
-# Option A: local dev with live reload (PostgreSQL + Redis via Docker Compose)
+# Option A: local dev with live reload (PostgreSQL + Redis + Keycloak on :8180 via Docker Compose)
 make infra-up && make dev
 
-# Option B: local Kubernetes (k3d cluster, 2 kernel pods, PostgreSQL, Redis, Traefik ingress)
-make k3d-up
+# Option B: local Kubernetes (k3d cluster, 2 kernel pods, PostgreSQL, Redis, Keycloak, Traefik ingress)
+make k3d-up          # API on http://localhost:8080/api, login page under /auth (ASTRA_PUBLIC_URL to change)
 make demo            # two tenants, hooks, naming series, row-level security, validation
+make demo-iam        # sign-in, tenant roles, permissions, member provisioning, self-join
 make k3d-down
 ```
 
@@ -773,8 +772,10 @@ What the demo exercises, all from real code in this repository:
 | Cluster-safe, per-tenant naming series (`ART-00001`) | `SeriesService` |
 | Tier 0 app contributing a DocType and a lifecycle hook through `astra-spi` only | `astra-apps/cms` |
 | Virtual threads per request (`@RunOnVirtualThread`), Quarkus 3.39 on JDK 25 | `DocResource`, `astra-server` |
+| Sign-in through Keycloak 26 with the Astra login theme (vi/en); bearer tokens verified by the server; tenant roles from Keycloak groups `/tenants/<tenant>/<role>`; tenant admins provision members and public users self-join | `astra-iam`, `deploy/keycloak`, [docs/iam-mobile-integration.md](docs/iam-mobile-integration.md) |
+| DocType permission rules per tenant role (`read`, `create`, `write`, `if-owner`), enforced by the generated API | `DocPermissions`, `article.doctype.yaml` |
 
-Not in the thin slice yet: overlays, permissions, submittable lifecycle, projections, Tier 1/2 loaders, rollout control plane, Seata, MCP, Desk. The roadmap below sequences them.
+Not in the thin slice yet: overlays, row-level permission conditions, submittable lifecycle, projections, Tier 1/2 loaders, rollout control plane, Seata, MCP, Desk. The roadmap below sequences them.
 
 ## Getting Started (Target Workflow)
 

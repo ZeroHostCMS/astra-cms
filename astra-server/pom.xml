@@ -11,7 +11,7 @@
 
   <artifactId>astra-server</artifactId>
   <name>Astra Server</name>
-  <description>Runnable composition: kernel + DocType engine + first-party apps</description>
+  <description>Runnable composition: kernel + DocType engine + IAM + first-party apps</description>
 
   <dependencies>
     <dependency>
@@ -27,6 +27,10 @@
       <artifactId>astra-app-cms</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.astra</groupId>
+      <artifactId>astra-iam</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-config-yaml</artifactId>
     </dependency>
@@ -38,6 +42,11 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-test-security-oidc</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

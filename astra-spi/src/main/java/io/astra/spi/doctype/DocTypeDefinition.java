@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Metadata that fully describes a kind of business record. Everything else (storage, REST, hooks)
- * derives from this. Loaded from YAML contributed by apps; immutable once registered.
+ * Metadata that fully describes a kind of business record. Everything else (storage, REST, hooks,
+ * permissions) derives from this. Loaded from YAML contributed by apps; immutable once registered.
  */
 public record DocTypeDefinition(
         String name,
@@ -13,13 +13,15 @@ public record DocTypeDefinition(
         String kind,
         boolean submittable,
         Naming naming,
-        List<FieldDefinition> fields) {
+        List<FieldDefinition> fields,
+        List<PermissionRule> permissions) {
 
     public DocTypeDefinition {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("doctype name is required");
         kind = kind == null ? "transaction" : kind;
         naming = naming == null ? Naming.AUTO : naming;
         fields = fields == null ? List.of() : List.copyOf(fields);
+        permissions = permissions == null ? List.of() : List.copyOf(permissions);
     }
 
     public Optional<FieldDefinition> field(String fieldName) {

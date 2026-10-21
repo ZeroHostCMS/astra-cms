@@ -8,8 +8,6 @@
   <img src="docs/astra-intro-poster.jpg" width="820" alt="Xem video: Astra trong 5 phút (phụ đề tiếng Việt)">
 </a>
 
-<sub>▶ <b>Astra trong 5 phút</b> (phụ đề tiếng Việt) · <a href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4">MP4</a> · <a href="docs/video/astra-intro.vi.srt">phụ đề .srt</a> · <a href="docs/video/video-intro-script.md">kịch bản</a></sub>
-
 **Nền tảng ứng dụng metadata-driven, plugin-first cho những doanh nghiệp thay đổi liên tục và không thể chấp nhận downtime.**  
 *Lấy cảm hứng từ Frappe / ERPNext, xây lại từ đầu trên Java 25 và Quarkus. DocType định nghĩa schema, form, API, quyền, workflow và metadata tuân thủ dưới dạng dữ liệu. Ba tầng cô lập plugin: dùng chung (shared), JVM cô lập, Wasm. Các phiên bản app chạy song song với canary rollout và rollback tự động. Giao dịch phân tán có sẵn trong nền tảng. AI-native: mọi DocType và extension point đều là một tool. Metadata tuân thủ là một phần của mô hình dữ liệu, nên bằng chứng kiểm toán cho SOC 2, ISO 27001, GDPR và các luật bảo vệ dữ liệu khu vực được sinh ra tự động thay vì phải gom lại về sau. Các app đầu tiên: Astra CMS, sau đó là Astra ERP.*
 
@@ -754,12 +752,13 @@ Yêu cầu: JDK 25, Docker Desktop, `kubectl` và `k3d` (k3s trong Docker). Đã
 # Tests: starts a throwaway PostgreSQL via Dev Services and proves tenant isolation end to end
 ./mvnw -pl astra-server -am test
 
-# Option A: local dev with live reload (PostgreSQL + Redis via Docker Compose)
+# Option A: local dev with live reload (PostgreSQL + Redis + Keycloak on :8180 via Docker Compose)
 make infra-up && make dev
 
-# Option B: local Kubernetes (k3d cluster, 2 kernel pods, PostgreSQL, Redis, Traefik ingress)
-make k3d-up
+# Option B: local Kubernetes (k3d cluster, 2 kernel pods, PostgreSQL, Redis, Keycloak, Traefik ingress)
+make k3d-up          # API on http://localhost:8080/api, login page under /auth (ASTRA_PUBLIC_URL to change)
 make demo            # two tenants, hooks, naming series, row-level security, validation
+make demo-iam        # sign-in, tenant roles, permissions, member provisioning, self-join
 make k3d-down
 ```
 
@@ -773,8 +772,10 @@ Những gì demo kiểm chứng, tất cả từ code thật trong repository n�
 | Naming series an toàn trên cụm, theo từng tenant (`ART-00001`) | `SeriesService` |
 | App Tier 0 đóng góp một DocType và một lifecycle hook chỉ qua `astra-spi` | `astra-apps/cms` |
 | Virtual thread cho mỗi request (`@RunOnVirtualThread`), Quarkus 3.39 trên JDK 25 | `DocResource`, `astra-server` |
+| Đăng nhập qua Keycloak 26 với giao diện đăng nhập Astra (vi/en); server xác minh bearer token; vai trò theo tenant lấy từ nhóm Keycloak `/tenants/<tenant>/<role>`; admin tenant cấp tài khoản thành viên, người dùng công khai tự tham gia | `astra-iam`, `deploy/keycloak`, [docs/iam-mobile-integration.md](docs/iam-mobile-integration.md) |
+| Quyền DocType theo vai trò trong tenant (`read`, `create`, `write`, `if-owner`), áp dụng trong API sinh tự động | `DocPermissions`, `article.doctype.yaml` |
 
-Chưa có trong lát cắt mỏng: overlay, quyền, submittable lifecycle, projection, loader Tier 1/2, rollout control plane, Seata, MCP, Desk. Lộ trình bên dưới sắp thứ tự cho các phần này.
+Chưa có trong lát cắt mỏng: overlay, điều kiện quyền theo dòng, submittable lifecycle, projection, loader Tier 1/2, rollout control plane, Seata, MCP, Desk. Lộ trình bên dưới sắp thứ tự cho các phần này.
 
 ## Bắt đầu (quy trình mục tiêu)
 
