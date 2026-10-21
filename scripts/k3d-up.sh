@@ -4,6 +4,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 export PATH="$HOME/.local/bin:$PATH"
+# The build targets Java 25; on macOS prefer an installed JDK 25 over an older JAVA_HOME.
+if JDK25=$(/usr/libexec/java_home -v 25 2>/dev/null); then export JAVA_HOME="$JDK25"; fi
 CLUSTER=astra
 IMAGE=astra/server:dev
 

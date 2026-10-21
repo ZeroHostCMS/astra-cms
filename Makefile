@@ -2,6 +2,13 @@
 
 export PATH := $(HOME)/.local/bin:$(PATH)
 
+# The build targets Java 25. On macOS, pick an installed JDK 25 even when the shell's
+# JAVA_HOME points at an older JDK; elsewhere, keep whatever JAVA_HOME already is.
+JDK25 := $(shell /usr/libexec/java_home -v 25 2>/dev/null)
+ifneq ($(JDK25),)
+export JAVA_HOME := $(JDK25)
+endif
+
 build:            ## compile and package all modules
 	./mvnw -q -DskipTests package
 
@@ -15,7 +22,7 @@ infra-down:
 	docker compose -f deploy/docker/docker-compose.yml down
 
 dev: infra-up     ## Quarkus dev mode with live reload
-	./mvnw -pl astra-server -am quarkus:dev
+	./mvnw -pl astra-server -am quarkus:dev $(DEV_ARGS)
 
 image: build      ## build the server container image
 	docker build -f astra-server/src/main/docker/Dockerfile.jvm -t astra/server:dev .
