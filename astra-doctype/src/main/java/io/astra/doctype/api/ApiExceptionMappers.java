@@ -1,5 +1,6 @@
 package io.astra.doctype.api;
 
+import io.astra.doctype.permission.DocPermissions;
 import io.astra.doctype.registry.DocTypeRegistry;
 import io.astra.spi.doc.DocValidationException;
 import jakarta.ws.rs.core.Response;
@@ -18,5 +19,10 @@ public class ApiExceptionMappers {
     @ServerExceptionMapper
     public Response unknownDoctype(DocTypeRegistry.DocTypeNotFoundException e) {
         return Response.status(404).entity(Map.of("error", e.getMessage())).build();
+    }
+
+    @ServerExceptionMapper
+    public Response accessDenied(DocPermissions.AccessDeniedException e) {
+        return Response.status(403).entity(Map.of("error", e.getMessage())).build();
     }
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.astra.spi.doctype.DocTypeDefinition;
 import io.astra.spi.doctype.FieldDefinition;
 import io.astra.spi.doctype.FieldType;
+import io.astra.spi.doctype.PermissionRule;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,15 @@ final class DocTypeLoader {
                     options,
                     f.hasNonNull("default") ? YAML.convertValue(f.get("default"), Object.class) : null));
         }
+        List<PermissionRule> permissions = new ArrayList<>();
+        for (JsonNode p : root.path("permissions")) {
+            permissions.add(new PermissionRule(
+                    p.path("role").asText(null),
+                    p.path("read").asBoolean(false),
+                    p.path("create").asBoolean(false),
+                    p.path("write").asBoolean(false),
+                    p.path("if-owner").asBoolean(false)));
+        }
         JsonNode naming = root.path("naming");
         return new DocTypeDefinition(
                 root.path("name").asText(null),
@@ -54,6 +64,7 @@ final class DocTypeLoader {
                 root.path("submittable").asBoolean(false),
                 naming.isMissingNode() ? DocTypeDefinition.Naming.AUTO
                         : new DocTypeDefinition.Naming(naming.path("field").asText(null), naming.path("series").asText(null)),
-                fields);
+                fields,
+                permissions);
     }
 }

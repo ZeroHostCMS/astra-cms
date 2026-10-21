@@ -1,0 +1,207 @@
+{
+  "realm": "astra",
+  "enabled": true,
+  "displayName": "Astra",
+  "displayNameHtml": "Astra",
+  "loginTheme": "astra",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["vi", "en"],
+  "defaultLocale": "vi",
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "rememberMe": true,
+  "verifyEmail": false,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 10,
+  "permanentLockout": false,
+  "passwordPolicy": "length(8) and notUsername",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "ssoSessionIdleTimeoutRememberMe": 604800,
+  "ssoSessionMaxLifespanRememberMe": 2592000,
+  "offlineSessionIdleTimeout": 2592000,
+  "eventsEnabled": true,
+  "eventsExpiration": 2592000,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "roles": {
+    "realm": [
+      { "name": "platform-admin", "description": "Manages tenants and their members. Grants no access to tenant documents." }
+    ]
+  },
+  "groups": [
+    {
+      "name": "tenants",
+      "subGroups": [
+        {
+          "name": "acme",
+          "attributes": { "display-name": ["Acme Vietnam"], "public-signup": ["true"] },
+          "subGroups": [ { "name": "admin" }, { "name": "editor" }, { "name": "author" }, { "name": "reader" } ]
+        },
+        {
+          "name": "globex",
+          "attributes": { "display-name": ["Globex"], "public-signup": ["false"] },
+          "subGroups": [ { "name": "admin" }, { "name": "editor" }, { "name": "author" }, { "name": "reader" } ]
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "astra-mobile",
+      "name": "Astra mobile app",
+      "description": "Public client for the Flutter app: Authorization Code + PKCE (S256) through the system browser.",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "frontchannelLogout": false,
+      "redirectUris": ["io.astra.mobile:/oauthredirect"],
+      "webOrigins": [],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "io.astra.mobile:/oauthredirect",
+        "use.refresh.tokens": "true",
+        "oauth2.device.authorization.grant.enabled": "false"
+      },
+      "defaultClientScopes": ["basic", "profile", "email", "roles", "web-origins", "acr"],
+      "optionalClientScopes": ["offline_access"],
+      "protocolMappers": [
+        {
+          "name": "tenant groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "astra-server audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "astra-server",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "astra-dev-cli",
+      "name": "Astra local CLI (local stack only)",
+      "description": "Password grant for scripts/demo-iam.sh. Never enable in a shared or production realm.",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "attributes": { "use.refresh.tokens": "true" },
+      "defaultClientScopes": ["basic", "profile", "email", "roles", "acr"],
+      "optionalClientScopes": ["offline_access"],
+      "protocolMappers": [
+        {
+          "name": "tenant groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "config": {
+            "claim.name": "groups",
+            "full.path": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "astra-server audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "astra-server",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "astra-server",
+      "name": "Astra server",
+      "description": "Resource server audience, and service account for tenant/member management via the Admin API.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "astra-server-local-secret",
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": ["basic", "roles"]
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-astra-server",
+      "enabled": true,
+      "serviceAccountClientId": "astra-server",
+      "realmRoles": ["default-roles-astra"],
+      "clientRoles": { "realm-management": ["manage-users", "view-users", "query-users", "query-groups"] }
+    },
+    {
+      "username": "platform", "email": "platform@astra.test", "firstName": "Platform", "lastName": "Admin",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra", "platform-admin"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "lan", "email": "lan@acme.test", "firstName": "Lan", "lastName": "Nguyễn",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/acme/admin"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "minh", "email": "minh@acme.test", "firstName": "Minh", "lastName": "Trần",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/acme/editor"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "hoa", "email": "hoa@acme.test", "firstName": "Hoa", "lastName": "Lê",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/acme/author"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "an", "email": "an@acme.test", "firstName": "An", "lastName": "Phạm",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/acme/reader"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "john", "email": "john@globex.test", "firstName": "John", "lastName": "Smith",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/globex/admin"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    }
+  ]
+}

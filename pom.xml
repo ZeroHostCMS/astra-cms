@@ -16,6 +16,7 @@
     <module>astra-spi</module>
     <module>astra-kernel</module>
     <module>astra-doctype</module>
+    <module>astra-iam</module>
     <module>astra-apps/cms</module>
     <module>astra-server</module>
   </modules>
@@ -57,6 +58,11 @@
       <dependency>
         <groupId>io.astra</groupId>
         <artifactId>astra-app-cms</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-iam</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

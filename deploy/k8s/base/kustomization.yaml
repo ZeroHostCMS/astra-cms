@@ -5,4 +5,5 @@ resources:
   - namespace.yaml
   - postgres.yaml
   - redis.yaml
+  - keycloak.yaml
   - astra-server.yaml

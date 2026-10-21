@@ -44,6 +44,11 @@
         <artifactId>astra-app-cms</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-iam</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

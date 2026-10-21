@@ -43,6 +43,14 @@ spec:
               valueFrom: { secretKeyRef: { name: astra-db, key: password } }
             - name: ASTRA_TENANCY_MODE
               value: multi
+            - name: ASTRA_OIDC_URL                 # in-cluster discovery and JWKS
+              value: http://keycloak:8080/auth/realms/astra
+            - name: ASTRA_OIDC_ISSUER              # issuer the clients see, advertised by /api/iam/config
+              valueFrom: { configMapKeyRef: { name: astra-public, key: oidc-issuer } }
+            - name: ASTRA_KEYCLOAK_URL
+              value: http://keycloak:8080/auth
+            - name: ASTRA_KEYCLOAK_CLIENT_SECRET
+              valueFrom: { secretKeyRef: { name: astra-keycloak, key: astra-server-client-secret } }
           readinessProbe:
             httpGet: { path: /q/health/ready, port: 8080 }
             periodSeconds: 5
@@ -61,6 +69,13 @@ spec:
   rules:
     - http:
         paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
           - path: /
             pathType: Prefix
             backend:

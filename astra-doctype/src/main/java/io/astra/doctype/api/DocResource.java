@@ -1,5 +1,7 @@
 package io.astra.doctype.api;
 
+import io.astra.doctype.permission.DocPermissions;
+import io.astra.doctype.permission.DocPermissions.Action;
 import io.astra.doctype.store.DocumentStore;
 import io.astra.kernel.tenant.TenantRequest;
 import io.astra.spi.doc.Document;
@@ -26,7 +28,8 @@ import java.util.Map;
 
 /**
  * Generated document API: one resource serves every DocType.
- * Each handler runs on a virtual thread with the request's tenant bound in the ScopedValue scope.
+ * Each handler checks the DocType's permission rules against the caller's roles in the tenant,
+ * then runs on a virtual thread with the request's tenant bound in the ScopedValue scope.
  */
 @Path("/api/doc/{doctype}")
 @Produces(MediaType.APPLICATION_JSON)
@@ -36,23 +39,27 @@ public class DocResource {
 
     @Inject DocumentStore store;
     @Inject TenantRequest tenant;
+    @Inject DocPermissions permissions;
 
     @GET
     public List<Map<String, Object>> list(@PathParam("doctype") String doctype,
                                           @QueryParam("limit") @DefaultValue("20") int limit,
                                           @QueryParam("offset") @DefaultValue("0") int offset) {
+        permissions.require(doctype, tenant.roles(), Action.READ);
         return scoped(() -> store.list(doctype, Math.min(limit, 200), offset).stream().map(DocResource::toJson).toList());
     }
 
     @GET
     @Path("/{name}")
     public Map<String, Object> get(@PathParam("doctype") String doctype, @PathParam("name") String name) {
+        permissions.require(doctype, tenant.roles(), Action.READ);
         return scoped(() -> store.get(doctype, name).map(DocResource::toJson)
                 .orElseThrow(() -> new NotFoundException(doctype + "/" + name)));
     }
 
     @POST
     public Response create(@PathParam("doctype") String doctype, Map<String, Object> body) {
+        permissions.require(doctype, tenant.roles(), Action.CREATE);
         Document saved = scoped(() -> store.insert(doctype, body, tenant.userId()));
         return Response.created(URI.create("/api/doc/" + doctype + "/" + saved.name())).entity(toJson(saved)).build();
     }
@@ -61,8 +68,12 @@ public class DocResource {
     @Path("/{name}")
     public Map<String, Object> update(@PathParam("doctype") String doctype, @PathParam("name") String name,
                                       Map<String, Object> patch) {
-        return scoped(() -> store.update(doctype, name, patch).map(DocResource::toJson)
-                .orElseThrow(() -> new NotFoundException(doctype + "/" + name)));
+        return scoped(() -> {
+            Document existing = store.get(doctype, name).orElseThrow(() -> new NotFoundException(doctype + "/" + name));
+            permissions.requireWrite(doctype, tenant.roles(), tenant.userId(), existing);
+            return store.update(doctype, name, patch).map(DocResource::toJson)
+                    .orElseThrow(() -> new NotFoundException(doctype + "/" + name));
+        });
     }
 
     /** Binds the request's tenant into the ScopedValue scope for the duration of the kernel call. */

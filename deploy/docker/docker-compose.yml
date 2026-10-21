@@ -1,5 +1,7 @@
 # Local infrastructure for `./mvnw quarkus:dev`. Redis is part of the target stack
 # (L2 cache, TCC) and is provisioned now so later phases need no compose changes.
+# Keycloak runs in dev mode on http://localhost:8180/auth with the Astra realm imported and the
+# login theme mounted, so theme edits show on reload without rebuilding the image.
 name: astra
 
 services:
@@ -27,6 +29,21 @@ services:
       - "6379:6379"
     volumes:
       - redisdata:/data
+
+  keycloak:
+    image: astra/keycloak:dev
+    build: ../keycloak
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_DB: dev-file
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: astra-local-admin
+    ports:
+      - "8180:8080"
+    volumes:
+      - ../keycloak/themes/astra:/opt/keycloak/themes/astra:ro
 
 volumes:
   pgdata:

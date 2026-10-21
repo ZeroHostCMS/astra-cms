@@ -1,6 +1,7 @@
 package io.astra.server;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -8,8 +9,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.not;
 
-/** Proves the tenancy boundary end to end: header → ScopedValue → set_config → row-level security. */
+/**
+ * Proves the tenancy boundary end to end: header → membership check → ScopedValue → set_config →
+ * row-level security. The test user is an editor in both tenants, so only RLS separates them.
+ */
 @QuarkusTest
+@TestSecurity(user = "u-multi", roles = {"/tenants/acme/editor", "/tenants/globex/editor"})
 class TenantIsolationTest {
 
     @Test
@@ -46,7 +51,7 @@ class TenantIsolationTest {
     }
 
     @Test
-    void requestsWithoutTenantAreRejectedInMultiMode() {
+    void requestsWithoutTenantAreRejectedForUsersOfSeveralTenants() {
         given().when().get("/api/doc/Article").then().statusCode(400);
     }
 }

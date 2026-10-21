@@ -3,6 +3,14 @@ quarkus:
     name: astra
   http:
     port: 8080
+    auth:
+      permission:
+        public:
+          paths: /q/*,/api/iam/config
+          policy: permit
+        api:
+          paths: /api/*
+          policy: authenticated
   datasource:
     db-kind: postgresql
     username: ${ASTRA_DB_USER:astra_app}     # non-superuser role; see deploy/docker/init/01-app-role.sql
@@ -12,6 +20,26 @@ quarkus:
       max-size: 20
   flyway:
     migrate-at-start: true
+  # Resource server: every /api call carries a Keycloak access token (Authorization Code + PKCE on mobile).
+  # Group paths /tenants/<tenant>/<role> and realm roles both become identity roles.
+  oidc:
+    auth-server-url: ${ASTRA_OIDC_URL:http://localhost:8180/auth/realms/astra}   # deploy/docker compose Keycloak
+    client-id: astra-server
+    application-type: service
+    token:
+      audience: astra-server
+      principal-claim: sub
+    roles:
+      role-claim-path: groups,realm_access/roles
+  keycloak:
+    devservices:
+      enabled: false
+    admin-client:                       # service account with user and group management roles only
+      server-url: ${ASTRA_KEYCLOAK_URL:http://localhost:8180/auth}
+      realm: astra
+      client-id: astra-server
+      client-secret: ${ASTRA_KEYCLOAK_CLIENT_SECRET:astra-server-local-secret}
+      grant-type: CLIENT_CREDENTIALS
   log:
     category:
       "io.astra":
@@ -22,6 +50,15 @@ astra:
     mode: ${ASTRA_TENANCY_MODE:multi}      # single | multi
     default-tenant: default
     # base-domain: astra.localhost         # enables tenant resolution from subdomains
+  iam:
+    realm: astra
+    # Issuer that clients see; behind an ingress it differs from the in-cluster auth-server-url.
+    issuer: ${ASTRA_OIDC_ISSUER:http://localhost:8180/auth/realms/astra}
+    tenant-roles: admin,editor,author,reader
+    self-join-role: reader
+    mobile:
+      client-id: astra-mobile
+      redirect-uri: io.astra.mobile:/oauthredirect
 
 # The JDBC URL is set only for dev and prod so that the test profile keeps Dev Services
 # (an automatic PostgreSQL container) enabled.
@@ -47,3 +84,6 @@ astra:
         username: astra                        # container superuser, used only to bootstrap
         password: astra
         init-script-path: db/init-app-role.sql # creates astra_app, which the kernel connects as
+    # Tests inject identities with @TestSecurity; no identity provider is contacted.
+    oidc:
+      tenant-enabled: false

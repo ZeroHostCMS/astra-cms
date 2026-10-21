@@ -9,3 +9,10 @@ fields:
   - { name: body,    type: Text }
   - { name: status,  type: Select, options: [Draft, Published], default: Draft, in-list: true, projected: true }
   - { name: tags,    type: JSON }
+
+# Roles are per tenant (Keycloak groups /tenants/<tenant>/<role>). No matching rule means no access.
+permissions:
+  - { role: admin,  read: true, create: true, write: true }
+  - { role: editor, read: true, create: true, write: true }
+  - { role: author, read: true, create: true, write: true, if-owner: true }
+  - { role: reader, read: true }

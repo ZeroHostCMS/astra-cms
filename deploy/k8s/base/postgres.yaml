@@ -22,6 +22,9 @@ data:
     CREATE ROLE astra_app LOGIN PASSWORD 'astra_app' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE NOINHERIT;
     GRANT CONNECT ON DATABASE astra TO astra_app;
     GRANT USAGE, CREATE ON SCHEMA public TO astra_app;
+  02-keycloak.sql: |
+    CREATE ROLE keycloak LOGIN PASSWORD 'keycloak-local';
+    CREATE DATABASE keycloak OWNER keycloak;
 ---
 apiVersion: v1
 kind: Service

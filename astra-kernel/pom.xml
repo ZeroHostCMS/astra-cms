@@ -11,7 +11,7 @@
 
   <artifactId>astra-kernel</artifactId>
   <name>Astra Kernel</name>
-  <description>Tenant resolution, extension registry, app registry</description>
+  <description>Tenant resolution, identity memberships, extension registry, app registry</description>
 
   <dependencies>
     <dependency>
@@ -25,6 +25,10 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-security</artifactId>
     </dependency>
   </dependencies>
 </project>

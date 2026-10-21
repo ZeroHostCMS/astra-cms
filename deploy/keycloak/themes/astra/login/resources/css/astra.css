@@ -1,0 +1,624 @@
+/* Astra login theme: ink on warm paper, amber for the one primary action. Mobile-first. */
+
+:root {
+  color-scheme: light dark;
+
+  --paper:        oklch(0.925 0.018 80);
+  --paper-deep:   oklch(0.885 0.022 78);
+  --card:         oklch(0.975 0.010 85);
+  --field:        oklch(0.995 0.004 85);
+  --ink:          oklch(0.285 0.020 272);
+  --ink-soft:     oklch(0.440 0.018 272);
+  --ink-faint:    oklch(0.285 0.020 272 / 0.22);
+  --ink-hair:     oklch(0.285 0.020 272 / 0.14);
+  --accent:       oklch(0.745 0.150 70);
+  --accent-hover: oklch(0.700 0.150 66);
+  --accent-ink:   oklch(0.235 0.020 272);
+  --link:         oklch(0.470 0.075 200);
+  --danger:       oklch(0.520 0.170 27);
+  --danger-wash:  oklch(0.950 0.030 27);
+  --warn:         oklch(0.560 0.120 70);
+  --warn-wash:    oklch(0.955 0.040 85);
+  --ok:           oklch(0.500 0.090 165);
+  --ok-wash:      oklch(0.955 0.030 165);
+  --info-wash:    oklch(0.950 0.020 210);
+  --focus:        oklch(0.745 0.150 70 / 0.55);
+
+  --font-display: "Iowan Old Style", "Charter", "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  --step--1: 0.8125rem;
+  --step-0:  1rem;
+  --step-1:  1.125rem;
+  --step-3:  1.75rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --radius-card: 14px;
+  --radius-ctl: 10px;
+  --stroke: 1.5px;
+  --control-h: 3rem;          /* 48px: comfortable thumb target */
+  --sketch: 5px;              /* offset of the hand-drawn second frame */
+  --dur: 180ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:        oklch(0.215 0.012 272);
+    --paper-deep:   oklch(0.190 0.012 272);
+    --card:         oklch(0.255 0.014 272);
+    --field:        oklch(0.215 0.012 272);
+    --ink:          oklch(0.930 0.015 85);
+    --ink-soft:     oklch(0.780 0.015 85);
+    --ink-faint:    oklch(0.930 0.015 85 / 0.24);
+    --ink-hair:     oklch(0.930 0.015 85 / 0.12);
+    --accent:       oklch(0.780 0.145 72);
+    --accent-hover: oklch(0.820 0.135 75);
+    --accent-ink:   oklch(0.215 0.020 272);
+    --link:         oklch(0.790 0.080 195);
+    --danger:       oklch(0.740 0.140 27);
+    --danger-wash:  oklch(0.300 0.060 27);
+    --warn:         oklch(0.820 0.120 80);
+    --warn-wash:    oklch(0.310 0.050 75);
+    --ok:           oklch(0.780 0.100 165);
+    --ok-wash:      oklch(0.290 0.040 165);
+    --info-wash:    oklch(0.290 0.030 210);
+  }
+}
+
+/* ---------- Base ---------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body.astra-body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(120% 70% at 0% 0%, var(--paper-deep) 0%, transparent 60%),
+    radial-gradient(90% 60% at 100% 100%, var(--paper-deep) 0%, transparent 55%);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--link); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.astra-sr-only, .sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- Shell ---------- */
+
+.astra-shell {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding:
+    calc(var(--space-4) + env(safe-area-inset-top, 0px))
+    calc(var(--space-4) + env(safe-area-inset-right, 0px))
+    calc(var(--space-5) + env(safe-area-inset-bottom, 0px))
+    calc(var(--space-4) + env(safe-area-inset-left, 0px));
+}
+
+@media (min-width: 40rem) {
+  .astra-shell { justify-content: center; padding-top: var(--space-7); padding-bottom: var(--space-7); }
+}
+
+/* ---------- Masthead: wordmark + language switch ---------- */
+
+.astra-masthead { margin-bottom: var(--space-5); }
+
+.astra-masthead__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.astra-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--ink);
+}
+
+.astra-brand__mark { width: 2rem; height: 2rem; flex: none; }
+.astra-brand__core { fill: var(--accent); }
+
+.astra-brand__name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  padding-bottom: 0.2rem;
+  background: linear-gradient(var(--accent), var(--accent)) left bottom / 100% 3px no-repeat;
+}
+
+.astra-locale__list {
+  display: inline-flex;
+  margin: 0;
+  padding: 3px;
+  list-style: none;
+  border: var(--stroke) solid var(--ink-faint);
+  border-radius: 999px;
+  background: var(--card);
+}
+
+.astra-locale__item { display: flex; }
+
+.astra-locale__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 var(--space-4);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.astra-locale__link:hover { color: var(--ink); text-decoration: none; }
+
+.astra-locale__link[aria-current="true"] {
+  background: var(--ink);
+  color: var(--card);
+}
+
+/* ---------- Card with hand-drawn offset frame ---------- */
+
+.astra-card {
+  position: relative;
+  isolation: isolate;
+  background: var(--card);
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--radius-card);
+  padding: var(--space-5) var(--space-5) var(--space-5);
+}
+
+.astra-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translate(var(--sketch), var(--sketch));
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--radius-card);
+  opacity: 0.28;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@media (min-width: 40rem) {
+  .astra-card { padding: var(--space-6) var(--space-6) var(--space-5); }
+}
+
+.astra-card__header { margin-bottom: var(--space-5); }
+
+#kc-page-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+
+.astra-card__lede {
+  margin: var(--space-2) 0 0;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  text-wrap: pretty;
+}
+
+.astra-card__required {
+  margin: var(--space-3) 0 0;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+}
+
+.required { color: var(--danger); font-weight: 600; }
+
+/* Username chip shown on second-step pages (e.g. update password) */
+.astra-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
+  border: var(--stroke) solid var(--ink-hair);
+  border-radius: 999px;
+  background: var(--field);
+}
+
+.astra-identity__avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+.astra-identity__name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.astra-identity__switch {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-size: var(--step--1);
+  font-weight: 600;
+}
+
+/* ---------- Alerts ---------- */
+
+.astra-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-ctl);
+  border: var(--stroke) solid currentColor;
+  font-size: 0.9375rem;
+}
+
+.astra-alert__text { color: var(--ink); }
+.astra-alert .astra-icon { margin-top: 0.15rem; }
+
+.astra-alert--error   { color: var(--danger); background: var(--danger-wash); }
+.astra-alert--warning { color: var(--warn);   background: var(--warn-wash); }
+.astra-alert--success { color: var(--ok);     background: var(--ok-wash); }
+.astra-alert--info    { color: var(--link);   background: var(--info-wash); }
+
+/* ---------- Form fields ---------- */
+
+.astra-form, #kc-form-login { margin: 0; }
+
+.astra-field { margin-bottom: var(--space-4); }
+
+.astra-field__label-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+
+.astra-label, .astra-field > label {
+  display: inline-block;
+  margin-bottom: var(--space-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.astra-input,
+.astra-field select,
+.astra-field textarea {
+  display: block;
+  width: 100%;
+  min-height: var(--control-h);
+  padding: 0 var(--space-4);
+  border: var(--stroke) solid var(--ink-faint);
+  border-radius: var(--radius-ctl);
+  background: var(--field);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step-0);   /* 16px: prevents iOS zoom on focus */
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.astra-input--area, .astra-field textarea { padding: var(--space-3) var(--space-4); min-height: 6rem; }
+
+.astra-input::placeholder { color: var(--ink-soft); opacity: 0.7; }
+
+.astra-input:hover { border-color: var(--ink-soft); }
+
+.astra-input:focus,
+.astra-input:focus-visible {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: 0 0 0 4px var(--focus);
+  border-radius: var(--radius-ctl);
+}
+
+.astra-input[aria-invalid="true"] { border-color: var(--danger); }
+.astra-input[aria-invalid="true"]:focus { box-shadow: 0 0 0 4px oklch(0.52 0.17 27 / 0.25); }
+
+.astra-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.astra-field__error {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--danger);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.astra-field__help { margin: var(--space-1) 0 var(--space-2); color: var(--ink-soft); font-size: var(--step--1); }
+
+/* Password + reveal button */
+.astra-input-group { position: relative; display: block; }
+.astra-input-group .astra-input { padding-right: 3.25rem; }
+
+.astra-reveal {
+  position: absolute;
+  top: 50%;
+  right: 0.125rem;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.astra-reveal:hover { color: var(--ink); }
+
+/* ---------- Checkboxes / radios ---------- */
+
+.checkbox label,
+.astra-choice__label,
+.astra-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.checkbox input[type="checkbox"],
+.astra-choice__input,
+input[type="checkbox"],
+input[type="radio"] {
+  flex: none;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin: 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+/* ---------- Login options row ---------- */
+
+.astra-form__settings {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: calc(var(--space-2) * -1);
+}
+
+.astra-form__options-inner { font-size: 0.9375rem; }
+.astra-form__options-inner a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+
+#kc-form-buttons { margin-top: var(--space-5); margin-bottom: 0; }
+
+/* register / update-password: "back to login" sits under the button */
+#kc-register-form .astra-field:last-of-type { display: flex; flex-direction: column-reverse; }
+#kc-register-form #kc-form-options { margin-top: var(--space-3); text-align: center; }
+#kc-register-form #kc-form-buttons { margin-top: var(--space-2); }
+
+/* ---------- Buttons ---------- */
+
+.astra-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 3.125rem;
+  padding: 0 var(--space-5);
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--radius-ctl);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step-0);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 0 var(--ink);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.astra-btn:hover { text-decoration: none; }
+
+.astra-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 0 var(--ink);
+}
+
+.astra-btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.astra-btn--primary:hover { background: var(--accent-hover); }
+
+.astra-btn--secondary { background: var(--card); }
+.astra-btn--secondary:hover { background: var(--paper); }
+
+.astra-btn--block { display: flex; width: 100%; }
+
+.astra-btn:disabled,
+.astra-btn--disabled,
+.astra-btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.astra-btn--busy { cursor: progress; color: transparent !important; }
+.astra-btn--busy::after {
+  content: "";
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2.5px solid var(--accent-ink);
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: astra-spin 0.7s linear infinite;
+}
+
+/* Logout confirm / AIA cancel render two buttons side by side */
+.astra-form__buttons { display: grid; gap: var(--space-4); }
+.astra-field > #kc-form-buttons { margin-top: var(--space-4); }
+#kc-form-buttons.astra-field { display: grid; gap: var(--space-4); }
+
+@keyframes astra-spin { to { transform: rotate(360deg); } }
+
+/* ---------- Info area (register link, back links) ---------- */
+
+.astra-info {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: var(--stroke) dashed var(--ink-faint);
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.astra-info a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  margin-left: var(--space-1);
+  font-weight: 700;
+}
+
+#kc-info-message p, .instruction { margin: 0 0 var(--space-4); }
+#kc-info-message a, #kc-error-message a, .astra-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-weight: 600;
+}
+
+#kc-error-message .instruction { color: var(--ink); }
+
+/* ---------- Social providers (if configured later) ---------- */
+
+.astra-social { margin-top: var(--space-5); }
+.astra-social hr { border: 0; border-top: var(--stroke) dashed var(--ink-faint); margin: 0 0 var(--space-4); }
+.astra-social h2 { margin: 0 0 var(--space-3); font-size: 0.875rem; font-weight: 600; color: var(--ink-soft); text-align: center; }
+.astra-social__list { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.astra-social__list--grid { grid-template-columns: 1fr 1fr; }
+
+/* ---------- Authenticator choices / OTP tiles / recovery codes ---------- */
+
+.astra-choices { display: grid; gap: var(--space-3); }
+.astra-choices__item {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: var(--stroke) solid var(--ink-faint); border-radius: var(--radius-ctl);
+  background: var(--field); color: var(--ink); text-decoration: none; cursor: pointer;
+}
+.astra-choices__item:hover { border-color: var(--ink); }
+.astra-choices__body { flex: 1; }
+.astra-choices__title { font-weight: 700; }
+.astra-choices__desc { color: var(--ink-soft); font-size: var(--step--1); }
+
+.astra-tile { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: var(--stroke) solid var(--ink-faint); border-radius: var(--radius-ctl); }
+.astra-codes { columns: 2; padding: var(--space-3) var(--space-5); border: var(--stroke) dashed var(--ink-faint); border-radius: var(--radius-ctl); font-family: ui-monospace, monospace; }
+
+#kc-totp-secret-qr-code { max-width: 12rem; height: auto; display: block; margin: var(--space-3) auto; border-radius: 8px; background: #fff; padding: 8px; }
+#kc-totp-settings { padding-left: var(--space-5); }
+#kc-totp-settings li { margin-bottom: var(--space-3); }
+
+/* ---------- Icons (mask-based so they follow currentColor) ---------- */
+
+.astra-icon {
+  display: inline-block;
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+          mask: var(--icon) center / contain no-repeat;
+}
+
+.astra-icon--eye     { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E"); }
+.astra-icon--eye-off { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.6 5.1A10.6 10.6 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.1 4M6.6 6.6C3.7 8.5 2 12 2 12s3.6 7 10 7c1.9 0 3.6-.6 5-1.5'/%3E%3Cpath d='M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18'/%3E%3C/svg%3E"); }
+.astra-icon--error   { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 7.5v5.5M12 16.5v.01'/%3E%3C/svg%3E"); }
+.astra-icon--warning { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3 2 20.5h20Z'/%3E%3Cpath d='M12 10v4.5M12 17.5v.01'/%3E%3C/svg%3E"); }
+.astra-icon--success { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='m7.5 12.5 3 3 6-6.5'/%3E%3C/svg%3E"); }
+.astra-icon--info    { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 11v5.5M12 7.5v.01'/%3E%3C/svg%3E"); }
+.astra-icon--restart { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12a9 9 0 1 0 3-6.7L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3C/svg%3E"); }
+.astra-icon--chevron { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E"); }
+.astra-icon--key     { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='8' cy='15' r='4.5'/%3E%3Cpath d='m11.2 11.8 9.3-9.3M17 6l3 3M15 8l2 2'/%3E%3C/svg%3E"); }
+
+/* ---------- Footer ---------- */
+
+.astra-footer {
+  margin-top: var(--space-6);
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+  text-wrap: balance;
+}
+
+.astra-footer p { margin: 0; }
+
+/* ---------- Motion preferences ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  .astra-btn:active { transform: none; }
+}
+
+@media (forced-colors: active) {
+  .astra-card::after { display: none; }
+  .astra-icon { background-color: CanvasText; }
+}
