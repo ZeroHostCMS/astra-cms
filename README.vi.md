@@ -8,8 +8,6 @@
   <img src="docs/astra-intro-poster.jpg" width="820" alt="Xem video: Astra trong 5 phút (phụ đề tiếng Việt)">
 </a>
 
-<sub>▶ <b>Astra trong 5 phút</b> (phụ đề tiếng Việt) · <a href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4">MP4</a> · <a href="docs/video/astra-intro.vi.srt">phụ đề .srt</a> · <a href="docs/video/video-intro-script.md">kịch bản</a></sub>
-
 **Nền tảng ứng dụng metadata-driven, plugin-first cho những doanh nghiệp thay đổi liên tục và không thể chấp nhận downtime.**  
 *Lấy cảm hứng từ Frappe / ERPNext, xây lại từ đầu trên Java 25 và Quarkus. DocType định nghĩa schema, form, API, quyền, workflow và metadata tuân thủ dưới dạng dữ liệu. Ba tầng cô lập plugin: dùng chung (shared), JVM cô lập, Wasm. Các phiên bản app chạy song song với canary rollout và rollback tự động. Giao dịch phân tán có sẵn trong nền tảng. AI-native: mọi DocType và extension point đều là một tool. Metadata tuân thủ là một phần của mô hình dữ liệu, nên bằng chứng kiểm toán cho SOC 2, ISO 27001, GDPR và các luật bảo vệ dữ liệu khu vực được sinh ra tự động thay vì phải gom lại về sau. Các app đầu tiên: Astra CMS, sau đó là Astra ERP.*
 
