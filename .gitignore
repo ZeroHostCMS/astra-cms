@@ -22,3 +22,9 @@ target/
 # Local runtime
 deploy/docker/data/
 *.log
+
+# Intro video build outputs (mp4 hosted on Cloudflare R2)
+docs/video/*.mp4
+docs/video/*.wav
+docs/video/out/
+docs/video/node_modules/

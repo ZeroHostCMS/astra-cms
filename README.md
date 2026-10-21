@@ -2,6 +2,12 @@
 
 # Astra
 
+<a href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4" title="Xem video: Astra trong 5 phút">
+  <img src="docs/astra-intro-poster.jpg" width="820" alt="▶ Xem video: Astra trong 5 phút (phụ đề tiếng Việt)">
+</a>
+
+<sub>▶ <b>Astra trong 5 phút</b> (5:29, phụ đề tiếng Việt): nỗi đau của app enterprise, chia việc kỹ sư lõi và AI agent, hot-swap, giao dịch 2PC Seata, demo hai tenant chạy thật · <a href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4">MP4</a>
+
 **A metadata-driven, plugin-first application platform for enterprises that must change every day without ever going down.**  
 *In the spirit of Frappe / ERPNext, rebuilt from a clean sheet on Java 25 + Quarkus • DocTypes define schema, form, API, permissions, workflow **and compliance metadata** as data • Three plugin isolation tiers (shared / isolated JVM / Wasm) • Versioned, side-by-side apps with canary rollout and auto-rollback • Distributed transactions built in • AI-native: every DocType and extension point is a tool • Compliance by design: audit-ready for SOC 2, ISO 27001, GDPR and regional privacy laws from day one • First apps: Astra CMS, then Astra ERP.*
 
