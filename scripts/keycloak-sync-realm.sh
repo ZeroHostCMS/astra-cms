@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Adds what deploy/keycloak/realm/astra-realm.json declares but the running realm lacks (clients, groups,
-# users, roles) and merges the file's client attributes into existing clients. Keycloak imports the realm
+# users, roles, identity providers and their mappers), merges the file's client attributes into existing
+# clients, creates the other realms in deploy/keycloak/realm (the demo SAML IdP) when missing, and points
+# SAML brokering at the public origin BASE. Keycloak imports the realm
 # file only when the realm does not exist yet; this keeps a persistent local realm in step with the file
 # without deleting anything that already exists.
 #   scripts/keycloak-sync-realm.sh [BASE]   (default http://localhost:8080, Keycloak under /auth)
@@ -73,3 +75,54 @@ while IFS= read -r g; do ensure_group "" "/$(jq -r .name <<<"$g")" "$g"; done < 
 # Users last, so their group paths resolve.
 kc POST "${KC}/partialImport" "$(jq -c '{ifResourceExists: "SKIP", users}' "$REALM_FILE")" \
   | jq -r '"users: \(.added) added, \(.skipped) already present"'
+
+# Keycloak creates a client's service-account user itself when the client is imported, so the partial import
+# above skips the file's entry for it; grant the realm roles the file lists (for example scim) explicitly.
+while IFS= read -r u; do
+  cid="$(kc GET "${KC}/clients?clientId=$(jq -r '.serviceAccountClientId | @uri' <<<"$u")" | jq -r '.[0].id // empty')"
+  [[ -n $cid ]] || continue
+  uid="$(kc GET "${KC}/clients/${cid}/service-account-user" | jq -r .id)"
+  reps="$(kc GET "${KC}/roles?briefRepresentation=true&max=1000" | jq -c --argjson want "$(jq -c .realmRoles <<<"$u")" \
+    '[.[] | select(.name as $n | $want | index($n))]')"
+  kc POST "${KC}/users/${uid}/role-mappings/realm" "$reps" >/dev/null
+done < <(jq -c '.users[] | select(.serviceAccountClientId != null and .realmRoles != null)' "$REALM_FILE")
+echo "service accounts: realm roles in step with the realm file"
+
+# Other realm files (the acme-corp-idp demo SAML IdP): created whole when the realm is missing.
+for f in deploy/keycloak/realm/*.json; do
+  [[ $f == "$REALM_FILE" ]] && continue
+  name="$(jq -r .realm "$f")"
+  kc GET "${BASE}/auth/admin/realms/${name}" >/dev/null
+  if [[ $KC_CODE == 404 ]]; then kc POST "${BASE}/auth/admin/realms" "$(jq -c . "$f")" >/dev/null; echo "realm ${name}: created"
+  else echo "realm ${name}: present"; fi
+done
+
+# Identity providers and their mappers: added when missing (existing ones are left as they are).
+while IFS= read -r idp; do
+  alias="$(jq -r .alias <<<"$idp")"
+  kc GET "${KC}/identity-provider/instances/${alias}" >/dev/null
+  if [[ $KC_CODE == 404 ]]; then kc POST "${KC}/identity-provider/instances" "$idp" >/dev/null; echo "identity provider ${alias}: created"; fi
+  have="$(kc GET "${KC}/identity-provider/instances/${alias}/mappers" | jq -c '[.[].name]')"
+  while IFS= read -r m; do
+    jq -e --arg n "$(jq -r .name <<<"$m")" 'index($n) != null' <<<"$have" >/dev/null && continue
+    kc POST "${KC}/identity-provider/instances/${alias}/mappers" "$m" >/dev/null
+    echo "identity provider mapper '$(jq -r .name <<<"$m")': created"
+  done < <(jq -c --arg a "$alias" '.identityProviderMappers[]? | select(.identityProviderAlias == $a)' "$REALM_FILE")
+done < <(jq -c '.identityProviders[]?' "$REALM_FILE")
+
+# SAML brokers: the browser-facing IdP endpoints and issuer follow the public origin BASE (the realm file holds
+# http://localhost:8080), and the IdP's SP client accepts the broker endpoint on that origin. The metadata
+# descriptor URL, from which the broker loads the IdP's signing key, stays on Keycloak's in-container port.
+while IFS= read -r alias; do
+  cur="$(kc GET "${KC}/identity-provider/instances/${alias}")"
+  idp_realm="$(jq -r '.config.singleSignOnServiceUrl | capture("/realms/(?<r>[^/]+)/").r' <<<"$cur")"
+  issuer="${BASE}/auth/realms/${idp_realm}"
+  kc PUT "${KC}/identity-provider/instances/${alias}" "$(jq -c --arg i "$issuer" \
+    '.config.idpEntityId = $i | .config.singleSignOnServiceUrl = ($i + "/protocol/saml")' <<<"$cur")" >/dev/null
+  sp="$(kc GET "${BASE}/auth/admin/realms/${idp_realm}/clients?clientId=$(jq -r '.config.entityId | @uri' <<<"$cur")" | jq -c '.[0] // empty')"
+  if [[ -n $sp ]]; then
+    kc PUT "${BASE}/auth/admin/realms/${idp_realm}/clients/$(jq -r .id <<<"$sp")" "$(jq -c \
+      --arg u "${BASE}/auth/realms/astra/broker/${alias}/endpoint*" '.redirectUris = ((.redirectUris // []) + [$u] | unique)' <<<"$sp")" >/dev/null
+  fi
+  echo "SAML broker ${alias}: IdP ${issuer}, broker endpoint ${BASE}/auth/realms/astra/broker/${alias}/endpoint"
+done < <(jq -r '.identityProviders[]? | select(.providerId == "saml") | .alias' "$REALM_FILE")
