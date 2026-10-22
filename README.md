@@ -6,6 +6,10 @@
 
 <p><b>English</b> · <a href="README.vi.md">Tiếng Việt</a></p>
 
+<a href="docs/architecture/astra-architecture.en.html" title="Astra CMS architecture">
+  <img src="docs/architecture/astra-architecture.en.png" width="820" alt="Astra CMS architecture: Desk, mobile and AI-agent clients call one Quarkus server (REST API, MCP server, identity and SCIM over a kernel, business apps, the DocType engine, a Wasm plugin host and Seata transactions), backed by PostgreSQL, a Rust CDC worker, Keycloak, Seata server and Redis">
+</a>
+
 <a href="https://media.zerohostcms.com/astra-cms/astra-intro.en.mp4" title="Watch: Astra in 5 minutes">
   <img src="docs/astra-intro-poster-en.jpg" width="820" alt="Watch: Astra in 5 minutes (English subtitles)">
 </a>

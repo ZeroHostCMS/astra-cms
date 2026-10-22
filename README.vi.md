@@ -6,6 +6,10 @@
 
 <p><a href="README.md">English</a> · <b>Tiếng Việt</b></p>
 
+<a href="docs/architecture/astra-architecture.vi.html" title="Kiến trúc Astra CMS">
+  <img src="docs/architecture/astra-architecture.vi.png" width="820" alt="Kiến trúc Astra CMS: Desk, app di động và AI agent gọi vào một server Quarkus (REST API, MCP server, định danh và SCIM trên kernel, các app nghiệp vụ, DocType engine, plugin host Wasm và giao dịch Seata), dữ liệu nằm ở PostgreSQL, cùng worker CDC Rust, Keycloak, Seata server và Redis">
+</a>
+
 <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4" title="Xem video: Astra trong 5 phút">
   <img src="docs/astra-intro-poster.jpg" width="820" alt="Xem video: Astra trong 5 phút (phụ đề tiếng Việt)">
 </a>
