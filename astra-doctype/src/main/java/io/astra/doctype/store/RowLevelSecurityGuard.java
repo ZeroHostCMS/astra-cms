@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.sql.DataSource;
+
 /**
  * Fail-closed startup check for tenant isolation. PostgreSQL superusers and roles with BYPASSRLS
  * ignore row-level security policies, so a kernel connected as one would serve every tenant's data
@@ -29,6 +31,15 @@ public class RowLevelSecurityGuard {
     boolean allowBypass;
 
     void onStart(@Observes StartupEvent ev) {
+        check(dataSource);
+    }
+
+    /**
+     * Refuses a role that would bypass row-level security. Called by {@link RowLevelSecurityFlywayCustomizer}
+     * before Flyway migrates at start, so an unsafe role cannot even run the schema migrations, and again at
+     * startup for deployments that migrate separately.
+     */
+    void check(DataSource dataSource) {
         try (Connection conn = dataSource.getConnection();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(

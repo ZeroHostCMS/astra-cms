@@ -46,7 +46,27 @@
       </dependency>
       <dependency>
         <groupId>io.astra</groupId>
+        <artifactId>astra-plugin-host</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-ai</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-tx-seata</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
         <artifactId>astra-iam</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-app-express</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

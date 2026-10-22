@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Astra Desk</title>
+  <link rel="stylesheet" href="desk.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#/"><span class="brand-mark">A</span> Astra Desk</a>
+    <span class="hint">Every screen below is generated from DocType metadata</span>
+    <div class="topbar-controls">
+      <label>Tenant <select id="tenant"></select></label>
+      <span id="who" class="who"></span>
+      <a class="btn ghost" id="compare-link" href="compare.html">Compare tenants</a>
+      <button class="btn ghost" id="toggle-inspector" type="button">API inspector</button>
+    </div>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar"></nav>
+    <main class="main" id="main"><p class="muted">Loading…</p></main>
+    <aside class="inspector" id="inspector" hidden>
+      <div class="inspector-head"><strong>API inspector</strong><button class="btn ghost small" id="clear-log" type="button">Clear</button></div>
+      <p class="muted small">The Desk has no private backend: these are the exact calls it makes to the generated REST API.</p>
+      <ol class="log" id="log"></ol>
+    </aside>
+  </div>
+  <script src="desk.js"></script>
+</body>
+</html>

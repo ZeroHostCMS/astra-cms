@@ -16,8 +16,12 @@
     <module>astra-spi</module>
     <module>astra-kernel</module>
     <module>astra-doctype</module>
+    <module>astra-plugin-host</module>
+    <module>astra-ai</module>
+    <module>astra-tx-seata</module>
     <module>astra-iam</module>
     <module>astra-apps/cms</module>
+    <module>astra-apps/express</module>
     <module>astra-server</module>
   </modules>
 
@@ -27,6 +31,10 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.version>3.39.5</quarkus.platform.version>
     <compiler-plugin.version>3.14.0</compiler-plugin.version>
+    <chicory.version>1.7.5</chicory.version>
+    <seata.version>2.6.0</seata.version>
+    <druid.version>1.2.28</druid.version>
+    <fastjson.version>2.0.66</fastjson.version>
     <surefire-plugin.version>3.5.3</surefire-plugin.version>
   </properties>
 
@@ -57,12 +65,89 @@
       </dependency>
       <dependency>
         <groupId>io.astra</groupId>
+        <artifactId>astra-plugin-host</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-ai</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.seata</groupId>
+        <artifactId>seata-tm</artifactId>
+        <version>${seata.version}</version>
+        <exclusions>
+          <exclusion><groupId>io.netty</groupId><artifactId>netty-all</artifactId></exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.seata</groupId>
+        <artifactId>seata-rm-datasource</artifactId>
+        <version>${seata.version}</version>
+        <exclusions>
+          <exclusion><groupId>io.netty</groupId><artifactId>netty-all</artifactId></exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.seata</groupId>
+        <artifactId>seata-tcc</artifactId>
+        <version>${seata.version}</version>
+        <exclusions>
+          <exclusion><groupId>io.netty</groupId><artifactId>netty-all</artifactId></exclusion>
+          <!-- Quarkus routes commons-logging through JBoss Logging; spring-jcl would clash with it. -->
+          <exclusion><groupId>org.springframework</groupId><artifactId>spring-jcl</artifactId></exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.seata</groupId>
+        <artifactId>seata-sqlparser-druid</artifactId>
+        <version>${seata.version}</version>
+        <exclusions>
+          <exclusion><groupId>io.netty</groupId><artifactId>netty-all</artifactId></exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.seata</groupId>
+        <artifactId>seata-serializer-seata</artifactId>
+        <version>${seata.version}</version>
+        <exclusions>
+          <exclusion><groupId>io.netty</groupId><artifactId>netty-all</artifactId></exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+        <version>${druid.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>${fastjson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-tx-seata</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.dylibso.chicory</groupId>
+        <artifactId>runtime</artifactId>
+        <version>${chicory.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
         <artifactId>astra-app-cms</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>io.astra</groupId>
         <artifactId>astra-iam</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-app-express</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

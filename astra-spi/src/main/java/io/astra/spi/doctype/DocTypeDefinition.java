@@ -5,7 +5,9 @@ import java.util.Optional;
 
 /**
  * Metadata that fully describes a kind of business record. Everything else (storage, REST, hooks,
- * permissions) derives from this. Loaded from YAML contributed by apps; immutable once registered.
+ * permissions) derives from this. With {@code segregationOfDuties}, the user who created a document
+ * may not submit it (SOX-style maker/checker). With {@code globalTransaction} ({@code transaction: global}),
+ * submit and cancel run inside a distributed transaction that hooks can add AT and TCC branches to. Loaded from YAML contributed by apps; immutable once registered.
  */
 public record DocTypeDefinition(
         String name,
@@ -14,7 +16,9 @@ public record DocTypeDefinition(
         boolean submittable,
         Naming naming,
         List<FieldDefinition> fields,
-        List<PermissionRule> permissions) {
+        List<PermissionRule> permissions,
+        boolean segregationOfDuties,
+        boolean globalTransaction) {
 
     public DocTypeDefinition {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("doctype name is required");

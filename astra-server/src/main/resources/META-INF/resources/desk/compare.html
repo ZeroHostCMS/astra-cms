@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Astra Desk · Compare tenants</title>
+  <link rel="stylesheet" href="desk.css">
+</head>
+<body class="compare">
+  <header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-mark">A</span> Astra Desk</a>
+    <span class="hint">Same server, same DocTypes, same URL — two tenants, isolated by PostgreSQL row-level security</span>
+    <div class="topbar-controls">
+      <label>Left <input id="left" value="saigon-express" spellcheck="false"></label>
+      <label>Right <input id="right" value="hanoi-express" spellcheck="false"></label>
+      <label>Screen <input id="route" value="#/list/CustomerOrder" spellcheck="false"></label>
+      <button class="btn" id="apply" type="button">Show</button>
+    </div>
+  </header>
+  <div class="split">
+    <iframe id="frame-left" title="left tenant"></iframe>
+    <iframe id="frame-right" title="right tenant"></iframe>
+  </div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    for (const id of ['left', 'right', 'route']) if (params.get(id)) document.getElementById(id).value = params.get(id);
+    function show() {
+      const route = document.getElementById('route').value || '#/';
+      for (const side of ['left', 'right']) {
+        const tenant = encodeURIComponent(document.getElementById(side).value.trim());
+        document.getElementById('frame-' + side).src = 'index.html?embed=1&tenant=' + tenant + route;
+      }
+    }
+    document.getElementById('apply').addEventListener('click', show);
+    show();
+  </script>
+</body>
+</html>

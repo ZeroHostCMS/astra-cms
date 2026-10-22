@@ -1,0 +1,20 @@
+[package]
+name = "astra-cdc"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "Astra CDC worker: decodes pgoutput from a logical replication slot and keeps replica tables and the sync watermark current"
+
+[dependencies]
+anyhow = "1.0.104"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.154"
+serde_yaml_ng = "0.10.0"
+tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread", "time", "signal"] }
+tokio-postgres = "0.7.18"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+[profile.release]
+lto = true
+strip = true

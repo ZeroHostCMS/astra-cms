@@ -18,8 +18,10 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -41,12 +43,18 @@ public class DocResource {
     @Inject TenantRequest tenant;
     @Inject DocPermissions permissions;
 
+    /** Lists documents; every query parameter other than {@code limit}/{@code offset} is an equality filter on a field or {@code docstatus}. */
     @GET
     public List<Map<String, Object>> list(@PathParam("doctype") String doctype,
                                           @QueryParam("limit") @DefaultValue("20") int limit,
-                                          @QueryParam("offset") @DefaultValue("0") int offset) {
+                                          @QueryParam("offset") @DefaultValue("0") int offset,
+                                          @Context UriInfo uri) {
         permissions.require(doctype, tenant.roles(), Action.READ);
-        return scoped(() -> store.list(doctype, Math.min(limit, 200), offset).stream().map(DocResource::toJson).toList());
+        Map<String, String> filters = new LinkedHashMap<>();
+        uri.getQueryParameters().forEach((k, v) -> {
+            if (!k.equals("limit") && !k.equals("offset") && !v.isEmpty()) filters.put(k, v.getFirst());
+        });
+        return scoped(() -> store.list(doctype, filters, Math.min(limit, 200), offset).stream().map(DocResource::toJson).toList());
     }
 
     @GET
@@ -76,6 +84,35 @@ public class DocResource {
         });
     }
 
+    @POST
+    @Path("/{name}/submit")
+    public Map<String, Object> submit(@PathParam("doctype") String doctype, @PathParam("name") String name) {
+        store.requireSubmittable(doctype);
+        return scoped(() -> {
+            Document existing = store.get(doctype, name).orElseThrow(() -> new NotFoundException(doctype + "/" + name));
+            permissions.requireSubmit(doctype, tenant.roles(), tenant.userId(), existing);
+            return store.submit(doctype, name).map(DocResource::toJson)
+                    .orElseThrow(() -> new NotFoundException(doctype + "/" + name));
+        });
+    }
+
+    @POST
+    @Path("/{name}/cancel")
+    public Map<String, Object> cancel(@PathParam("doctype") String doctype, @PathParam("name") String name) {
+        permissions.require(doctype, tenant.roles(), Action.CANCEL);
+        return scoped(() -> store.cancel(doctype, name).map(DocResource::toJson)
+                .orElseThrow(() -> new NotFoundException(doctype + "/" + name)));
+    }
+
+    @POST
+    @Path("/{name}/amend")
+    public Response amend(@PathParam("doctype") String doctype, @PathParam("name") String name) {
+        permissions.require(doctype, tenant.roles(), Action.CREATE);
+        Document draft = scoped(() -> store.amend(doctype, name, tenant.userId())
+                .orElseThrow(() -> new NotFoundException(doctype + "/" + name)));
+        return Response.created(URI.create("/api/doc/" + doctype + "/" + draft.name())).entity(toJson(draft)).build();
+    }
+
     /** Binds the request's tenant into the ScopedValue scope for the duration of the kernel call. */
     private <T> T scoped(ScopedValue.CallableOp<T, RuntimeException> work) {
         return TenantContext.call(tenant.tenantId(), work);
@@ -90,6 +127,7 @@ public class DocResource {
         m.put("createdAt", d.createdAt());
         m.put("modifiedAt", d.modifiedAt());
         m.put("version", d.version());
+        m.put("amendedFrom", d.amendedFrom());
         m.put("data", d.data());
         return m;
     }

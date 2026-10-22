@@ -39,6 +39,9 @@ public class IdentityResource {
     @ConfigProperty(name = "astra.iam.mobile.redirect-uri", defaultValue = "io.astra.mobile:/oauthredirect")
     String mobileRedirectUri;
 
+    @ConfigProperty(name = "astra.iam.desk.client-id", defaultValue = "astra-desk")
+    String deskClientId;
+
     @ConfigProperty(name = "astra.iam.locales", defaultValue = "vi,en")
     List<String> locales;
 
@@ -55,6 +58,7 @@ public class IdentityResource {
         m.put("scopes", List.of("openid", "profile", "email", "offline_access"));
         m.put("tenantHeader", TenantResolverFilter.TENANT_HEADER);
         m.put("locales", locales);
+        m.put("deskClientId", deskClientId);
         return m;
     }
 

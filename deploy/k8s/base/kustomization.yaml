@@ -7,3 +7,5 @@ resources:
   - redis.yaml
   - keycloak.yaml
   - astra-server.yaml
+  - cdc.yaml
+  - seata.yaml

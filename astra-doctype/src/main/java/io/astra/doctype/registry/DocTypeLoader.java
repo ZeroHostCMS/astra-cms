@@ -30,23 +30,43 @@ final class DocTypeLoader {
         }
     }
 
+    /** One field declaration, as written in a DocType or an overlay. */
+    static FieldDefinition field(JsonNode f, String where) {
+        String fieldName = f.path("name").asText("");
+        if (!fieldName.matches("[a-z][a-z0-9_]{0,50}")) {
+            throw new IllegalStateException(where + ": field name '" + fieldName + "' must be snake_case");
+        }
+        return new FieldDefinition(
+                fieldName,
+                FieldType.valueOf(f.path("type").asText("Data").toUpperCase(Locale.ROOT)),
+                f.path("label").asText(null),
+                f.path("required").asBoolean(false),
+                f.path("read-only").asBoolean(false),
+                f.path("in-list").asBoolean(false),
+                f.path("projected").asBoolean(false),
+                options(f),
+                f.hasNonNull("default") ? YAML.convertValue(f.get("default"), Object.class) : null,
+                f.path("pii").asBoolean(false));
+    }
+
+    static List<String> options(JsonNode f) {
+        List<String> options = new ArrayList<>();
+        if (f.path("options").isArray()) f.path("options").forEach(o -> options.add(o.asText()));
+        else if (f.hasNonNull("options")) options.add(f.get("options").asText());
+        return options;
+    }
+
+    static Object value(JsonNode node) {
+        return YAML.convertValue(node, Object.class);
+    }
+
+    static JsonNode yaml(String text) throws IOException {
+        return YAML.readTree(text);
+    }
+
     private static DocTypeDefinition fromNode(JsonNode root, String resource) {
         List<FieldDefinition> fields = new ArrayList<>();
-        for (JsonNode f : root.path("fields")) {
-            List<String> options = new ArrayList<>();
-            if (f.path("options").isArray()) f.path("options").forEach(o -> options.add(o.asText()));
-            else if (f.hasNonNull("options")) options.add(f.get("options").asText());
-            fields.add(new FieldDefinition(
-                    f.path("name").asText(null),
-                    FieldType.valueOf(f.path("type").asText("Data").toUpperCase(Locale.ROOT)),
-                    f.path("label").asText(null),
-                    f.path("required").asBoolean(false),
-                    f.path("read-only").asBoolean(false),
-                    f.path("in-list").asBoolean(false),
-                    f.path("projected").asBoolean(false),
-                    options,
-                    f.hasNonNull("default") ? YAML.convertValue(f.get("default"), Object.class) : null));
-        }
+        for (JsonNode f : root.path("fields")) fields.add(field(f, "DocType " + resource));
         List<PermissionRule> permissions = new ArrayList<>();
         for (JsonNode p : root.path("permissions")) {
             permissions.add(new PermissionRule(
@@ -54,7 +74,9 @@ final class DocTypeLoader {
                     p.path("read").asBoolean(false),
                     p.path("create").asBoolean(false),
                     p.path("write").asBoolean(false),
-                    p.path("if-owner").asBoolean(false)));
+                    p.path("if-owner").asBoolean(false),
+                    p.path("submit").asBoolean(false),
+                    p.path("cancel").asBoolean(false)));
         }
         JsonNode naming = root.path("naming");
         return new DocTypeDefinition(
@@ -65,6 +87,8 @@ final class DocTypeLoader {
                 naming.isMissingNode() ? DocTypeDefinition.Naming.AUTO
                         : new DocTypeDefinition.Naming(naming.path("field").asText(null), naming.path("series").asText(null)),
                 fields,
-                permissions);
+                permissions,
+                root.path("segregation-of-duties").asBoolean(false),
+                "global".equals(root.path("transaction").asText("local")));
     }
 }

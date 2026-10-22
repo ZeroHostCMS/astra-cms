@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.astra</groupId>
+    <artifactId>astra-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>astra-tx-seata</artifactId>
+  <name>Astra Transactions: Seata</name>
+  <description>Global transactions on Apache Seata: AT branches on module schemas, TCC branches on Redis</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.astra</groupId>
+      <artifactId>astra-doctype</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-redis-client</artifactId>
+    </dependency>
+    <!-- Seata's modules, not seata-all: no Spring container, and Netty comes from Quarkus, not netty-all. -->
+    <dependency>
+      <groupId>org.apache.seata</groupId>
+      <artifactId>seata-tm</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.seata</groupId>
+      <artifactId>seata-rm-datasource</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.seata</groupId>
+      <artifactId>seata-tcc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.seata</groupId>
+      <artifactId>seata-sqlparser-druid</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.seata</groupId>
+      <artifactId>seata-serializer-seata</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+    </dependency>
+    <!-- Seata's TCC keeps the action context as fastjson; this is the maintained fastjson2-based compat artifact. -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-handler</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-codec</artifactId>
+    </dependency>
+    <!-- Seata probes Epoll.isAvailable(); the classes alone make it fall back to NIO when no native library is present. -->
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-transport-classes-epoll</artifactId>
+    </dependency>
+  </dependencies>
+</project>

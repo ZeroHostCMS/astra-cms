@@ -1,0 +1,21 @@
+name: PricingRule
+module: oms
+kind: setup
+naming: { series: "PRL-.###" }
+
+# A tenant's own shipping-fee formula, uploaded as a WebAssembly module and run in the Tier 2 sandbox.
+# ABI: fee(weight_g: i64, zone: i64, express: i64, cod: i64) -> i64 (VND). See astra-apps/express/wasm.
+fields:
+  - { name: rule_name,     type: Data,   required: true, in-list: true }
+  - { name: segment,       type: Select, options: [All, Retail, B2B], default: All, in-list: true, projected: true }
+  - { name: active,        type: Check,  default: false, in-list: true, projected: true }
+  - { name: timeout_ms,    type: Int,    default: 50, label: Deadline (ms) }
+  - { name: module_wasm,   type: Attach, required: true, label: WebAssembly module }
+  - { name: module_sha256, type: Data,   read-only: true, label: Module SHA-256 }
+  - { name: module_bytes,  type: Int,    read-only: true, in-list: true, label: Module size (bytes) }
+  - { name: self_test,     type: Data,   read-only: true, in-list: true }   # set by PricingRuleHook on every save
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true }
+  - { role: accountant, read: true, create: true, write: true }
+  - { role: sales,      read: true }

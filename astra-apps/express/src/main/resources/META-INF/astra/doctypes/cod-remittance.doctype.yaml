@@ -1,0 +1,17 @@
+name: CODRemittance
+module: bms
+kind: transaction
+submittable: true
+segregation-of-duties: true        # maker/checker: whoever prepares a payout cannot approve it
+naming: { series: "CODR-.YYMM.-.####" }
+
+fields:
+  - { name: customer,       type: Link,     options: Customer, required: true, in-list: true, projected: true }
+  - { name: amount,         type: Currency, required: true, in-list: true }
+  - { name: outstanding,    type: Currency, read-only: true, in-list: true }   # COD owed to the shop, from the ledger
+  - { name: bank_reference, type: Data }
+  - { name: note,           type: Text }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: accountant, read: true, create: true, write: true, submit: true, cancel: true }

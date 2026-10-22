@@ -1,0 +1,17 @@
+# Tenant pricing scripts for the Express demo, compiled to WebAssembly and run by Astra's Tier 2 sandbox.
+# ABI: export `fee(weight_g: i64, zone: i64, express: i64, cod: i64) -> i64` returning VND;
+# zone is 0 = Same city, 1 = Domestic, 2 = Remote, 3 = Island. Build with scripts/build-wasm.sh.
+[workspace]
+members = ["tet-promo", "runaway"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+publish = false
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"
+strip = true

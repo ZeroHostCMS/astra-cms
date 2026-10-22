@@ -1,0 +1,22 @@
+name: SupportTicket
+module: care
+kind: transaction
+naming: { series: "TCK-.#####" }
+
+fields:
+  - { name: subject,        type: Data,     required: true, in-list: true }
+  - { name: waybill,        type: Link,     options: Waybill, in-list: true }
+  - { name: customer,       type: Link,     options: Customer }
+  - { name: channel,        type: Select,   options: [Hotline, Zalo, Email, Web], default: Hotline }
+  - { name: description,    type: Text }
+  - { name: priority,       type: Select,   options: [Low, Normal, High, Urgent], default: Normal, in-list: true, projected: true }
+  - { name: status,         type: Select,   options: [Open, In Progress, Resolved], default: Open, in-list: true, projected: true }
+  - { name: waybill_status, type: Data,     read-only: true, in-list: true }   # snapshot of the waybill when the ticket is saved
+  - { name: sla_due,        type: Datetime, read-only: true, in-list: true }
+  - { name: triage_note,    type: Data,     read-only: true }
+
+permissions:
+  - { role: admin, read: true, create: true, write: true }
+  - { role: care,  read: true, create: true, write: true }
+  - { role: sales, read: true, create: true }
+  - { role: ops,   read: true }

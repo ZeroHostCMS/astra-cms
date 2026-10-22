@@ -41,4 +41,16 @@ public class HookRegistry {
             hook.afterSave(doc);
         }
     }
+
+    public void onSubmit(Document doc) {
+        for (DocLifecycleHook hook : chains.getOrDefault(doc.doctype(), List.of())) {
+            hook.onSubmit(doc);
+        }
+    }
+
+    public void onCancel(Document doc) {
+        for (DocLifecycleHook hook : chains.getOrDefault(doc.doctype(), List.of())) {
+            hook.onCancel(doc);
+        }
+    }
 }

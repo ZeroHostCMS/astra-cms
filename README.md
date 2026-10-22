@@ -755,11 +755,17 @@ Requirements: JDK 25, Docker Desktop, `kubectl`, and `k3d` (k3s in Docker). The 
 # Option A: local dev with live reload (PostgreSQL + Redis + Keycloak on :8180 via Docker Compose)
 make infra-up && make dev
 
-# Option B: local Kubernetes (k3d cluster, 2 kernel pods, PostgreSQL, Redis, Keycloak, Traefik ingress)
+# Option B: local Kubernetes (k3d: 2 kernel pods, PostgreSQL, Redis, Keycloak, Seata, Rust CDC worker, Traefik ingress)
 make k3d-up          # API on http://localhost:8080/api, login page under /auth (ASTRA_PUBLIC_URL to change)
 make demo            # two tenants, hooks, naming series, row-level security, validation
 make demo-iam        # sign-in, tenant roles, permissions, member provisioning, self-join
 make k3d-down
+
+# Astra Express: the courier demo from docs/use-case-01.md (full feature set on Option B; scripts need Bash 5)
+make demo-seed       # two tenants of orders, waybills, tickets, ledger and overlays, through the REST API
+open http://localhost:8080/desk/                  # metadata-driven Desk UI (+ /desk/compare.html)
+make demo-express    # 15 scenes, one per video; SCENES="4 5" PAUSE=0 to pick and skip pauses
+scripts/mcp-claude.sh tuan saigon-express          # register Astra's MCP server with Claude Code
 ```
 
 What the demo exercises, all from real code in this repository:
@@ -774,8 +780,18 @@ What the demo exercises, all from real code in this repository:
 | Virtual threads per request (`@RunOnVirtualThread`), Quarkus 3.39 on JDK 25 | `DocResource`, `astra-server` |
 | Sign-in through Keycloak 26 with the Astra login theme (vi/en); bearer tokens verified by the server; tenant roles from Keycloak groups `/tenants/<tenant>/<role>`; tenant admins provision members and public users self-join | `astra-iam`, `deploy/keycloak`, [docs/iam-mobile-integration.md](docs/iam-mobile-integration.md) |
 | DocType permission rules per tenant role (`read`, `create`, `write`, `if-owner`), enforced by the generated API | `DocPermissions`, `article.doctype.yaml` |
+| Submittable lifecycle (draft → submitted → cancelled → amend) with hooks that write other documents in the same transaction | `DocumentStore.submit/cancel/amend`, `DocumentService`, `astra-apps/express` |
+| `projected: true` fields become online expression indexes (`CREATE INDEX CONCURRENTLY`) used by list filters | `ProjectionIndexer`, `GET /api/doctype/{name}/projections` |
+| Link fields validated inside the tenant; read-only fields owned by hooks; dated series (`ORD-.YYYYMMDD.-.#####`) | `DocumentStore`, `DocumentValidator`, `SeriesService` |
+| Desk UI generated from DocType metadata, with an API inspector and a two-tenant compare view | `astra-server` `META-INF/resources/desk` |
+| Append-only ledger (trigger-enforced), monthly partitions, balanced double entry, reversals; maker/checker (segregation of duties) on submit | `V3__ledger.sql`, `LedgerStore`, `GeneralLedger` SPI, `DocPermissions` |
+| Per-tenant DocType overlays applied at runtime, without a restart | `Overlays`, `DocTypeOverlays`, `tenants/*/overlays` |
+| Tier 2 sandbox: tenant WebAssembly (Rust-built) on Chicory with memory cap and deadline | `astra-plugin-host`, `astra-apps/express/wasm` |
+| MCP server (Streamable HTTP) with the caller's token, tenant and permissions; `pii` fields masked; app-contributed tools | `astra-ai`, `McpTool` SPI |
+| Rust CDC worker decoding `pgoutput` into replica tables; Sync-Aware LSN (`X-Tx-LSN`, `X-Required-LSN` → `202 Sync Pending`) | `astra-cdc-rust`, `SyncAwareLsnFilter`, `ReplicaResource` |
+| Apache Seata 2.6 global transactions: AT branch on a module schema, TCC branch on Redis, kernel commits last | `astra-tx-seata`, `OrderCreditHook`, `PickupCapacity` |
 
-Not in the thin slice yet: overlays, row-level permission conditions, submittable lifecycle, projections, Tier 1/2 loaders, rollout control plane, Seata, MCP, Desk. The roadmap below sequences them.
+Not in the thin slice yet: row-level permission conditions, materialised projections, Tier 1 loader, rollout control plane, audit hash-chain, field encryption, Apache Doris, AI agents beyond MCP tools, and a full Desk (dashboards, reports). The roadmap below sequences them. The video series that walks through the demo is in [docs/demo-video-series.md](docs/demo-video-series.md).
 
 ## Getting Started (Target Workflow)
 

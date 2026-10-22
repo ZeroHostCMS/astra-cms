@@ -17,4 +17,14 @@ public interface DocLifecycleHook {
 
     /** Runs after the document has been persisted in the same transaction. */
     default void afterSave(Document doc) { }
+
+    /**
+     * Runs when a draft of a submittable DocType is submitted, inside the transaction that writes
+     * {@code docstatus = 1}. The hook may mutate the document and write other documents through
+     * {@link io.astra.spi.doc.DocumentService}; throwing rolls all of it back.
+     */
+    default void onSubmit(Document doc) { }
+
+    /** Runs when a submitted document is cancelled, inside the transaction that writes {@code docstatus = 2}. */
+    default void onCancel(Document doc) { }
 }

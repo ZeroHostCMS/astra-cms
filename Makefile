@@ -1,4 +1,4 @@
-.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam
+.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam demo-seed demo-express demo-reset
 
 export PATH := $(HOME)/.local/bin:$(PATH)
 
@@ -15,8 +15,9 @@ build:            ## compile and package all modules
 test:             ## run tests (Dev Services starts PostgreSQL in Docker)
 	./mvnw -q test
 
-infra-up:         ## PostgreSQL + Redis via docker compose for local dev
+infra-up:         ## PostgreSQL, Redis and Keycloak (:8180) via docker compose for local dev
 	docker compose -f deploy/docker/docker-compose.yml up -d --wait
+	scripts/keycloak-compose-dev.sh
 
 infra-down:
 	docker compose -f deploy/docker/docker-compose.yml down
@@ -38,3 +39,12 @@ demo:             ## smoke test against http://localhost:8080 (or BASE=...)
 
 demo-iam:         ## end-to-end IAM checks with real Keycloak tokens (or BASE=...)
 	scripts/demo-iam.sh $(BASE)
+
+demo-seed:        ## seed the Astra Express demo tenants (BASE=http://localhost:8080)
+	scripts/demo-seed.sh $(BASE)
+
+demo-express:     ## scene-by-scene terminal demo; SCENES="3 4" picks scenes, PAUSE=0 runs straight through
+	scripts/demo-express.sh $(or $(BASE),http://localhost:8080) $(SCENES)
+
+demo-reset:       ## delete the demo tenants from the Docker Compose database
+	scripts/demo-reset.sh

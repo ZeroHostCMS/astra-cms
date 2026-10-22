@@ -7,6 +7,7 @@ name: astra
 services:
   postgres:
     image: pgvector/pgvector:pg16
+    command: ["postgres", "-c", "wal_level=logical", "-c", "max_replication_slots=10", "-c", "max_wal_senders=10"]
     environment:
       POSTGRES_DB: astra
       POSTGRES_USER: astra
@@ -21,6 +22,30 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+
+  # Rust CDC worker: WAL of astra_doc -> replica tables + sync watermark. Needs the kernel's schema and
+  # scripts/cdc-setup.sh compose; it retries until both are there. Start with: docker compose up -d cdc
+  cdc:
+    build: ../../astra-cdc-rust
+    image: astra/cdc:dev
+    environment:
+      DATABASE_URL: postgres://astra_cdc:astra_cdc@postgres:5432/astra
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    profiles: ["cdc"]
+
+  # Apache Seata transaction coordinator. Start with: docker compose --profile seata up -d seata
+  # and run the kernel with ASTRA_SEATA_ENABLED=true.
+  seata:
+    image: apache/seata-server:2.6.0.jdk25
+    environment:
+      SEATA_IP: 127.0.0.1
+    ports:
+      - "8091:8091"
+      - "7091:7091"
+    profiles: ["seata"]
 
   redis:
     image: redis:7-alpine
