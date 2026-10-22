@@ -32,6 +32,8 @@ public class CopilotTool implements McpTool {
 
     @Override public List<String> reads() { return Replanner.REPLAN_READS; }
 
+    @Override public boolean writes() { return true; }
+
     @Override public Object call(Map<String, Object> arguments) {
         return copilot.run(Values.text(arguments, "plan"), Values.text(arguments, "instruction"));
     }

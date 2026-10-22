@@ -5,7 +5,7 @@
 const params = new URLSearchParams(location.search);
 const embed = params.get('embed') === '1';
 const MODULE_ORDER = ['oms', 'ops', 'care', 'bms', 'cms'];
-const MODULE_LABEL = { oms: 'Orders · OMS', ops: 'Operations · OPS', care: 'Customer care · CARE', bms: 'Billing · BMS', cms: 'Content · CMS' };
+const MODULE_LABEL = { oms: 'Orders · OMS', ops: 'Operations · OPS', care: 'Customer care · CARE', bms: 'Billing · BMS', cms: 'Content · CMS', stms: 'Vận tải · STMS' };
 const DOCSTATUS = ['Draft', 'Submitted', 'Cancelled'];
 
 const state = {
@@ -298,6 +298,7 @@ function renderSidebar() {
       h('h4', null, MODULE_LABEL[m] || m),
       ...state.doctypes.filter((d) => d.module === m)
         .map((d) => h('a', { href: '#/list/' + enc(d.name), 'data-route': d.name }, label(d.name))),
+      m === 'stms' && can('DispatchPlan').read ? h('a', { href: '#/dispatch', 'data-route': 'dispatch' }, 'Điều phối (Copilot)') : null,
     ]),
     h('h4', null, 'Platform'),
     can('Account').read ? h('a', { href: '#/ledger', 'data-route': 'ledger' }, 'General ledger') : null,
@@ -326,6 +327,7 @@ function route() {
   if (view === 'apps') return appsView();
   if (view === 'ledger') return ledgerView(q);
   if (view === 'sync') return syncView();
+  if (view === 'dispatch' && state.byName.DispatchPlan) return dispatchView(q);
   return overview();
 }
 

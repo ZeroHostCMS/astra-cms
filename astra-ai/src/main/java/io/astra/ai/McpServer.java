@@ -17,7 +17,6 @@ import io.astra.spi.doc.Document;
 import io.astra.spi.doctype.DocTypeDefinition;
 import io.astra.spi.tenant.TenantContext;
 import io.smallrye.common.annotation.RunOnVirtualThread;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -47,7 +46,9 @@ public class McpServer {
 
     private static final Logger LOG = Logger.getLogger(McpServer.class);
     static final List<String> PROTOCOL_VERSIONS = List.of("2025-11-25", "2025-06-18", "2025-03-26");
-    /** Kernel tools that write; app tools only read the DocTypes they declare in {@link McpTool#reads()}. */
+    static final Set<String> KERNEL_TOOLS = Set.of("list_doctypes", "search_documents", "get_document", "create_document",
+            "ledger_trial_balance");
+    /** Kernel tools that write; app tools declare it themselves with {@link McpTool#writes()}. */
     static final Set<String> WRITE_TOOLS = Set.of("create_document");
 
     @Inject TenantRequest tenant;
@@ -57,7 +58,7 @@ public class McpServer {
     @Inject LedgerStore ledger;
     @Inject PiiMasking pii;
     @Inject SyncWatermark watermark;
-    @Inject Instance<McpTool> appTools;
+    @Inject AppToolInvoker appTools;
     @Inject ObjectMapper json;
 
     @ConfigProperty(name = "astra.ledger.account-doctype", defaultValue = "Account")
@@ -89,15 +90,32 @@ public class McpServer {
     }
 
     /**
-     * Every MCP call is a POST, so the response carries {@code X-Tx-LSN} only when the call committed a write
-     * (a successful {@code create_document}); reads would otherwise hand the agent a position it never wrote.
+     * Every MCP call is a POST, so the response carries {@code X-Tx-LSN} only after a successful call of a tool that
+     * writes ({@code create_document}, or an app tool whose {@link McpTool#writes()} is true); reads would otherwise
+     * hand the agent a position it never wrote.
      */
     private Response toolCall(Object id, Map<String, Object> params) {
-        Map<String, Object> result = TenantContext.call(tenant.tenantId(), () -> call(params));
-        Response.ResponseBuilder response = Response.ok(envelope(id, result));
-        if (WRITE_TOOLS.contains(String.valueOf(params.get("name"))) && Boolean.FALSE.equals(result.get("isError"))) {
-            response.header(SyncAwareLsnFilter.TX_LSN, watermark.currentLsn());
+        String name = String.valueOf(params.get("name"));
+        @SuppressWarnings("unchecked")
+        Map<String, Object> args = params.get("arguments") instanceof Map<?, ?> a ? (Map<String, Object>) a : Map.of();
+        Map<String, Object> result;
+        boolean wrote;
+        try {
+            if (KERNEL_TOOLS.contains(name)) {
+                LOG.infof("MCP tool %s by %s in tenant %s (arguments: %s)", name, tenant.userId(), tenant.tenantId(), args.keySet());
+                result = toolResult(TenantContext.call(tenant.tenantId(), () -> pii.mask(kernelTool(name, args))), false);
+                wrote = WRITE_TOOLS.contains(name);
+            } else {
+                AppToolInvoker.Outcome outcome = appTools.call("MCP", name, args);
+                result = toolResult(outcome.result(), false);
+                wrote = outcome.wrote();
+            }
+        } catch (AccessDeniedException | DocValidationException | DocTypeNotFoundException | IllegalArgumentException e) {
+            result = toolResult(Map.of("error", String.valueOf(e.getMessage())), true);
+            wrote = false;
         }
+        Response.ResponseBuilder response = Response.ok(envelope(id, result));
+        if (wrote) response.header(SyncAwareLsnFilter.TX_LSN, watermark.currentLsn());
         return response.build();
     }
 
@@ -129,7 +147,7 @@ public class McpServer {
                 Map.of("doctype", str("DocType name"), "data", Map.of("type", "object", "description", "field values")),
                 List.of("doctype", "data")));
         out.add(tool("ledger_trial_balance", "Debit, credit and balance per account in the general ledger.", Map.of(), List.of()));
-        for (McpTool t : appTools) {
+        for (McpTool t : appTools.all()) {
             Map<String, Object> m = new LinkedHashMap<>();
             m.put("name", t.name());
             m.put("description", t.description());
@@ -139,36 +157,18 @@ public class McpServer {
         return out;
     }
 
-    private Map<String, Object> call(Map<String, Object> params) {
-        String name = String.valueOf(params.get("name"));
-        @SuppressWarnings("unchecked")
-        Map<String, Object> args = params.get("arguments") instanceof Map<?, ?> a ? (Map<String, Object>) a : Map.of();
-        LOG.infof("MCP tool %s by %s in tenant %s (arguments: %s)", name, tenant.userId(), tenant.tenantId(), args.keySet());
-        try {
-            Object result = switch (name) {
-                case "list_doctypes" -> listDoctypes();
-                case "search_documents" -> search(args);
-                case "get_document" -> get(args);
-                case "create_document" -> create(args);
-                case "ledger_trial_balance" -> {
-                    permissions.require(accountDoctype, tenant.roles(), Action.READ);
-                    yield ledger.trialBalance();
-                }
-                default -> appTool(name, args);
-            };
-            return toolResult(pii.mask(result), false);
-        } catch (AccessDeniedException | DocValidationException | DocTypeNotFoundException | IllegalArgumentException e) {
-            return toolResult(Map.of("error", e.getMessage()), true);
-        }
-    }
-
-    private Object appTool(String name, Map<String, Object> args) {
-        for (McpTool t : appTools) {
-            if (!t.name().equals(name)) continue;
-            for (String doctype : t.reads()) permissions.require(doctype, tenant.roles(), Action.READ);
-            return t.call(args);
-        }
-        throw new IllegalArgumentException("unknown tool: " + name);
+    private Object kernelTool(String name, Map<String, Object> args) {
+        return switch (name) {
+            case "list_doctypes" -> listDoctypes();
+            case "search_documents" -> search(args);
+            case "get_document" -> get(args);
+            case "create_document" -> create(args);
+            case "ledger_trial_balance" -> {
+                permissions.require(accountDoctype, tenant.roles(), Action.READ);
+                yield ledger.trialBalance();
+            }
+            default -> throw new IllegalArgumentException("unknown tool: " + name);
+        };
     }
 
     private List<Map<String, Object>> listDoctypes() {
