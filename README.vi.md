@@ -58,7 +58,7 @@ Phần mềm không nên là một sản phẩm tĩnh chờ bản phát hành k�
 
 ## Video demo
 
-Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang chạy: màn hình Desk và output terminal thật, có giọng đọc tiếng Việt (giọng nam tổng hợp bằng VieNeu-TTS), không dựng cảnh. Các video về cơ chế nền tảng và nghiệp vụ (8 đến 17, 19 đến 21) có mục "Nói đúng" ghi rõ phần nào chưa làm. Video về lộ trình nằm ở mục [Lộ trình](#lộ-trình). Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md).
+Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang chạy: màn hình Desk và output terminal thật, có giọng đọc tiếng Việt (giọng nam tổng hợp bằng VieNeu-TTS), không dựng cảnh. Các video về cơ chế nền tảng và nghiệp vụ (8 đến 17, 19 đến 21) có mục "Nói đúng" ghi rõ phần nào chưa làm. Video về lộ trình nằm ở mục [Lộ trình](#lộ-trình). Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md). Bản tiếng Anh của các video: [README.md](README.md#demo-videos).
 
 <table>
 <tr><th colspan="2" align="left">Teaser: Một nền tảng, mọi nghiệp vụ <sub>(1:30)</sub></th></tr>

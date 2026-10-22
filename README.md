@@ -46,6 +46,120 @@ Software should no longer be a static product that waits for its next release. I
 
 ---
 
+## Demo videos
+
+A 90-second teaser and 20 videos recorded from the running demo: real Desk screens and terminal output, with an English voice-over (a synthetic male voice, Kokoro-82M), no staged scenes. The platform and business videos (8 to 17, 19 to 21) each have a "To be accurate" section that says what is not built yet. The roadmap video is in [Roadmap](#roadmap). Script: [docs/demo-video-series.en.md](docs/demo-video-series.en.md). Vietnamese versions: [README.vi.md](README.vi.md#video-demo).
+
+<table>
+<tr><th colspan="2" align="left">Teaser: One platform, every business process <sub>(1:30)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-en.mp4"><img src="docs/video-thumbs/video-00-en.jpg" width="320" alt="Watch the teaser: One platform, every business process"></a></td>
+<td>Cut from real scenes of the demo: a DocType becomes the Desk, Submit creates a waybill and a journal entry, per-tenant overlays, the Wasm sandbox, MCP masking PII, Rust CDC and a Seata rollback.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 1 · What is Astra &amp; running it locally <sub>(2:32)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-en.mp4"><img src="docs/video-thumbs/video-01-en.jpg" width="320" alt="Watch video 1 · What is Astra &amp; running it locally"></a></td>
+<td>Kernel + DocType engine + plugin host, then the whole k3d cluster with <code>make k3d-up</code>, data seeded through the REST API, and a Desk login.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 2 · DocType: from one YAML file to API, UI and indexes <sub>(2:38)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-en.mp4"><img src="docs/video-thumbs/video-02-en.jpg" width="320" alt="Watch video 2 · DocType: from one YAML file to API, UI and indexes"></a></td>
+<td>One YAML file generates the form, REST API, validation and an online expression index; every DocType shares one JSONB table, no ALTER TABLE.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 3 · Business rules: hooks &amp; validation <sub>(2:53)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-3-hooks-en.mp4"><img src="docs/video-thumbs/video-03-en.jpg" width="320" alt="Watch video 3 · Business rules: hooks &amp; validation"></a></td>
+<td>A 73,000 ₫ shipping fee computed by a hook, all validation errors returned at once, Links checked inside the tenant; the Desk and the API hit the same rules.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-3-hooks-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 4 · Document lifecycle: Submit, Cancel, Amend <sub>(3:10)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-4-lifecycle-en.mp4"><img src="docs/video-thumbs/video-04-en.jpg" width="320" alt="Watch video 4 · Document lifecycle: Submit, Cancel, Amend"></a></td>
+<td>Submit creates the waybill and the journal entry in one transaction; submitted documents are immutable; cancel posts a reversing entry; amend creates a new revision.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-4-lifecycle-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 5 · Operations: the parcel state machine <sub>(3:00)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-5-ops-en.mp4"><img src="docs/video-thumbs/video-05-en.jpg" width="320" alt="Watch video 5 · Operations: the parcel state machine"></a></td>
+<td>Filtering on a projected field, the scan timeline, no skipped states, an error then a success on the same form, and no cancelling a delivered order.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-5-ops-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 6 · Customer care sees operations <sub>(2:30)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-6-care-en.mp4"><img src="docs/video-thumbs/video-06-en.jpg" width="320" alt="Watch video 6 · Customer care sees operations"></a></td>
+<td>Tickets jump to High with a +24h SLA based on keywords; the CARE replica card reads a copy kept by the CDC worker.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-6-care-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 7 · Multi-tenancy <sub>(2:28)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-en.mp4"><img src="docs/video-thumbs/video-07-en.jpg" width="320" alt="Watch video 7 · Multi-tenancy"></a></td>
+<td>Two companies on one server: same URL, different data; Links never cross tenants, 403/400 when the tenant is unclear, RLS returns 0 rows.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 8 · Fail-closed security <sub>(2:02)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-en.mp4"><img src="docs/video-thumbs/video-08-en.jpg" width="320" alt="Watch video 8 · Fail-closed security"></a></td>
+<td>Connect as a superuser and the kernel refuses to start, before Flyway runs any migration; the application role is NOSUPERUSER NOBYPASSRLS.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 9 · For developers: writing an Astra app <sub>(2:22)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-9-developer-en.mp4"><img src="docs/video-thumbs/video-09-en.jpg" width="320" alt="Watch video 9 · For developers: writing an Astra app"></a></td>
+<td>An app is plain Java + YAML on astra-spi; dev-mode live reload adds a new column in 0.73 s; 44 integration tests against real PostgreSQL, Seata and Redis.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-9-developer-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 10 · Running on Kubernetes <sub>(2:06)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-en.mp4"><img src="docs/video-thumbs/video-10-en.jpg" width="320" alt="Watch video 10 · Running on Kubernetes"></a></td>
+<td>Two kernel pods write in parallel with no duplicate and no gap in the numbering; a rolling restart under load, and what is still missing (no drain yet).<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 11 · Keycloak: one identity, roles per tenant, permissions per DocType <sub>(2:18)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-en.mp4"><img src="docs/video-thumbs/video-11-en.jpg" width="320" alt="Watch video 11 · Keycloak: one identity, roles per tenant, permissions per DocType"></a></td>
+<td>PKCE login with the Astra theme, roles as Keycloak groups, permissions declared on the DocType; the maker of a payment voucher cannot approve it (403).<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 12 · Append-only ledger <sub>(2:32)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-en.mp4"><img src="docs/video-thumbs/video-12-en.jpg" width="320" alt="Watch video 12 · Append-only ledger"></a></td>
+<td>Double-entry postings ride the document's transaction, cancel reverses, a trigger blocks UPDATE even for the table owner, monthly partitions.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 13 · Tenant overlays <sub>(2:24)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-13-overlay-en.mp4"><img src="docs/video-thumbs/video-13-en.jpg" width="320" alt="Watch video 13 · Tenant overlays"></a></td>
+<td>Hanoi adds VAT fields and an island zone with one YAML file, live immediately; the Express app does not change a line.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-13-overlay-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 14 · Tier 2 Wasm: each tenant's own shipping formula <sub>(2:20)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-14-wasm-en.mp4"><img src="docs/video-thumbs/video-14-en.jpg" width="320" alt="Watch video 14 · Tier 2 Wasm: each tenant's own shipping formula"></a></td>
+<td>A Tết promotion written in Rust (421 bytes) switches the fee from 73,000 to 51,000; an infinite loop is stopped at 50 ms.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-14-wasm-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 15 · MCP: AI agents use Astra with the user's permissions <sub>(2:24)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-en.mp4"><img src="docs/video-thumbs/video-15-en.jpg" width="320" alt="Watch video 15 · MCP: AI agents use Astra with the user's permissions"></a></td>
+<td>Real Claude calls tools over MCP: PII is masked, the customer care agent cannot create orders, and the accountant's COD question is answered from the ledger.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 16 · Rust CDC + Sync-Aware LSN <sub>(2:36)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-16-cdc-en.mp4"><img src="docs/video-thumbs/video-16-en.jpg" width="320" alt="Watch video 16 · Rust CDC + Sync-Aware LSN"></a></td>
+<td>A Rust worker reads the WAL, writes return X-Tx-LSN, and a read from a replica that has not caught up gets 202 Sync Pending instead of stale data.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-16-cdc-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 17 · Seata: one submit, three resources <sub>(2:26)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-17-seata-en.mp4"><img src="docs/video-thumbs/video-17-en.jpg" width="320" alt="Watch video 17 · Seata: one submit, three resources"></a></td>
+<td>The AT branch charges the BMS credit limit, the TCC branch holds a slot in Redis, the kernel commits last; one branch refusing rolls everything back.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-17-seata-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 19 · HRM: attendance and payroll <sub>(2:40)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-19-hrm-en.mp4"><img src="docs/video-thumbs/video-19-en.jpg" width="320" alt="Watch video 19 · HRM: attendance and payroll"></a></td>
+<td>Following Frappe HRMS concepts: attendance sets working days, Payroll Entry computes salary slips in parallel, a courier bonus in Wasm, one accrual journal entry for the period, cancel reverses; the AI agent only sees masked names.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-19-hrm-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 20 · STMS: vehicle dispatch with Timefold + AI copilot <sub>(2:58)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-20-stms-en.mp4"><img src="docs/video-thumbs/video-20-en.jpg" width="320" alt="Watch video 20 · STMS: vehicle dispatch with Timefold + AI copilot"></a></td>
+<td>Timefold plans routes by capacity and time window and re-plans on a breakdown, an urgent order or a traffic jam; the copilot takes Vietnamese commands and calls real tools. The copilot's LLM is simulated from the demo script, labelled on every frame.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-20-stms-en.mp4">▶ Watch</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 21 · SAML SSO and SCIM <sub>(2:32)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-en.mp4"><img src="docs/video-thumbs/video-21-en.jpg" width="320" alt="Watch video 21 · SAML SSO and SCIM"></a></td>
+<td>Login through a signed SAML IdP, IdP groups become tenant roles; SCIM 2.0 creates, regroups, deactivates and deletes users per tenant, and another tenant's token is blocked.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-en.mp4">▶ Watch</a></td>
+</tr>
+</table>
+
+---
+
 ## Project Status
 
 > **Astra is in the architecture & specification phase, with a running thin slice.** The repository
@@ -62,7 +176,7 @@ Software should no longer be a static product that waits for its next release. I
 > It shares **no code, schema, or assets** with either. Concepts such as "DocType" are used as common vocabulary;
 > every implementation is original, in Java, under MIT. Nothing from ERPNext may be copied into this repository.
 
-Why each choice was made, written as a 40-minute talk: [docs/explain.en.md](docs/explain.en.md). Vietnamese readers: [README.vi.md](README.vi.md) is the full Vietnamese README with a Vietnamese-subtitled intro video, a teaser and 20 demo videos recorded from the running demo (including HRM payroll, STMS routing with a Timefold copilot, and SAML SSO + SCIM in Videos 19–21), and [docs/explain.md](docs/explain.md) is the Vietnamese original of the explainer.
+Why each choice was made, written as a 40-minute talk: [docs/explain.en.md](docs/explain.en.md). The demo videos are listed under [Demo videos](#demo-videos). Vietnamese readers: [README.vi.md](README.vi.md) is the full Vietnamese README with the same videos in Vietnamese, and [docs/explain.md](docs/explain.md) is the Vietnamese original of the explainer.
 
 ---
 
@@ -812,7 +926,7 @@ What the demo exercises, all from real code in this repository:
 | STMS: vehicle routing with Timefold Solver (capacity and time windows as hard constraints), re-solving on live events, MCP tools and a dispatch copilot (the language model is a scripted mock for the demo; the solver and tools are real) | `astra-apps/stms`, `RoutePlanner`, `Replanner`, `DispatchCopilot` |
 | SAML 2.0 SSO through Keycloak brokering (signed assertions, IdP groups become tenant roles) and per-tenant SCIM 2.0 Users/Groups at `/scim/v2`, with the tenant taken from the token | `deploy/keycloak/realm`, `astra-iam` `ScimResource`, `ScimDirectory` |
 
-Not in the thin slice yet: row-level permission conditions, materialised projections, Tier 1 loader, rollout control plane, audit hash-chain, field encryption, Apache Doris, AI agents beyond MCP tools, and a full Desk (dashboards, reports). The roadmap below sequences them. The video series that walks through the demo is in [docs/demo-video-series.md](docs/demo-video-series.md).
+Not in the thin slice yet: row-level permission conditions, materialised projections, Tier 1 loader, rollout control plane, audit hash-chain, field encryption, Apache Doris, AI agents beyond MCP tools, and a full Desk (dashboards, reports). The roadmap below sequences them. The video series that walks through the demo is in [docs/demo-video-series.en.md](docs/demo-video-series.en.md).
 
 ## Getting Started (Target Workflow)
 
@@ -856,6 +970,14 @@ astra:
 ---
 
 ## Roadmap
+
+<table>
+<tr><th colspan="2" align="left">Roadmap video: the rest of use-case-01 <sub>(1:36)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-en.mp4"><img src="docs/video-thumbs/video-18-en.jpg" width="320" alt="Watch the roadmap video: the rest of use-case-01"></a></td>
+<td>What videos 1 to 17 and 19 to 21 already run for real (including HRM, STMS, SAML and SCIM) and what is still in development: multi-schema, Tier 1, streaming CDC, autonomous agents, audit hash-chain, field encryption.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-en.mp4">▶ Watch</a></td>
+</tr>
+</table>
 
 Rebuilding a Frappe-class platform with a three-tier sandbox, distributed transactions, multi-tenancy, a compliance engine and an AI surface is years of work for a team, and a single repository cannot finish it in a year. The roadmap therefore has two readings. The **thin slice** is what gets built and demonstrated first, end to end. Everything after it is sequenced so each phase ships something usable on its own. The compliance table is a catalogue of **profiles enabled over time**, not a single Phase 5 deliverable.
 
