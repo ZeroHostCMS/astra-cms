@@ -28,7 +28,7 @@ Bản đề xuất triển khai trên nền tảng **Astra Platform** (Java 25 +
 |  +---------------------------------------------------------------------------------------------+  |
 |  +---------------------------------------------------------------------------------------------+  |
 |  | 3. THREE-TIER PLUGIN HOST ("ASTRA APPS")                                                    |  |
-|  | • Tier 0 (Shared Build-time CDI/Jandex): [OMS] [OPS] [BMS] [SCS] [STMS] [CARE] [NOC]        |  |
+|  | • Tier 0 (Shared Build-time CDI/Jandex): [OMS] [OPS] [BMS] [HRM] [STMS] [CARE] [NOC]        |  |
 |  | • Tier 1 (Isolated JVM - MethodHandle): Localization (VN E-Invoice, Tax), Custom Connectors |  |
 |  | • Tier 2 (Wasm Sandbox - Chicory/Extism): Tenant Server Scripts, Pricing Rules, AI Code     |  |
 |  +---------------------------------------------------------------------------------------------+  |
@@ -39,7 +39,7 @@ Bản đề xuất triển khai trên nền tảng **Astra Platform** (Java 25 +
 |   POSTGRESQL 16+ & REDIS CLUSTER (HA)  |      |      RUST CDC PIPELINE (supabase/etl Custom)      |
 | • 1 App = 1 Schema (Strict Ownership): |      | • Đọc WAL trực tiếp theo LSN, độ trễ < 10ms       |
 |   schema_oms, schema_ops, schema_bms,  | ===> | • Đồng bộ bảng Replica (replica_*) giữa các Schema|
-|   schema_scs, schema_stms, schema_care |      | • Cập nhật bảng _cdc_sync_watermark (last_lsn)    |
+|   schema_hrm, schema_stms, schema_care |      | • Cập nhật bảng _cdc_sync_watermark (last_lsn)    |
 | • RLS (tenant_id) + Partitioning       |      | • Stream Load realtime sang Apache Doris          |
 | • Redis: L2 Cache, Series, Seata TCC   |      +---------------------------------------------------+
 +----------------------------------------+                                |
@@ -60,7 +60,7 @@ Bản đề xuất triển khai trên nền tảng **Astra Platform** (Java 25 +
 
 Thay vì đặt tất cả các phân hệ vào chung schema `public`, chúng ta mở rộng thuộc tính `schema` vào định nghĩa DocType của Astra:
 
-* **Cô lập theo Schema (`schema_<app>`):** Mỗi phân hệ (`OMS`, `OPS`, `BMS`, `SCS`, `STMS`, `CARE`) sở hữu độc quyền 1 Schema riêng trên PostgreSQL 16+ kèm RLS (`tenant_id`).
+* **Cô lập theo Schema (`schema_<app>`):** Mỗi phân hệ (`OMS`, `OPS`, `BMS`, `HRM`, `STMS`, `CARE`) sở hữu độc quyền 1 Schema riêng trên PostgreSQL 16+ kèm RLS (`tenant_id`).
 
 
 * **3 Chiến lược lưu trữ bên trong mỗi Schema:**
@@ -99,7 +99,7 @@ Kết hợp giữa cơ chế Local/Cross-Schema của PostgreSQL, Apache Seata 2
 
 
 
-* **Tier 0 – Shared (Build-time Quarkus CDI + Jandex):** Biên dịch trực tiếp vào image qua `astra build`, gọi hàm trực tiếp (zero-copy), hỗ trợ GraalVM Native. **Dùng cho toàn bộ lõi của 7 phân hệ (`OMS`, `OPS`, `BMS`, `SCS`, `STMS`, `CARE`, `NOC`).**
+* **Tier 0 – Shared (Build-time Quarkus CDI + Jandex):** Biên dịch trực tiếp vào image qua `astra build`, gọi hàm trực tiếp (zero-copy), hỗ trợ GraalVM Native. **Dùng cho toàn bộ lõi của 7 phân hệ (`OMS`, `OPS`, `BMS`, `HRM`, `STMS`, `CARE`, `NOC`).**
 
 
 * **Tier 1 – Isolated JVM (Runtime `PluginClassLoader` + `MethodHandle`):** Cho phép Hot-swap không cần khởi động lại pod, cô lập bằng Bulkhead/Circuit Breaker. **Dùng cho các bản địa hóa (VN E-Invoice, Thuế GTGT, cổng thanh toán, kết nối đối tác 3PL).**
@@ -214,9 +214,11 @@ Thêm thuộc tính `db_schema` vào `DocTypeDefinition`. Khi `DocumentStore` ho
 
 
 
-#### Phân hệ 4: `astra-app-scs` (Salary Calculation System – HRM & Tính lương chuẩn ERPNext)
+#### Phân hệ 4: `astra-app-hrm` (Human Resource Management – Nhân sự & Tính lương chuẩn ERPNext HRMS)
 
-* **Schema & Phân tầng:** `schema_scs` | **Tier 0** (Hồ sơ nhân sự, Chấm công, Sổ cái lương) + **Tier 2 Wasm** (Công thức tính KPI/Đơn giá giao hàng cho Bưu tá/Tài xế).
+> **Trạng thái: đã có lát cắt mỏng (Video 19).** Bản đang chạy (`astra-apps/hrm`) khác thiết kế dưới đây ở vài điểm: chưa có schema riêng, `Contract`, `LeaveApplication` hay `PayrollLedger`; số kiện do ops nhập khi chấm công, chưa lấy qua Rust CDC; batch chạy trong request lưu `PayrollEntry`, chưa là `JobContributor`; bút toán ghi qua SPI `GeneralLedger` trong transaction của kernel, không qua Seata. Danh sách đầy đủ ở mục "Nói đúng" của Video 19 trong [demo-video-series.md](demo-video-series.md).
+
+* **Schema & Phân tầng:** `schema_hrm` | **Tier 0** (Hồ sơ nhân sự, Chấm công, Sổ cái lương) + **Tier 2 Wasm** (Công thức tính KPI/Đơn giá giao hàng cho Bưu tá/Tài xế).
 * Core DocTypes (Theo hình mẫu `erp.hr` của Astra):
 
 
@@ -232,7 +234,7 @@ Thêm thuộc tính `db_schema` vào `DocTypeDefinition`. Khi `DocumentStore` ho
 
 
 * **Cơ chế Tính lương Tự động & Kết nối Kế toán:**
-* Sản lượng giao/nhận thành công của từng Bưu tá/Tài xế được Rust CDC tổng hợp từ `OPS`/`STMS` sang bảng `schema_scs.replica_staff_performance`.
+* Sản lượng giao/nhận thành công của từng Bưu tá/Tài xế được Rust CDC tổng hợp từ `OPS`/`STMS` sang bảng `schema_hrm.replica_staff_performance`.
 * Sử dụng `JobContributor` (với cơ chế bầu chọn Leader trên cụm K8s) để chạy Batch tính lương cuối tháng trên Virtual Threads. Công thức thưởng phạt phức tạp được thực thi an toàn qua **Tier 2 Wasm Script**.
 
 
@@ -265,6 +267,8 @@ Thêm thuộc tính `db_schema` vào `DocTypeDefinition`. Khi `DocumentStore` ho
 
 
 #### Phân hệ 6: `astra-app-stms` (Smart Transport Management System – Điều phối Xe Thông minh + AI)
+
+> **Trạng thái: đã có lát cắt mỏng (Video 20).** Bản đang chạy (`astra-apps/stms`) giải VRP bằng Timefold trong hook của `DispatchPlan` và qua tool MCP (`stms_optimize_route`, không phải `stms.optimize_route`); copilot dùng mô hình ngôn ngữ giả lập cho demo. Chưa có schema riêng, `Driver`, `RouteTemplate`, `HubGeofence`, `TripExecution`, dự báo tải Tier 1 hay dữ liệu từ CDC. Danh sách đầy đủ ở mục "Nói đúng" của Video 20 trong [demo-video-series.md](demo-video-series.md).
 
 * **Schema & Phân tầng:** `schema_stms` | **Tier 0** (Tích hợp **Timefold Solver** trên Quarkus) + **Tier 1** (Thuật toán dự báo tải AI).
 * **Core DocTypes:**
@@ -331,7 +335,7 @@ astra/
 │   ├── oms/                            #   Quản lý đơn hàng (schema_oms)
 │   ├── ops/                            #   Core chuyển phát & quét mã vạch (schema_ops)
 │   ├── bms/                            #   Kế toán chuẩn ERPNext & Hoá đơn (schema_bms + GL Entry)
-│   ├── scs/                            #   HRM & Tính lương chuẩn ERPNext (schema_scs + Payroll Ledger)
+│   ├── hrm/                            #   Nhân sự & Tính lương chuẩn ERPNext HRMS (schema_hrm + Payroll Ledger)
 │   ├── stms/                           #   Điều phối xe thông minh Timefold + AI (schema_stms)
 │   ├── care/                           #   CRM & Helpdesk (schema_care)
 │   └── noc/                            #   Insights + Apache Doris Virtual DocType + MCP Tools
@@ -358,7 +362,7 @@ astra/
 * Thiết lập luồng đồng bộ Replica qua Rust CDC sang `CARE` để chứng minh hiệu năng đọc/ghi tách biệt và cơ chế cảnh báo chờ Sync trên giao diện.
 
 
-3. **Bước 3 – Xây dựng Lõi Tài chính & Nhân sự `BMS` + `SCS` (Tuần 8–11):**
+3. **Bước 3 – Xây dựng Lõi Tài chính & Nhân sự `BMS` + `HRM` (Tuần 8–11):**
 * Triển khai `GLEntry` và `PayrollLedger` cùng `@AstraGlobalTransactional` (kết hợp Narayana JTA / Seata AT & Redis TCC).
 
 
