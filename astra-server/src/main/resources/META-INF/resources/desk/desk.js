@@ -292,7 +292,7 @@ function renderSidebar() {
   const rank = (m) => (MODULE_ORDER.includes(m) ? MODULE_ORDER.indexOf(m) : MODULE_ORDER.length);
   const modules = [...new Set(state.doctypes.map((d) => d.module))].sort((a, b) => rank(a) - rank(b));
   const nav = document.getElementById('sidebar');
-  nav.replaceChildren(
+  nav.replaceChildren(...[
     h('a', { href: '#/', 'data-route': '' }, 'Overview'),
     ...modules.flatMap((m) => [
       h('h4', null, MODULE_LABEL[m] || m),
@@ -303,7 +303,7 @@ function renderSidebar() {
     can('Account').read ? h('a', { href: '#/ledger', 'data-route': 'ledger' }, 'General ledger') : null,
     h('a', { href: '#/sync', 'data-route': 'sync' }, 'Replication (CDC)'),
     h('a', { href: '#/apps', 'data-route': 'apps' }, 'Installed apps'),
-    h('a', { href: '#/meta', 'data-route': 'meta' }, 'DocType metadata'));
+    h('a', { href: '#/meta', 'data-route': 'meta' }, 'DocType metadata')].filter(Boolean));
 }
 
 function highlight(key) {
@@ -423,7 +423,9 @@ async function formView(doctype, name) {
   if (name) {
     const res = await api('GET', '/api/doc/' + enc(doctype) + '/' + enc(name));
     if (!res.ok) {
-      render(h('div', { class: 'errors' }, doctype + ' ' + name + ' not found in tenant ' + state.tenant + ' (HTTP ' + res.status + ')'));
+      render(h('div', { class: 'errors' }, res.status === 403
+        ? 'Your role in tenant ' + state.tenant + ' may not read ' + doctype + ' (HTTP 403)'
+        : doctype + ' ' + name + ' not found in tenant ' + state.tenant + ' (HTTP ' + res.status + ')'));
       return;
     }
     doc = res.data;
@@ -496,14 +498,15 @@ async function loadLinkOptions(def) {
   return out;
 }
 
-function drawForm(def, doc, linkOptions, errors, notice) {
+function drawForm(def, doc, linkOptions, errors, notice, draft) {
   const perm = can(def.name);
   const mayWrite = doc.name ? perm.write === 'all' || (perm.write === 'own' && doc.owner === (state.me && state.me.id)) : perm.create;
   const editable = doc.docstatus === 0 && mayWrite;
   const inputs = {};
   const grid = h('div', { class: 'form-grid' });
   for (const f of def.fields) {
-    const value = doc.data[f.name] ?? (doc.name || f.defaultValue === null ? undefined : f.defaultValue); // a new form starts at the defaults
+    const stored = draft && f.name in draft ? draft[f.name] : doc.data[f.name]; // after a rejected save, show what was typed
+    const value = stored ?? (doc.name || f.defaultValue === null ? undefined : f.defaultValue); // a new form starts at the defaults
     const locked = f.readOnly || !editable;
     const tag = f.readOnly ? h('span', { class: 'tag' }, 'set by hook') : f.projected ? h('span', { class: 'tag' }, '⚡ projected') : null;
     const head = h('span', null, fieldLabel(f), f.required ? h('span', { class: 'req' }, '*') : null, tag, overlayTag(def.name, f.name),
@@ -543,7 +546,7 @@ function drawForm(def, doc, linkOptions, errors, notice) {
       actions),
     stepper,
     notice ? h('div', { class: 'notice' }, notice) : null,
-    errors ? h('div', { class: 'errors' }, h('strong', null, 'The kernel rejected this (HTTP 422):'), h('ul', null, errors.map((e) => h('li', null, e)))) : null,
+    errors ? h('div', { class: 'errors' }, h('strong', null, 'The kernel rejected this (HTTP ' + errors.status + '):'), h('ul', null, errors.map((e) => h('li', null, e)))) : null,
     doc.docstatus === 0 && !mayWrite ? h('p', { class: 'muted' }, 'Read-only for your role in this tenant.') : null,
     doc.docstatus !== 0 ? h('p', { class: 'muted' }, doc.docstatus === 1
       ? 'Submitted documents are immutable. Cancel, then amend to change them.'
@@ -705,7 +708,7 @@ async function save(def, doc, inputs, linkOptions) {
     ? await api('PUT', '/api/doc/' + enc(def.name) + '/' + enc(doc.name), body)
     : await api('POST', '/api/doc/' + enc(def.name), body);
   if (!res.ok) {
-    drawForm(def, { ...doc, data: { ...doc.data, ...body } }, linkOptions, errorsOf(res), null);
+    drawForm(def, doc, linkOptions, rejection(res), null, body);
     return;
   }
   if (!doc.name) {
@@ -717,12 +720,17 @@ async function save(def, doc, inputs, linkOptions) {
 async function lifecycle(def, doc, action, linkOptions) {
   const res = await api('POST', '/api/doc/' + enc(def.name) + '/' + enc(doc.name) + '/' + action);
   if (!res.ok) {
-    drawForm(def, doc, linkOptions, errorsOf(res), null);
+    drawForm(def, doc, linkOptions, rejection(res), null);
     return;
   }
   const done = { submit: 'Submitted', cancel: 'Cancelled', amend: 'Amended as' }[action];
   history.replaceState(null, '', '#/form/' + enc(def.name) + '/' + enc(res.data.name));
   drawForm(def, res.data, linkOptions, null, done + ' ' + res.data.name);
+}
+
+/** The kernel's messages plus the HTTP status it answered with, for the form's error banner. */
+function rejection(res) {
+  return Object.assign(errorsOf(res), { status: res.status });
 }
 
 function errorsOf(res) {
