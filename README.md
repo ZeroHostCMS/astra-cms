@@ -2,6 +2,8 @@
 
 # Astra CMS
 
+### Software After Software. Software that evolves with its users.
+
 <p><b>English</b> · <a href="README.vi.md">Tiếng Việt</a></p>
 
 <a href="https://media.zerohostcms.com/astra-cms/astra-intro.en.mp4" title="Watch: Astra in 5 minutes">
@@ -25,6 +27,32 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
+
+---
+
+## Vision: Software After Software
+
+> **Shorten the journey from an idea to a production-ready capability from months to days, or even hours, while keeping humans in control of critical decisions.**
+
+Astra CMS is an **AI-ready** content management platform built for the next generation of software: systems that can **understand user needs, create new capabilities, test changes, and evolve continuously with human approval**.
+
+Software development is moving beyond manually building and shipping features. In the **Software After Software** era, AI agents become active participants in the software lifecycle, turning real-world needs into working features through planning, code generation, testing and deployment.
+
+Astra explores this future by providing a foundation for **extensible, event-driven and AI-integrated** applications, where software evolves from **user feedback and operational signals** rather than relying solely on traditional development cycles.
+
+Software should no longer be a static product that waits for its next release. It should be a **living system** that continuously learns, adapts and improves.
+
+**How the architecture serves the vision.** Each step of the loop from need to capability maps to a concrete part of the platform:
+
+| Step | What makes it possible in Astra |
+| --- | --- |
+| **Understand the need** | Every DocType, event and job is an MCP tool, scoped by role and tenant, so an agent reads the same business data a user sees and nothing more. |
+| **Create the capability** | A capability is metadata: a new DocType is one YAML file, a business rule is one hook class, a script is one Wasm function. Each task is narrow enough for an agent to finish. |
+| **Test the change** | `astra-plugin-testkit` contract, capability and budget assertions give a pass/fail loop. AI-generated code defaults to the Tier 2 Wasm sandbox and records its `provenance.generator`. |
+| **Ship without breaking** | Zero-DDL schema changes, side-by-side app versions, per-tenant pinning, canary rollout and automatic rollback. Tenant customisations live in overlays that survive upgrades. |
+| **Keep humans in control** | Workflow approvals, Submit/Cancel/Amend on documents, an append-only ledger, full audit, and environment policy that decides which tier agent-written code may run in. |
+
+**Astra CMS is building toward Software After Software.** The parts that run today are listed in [Project Status](#project-status); the agent-driven loop end to end is on the [Roadmap](#roadmap).
 
 ---
 
@@ -601,6 +629,8 @@ Java 25 runtime: unpinned virtual threads (JEP 491), `ScopedValue` (JEP 506, fin
 
 ## AI-Native: Built By Agents, Used By Agents
 
+This section is the machinery behind [Software After Software](#vision-software-after-software).
+
 **For agents that build apps.** The SPI is large: twenty-plus extension points, the DocType model, manifests, overlays and compliance metadata. What makes it workable for an agent is that each task is **narrow**: a lifecycle hook touches two interfaces, a DocType is one YAML file, a Wasm script is one exported function. `AGENTS.md` is organised per extension point so an agent loads only the slice it needs, `astra mcp --dev` answers "what exists" from the live kernel, and `astra-plugin-testkit` contract tests, capability assertions and budget assertions give a pass/fail loop. The test kit is what makes agent-written apps trustworthy. AI-generated code defaults to Tier 2 Wasm; `provenance.generator` is recorded and environment policy can require the sandbox tier. Canary and auto-rollback revert a change that passes tests but misbehaves under traffic. The repository ships `AGENTS.md`, `CLAUDE.md` and `llms.txt`.
 
 **For agents that use an Astra application.** Every DocType (search, get, create, submit, cancel), event, job and `ToolContributor` is projected as an MCP tool with the DocType's JSON Schema, scoped by role and tenant, audited like any call. `AgentContributor` runs budgeted agents inside the platform with scoped memory (DocTypes + pgvector). `ModelProvider` abstracts Claude, OpenAI, Gemini and local models behind a gateway with fallback and cost accounting. Prompts and evals are versioned artifacts on the same rollout path as code.
@@ -765,6 +795,7 @@ make k3d-down
 make demo-seed       # two tenants of orders, waybills, tickets, ledger and overlays, through the REST API
 open http://localhost:8080/desk/                  # metadata-driven Desk UI (+ /desk/compare.html)
 make demo-express    # 15 scenes, one per video; SCENES="4 5" PAUSE=0 to pick and skip pauses
+make demo-hrm && make demo-stms && make demo-sso   # HR and payroll, vehicle routing, SAML SSO + SCIM (Videos 19–21)
 scripts/mcp-claude.sh tuan saigon-express          # register Astra's MCP server with Claude Code
 ```
 
@@ -790,6 +821,9 @@ What the demo exercises, all from real code in this repository:
 | MCP server (Streamable HTTP) with the caller's token, tenant and permissions; `pii` fields masked; app-contributed tools | `astra-ai`, `McpTool` SPI |
 | Rust CDC worker decoding `pgoutput` into replica tables; Sync-Aware LSN (`X-Tx-LSN`, `X-Required-LSN` → `202 Sync Pending`) | `astra-cdc-rust`, `SyncAwareLsnFilter`, `ReplicaResource` |
 | Apache Seata 2.6 global transactions: AT branch on a module schema, TCC branch on Redis, kernel commits last | `astra-tx-seata`, `OrderCreditHook`, `PickupCapacity` |
+| HRM (HR and payroll) on Frappe HRMS concepts: attendance drives payment days, a Payroll Entry computes salary slips in parallel on virtual threads, the courier KPI bonus is tenant Wasm, and submit posts one accrual voucher through `GeneralLedger` in the same transaction | `astra-apps/hrm`, `PayrollEntryHook`, `SalaryCalculator` |
+| STMS: vehicle routing with Timefold Solver (capacity and time windows as hard constraints), re-solving on live events, MCP tools and a dispatch copilot (the language model is a scripted mock for the demo; the solver and tools are real) | `astra-apps/stms`, `RoutePlanner`, `Replanner`, `DispatchCopilot` |
+| SAML 2.0 SSO through Keycloak brokering (signed assertions, IdP groups become tenant roles) and per-tenant SCIM 2.0 Users/Groups at `/scim/v2`, with the tenant taken from the token | `deploy/keycloak/realm`, `astra-iam` `ScimResource`, `ScimDirectory` |
 
 Not in the thin slice yet: row-level permission conditions, materialised projections, Tier 1 loader, rollout control plane, audit hash-chain, field encryption, Apache Doris, AI agents beyond MCP tools, and a full Desk (dashboards, reports). The roadmap below sequences them. The video series that walks through the demo is in [docs/demo-video-series.md](docs/demo-video-series.md).
 

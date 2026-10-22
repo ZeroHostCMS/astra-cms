@@ -2,6 +2,8 @@
 
 # Astra CMS
 
+### Software After Software. Phần mềm tiến hóa cùng người dùng.
+
 <p><a href="README.md">English</a> · <b>Tiếng Việt</b></p>
 
 <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4" title="Xem video: Astra trong 5 phút">
@@ -37,6 +39,32 @@ App đầu tiên là Astra CMS, tiếp theo là Astra ERP.
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
+
+## Tầm nhìn: Software After Software
+
+> **Rút ngắn hành trình từ một ý tưởng đến một tính năng sẵn sàng cho production, từ vài tháng xuống vài ngày, thậm chí vài giờ, trong khi con người vẫn nắm quyền với các quyết định quan trọng.**
+
+Astra CMS là nền tảng quản lý nội dung **sẵn sàng cho AI**, xây cho thế hệ phần mềm tiếp theo: những hệ thống có thể **hiểu nhu cầu người dùng, tạo ra năng lực mới, kiểm thử thay đổi và tiến hóa liên tục dưới sự phê duyệt của con người**.
+
+Phát triển phần mềm đang vượt qua cách làm thủ công từng tính năng rồi phát hành. Trong kỷ nguyên **Software After Software**, AI agent tham gia trực tiếp vào vòng đời phần mềm, biến nhu cầu thực tế thành tính năng chạy được qua lập kế hoạch, sinh code, kiểm thử và triển khai.
+
+Astra khám phá tương lai đó bằng cách cung cấp nền móng cho các ứng dụng **dễ mở rộng, hướng sự kiện và tích hợp AI**, nơi phần mềm tiến hóa từ **phản hồi của người dùng và tín hiệu vận hành**, thay vì chỉ trông vào chu kỳ phát triển truyền thống.
+
+Phần mềm không nên là một sản phẩm tĩnh chờ bản phát hành kế tiếp. Nó nên là một **hệ thống sống**, liên tục học hỏi, thích nghi và cải thiện.
+
+**Kiến trúc phục vụ tầm nhìn này ra sao.** Mỗi bước trong vòng từ nhu cầu đến tính năng ứng với một phần cụ thể của nền tảng:
+
+| Bước | Điều gì trong Astra làm được việc đó |
+| --- | --- |
+| **Hiểu nhu cầu** | Mọi DocType, event và job đều là một MCP tool, giới hạn theo role và tenant, nên agent đọc đúng dữ liệu nghiệp vụ mà người dùng thấy, không hơn. |
+| **Tạo năng lực mới** | Một tính năng là metadata: DocType mới là một file YAML, một quy tắc nghiệp vụ là một class hook, một script là một hàm Wasm. Mỗi việc đủ hẹp để agent làm trọn. |
+| **Kiểm thử thay đổi** | Contract test, assertion capability và assertion ngân sách của `astra-plugin-testkit` cho vòng lặp pass/fail. Code do AI sinh mặc định chạy trong sandbox Wasm Tier 2 và ghi lại `provenance.generator`. |
+| **Phát hành không phá vỡ** | Đổi schema không DDL, các phiên bản app chạy song song, ghim phiên bản theo tenant, canary rollout và tự rollback. Tùy biến của tenant nằm trong overlay, sống sót qua mọi lần nâng cấp. |
+| **Con người nắm quyền** | Workflow phê duyệt, Submit/Cancel/Amend trên chứng từ, sổ cái append-only, audit đầy đủ, và policy môi trường quyết định code do agent viết được chạy ở tier nào. |
+
+**Astra CMS đang xây dựng hướng tới Software After Software.** Những phần đã chạy được nằm ở [Trạng thái dự án](#trạng-thái-dự-án); vòng lặp do agent dẫn dắt từ đầu đến cuối nằm trong [Lộ trình](#lộ-trình).
+
+---
 
 ## Video demo
 
@@ -724,6 +752,8 @@ Runtime Java 25: virtual thread không bị pin (JEP 491), `ScopedValue` (JEP 50
 
 ## AI: agent viết app và dùng app
 
+Phần này là bộ máy đứng sau [Software After Software](#tầm-nhìn-software-after-software).
+
 **Với agent xây app.** SPI khá lớn: hơn hai mươi extension point, mô hình DocType, manifest, overlay và metadata tuân thủ. Điều khiến agent làm việc được với nó là mỗi tác vụ đều **hẹp**: một lifecycle hook chạm hai interface, một DocType là một file YAML, một script Wasm là một hàm export. `AGENTS.md` được tổ chức theo từng extension point để agent chỉ nạp đúng lát cắt cần thiết, `astra mcp --dev` trả lời câu hỏi "đang có gì" từ kernel đang chạy, và contract test, assertion capability, assertion ngân sách của `astra-plugin-testkit` cho agent một vòng lặp pass/fail. Test kit là cách kiểm tra app do agent viết. Code do AI sinh mặc định chạy ở Tier 2 Wasm; `provenance.generator` được ghi lại và policy môi trường có thể bắt buộc tier sandbox. Canary và auto-rollback hoàn tác thay đổi qua được test nhưng hoạt động sai dưới traffic thật. `AGENTS.md`, `CLAUDE.md` và `llms.txt` sẽ có cùng bộ khung Phase 1.
 
 **Với agent dùng một ứng dụng Astra.** Mọi DocType (search, get, create, submit, cancel), event, job và `ToolContributor` được chiếu thành MCP tool kèm JSON Schema của DocType, giới hạn theo role và tenant, và được audit như mọi lời gọi khác. `AgentContributor` chạy agent có ngân sách ngay trong nền tảng với bộ nhớ có phạm vi (DocType + pgvector). `ModelProvider` trừu tượng hoá Claude, OpenAI, Gemini và model local sau một gateway có fallback và hạch toán chi phí. Prompt và eval là artifact có phiên bản, đi cùng đường rollout với code.
@@ -888,6 +918,7 @@ make k3d-down
 make demo-seed       # two tenants of orders, waybills, tickets, ledger and overlays, through the REST API
 open http://localhost:8080/desk/                  # metadata-driven Desk UI (+ /desk/compare.html)
 make demo-express    # 15 scenes, one per video; SCENES="4 5" PAUSE=0 to pick and skip pauses
+make demo-hrm && make demo-stms && make demo-sso   # HR and payroll, vehicle routing, SAML SSO + SCIM (Videos 19–21)
 scripts/mcp-claude.sh tuan saigon-express          # register Astra's MCP server with Claude Code
 ```
 
@@ -913,6 +944,9 @@ Những gì demo kiểm chứng, tất cả từ code thật trong repository n�
 | MCP server (Streamable HTTP) dùng token, tenant và quyền của người gọi; che trường `pii`; tool do app đóng góp | `astra-ai`, SPI `McpTool` |
 | Worker CDC bằng Rust giải mã `pgoutput` vào bảng replica; Sync-Aware LSN (`X-Tx-LSN`, `X-Required-LSN` → `202 Sync Pending`) | `astra-cdc-rust`, `SyncAwareLsnFilter`, `ReplicaResource` |
 | Global transaction Apache Seata 2.6: nhánh AT trên schema của module, nhánh TCC trên Redis, kernel commit cuối | `astra-tx-seata`, `OrderCreditHook`, `PickupCapacity` |
+| HRM (nhân sự và tiền lương) theo khái niệm Frappe HRMS: chấm công quyết định ngày công, Payroll Entry tính phiếu lương song song trên virtual thread, thưởng KPI là Wasm của tenant, submit ghi một bút toán dồn tích qua `GeneralLedger` trong cùng transaction | `astra-apps/hrm`, `PayrollEntryHook`, `SalaryCalculator` |
+| STMS: định tuyến xe bằng Timefold Solver (tải trọng và khung giờ là ràng buộc cứng), giải lại khi có sự cố, tool MCP và copilot điều phối (mô hình ngôn ngữ là bản giả lập cho demo; solver và tool chạy thật) | `astra-apps/stms`, `RoutePlanner`, `Replanner`, `DispatchCopilot` |
+| SAML 2.0 SSO qua Keycloak brokering (assertion có chữ ký, nhóm của IdP thành role của tenant) và SCIM 2.0 Users/Groups theo tenant tại `/scim/v2`, tenant lấy từ token | `deploy/keycloak/realm`, `astra-iam` `ScimResource`, `ScimDirectory` |
 
 Chưa có trong lát cắt mỏng: điều kiện quyền theo dòng, projection materialised, loader Tier 1, rollout control plane, audit hash-chain, mã hoá trường, Apache Doris, AI agent ngoài các tool MCP và Desk đầy đủ (dashboard, báo cáo). Lộ trình bên dưới sắp thứ tự cho các phần này. Bộ kịch bản video đi qua bản demo nằm ở [docs/demo-video-series.md](docs/demo-video-series.md).
 
@@ -963,7 +997,7 @@ astra:
 <tr><th colspan="2" align="left">Video lộ trình: phần còn lại của use-case-01 <sub>(1:36)</sub></th></tr>
 <tr>
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4"><img src="docs/video-thumbs/video-18.jpg" width="320" alt="Xem video lộ trình: phần còn lại của use-case-01"></a></td>
-<td>Những gì 17 video đã chạy thật và những gì còn đang phát triển: multi-schema, Tier 1, streaming CDC, agent tự hành, STMS, SCS.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4">▶ Xem video</a></td>
+<td>Những gì video 1–17 và 19–21 đã chạy thật (gồm HRM, STMS, SAML và SCIM) và những gì còn đang phát triển: multi-schema, Tier 1, streaming CDC, agent tự hành, audit hash-chain, mã hoá trường.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4">▶ Xem video</a></td>
 </tr>
 </table>
 

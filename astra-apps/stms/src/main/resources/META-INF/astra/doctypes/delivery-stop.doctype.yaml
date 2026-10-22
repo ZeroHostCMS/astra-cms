@@ -1,0 +1,24 @@
+name: DeliveryStop
+module: stms
+kind: transaction
+naming: { series: "DS-.YYMM.-.#####" }
+
+fields:
+  - { name: hub,             type: Link,   options: Hub, required: true, in-list: true, projected: true }
+  - { name: plan_date,       type: Date,   required: true, in-list: true, projected: true }
+  - { name: kind,            type: Select, options: [Delivery, Pickup], default: Delivery, in-list: true }
+  - { name: priority,        type: Select, options: [Normal, VIP, Urgent], default: Normal, in-list: true }
+  - { name: waybill,         type: Link,   options: Waybill }
+  - { name: label,           type: Data,   required: true, in-list: true }     # shop or place shown on the route
+  - { name: address,         type: Data,   pii: true }
+  - { name: latitude,        type: Float,  required: true }
+  - { name: longitude,       type: Float,  required: true }
+  - { name: demand_kg,       type: Float,  required: true, in-list: true, label: Demand (kg) }
+  - { name: window_from,     type: Data,   default: "08:00", in-list: true, label: Window from (HH:mm) }
+  - { name: window_to,       type: Data,   default: "17:00", in-list: true, label: Window to (HH:mm) }
+  - { name: service_minutes, type: Int,    default: 5 }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true }
+  - { role: dispatcher, read: true, create: true, write: true }
+  - { role: ops,        read: true }

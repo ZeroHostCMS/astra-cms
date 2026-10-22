@@ -9,5 +9,6 @@ RUN /opt/keycloak/bin/kc.sh build
 
 FROM quay.io/keycloak/keycloak:26.8.1
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
-COPY realm/astra-realm.json /opt/keycloak/data/import/astra-realm.json
+# The Astra realm and the acme-corp-idp realm (demo enterprise SAML IdP brokered by the Astra realm).
+COPY realm/*.json /opt/keycloak/data/import/
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]

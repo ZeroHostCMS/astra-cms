@@ -1,0 +1,18 @@
+name: SalaryStructure
+module: hrm
+kind: setup
+submittable: true                   # only a submitted structure can be assigned
+naming: { field: code }             # e.g. COURIER
+
+# Rows are {component, amount?}: amount overrides the component's own amount for Fixed components.
+fields:
+  - { name: code,           type: Data,   required: true, in-list: true }
+  - { name: structure_name, type: Data,   required: true, in-list: true }
+  - { name: earnings,       type: JSON,   required: true }
+  - { name: deductions,     type: JSON }
+  - { name: note,           type: Text }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: hr,         read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: accountant, read: true }

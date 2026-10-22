@@ -1,0 +1,4 @@
+# Tier 2 caps a script's linear memory (16 pages = 1 MiB by default). Rust reserves a 1 MiB stack
+# unless told otherwise, which alone would exceed the cap; payroll formulas need only a few KiB.
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "link-arg=-zstack-size=32768"]

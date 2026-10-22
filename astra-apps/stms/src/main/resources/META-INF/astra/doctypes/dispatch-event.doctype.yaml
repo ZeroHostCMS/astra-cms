@@ -1,0 +1,21 @@
+name: DispatchEvent
+module: stms
+kind: transaction
+naming: { series: "DE-.YYMM.-.#####" }
+
+# The log of live changes applied to a plan. Only roles that may replan can read it, which is also what
+# gates the replanning MCP tools: they declare it in reads().
+fields:
+  - { name: plan,         type: Link,   options: DispatchPlan, required: true, in-list: true, projected: true }
+  - { name: event_type,   type: Select, options: [Solve, Vehicle unavailable, Urgent stop, Traffic delay, Time window, Weights, Copilot],
+      required: true, in-list: true }
+  - { name: source,       type: Select, options: [MCP, Copilot], default: MCP, in-list: true }
+  - { name: detail,       type: JSON }
+  - { name: score_before, type: Data,   in-list: true }
+  - { name: score_after,  type: Data,   in-list: true }
+  - { name: moved_stops,  type: Int,    in-list: true }
+  - { name: solve_ms,     type: Int }
+
+permissions:
+  - { role: admin,      read: true, create: true }
+  - { role: dispatcher, read: true, create: true }

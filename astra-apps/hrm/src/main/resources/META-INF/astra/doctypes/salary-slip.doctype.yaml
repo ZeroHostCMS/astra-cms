@@ -1,0 +1,32 @@
+name: SalarySlip
+module: hrm
+kind: transaction
+submittable: true                   # a run's slips are accrued in one ledger voucher when their PayrollEntry is submitted
+naming: { series: "SAL-.YYMM.-.#####" }
+
+# Everything below the period is computed by SalarySlipHook from the employee's structure assignment,
+# submitted attendance and additional salaries; rows are {component, component_name, amount, basis}.
+fields:
+  - { name: employee,         type: Link,     options: Employee, required: true, in-list: true, projected: true }
+  - { name: start_date,       type: Date,     required: true, in-list: true }
+  - { name: end_date,         type: Date,     required: true }
+  - { name: posting_date,     type: Date }                                  # defaults to end_date
+  - { name: payroll_entry,    type: Link,     options: PayrollEntry, in-list: true, projected: true }
+  - { name: employee_name,    type: Data,     read-only: true, in-list: true, pii: true }
+  - { name: designation,      type: Data,     read-only: true }
+  - { name: salary_structure, type: Data,     read-only: true }
+  - { name: base,             type: Currency, read-only: true }
+  - { name: working_days,     type: Float,    read-only: true }
+  - { name: payment_days,     type: Float,    read-only: true, in-list: true }
+  - { name: delivered_pieces, type: Int,      read-only: true }
+  - { name: earnings,         type: JSON,     read-only: true }
+  - { name: deductions,       type: JSON,     read-only: true }
+  - { name: gross_pay,        type: Currency, read-only: true, in-list: true }
+  - { name: total_deduction,  type: Currency, read-only: true }
+  - { name: net_pay,          type: Currency, read-only: true, in-list: true }
+  - { name: accrual_voucher,  type: Data,     read-only: true }   # ledger voucher (the PayrollEntry) that accrued this slip
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: hr,         read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: accountant, read: true }

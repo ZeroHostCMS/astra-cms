@@ -22,6 +22,8 @@
     <module>astra-iam</module>
     <module>astra-apps/cms</module>
     <module>astra-apps/express</module>
+    <module>astra-apps/hrm</module>
+    <module>astra-apps/stms</module>
     <module>astra-server</module>
   </modules>
 
@@ -148,6 +150,16 @@
       <dependency>
         <groupId>io.astra</groupId>
         <artifactId>astra-app-express</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-app-hrm</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-app-stms</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

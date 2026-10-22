@@ -1,0 +1,18 @@
+name: Hub
+module: stms
+kind: master
+naming: { field: code }
+
+fields:
+  - { name: code,       type: Data,  required: true, in-list: true }
+  - { name: hub_name,   type: Data,  required: true, in-list: true }
+  - { name: city,       type: Data,  in-list: true }
+  - { name: latitude,   type: Float, required: true }
+  - { name: longitude,  type: Float, required: true }
+  - { name: open_from,  type: Data,  default: "07:00", label: Opens (HH:mm) }    # vehicles leave at opening time
+  - { name: open_to,    type: Data,  default: "19:00", label: Closes (HH:mm) }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true }
+  - { role: dispatcher, read: true }
+  - { role: ops,        read: true }

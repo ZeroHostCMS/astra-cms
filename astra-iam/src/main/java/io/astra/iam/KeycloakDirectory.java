@@ -163,7 +163,7 @@ public class KeycloakDirectory {
         for (String role : tenantRoles) roleGroup(tenant, role).ifPresent(g -> user.leaveGroup(g.getId()));
     }
 
-    private void guardLastAdmin(String tenant, String leavingUserId) {
+    void guardLastAdmin(String tenant, String leavingUserId) {
         long otherAdmins = roleGroup(tenant, ADMIN_ROLE).stream()
                 .flatMap(g -> realm().groups().group(g.getId()).members(0, 10_000, true).stream())
                 .filter(u -> !u.getId().equals(leavingUserId))
@@ -194,7 +194,7 @@ public class KeycloakDirectory {
         return user;
     }
 
-    private Optional<GroupRepresentation> group(String path) {
+    Optional<GroupRepresentation> group(String path) {
         try {
             return Optional.of(realm().getGroupByPath(path));
         } catch (WebApplicationException e) {
@@ -203,11 +203,11 @@ public class KeycloakDirectory {
         }
     }
 
-    private RealmResource realm() {
+    RealmResource realm() {
         return keycloak.realm(realmName);
     }
 
-    private static String createdId(Response response) {
+    static String createdId(Response response) {
         try (response) {
             if (response.getStatus() == 409) throw IamException.conflict("already exists (username or email in use)");
             if (response.getStatus() >= 400) {

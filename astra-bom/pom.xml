@@ -13,6 +13,8 @@
 
   <properties>
     <quarkus.platform.version>3.39.5</quarkus.platform.version>
+    <!-- Timefold 2.7.x is built against Quarkus 3.39 and runs on JDK 21+. -->
+    <timefold.version>2.7.1</timefold.version>
   </properties>
 
   <dependencyManagement>
@@ -21,6 +23,13 @@
         <groupId>io.quarkus.platform</groupId>
         <artifactId>quarkus-bom</artifactId>
         <version>${quarkus.platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>ai.timefold.solver</groupId>
+        <artifactId>timefold-solver-bom</artifactId>
+        <version>${timefold.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -67,6 +76,16 @@
       <dependency>
         <groupId>io.astra</groupId>
         <artifactId>astra-app-express</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-app-hrm</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-app-stms</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

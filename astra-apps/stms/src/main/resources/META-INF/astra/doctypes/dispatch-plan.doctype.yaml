@@ -1,0 +1,31 @@
+name: DispatchPlan
+module: stms
+kind: transaction
+submittable: true                  # submit freezes the routes and dispatches them
+naming: { series: "DP-.YYMM.-.####" }
+
+fields:
+  - { name: plan_date,            type: Date,   required: true, in-list: true, projected: true }
+  - { name: hub,                  type: Link,   options: Hub, required: true, in-list: true, projected: true }
+  - { name: solve,                type: Check,  label: Solve on save }     # the solve action: DispatchPlanHook routes the plan
+  - { name: solve_seconds,        type: Int,    label: Time budget (s) }    # empty: astra.stms.solve-seconds
+  - { name: unavailable_vehicles, type: JSON }                               # plates taken off the road for this plan
+  - { name: traffic,              type: JSON }                               # [{label, latitude, longitude, radius_km, factor}]
+  - { name: weights,              type: JSON }                               # {distance, priority, balance}
+  - { name: status,               type: Select, options: [Draft, Solved, Infeasible, Dispatched, Cancelled], default: Draft,
+      read-only: true, in-list: true, projected: true }
+  - { name: score,                type: Data,     read-only: true, in-list: true }
+  - { name: feasible,             type: Check,    read-only: true, in-list: true }
+  - { name: distance_km,          type: Float,    read-only: true, in-list: true }
+  - { name: vehicles_used,        type: Int,      read-only: true }
+  - { name: solve_ms,             type: Int,      read-only: true }
+  - { name: solved_for,           type: Data,     read-only: true }
+  - { name: solved_at,            type: Datetime, read-only: true }
+  - { name: route_summary,        type: Text,     read-only: true }          # the route table as text, for the Desk
+  - { name: routes,               type: JSON,     read-only: true }          # child rows: vehicle, sequence, stop, eta, load
+  - { name: last_change,          type: JSON,     read-only: true }          # what the last solve changed
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: dispatcher, read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: ops,        read: true }

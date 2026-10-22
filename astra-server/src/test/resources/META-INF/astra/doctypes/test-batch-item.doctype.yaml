@@ -1,0 +1,15 @@
+# Test-only: items of a TestBatch. A clerk may create them but not submit or cancel them.
+name: TestBatchItem
+module: test
+kind: transaction
+submittable: true
+naming: { field: code }
+
+fields:
+  - { name: code,  type: Data, required: true }
+  - { name: batch, type: Link, options: TestBatch, required: true }
+  - { name: stamp, type: Data }      # set by the item's own onSubmit hook
+
+permissions:
+  - { role: admin, read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: clerk, read: true, create: true, write: true }

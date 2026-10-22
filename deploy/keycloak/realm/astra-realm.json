@@ -32,7 +32,8 @@
   "adminEventsDetailsEnabled": true,
   "roles": {
     "realm": [
-      { "name": "platform-admin", "description": "Manages tenants and their members. Grants no access to tenant documents." }
+      { "name": "platform-admin", "description": "Manages tenants and their members. Grants no access to tenant documents." },
+      { "name": "scim", "description": "SCIM 2.0 provisioning client. Held only by the service account of a tenant-scoped scim-<tenant> client, whose token names the tenant in the scim_tenant claim." }
     ]
   },
   "groups": [
@@ -52,12 +53,12 @@
         {
           "name": "saigon-express",
           "attributes": { "display-name": ["Saigon Express"], "public-signup": ["false"] },
-          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" } ]
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" }, { "name": "hr" }, { "name": "dispatcher" } ]
         },
         {
           "name": "hanoi-express",
           "attributes": { "display-name": ["Hanoi Express"], "public-signup": ["false"] },
-          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" } ]
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" }, { "name": "hr" }, { "name": "dispatcher" } ]
         }
       ]
     }
@@ -216,6 +217,197 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
       "defaultClientScopes": ["basic", "roles"]
+    },
+    {
+      "clientId": "scim-acme",
+      "name": "SCIM provisioning for tenant acme",
+      "description": "Client credentials for an enterprise directory that provisions acme users through /scim/v2. The hardcoded scim_tenant claim binds every token to acme; the secret is local-only.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "scim-acme-local-secret",
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": ["basic", "roles"],
+      "optionalClientScopes": [],
+      "protocolMappers": [
+        {
+          "name": "scim tenant",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.name": "scim_tenant",
+            "claim.value": "acme",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "astra-server audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "astra-server",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "scim-globex",
+      "name": "SCIM provisioning for tenant globex",
+      "description": "Client credentials for an enterprise directory that provisions globex users through /scim/v2. The hardcoded scim_tenant claim binds every token to globex; the secret is local-only.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "scim-globex-local-secret",
+      "protocol": "openid-connect",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "defaultClientScopes": ["basic", "roles"],
+      "optionalClientScopes": [],
+      "protocolMappers": [
+        {
+          "name": "scim tenant",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-hardcoded-claim-mapper",
+          "config": {
+            "claim.name": "scim_tenant",
+            "claim.value": "globex",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "astra-server audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "astra-server",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "identityProviders": [
+    {
+      "alias": "acme-corp",
+      "displayName": "Acme Corp SSO",
+      "providerId": "saml",
+      "enabled": true,
+      "trustEmail": true,
+      "storeToken": false,
+      "addReadTokenRoleOnCreate": false,
+      "linkOnly": false,
+      "hideOnLogin": false,
+      "config": {
+        "entityId": "urn:astra:sp",
+        "idpEntityId": "http://localhost:8080/auth/realms/acme-corp-idp",
+        "singleSignOnServiceUrl": "http://localhost:8080/auth/realms/acme-corp-idp/protocol/saml",
+        "useMetadataDescriptorUrl": "true",
+        "metadataDescriptorUrl": "http://localhost:8080/auth/realms/acme-corp-idp/protocol/saml/descriptor",
+        "nameIDPolicyFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+        "principalType": "SUBJECT",
+        "postBindingAuthnRequest": "true",
+        "postBindingResponse": "true",
+        "postBindingLogout": "true",
+        "wantAuthnRequestsSigned": "false",
+        "validateSignature": "true",
+        "wantAssertionsSigned": "true",
+        "wantAssertionsEncrypted": "false",
+        "signatureAlgorithm": "RSA_SHA256",
+        "allowCreate": "true",
+        "forceAuthn": "false",
+        "allowedClockSkew": "30",
+        "syncMode": "FORCE",
+        "guiOrder": "1"
+      }
+    }
+  ],
+  "identityProviderMappers": [
+    {
+      "name": "acme-corp username",
+      "identityProviderAlias": "acme-corp",
+      "identityProviderMapper": "saml-username-idp-mapper",
+      "config": { "syncMode": "INHERIT", "template": "${ALIAS}.${NAMEID}", "target": "LOCAL" }
+    },
+    {
+      "name": "acme-corp email",
+      "identityProviderAlias": "acme-corp",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "config": { "syncMode": "INHERIT", "attribute.name": "email", "user.attribute": "email" }
+    },
+    {
+      "name": "acme-corp firstName",
+      "identityProviderAlias": "acme-corp",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "config": { "syncMode": "INHERIT", "attribute.name": "firstName", "user.attribute": "firstName" }
+    },
+    {
+      "name": "acme-corp lastName",
+      "identityProviderAlias": "acme-corp",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "config": { "syncMode": "INHERIT", "attribute.name": "lastName", "user.attribute": "lastName" }
+    },
+    {
+      "name": "acme-corp admin",
+      "identityProviderAlias": "acme-corp",
+      "identityProviderMapper": "saml-advanced-group-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "attributes": "[{\"key\":\"memberOf\",\"value\":\"astra-admins\"}]",
+        "are.attribute.values.regex": "false",
+        "group": "/tenants/acme/admin"
+      }
+    },
+    {
+      "name": "acme-corp editor",
+      "identityProviderAlias": "acme-corp",
+      "identityProviderMapper": "saml-advanced-group-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "attributes": "[{\"key\":\"memberOf\",\"value\":\"astra-editors\"}]",
+        "are.attribute.values.regex": "false",
+        "group": "/tenants/acme/editor"
+      }
+    },
+    {
+      "name": "acme-corp author",
+      "identityProviderAlias": "acme-corp",
+      "identityProviderMapper": "saml-advanced-group-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "attributes": "[{\"key\":\"memberOf\",\"value\":\"astra-authors\"}]",
+        "are.attribute.values.regex": "false",
+        "group": "/tenants/acme/author"
+      }
+    },
+    {
+      "name": "acme-corp reader",
+      "identityProviderAlias": "acme-corp",
+      "identityProviderMapper": "saml-advanced-group-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "attributes": "[{\"key\":\"memberOf\",\"value\":\"astra-readers\"}]",
+        "are.attribute.values.regex": "false",
+        "group": "/tenants/acme/reader"
+      }
     }
   ],
   "users": [
@@ -225,6 +417,18 @@
       "serviceAccountClientId": "astra-server",
       "realmRoles": ["default-roles-astra"],
       "clientRoles": { "realm-management": ["manage-users", "view-users", "query-users", "query-groups"] }
+    },
+    {
+      "username": "service-account-scim-acme",
+      "enabled": true,
+      "serviceAccountClientId": "scim-acme",
+      "realmRoles": ["default-roles-astra", "scim"]
+    },
+    {
+      "username": "service-account-scim-globex",
+      "enabled": true,
+      "serviceAccountClientId": "scim-globex",
+      "realmRoles": ["default-roles-astra", "scim"]
     },
     {
       "username": "platform", "email": "platform@astra.test", "firstName": "Platform", "lastName": "Admin",
@@ -299,9 +503,21 @@
       "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
     },
     {
+      "username": "hanh", "email": "hanh@express.test", "firstName": "Hạnh", "lastName": "Nguyễn",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/hr"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
       "username": "nam", "email": "nam@express.test", "firstName": "Nam", "lastName": "Hoàng",
       "enabled": true, "emailVerified": true,
       "realmRoles": ["default-roles-astra"], "groups": ["/tenants/hanoi-express/admin"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "linh", "email": "linh@express.test", "firstName": "Linh", "lastName": "Ngô",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/dispatcher", "/tenants/hanoi-express/dispatcher"],
       "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
     },
     {

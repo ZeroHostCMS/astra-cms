@@ -66,8 +66,8 @@ spec:
             httpGet: { path: /q/health/live, port: 8080 }
             periodSeconds: 10
           resources:
-            requests: { cpu: 250m, memory: 384Mi }
-            limits: { memory: 768Mi }
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { memory: 1536Mi }   # ZGC heap is 75 % of this; the Timefold solver needs headroom
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
