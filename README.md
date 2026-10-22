@@ -14,8 +14,22 @@
   <img src="docs/astra-intro-poster-en.jpg" width="820" alt="Watch: Astra in 5 minutes (English subtitles)">
 </a>
 
-**A metadata-driven, plugin-first application platform for enterprises that change constantly and cannot afford downtime.**  
-*Inspired by Frappe / ERPNext, rebuilt from scratch on Java 25 and Quarkus. DocTypes define schema, form, API, permissions, workflow and compliance metadata as data. Three plugin isolation tiers: shared, isolated JVM, Wasm. Versioned apps run side by side with canary rollout and automatic rollback. Distributed transactions are built in. AI-native: every DocType and extension point is a tool. Compliance metadata is part of the data model, so the audit evidence for SOC 2, ISO 27001, GDPR and regional privacy laws is generated instead of assembled later. First apps: Astra CMS, then Astra ERP.*
+**A metadata-driven, plugin-first application platform for enterprises that change constantly and cannot afford downtime.**
+
+<div align="left">
+
+Inspired by Frappe / ERPNext, rebuilt from scratch on Java 25 and Quarkus.<br>
+◐&nbsp; **DocTypes** define schema, form, API, permissions, workflow and compliance metadata as data.<br>
+◐&nbsp; **Plugins** run in three isolation tiers: shared, isolated JVM, or WebAssembly.<br>
+○&nbsp; **Versioned apps** run side by side, with canary rollout and automatic rollback.<br>
+●&nbsp; **Distributed transactions** are built into the platform.<br>
+●&nbsp; **AI-native:** every DocType and extension point is a tool for agents.<br>
+◐&nbsp; **Compliance** is part of the data model, so the audit evidence for SOC 2, ISO 27001, GDPR and regional privacy laws is generated instead of assembled later.<br>
+First apps: Astra CMS, then Astra ERP.
+
+<sub>● running in the demo &nbsp;·&nbsp; ◐ partly running &nbsp;·&nbsp; ○ roadmap &nbsp;·&nbsp; details in <a href="#project-status">Project status</a></sub>
+
+</div>
 
 [![Status](https://img.shields.io/badge/Status-Demo%20running%20%C2%B7%20in%20development-yellow.svg)](#project-status)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)

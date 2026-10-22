@@ -19,13 +19,15 @@
 <div align="left">
 
 Lấy cảm hứng từ Frappe/ERPNext, viết lại từ đầu bằng Java 25 và Quarkus.<br>
-**DocType** mô tả schema, form, API, quyền, workflow và metadata tuân thủ dưới dạng dữ liệu.<br>
-**Plugin** chạy ở ba tầng cô lập: dùng chung (shared), JVM riêng, hoặc WebAssembly.<br>
-**Phiên bản app** chạy song song, lên dần bằng canary rollout và tự rollback khi lỗi.<br>
-**Giao dịch phân tán** có sẵn trong nền tảng.<br>
-**AI:** mọi DocType và extension point đều là một tool cho agent.<br>
-**Tuân thủ** nằm trong mô hình dữ liệu, nên bằng chứng kiểm toán cho SOC 2, ISO 27001, GDPR và luật bảo vệ dữ liệu khu vực được sinh tự động, không phải gom lại về sau.<br>
+◐&nbsp; **DocType** mô tả schema, form, API, quyền, workflow và metadata tuân thủ dưới dạng dữ liệu.<br>
+◐&nbsp; **Plugin** chạy ở ba tầng cô lập: dùng chung (shared), JVM riêng, hoặc WebAssembly.<br>
+○&nbsp; **Phiên bản app** chạy song song, lên dần bằng canary rollout và tự rollback khi lỗi.<br>
+●&nbsp; **Giao dịch phân tán** có sẵn trong nền tảng.<br>
+●&nbsp; **AI:** mọi DocType và extension point đều là một tool cho agent.<br>
+◐&nbsp; **Tuân thủ** nằm trong mô hình dữ liệu, nên bằng chứng kiểm toán cho SOC 2, ISO 27001, GDPR và luật bảo vệ dữ liệu khu vực được sinh tự động, không phải gom lại về sau.<br>
 App đầu tiên là Astra CMS, tiếp theo là Astra ERP.
+
+<sub>● chạy trong demo &nbsp;·&nbsp; ◐ chạy một phần &nbsp;·&nbsp; ○ lộ trình &nbsp;·&nbsp; chi tiết ở <a href="#trạng-thái-dự-án">Trạng thái dự án</a></sub>
 
 </div>
 
