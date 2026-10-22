@@ -1,0 +1,28 @@
+name: SalaryComponent
+module: hrm
+kind: setup
+naming: { field: abbr }             # short code used in salary structures, e.g. BASIC, BHXH
+
+# One line of a pay slip. Earnings are posted to an expense account, deductions to a liability account.
+# calculation: Fixed (amount), Percent of Base (rate % of the assigned base, optionally capped by base_cap),
+# Percent of Gross (deductions only), Wasm (a tenant formula run in the Tier 2 sandbox, see astra-apps/hrm/wasm).
+fields:
+  - { name: abbr,                    type: Data,     required: true, in-list: true }
+  - { name: component_name,          type: Data,     required: true, in-list: true }
+  - { name: component_type,          type: Select,   options: [Earning, Deduction], required: true, in-list: true, projected: true }
+  - { name: calculation,             type: Select,   options: [Fixed, Percent of Base, Percent of Gross, Wasm], default: Fixed, in-list: true }
+  - { name: amount,                  type: Currency, default: 0 }
+  - { name: rate,                    type: Float,    label: Rate (%) }
+  - { name: base_cap,                type: Currency, label: Base cap (0 = none) }
+  - { name: depends_on_payment_days, type: Check,    default: true, label: Prorate by payment days }
+  - { name: account,                 type: Data,     required: true, in-list: true, label: GL account }
+  - { name: timeout_ms,              type: Int,      default: 50, label: Deadline (ms) }
+  - { name: module_wasm,             type: Attach,   label: WebAssembly module }
+  - { name: module_sha256,           type: Data,     read-only: true, label: Module SHA-256 }
+  - { name: self_test,               type: Data,     read-only: true, in-list: true }   # set by SalaryComponentHook
+  - { name: note,                    type: Text }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true }
+  - { role: hr,         read: true, create: true, write: true }
+  - { role: accountant, read: true }

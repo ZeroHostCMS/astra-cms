@@ -105,7 +105,92 @@ seed_hanoi() {
   echo "  note: hanoi-express also has customer C001 and order ${o1} — same names as saigon-express, different data"
 }
 
+# ---------- HRM: employees and payroll setup (astra-apps/hrm) ----------
+# Demo seed configuration, not legal advice: employee insurance at the statutory rates (BHXH 8 %, BHYT 1.5 %,
+# BHTN 1 % of the contract salary), capped at 20 × the base salary (2,340,000) for BHXH/BHYT and 20 × the
+# region I minimum wage (5,310,000) for BHTN; verify current rates and caps before any real use. Employer
+# contributions and personal income tax are not modelled. Every employee below is fictional.
+hrm_submit() { # hrm_submit TENANT DOCTYPE JSON -> creates and submits a document, prints its name
+  local name; name=$(call "$1" POST "/api/doc/$2" "$3" | jq -r .name)
+  call "$1" POST "/api/doc/$2/$name/submit" >/dev/null
+  printf '%s' "$name"
+}
+hrm_setup() { # payroll accounts, salary components and structures of one tenant
+  local T=$1 a c
+  for a in '334|Phải trả người lao động|Liability' '3383|Bảo hiểm xã hội|Liability' '3384|Bảo hiểm y tế|Liability' \
+           '3386|Bảo hiểm thất nghiệp|Liability' '642|Chi phí quản lý doanh nghiệp|Expense'; do
+    IFS='|' read -r num name type <<<"$a"
+    call "$T" POST /api/doc/Account "{\"account_number\":\"$num\",\"account_name\":\"$name\",\"root_type\":\"$type\"}" >/dev/null
+  done
+  local kpi; kpi=$(base64 < astra-apps/hrm/wasm/modules/courier-kpi.wasm | tr -d '\n')
+  for c in \
+    '{"abbr":"BASIC","component_name":"Lương cơ bản","component_type":"Earning","calculation":"Percent of Base","rate":100,"depends_on_payment_days":true,"account":"642"}' \
+    '{"abbr":"LUNCH","component_name":"Phụ cấp ăn trưa","component_type":"Earning","calculation":"Fixed","amount":730000,"depends_on_payment_days":true,"account":"642"}' \
+    '{"abbr":"FUEL","component_name":"Phụ cấp xăng xe","component_type":"Earning","calculation":"Fixed","amount":500000,"depends_on_payment_days":true,"account":"642"}' \
+    "{\"abbr\":\"KPI\",\"component_name\":\"Thưởng sản lượng giao hàng\",\"component_type\":\"Earning\",\"calculation\":\"Wasm\",\"depends_on_payment_days\":false,\"account\":\"642\",\"module_wasm\":\"$kpi\"}" \
+    '{"abbr":"BONUS","component_name":"Thưởng","component_type":"Earning","calculation":"Fixed","depends_on_payment_days":false,"account":"642"}' \
+    '{"abbr":"BHXH","component_name":"BHXH người lao động (8%)","component_type":"Deduction","calculation":"Percent of Base","rate":8,"base_cap":46800000,"depends_on_payment_days":false,"account":"3383"}' \
+    '{"abbr":"BHYT","component_name":"BHYT người lao động (1.5%)","component_type":"Deduction","calculation":"Percent of Base","rate":1.5,"base_cap":46800000,"depends_on_payment_days":false,"account":"3384"}' \
+    '{"abbr":"BHTN","component_name":"BHTN người lao động (1%)","component_type":"Deduction","calculation":"Percent of Base","rate":1,"base_cap":106200000,"depends_on_payment_days":false,"account":"3386"}'; do
+    call "$T" POST /api/doc/SalaryComponent "$c" >/dev/null
+  done
+  local ins='[{"component":"BHXH"},{"component":"BHYT"},{"component":"BHTN"}]'
+  hrm_submit "$T" SalaryStructure "{\"code\":\"COURIER\",\"structure_name\":\"Bưu tá giao nhận\",\"earnings\":[{\"component\":\"BASIC\"},{\"component\":\"LUNCH\"},{\"component\":\"FUEL\"},{\"component\":\"KPI\"}],\"deductions\":$ins}" >/dev/null
+  hrm_submit "$T" SalaryStructure "{\"code\":\"OFFICE\",\"structure_name\":\"Văn phòng và kho\",\"earnings\":[{\"component\":\"BASIC\"},{\"component\":\"LUNCH\"}],\"deductions\":$ins}" >/dev/null
+  echo "  payroll: accounts 334, 3383, 3384, 3386, 642; 8 salary components (KPI in WebAssembly); structures COURIER, OFFICE"
+}
+hrm_employee() { # hrm_employee TENANT ID NAME DESIGNATION DEPARTMENT JOINED STRUCTURE BASE
+  call "$1" POST /api/doc/Employee "{\"employee_id\":\"$2\",\"employee_name\":\"$3\",\"designation\":\"$4\",\"department\":\"$5\",\"date_of_joining\":\"$6\"}" >/dev/null
+  hrm_submit "$1" SalaryStructureAssignment "{\"employee\":\"$2\",\"salary_structure\":\"$7\",\"from_date\":\"2026-01-01\",\"base\":$8}" >/dev/null
+  printf '  employee %s %s (%s, %s, base %s)\n' "$2" "$3" "$4" "$7" "$8"
+}
+hrm_attendance() { # hrm_attendance TENANT EMPLOYEE [DAY=STATUS...] — every working day of September 2026 (Mon–Sat)
+  local T=$1 e=$2; shift 2
+  local -A special=()
+  local o; for o in "$@"; do special[${o%%=*}]=${o#*=}; done
+  local d day status pieces body n=0 total=0
+  for d in $(seq 1 30); do
+    day=$(printf '2026-09-%02d' "$d")
+    (( (d - 1) % 7 == 5 )) && continue   # 1 September 2026 is a Tuesday, so the 6th, 13th, 20th and 27th are Sundays
+    status=${special[$d]:-Present}
+    pieces=$(( 36 + d * 7 % 11 ))
+    case $status in
+      Present)    body="{\"employee\":\"$e\",\"attendance_date\":\"$day\",\"status\":\"Present\",\"delivered_pieces\":$pieces}"; total=$(( total + pieces )) ;;
+      "Half Day") body="{\"employee\":\"$e\",\"attendance_date\":\"$day\",\"status\":\"Half Day\",\"delivered_pieces\":$(( pieces / 2 ))}"; total=$(( total + pieces / 2 )) ;;
+      *)          body="{\"employee\":\"$e\",\"attendance_date\":\"$day\",\"status\":\"$status\"}" ;;
+    esac
+    hrm_submit "$T" Attendance "$body" >/dev/null; n=$(( n + 1 ))
+  done
+  printf '  attendance %s, September 2026: %d working days marked, %d pieces delivered\n' "$e" "$n" "$total"
+}
+
+seed_hrm_saigon() {
+  local T=saigon-express
+  echo "Tenant ${T}: HRM"
+  hrm_setup $T
+  hrm_employee $T NV001 "Nguyễn Văn An"  Courier     "Giao nhận Quận 1" 2024-03-01 COURIER 7000000
+  hrm_employee $T NV002 "Trần Thị Bình"  Courier     "Giao nhận Quận 3" 2025-06-01 COURIER 6500000
+  hrm_employee $T NV003 "Lê Hoàng Cường" Office      "Kế toán"          2026-09-14 OFFICE  12000000
+  hrm_employee $T NV004 "Phạm Minh Dũng" "Hub Staff" "Hub Tân Bình"     2025-01-01 OFFICE  8000000
+  hrm_attendance $T NV001
+  hrm_attendance $T NV002 15=Absent 22="Half Day"
+  hrm_submit $T Attendance '{"employee":"NV004","attendance_date":"2026-09-29","status":"On Leave","leave_type":"Leave Without Pay"}' >/dev/null
+  echo "  attendance NV004: unpaid leave on 2026-09-29 (unmarked working days count as worked)"
+  hrm_submit $T AdditionalSalary '{"employee":"NV003","salary_component":"BONUS","amount":500000,"payroll_date":"2026-09-30","reason":"Thưởng hoàn thành hội nhập"}' >/dev/null
+  echo "  additional salary: NV003 bonus 500,000 in September; scripts/demo-hrm.sh runs the payroll"
+}
+
+seed_hrm_hanoi() {
+  local T=hanoi-express
+  echo "Tenant ${T}: HRM"
+  hrm_setup $T
+  hrm_employee $T NV001 "Đặng Quốc Khánh" Courier "Giao nhận Hoàn Kiếm" 2025-02-10 COURIER 6800000
+  hrm_employee $T NV002 "Vũ Thu Hằng"     Office  "Chăm sóc khách hàng" 2024-08-01 OFFICE  10000000
+}
+
 seed_saigon
 seed_hanoi
+seed_hrm_saigon
+seed_hrm_hanoi
 echo
 echo "Done. Open ${BASE}/desk/  ·  compare tenants: ${BASE}/desk/compare.html"

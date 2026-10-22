@@ -1,0 +1,23 @@
+name: PayrollEntry
+module: hrm
+kind: transaction
+submittable: true
+naming: { series: "PAY-.YYMM.-.###" }
+
+# Saving a draft creates (or refreshes) a draft Salary Slip for every active employee who matches;
+# submitting submits those slips, which post to the ledger; cancelling cancels them. One transaction each.
+fields:
+  - { name: start_date,      type: Date,     required: true, in-list: true }
+  - { name: end_date,        type: Date,     required: true, in-list: true }
+  - { name: posting_date,    type: Date }                                   # defaults to end_date
+  - { name: designation,     type: Select,   options: [All, Courier, Driver, Hub Staff, Office], default: All, in-list: true }
+  - { name: employee_count,  type: Int,      read-only: true, in-list: true }
+  - { name: total_gross,     type: Currency, read-only: true, in-list: true }
+  - { name: total_deduction, type: Currency, read-only: true }
+  - { name: total_net,       type: Currency, read-only: true, in-list: true }
+  - { name: note,            type: Text }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: hr,         read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: accountant, read: true }

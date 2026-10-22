@@ -1,4 +1,4 @@
-.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam demo-seed demo-express demo-reset
+.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam demo-seed demo-express demo-hrm demo-reset
 
 export PATH := $(HOME)/.local/bin:$(PATH)
 
@@ -45,6 +45,9 @@ demo-seed:        ## seed the Astra Express demo tenants (BASE=http://localhost:
 
 demo-express:     ## scene-by-scene terminal demo; SCENES="3 4" picks scenes, PAUSE=0 runs straight through
 	scripts/demo-express.sh $(or $(BASE),http://localhost:8080) $(SCENES)
+
+demo-hrm:         ## HR and payroll scenes (attendance, payroll entry, slips, ledger); SCENES and PAUSE as above
+	scripts/demo-hrm.sh $(or $(BASE),http://localhost:8080) $(SCENES)
 
 demo-reset:       ## delete the demo tenants from the Docker Compose database
 	scripts/demo-reset.sh

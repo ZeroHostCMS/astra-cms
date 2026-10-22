@@ -69,6 +69,11 @@
         <artifactId>astra-app-express</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>io.astra</groupId>
+        <artifactId>astra-app-hrm</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

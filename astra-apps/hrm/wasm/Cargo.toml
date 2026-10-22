@@ -1,0 +1,17 @@
+# Tenant payroll formulas for the HRM demo, compiled to WebAssembly and run by Astra's Tier 2 sandbox.
+# ABI: export `kpi(pieces: i64, payment_days_x10: i64, working_days: i64) -> i64` returning VND;
+# payment_days_x10 is payment days times ten, so half days stay integers. Build with ./build.sh.
+[workspace]
+members = ["courier-kpi", "runaway-kpi"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+publish = false
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"
+strip = true

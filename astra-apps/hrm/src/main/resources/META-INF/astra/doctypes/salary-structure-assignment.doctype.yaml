@@ -1,0 +1,18 @@
+name: SalaryStructureAssignment
+module: hrm
+kind: transaction
+submittable: true
+naming: { series: "SSA-.YY.-.####" }
+
+# From from_date on, the employee is paid by this structure on this base (contract salary).
+fields:
+  - { name: employee,         type: Link,     options: Employee, required: true, in-list: true, projected: true }
+  - { name: employee_name,    type: Data,     read-only: true, in-list: true, pii: true }
+  - { name: salary_structure, type: Link,     options: SalaryStructure, required: true, in-list: true }
+  - { name: from_date,        type: Date,     required: true, in-list: true }
+  - { name: base,             type: Currency, required: true, in-list: true }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: hr,         read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: accountant, read: true }

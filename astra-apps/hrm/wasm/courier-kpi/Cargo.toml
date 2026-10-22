@@ -1,0 +1,8 @@
+[package]
+name = "courier-kpi"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib"]

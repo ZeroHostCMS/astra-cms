@@ -1,0 +1,19 @@
+name: Attendance
+module: hrm
+kind: transaction
+submittable: true                   # only submitted attendance counts towards payment days
+naming: { series: "ATT-.YYMM.-.#####" }
+
+fields:
+  - { name: employee,         type: Link,   options: Employee, required: true, in-list: true, projected: true }
+  - { name: employee_name,    type: Data,   read-only: true, in-list: true, pii: true }
+  - { name: attendance_date,  type: Date,   required: true, in-list: true }
+  - { name: month,            type: Data,   read-only: true, projected: true }   # yyyy-MM of attendance_date, for payroll lookups
+  - { name: status,           type: Select, options: [Present, Absent, Half Day, On Leave], required: true, in-list: true }
+  - { name: leave_type,       type: Select, options: [Paid Leave, Leave Without Pay] }   # On Leave only
+  - { name: delivered_pieces, type: Int,    default: 0, in-list: true }   # parcels delivered that day (couriers)
+
+permissions:
+  - { role: admin, read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: hr,    read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: ops,   read: true, create: true, write: true, if-owner: true, submit: true }

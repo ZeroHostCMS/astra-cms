@@ -52,12 +52,12 @@
         {
           "name": "saigon-express",
           "attributes": { "display-name": ["Saigon Express"], "public-signup": ["false"] },
-          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" } ]
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" }, { "name": "hr" } ]
         },
         {
           "name": "hanoi-express",
           "attributes": { "display-name": ["Hanoi Express"], "public-signup": ["false"] },
-          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" } ]
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" }, { "name": "hr" } ]
         }
       ]
     }
@@ -296,6 +296,12 @@
       "username": "thu", "email": "thu@express.test", "firstName": "Thu", "lastName": "Bùi",
       "enabled": true, "emailVerified": true,
       "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/accountant"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "lan", "email": "lan@express.test", "firstName": "Lan", "lastName": "Nguyễn",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/hr"],
       "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
     },
     {

@@ -1,0 +1,21 @@
+name: Employee
+module: hrm
+kind: master
+naming: { field: employee_id }      # e.g. NV001
+
+fields:
+  - { name: employee_id,     type: Data,   required: true, in-list: true }
+  - { name: employee_name,   type: Data,   required: true, in-list: true, pii: true }
+  - { name: designation,     type: Select, options: [Courier, Driver, Hub Staff, Office], required: true, in-list: true, projected: true }
+  - { name: department,      type: Data,   in-list: true }
+  - { name: date_of_joining, type: Date,   required: true }
+  - { name: relieving_date,  type: Date }                      # last working day of someone who left
+  - { name: status,          type: Select, options: [Active, Left], default: Active, in-list: true, projected: true }
+  - { name: phone,           type: Data,   pii: true }
+  - { name: bank_account,    type: Data,   pii: true }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true }
+  - { role: hr,         read: true, create: true, write: true }
+  - { role: accountant, read: true }
+  - { role: ops,        read: true }     # hub supervisors record attendance and delivered pieces
