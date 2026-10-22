@@ -40,14 +40,6 @@ App đầu tiên là Astra CMS, tiếp theo là Astra ERP.
 
 > **Rút ngắn hành trình từ một ý tưởng đến một tính năng sẵn sàng cho production, từ vài tháng xuống vài ngày, thậm chí vài giờ, trong khi con người vẫn nắm quyền với các quyết định quan trọng.**
 
-Astra CMS là nền tảng quản lý nội dung **sẵn sàng cho AI**, xây cho thế hệ phần mềm tiếp theo: những hệ thống có thể **hiểu nhu cầu người dùng, tạo ra năng lực mới, kiểm thử thay đổi và tiến hóa liên tục dưới sự phê duyệt của con người**.
-
-Phát triển phần mềm đang vượt qua cách làm thủ công từng tính năng rồi phát hành. Trong kỷ nguyên **Software After Software**, AI agent tham gia trực tiếp vào vòng đời phần mềm, biến nhu cầu thực tế thành tính năng chạy được qua lập kế hoạch, sinh code, kiểm thử và triển khai.
-
-Astra khám phá tương lai đó bằng cách cung cấp nền móng cho các ứng dụng **dễ mở rộng, hướng sự kiện và tích hợp AI**, nơi phần mềm tiến hóa từ **phản hồi của người dùng và tín hiệu vận hành**, thay vì chỉ trông vào chu kỳ phát triển truyền thống.
-
-Phần mềm không nên là một sản phẩm tĩnh chờ bản phát hành kế tiếp. Nó nên là một **hệ thống sống**, liên tục học hỏi, thích nghi và cải thiện.
-
 **Kiến trúc phục vụ tầm nhìn này ra sao.** Mỗi bước trong vòng từ nhu cầu đến tính năng ứng với một phần cụ thể của nền tảng:
 
 | Bước | Điều gì trong Astra làm được việc đó |
@@ -64,7 +56,7 @@ Phần mềm không nên là một sản phẩm tĩnh chờ bản phát hành k�
 
 ## Video demo
 
-Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang chạy: màn hình Desk và output terminal thật, có giọng đọc tiếng Việt (giọng nam tổng hợp bằng VieNeu-TTS), không dựng cảnh. Các video về cơ chế nền tảng và nghiệp vụ (8 đến 17, 19 đến 21) có mục "Nói đúng" ghi rõ phần nào chưa làm. Video về lộ trình nằm ở mục [Lộ trình](#lộ-trình). Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md). Bản tiếng Anh của các video: [README.md](README.md#demo-videos).
+Quay từ bản demo đang chạy: màn hình Desk và output terminal thật. Các video 8 đến 17 và 19 đến 21 kết thúc bằng mục "Nói đúng" ghi rõ phần nào chưa làm. Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md).
 
 <table>
 <tr><th colspan="2" align="left">Teaser: Một nền tảng, mọi nghiệp vụ <sub>(1:30)</sub></th></tr>
@@ -72,6 +64,12 @@ Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang ch
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4"><img src="docs/video-thumbs/video-00.jpg" width="320" alt="Xem teaser: Một nền tảng, mọi nghiệp vụ"></a></td>
 <td>Dựng nhanh từ cảnh thật của bản demo: DocType thành Desk, Submit sinh vận đơn và bút toán, overlay theo tenant, sandbox Wasm, MCP che PII, CDC Rust và Seata rollback.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4">▶ Xem video</a></td>
 </tr>
+</table>
+
+<details>
+<summary><b>20 video còn lại</b>: các cơ chế nền tảng, rồi app HRM, STMS và SSO</summary>
+
+<table>
 <tr><th colspan="2" align="left">Video 1 · Astra là gì &amp; chạy trong 5 phút <sub>(2:32)</sub></th></tr>
 <tr>
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-vi.mp4"><img src="docs/video-thumbs/video-01.jpg" width="320" alt="Xem video 1: Astra là gì &amp; chạy trong 5 phút"></a></td>
@@ -174,6 +172,8 @@ Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang ch
 </tr>
 </table>
 
+</details>
+
 ---
 
 ## Đọc theo vai trò
@@ -181,9 +181,8 @@ Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang ch
 | Bạn là | Astra cho bạn gì | Bắt đầu từ |
 | --- | --- | --- |
 | **Developer đang tìm CMS mới** | Một file YAML là có REST API, form, list, quyền và index. Không viết migration khi thêm trường. Hook nghiệp vụ là class Java bình thường. | Video [1](https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-vi.mp4), [2](https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-vi.mp4), [9](https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4) · [Chạy lát cắt mỏng](#chạy-lát-cắt-mỏng-ngay-hôm-nay) · [DocType engine](#doctype-engine) |
-| **Nhà đầu tư** | Một nền tảng cho cả CMS lẫn ERP, nhắm doanh nghiệp cần tùy biến liên tục mà không fork. Phần lõi đã chạy được; phần còn lại ghi rõ là lộ trình. | [Teaser](https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4), video nghiệp vụ [19](https://media.zerohostcms.com/astra-cms/astra-video-19-hrm-vi.mp4) và [20](https://media.zerohostcms.com/astra-cms/astra-video-20-stms-vi.mp4), [video lộ trình](https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4) · [Trạng thái dự án](#trạng-thái-dự-án) · [Lộ trình](#lộ-trình) |
 | **Nhà nghiên cứu** | Các lựa chọn thiết kế có thể kiểm chứng: lưu trữ JSONB không DDL kèm index biểu thức, RLS fail-closed, đọc-sau-ghi giữa các module bằng LSN, Seata AT/TCC, sandbox Wasm giới hạn theo thời gian. | [docs/explain.md](docs/explain.md) · [Tham chiếu thiết kế](#tham-chiếu-thiết-kế) · [Hiệu năng](#hiệu-năng-nguyên-tắc-và-mục-tiêu) |
-| **Lập trình bằng AI (vibe code)** | Mỗi việc đủ nhỏ để agent làm trọn: một DocType là một file YAML, một hook là một class. 76 test tích hợp cho vòng lặp pass/fail. Agent dùng app qua MCP với đúng quyền của người dùng. | Video [9](https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4), [15](https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4) · app mẫu [astra-apps/express](astra-apps/express) · [docs/demo-code-snippets.md](docs/demo-code-snippets.md) |
+| **Lập trình cùng AI agent** | Mỗi việc đủ nhỏ để agent làm trọn: một DocType là một file YAML, một hook là một class. Bộ test tích hợp chạy với PostgreSQL thật cho vòng lặp pass/fail. Agent dùng app qua MCP với đúng quyền của người dùng. | Video [9](https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4), [15](https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4) · app mẫu [astra-apps/express](astra-apps/express) · [docs/demo-code-snippets.md](docs/demo-code-snippets.md) |
 | **Tech lead doanh nghiệp** | Đa tenant bằng PostgreSQL RLS, Keycloak với role theo tenant và tách nhiệm vụ, sổ cái append-only, giao dịch phân tán, chạy trên Kubernetes. Mỗi giới hạn hiện tại đều được ghi ra. | Video [7](https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-vi.mp4), [8](https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-vi.mp4), [10](https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-vi.mp4), [11](https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-vi.mp4), [12](https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-vi.mp4), [17](https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4), [21](https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4) · [Đa tenant](#đa-tenant-multi-tenancy) |
 
 ---
@@ -204,7 +203,7 @@ Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang ch
 > Astra **không dùng chung code, schema hay asset** nào với hai dự án này. Các khái niệm như "DocType" chỉ được dùng như từ vựng chung;
 > mọi phần hiện thực đều là bản gốc, viết bằng Java, theo giấy phép MIT. Không được sao chép bất cứ thứ gì từ ERPNext vào repository này.
 
-Muốn hiểu lý do đằng sau từng lựa chọn thiết kế: xem [docs/explain.md](docs/explain.md) (bản tiếng Anh: [docs/explain.en.md](docs/explain.en.md)).
+Lý do đằng sau từng lựa chọn thiết kế: [docs/explain.md](docs/explain.md).
 
 ---
 
@@ -233,16 +232,18 @@ Một ứng dụng Astra gồm một kernel cộng với một tập plugin ("ap
 | **Stripe** | Phiên bản API theo ngày, ghim theo từng tài khoản. | Phiên bản app và phiên bản public API ghim theo tenant. |
 | **Erlang / OTP** | Code cũ và mới cùng tồn tại; lời gọi đang chạy hoàn tất trên code cũ. | Phiên bản plugin chạy song song, drain trước khi giải phóng. |
 | **Shopify Functions** | Logic của merchant chạy dưới dạng Wasm với giới hạn lệnh xác định cho mỗi lần chạy. | Wasm sandbox Tier 2 với ngân sách tài nguyên và metric theo từng lần gọi. |
-| **Cloudflare Workers** | Isolate trong tiến trình thay vì container; Cloudflare tuyên bố khởi động nhanh hơn ~100 lần. | Cô lập plugin trong tiến trình thay vì mỗi tùy biến một microservice. |
+| **Cloudflare Workers** | Isolate trong tiến trình thay vì container. | Cô lập plugin trong tiến trình thay vì mỗi tùy biến một microservice. |
 | **Envoy / Proxy-Wasm** | Control plane phân phối Wasm filter tới mọi proxy. | Control plane của plugin đưa cùng một phiên bản tới mọi pod, kể cả pod tham gia muộn. |
-| **VS Code** | Extension chạy trong host riêng trên API ổn định, có kiểu; hàng chục nghìn extension. | Extension point có kiểu và cô lập, để nhiều app cùng chạy mà không làm hỏng nhau. |
+| **VS Code** | Extension chạy trong host riêng trên API ổn định, có kiểu. | Extension point có kiểu và cô lập, để nhiều app cùng chạy mà không làm hỏng nhau. |
 | **Google SRE / Netflix** | Canary, error budget, rollback tự động. | Các bước rollout có health gate, auto-rollback, DORA metric theo từng plugin. |
-| **Alibaba → Apache Seata** | Điều phối giao dịch ở quy mô Singles' Day. | AT trên PostgreSQL, TCC trên Redis Cluster, smart bypass khi không cần giao dịch. |
-| **Model Context Protocol (Linux Foundation / AAIF)** | Chuẩn mở để agent gọi tool, được ChatGPT, Gemini, Copilot, Cursor, VS Code áp dụng; 10.000+ server công khai. | DocType và extension point được chiếu (projection) thành MCP tool dưới cùng cơ chế quyền. |
+| **Alibaba → Apache Seata** | Điều phối giao dịch phân tán (chế độ AT và TCC). | AT trên PostgreSQL, TCC trên Redis Cluster, smart bypass khi không cần giao dịch. |
+| **Model Context Protocol (Linux Foundation / AAIF)** | Chuẩn mở để đưa tool cho AI agent. | DocType và extension point được chiếu (projection) thành MCP tool dưới cùng cơ chế quyền. |
 
 ---
 
 ## Kiến trúc
+
+Sơ đồ ở đầu trang là phần đang chạy. Dưới đây là kiến trúc mục tiêu.
 
 ```text
 +-----------------------------------------------------------------------------------------+
@@ -1007,11 +1008,11 @@ astra:
 </tr>
 </table>
 
-Xây lại một nền tảng cỡ Frappe với sandbox ba tầng, giao dịch phân tán, multi-tenancy, engine tuân thủ và bề mặt AI là nhiều năm làm việc của một đội, và một repository không thể hoàn thành trong một năm. Vì vậy lộ trình có hai cách đọc. **Lát cắt mỏng** là thứ được xây và demo trước, đầu cuối. Mọi thứ sau đó được sắp thứ tự sao cho mỗi phase tự nó ship được thứ dùng được. Bảng tuân thủ là catalogue các **profile được bật dần theo thời gian**, không phải một deliverable duy nhất của Phase 5.
+**Đã xong** (xem [Chạy lát cắt mỏng ngay hôm nay](#chạy-lát-cắt-mỏng-ngay-hôm-nay)): tenancy với row-level security và guard fail-closed, lưu trữ JSONB zero-DDL kèm REST và Desk sinh tự động, vòng đời submittable, sổ cái append-only, overlay theo tenant, sandbox Wasm Tier 2, MCP server, worker CDC Rust với Sync-Aware LSN, Seata AT + TCC, Keycloak với SAML SSO và SCIM, hai kernel pod trên k3d.
 
-**Lát cắt mỏng (đã xong, xem "Chạy lát cắt mỏng ngay hôm nay"):** một app DocType-driven (CMS `Article`), tenancy bằng `ScopedValue` và row-level security với guard fail-closed, lưu trữ JSONB zero-DDL với REST sinh tự động, một hook Tier 0, chạy trên Docker Compose và cụm k3d cục bộ với hai kernel pod. Các bước tiếp theo, theo thứ tự: ledger `GL Entry` tối thiểu với hoá đơn submittable; spike Seata chứng minh AT trên PostgreSQL + TCC trên Redis trên virtual thread; một script Wasm Tier 2; một canary rollout qua hai pod; một MCP server mỏng cung cấp `doc.search / get / create`. Mỗi bước đều kèm benchmark công khai so với các mục tiêu ở trên.
+**Tiếp theo:** loader JVM riêng (Tier 1), canary rollout qua nhiều pod, điều kiện quyền theo dòng, projection materialised, audit hash-chain, mã hoá trường, CDC streaming và agent ngoài các tool MCP. Các phase dưới đây sắp thứ tự cho toàn bộ nền tảng; phần tuân thủ là các **profile được bật dần theo thời gian**, không phải một deliverable duy nhất của Phase 5.
 
-* [ ] **Phase 1: Kiến trúc & SPI** (đang làm). Bản thiết kế (README này). Tiếp theo: khung Maven, `astra-spi` với các extension point, mô hình DocType và YAML schema **kèm thuộc tính tuân thủ**, manifest schema, mức trưởng thành, chính sách deprecation, `AGENTS.md` / `llms.txt`, `SECURITY.md`, khung catalogue control OSCAL.
+* [ ] **Phase 1: Kiến trúc & SPI** (đang làm). Bản thiết kế (README này). Tiếp theo: `astra-spi` với các extension point, mô hình DocType và YAML schema **kèm thuộc tính tuân thủ**, manifest schema, mức trưởng thành, chính sách deprecation, `AGENTS.md` / `llms.txt`, `SECURITY.md`, khung catalogue control OSCAL.
 * [ ] **Phase 2: Kernel, Plugin Host & lõi DocType Engine**. Registry với phiên bản chạy song song và ghim theo tenant; **lõi tenancy** (Tenant DocType, xác định tenant, ngữ cảnh `ScopedValue`, RLS, profile `shared-rls`, bulkhead); loader Tier 0/1/2 **có đếm lệnh cho Tier 2**; registry metadata DocType, lưu trữ JSONB, projection bằng expression index có quota, naming, link, child table, quyền, submittable lifecycle, phiên bản; **audit ledger chống giả mạo ngay từ lần ghi đầu tiên**; REST sinh tự động; **MCP server mỏng (`doc.search / get / create`)**; **spike Seata** (AT + TCC + virtual thread, quyết định go/no-go cho Phase 4); `astra-plugin-testkit`; pipeline build SLSA Level 3; benchmark công khai đầu tiên.
 * [ ] **Phase 3: Control Plane & tương thích**. Registry, chữ ký, SBOM, chính sách provenance, phê duyệt bốn mắt cho production, canary rollout, pod join; shim `astra-compat`; conformance suite bao gồm overlay của tenant; data patch; chỉ số DORA.
 * [ ] **Phase 4: Giao dịch, Ledger & Cache**. Extension Quarkus Seata (hoặc phương án dự phòng do spike Phase 2 chọn: transactional outbox cộng TCC idempotent không cần coordinator tập trung); lưu trữ `ledger` với expand/contract; projection materialised có job backfill; cache bus L1/L2; upcaster; API phiên bản theo ngày.
@@ -1030,9 +1031,7 @@ Những đóng góp hữu ích nhất lúc này là phản biện mô hình DocT
 
 **Người đóng góp không được sao chép code, schema, fixture hay UI asset từ ERPNext (GPL-3.0) hoặc bất kỳ dự án GPL nào.** Có thể tham chiếu khái niệm của Frappe; mọi cài đặt phải là nguyên bản.
 
-Vấn đề bảo mật đi qua quy trình công bố có phối hợp trong `SECURITY.md` (có cùng khung Phase 1), không bao giờ qua issue công khai.
-
-`CONTRIBUTING.md`, hướng dẫn build và quy tắc ứng xử sẽ có cùng khung Phase 1.
+Hướng dẫn cài đặt môi trường và gửi pull request nằm ở [CONTRIBUTING.md](CONTRIBUTING.md). Lỗ hổng bảo mật xin báo riêng theo [SECURITY.md](SECURITY.md), không mở issue công khai. Mọi người tham gia tuân theo [Quy tắc ứng xử](CODE_OF_CONDUCT.md).
 
 ---
 

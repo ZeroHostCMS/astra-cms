@@ -42,14 +42,6 @@ First apps: Astra CMS, then Astra ERP.
 
 > **Shorten the journey from an idea to a production-ready capability from months to days, or even hours, while keeping humans in control of critical decisions.**
 
-Astra CMS is an **AI-ready** content management platform built for the next generation of software: systems that can **understand user needs, create new capabilities, test changes, and evolve continuously with human approval**.
-
-Software development is moving beyond manually building and shipping features. In the **Software After Software** era, AI agents become active participants in the software lifecycle, turning real-world needs into working features through planning, code generation, testing and deployment.
-
-Astra explores this future by providing a foundation for **extensible, event-driven and AI-integrated** applications, where software evolves from **user feedback and operational signals** rather than relying solely on traditional development cycles.
-
-Software should no longer be a static product that waits for its next release. It should be a **living system** that continuously learns, adapts and improves.
-
 **How the architecture serves the vision.** Each step of the loop from need to capability maps to a concrete part of the platform:
 
 | Step | What makes it possible in Astra |
@@ -66,7 +58,7 @@ Software should no longer be a static product that waits for its next release. I
 
 ## Demo videos
 
-A 90-second teaser and 20 videos recorded from the running demo: real Desk screens and terminal output, with an English voice-over (a synthetic male voice, Kokoro-82M), no staged scenes. The platform and business videos (8 to 17, 19 to 21) each have a "To be accurate" section that says what is not built yet. The roadmap video is in [Roadmap](#roadmap). Script: [docs/demo-video-series.en.md](docs/demo-video-series.en.md). Vietnamese versions: [README.vi.md](README.vi.md#video-demo).
+Recorded from the running demo: real Desk screens and terminal output. Videos 8 to 17 and 19 to 21 each end with a "To be accurate" note on what is not built yet. Script: [docs/demo-video-series.en.md](docs/demo-video-series.en.md).
 
 <table>
 <tr><th colspan="2" align="left">Teaser: One platform, every business process <sub>(1:30)</sub></th></tr>
@@ -74,6 +66,12 @@ A 90-second teaser and 20 videos recorded from the running demo: real Desk scree
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-en.mp4"><img src="docs/video-thumbs/video-00-en.jpg" width="320" alt="Watch the teaser: One platform, every business process"></a></td>
 <td>Cut from real scenes of the demo: a DocType becomes the Desk, Submit creates a waybill and a journal entry, per-tenant overlays, the Wasm sandbox, MCP masking PII, Rust CDC and a Seata rollback.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-en.mp4">▶ Watch</a></td>
 </tr>
+</table>
+
+<details>
+<summary><b>20 more videos</b>: the platform mechanisms, then the HRM, STMS and SSO apps</summary>
+
+<table>
 <tr><th colspan="2" align="left">Video 1 · What is Astra &amp; running it locally <sub>(2:32)</sub></th></tr>
 <tr>
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-en.mp4"><img src="docs/video-thumbs/video-01-en.jpg" width="320" alt="Watch video 1 · What is Astra &amp; running it locally"></a></td>
@@ -176,25 +174,27 @@ A 90-second teaser and 20 videos recorded from the running demo: real Desk scree
 </tr>
 </table>
 
+</details>
+
 ---
 
 ## Project Status
 
-> **Astra is in the architecture & specification phase, with a running thin slice.** The repository
-> holds this blueprint plus the first vertical slice of the platform: a Maven multi-module build
-> (`astra-spi`, `astra-kernel`, `astra-doctype`, `astra-apps/cms`, `astra-server`), tenancy by
-> `ScopedValue` and PostgreSQL row-level security with a fail-closed guard, a zero-DDL JSONB DocType
-> store with generated REST, one Tier 0 lifecycle hook, a Docker Compose dev stack and a local k3d
-> deployment with two kernel pods. See [Run the thin slice today](#run-the-thin-slice-today).
-> Everything else below describes the **target architecture and the intended public API**; those code
-> samples do not compile yet. Performance figures are **design targets** to be validated by public
+> **Runs today:** a Maven multi-module build, tenancy by `ScopedValue` and PostgreSQL row-level security
+> (the kernel refuses to start as a superuser), a zero-DDL JSONB DocType store with generated REST, the
+> submit/cancel/amend lifecycle, an append-only ledger, per-tenant overlays, a WebAssembly sandbox, an MCP server,
+> a Rust CDC worker, Seata AT/TCC, Keycloak sign-in, a metadata-driven Desk, and a k3d deployment with two kernel
+> pods. See [Run the thin slice today](#run-the-thin-slice-today) and the [Demo videos](#demo-videos).
+>
+> **Not yet:** everything else below describes the **target architecture and the intended public API**; those
+> code samples do not compile yet. Performance figures are **design targets** to be validated by public
 > benchmarks, not measurements.
 >
 > **Clean-room notice.** Astra is inspired by the architecture of Frappe Framework (MIT) and ERPNext (GPL-3.0).
 > It shares **no code, schema, or assets** with either. Concepts such as "DocType" are used as common vocabulary;
 > every implementation is original, in Java, under MIT. Nothing from ERPNext may be copied into this repository.
 
-Why each choice was made, written as a 40-minute talk: [docs/explain.en.md](docs/explain.en.md). The demo videos are listed under [Demo videos](#demo-videos). Vietnamese readers: [README.vi.md](README.vi.md) is the full Vietnamese README with the same videos in Vietnamese, and [docs/explain.md](docs/explain.md) is the Vietnamese original of the explainer.
+The reasoning behind each design choice: [docs/explain.en.md](docs/explain.en.md).
 
 ---
 
@@ -223,16 +223,18 @@ An Astra application is a kernel plus a declared set of plugins ("apps") whose D
 | **Stripe** | Dated API versions pinned per account. | App versions and public API versions pinned per tenant. |
 | **Erlang / OTP** | Old and new code coexist; running calls finish on old code. | Side-by-side plugin versions, drain before release. |
 | **Shopify Functions** | Merchant logic as Wasm with deterministic, per-run instruction limits. | Tier 2 Wasm sandbox with budgets and per-invocation metrics. |
-| **Cloudflare Workers** | In-process isolates instead of containers; Cloudflare claims ~100x faster start. | In-process plugin isolation instead of a microservice per customisation. |
+| **Cloudflare Workers** | In-process isolates instead of containers. | In-process plugin isolation instead of a microservice per customisation. |
 | **Envoy / Proxy-Wasm** | Control plane distributes Wasm filters to every proxy. | Plugin control plane delivering the same version to every pod, including late joiners. |
-| **VS Code** | Extensions in a separate host against a stable typed API; tens of thousands of extensions. | Typed extension points + isolation = a large but not fragile ecosystem. |
+| **VS Code** | Extensions in a separate host against a stable typed API. | Typed extension points + isolation = a large but not fragile ecosystem. |
 | **Google SRE / Netflix** | Canary, error budgets, automated rollback. | Health-gated rollout steps, auto-rollback, DORA metrics per plugin. |
-| **Alibaba → Apache Seata** | Transaction coordination at Singles' Day scale. | AT on PostgreSQL, TCC on Redis Cluster, smart bypass when not transactional. |
-| **Model Context Protocol (Linux Foundation / AAIF)** | Open agent-tool standard adopted by ChatGPT, Gemini, Copilot, Cursor, VS Code; 10,000+ public servers. | DocTypes and extension points projected as MCP tools under the same permissions. |
+| **Alibaba → Apache Seata** | Distributed transaction coordination (AT and TCC modes). | AT on PostgreSQL, TCC on Redis Cluster, smart bypass when not transactional. |
+| **Model Context Protocol (Linux Foundation / AAIF)** | Open standard for exposing tools to AI agents. | DocTypes and extension points projected as MCP tools under the same permissions. |
 
 ---
 
 ## Architecture
+
+The diagram at the top of this page shows what runs today. This is the target architecture.
 
 ```text
 +-----------------------------------------------------------------------------------------+
@@ -997,11 +999,11 @@ astra:
 </tr>
 </table>
 
-Rebuilding a Frappe-class platform with a three-tier sandbox, distributed transactions, multi-tenancy, a compliance engine and an AI surface is years of work for a team, and a single repository cannot finish it in a year. The roadmap therefore has two readings. The **thin slice** is what gets built and demonstrated first, end to end. Everything after it is sequenced so each phase ships something usable on its own. The compliance table is a catalogue of **profiles enabled over time**, not a single Phase 5 deliverable.
+**Done** (see [Run the thin slice today](#run-the-thin-slice-today)): tenancy with row-level security and a fail-closed guard, zero-DDL JSONB storage with generated REST and Desk, the submittable lifecycle, an append-only ledger, per-tenant overlays, a Tier 2 Wasm sandbox, an MCP server, a Rust CDC worker with Sync-Aware LSN, Seata AT + TCC, Keycloak with SAML SSO and SCIM, and two kernel pods on k3d.
 
-**Thin slice (done, see "Run the Thin Slice Today"):** one DocType-driven app (CMS `Article`), tenancy by `ScopedValue` and row-level security with a fail-closed guard, zero-DDL JSONB storage with generated REST, one Tier 0 hook, running on Docker Compose and a local k3d cluster with two kernel pods. Next increments, in order: a minimal `GL Entry` ledger with a submittable invoice; a Seata spike proving AT on PostgreSQL + TCC on Redis on virtual threads; one Tier 2 Wasm script; one canary rollout across two pods; a thin MCP server exposing `doc.search / get / create`. Each increment comes with a public benchmark against the targets above.
+**Next:** the Tier 1 isolated-JVM loader, canary rollout across pods, row-level permission conditions, materialised projections, the audit hash-chain, field encryption, streaming CDC and agents beyond MCP tools. The phases below sequence the full platform; the compliance work is a set of **profiles enabled over time**, not a single Phase 5 deliverable.
 
-* [ ] **Phase 1: Architecture & SPI** (in progress). Blueprint (this README). Next: Maven skeleton, `astra-spi` with extension points, DocType model and YAML schema **including compliance attributes**, manifest schema, maturity levels, deprecation policy, `AGENTS.md` / `llms.txt`, `SECURITY.md`, OSCAL control catalogue skeleton.
+* [ ] **Phase 1: Architecture & SPI** (in progress). Blueprint (this README). Next: `astra-spi` with extension points, DocType model and YAML schema **including compliance attributes**, manifest schema, maturity levels, deprecation policy, `AGENTS.md` / `llms.txt`, `SECURITY.md`, OSCAL control catalogue skeleton.
 * [ ] **Phase 2: Kernel, Plugin Host & DocType Engine core**. Registry with side-by-side versions and tenant pins; **tenancy core** (Tenant DocType, resolution, `ScopedValue` context, RLS, `shared-rls` profile, bulkheads); Tier 0/1/2 loaders **with instruction counting for Tier 2**; DocType metadata registry, JSONB storage, expression-index projections with quotas, naming, links, child tables, permissions, submittable lifecycle, versions; **tamper-evident audit ledger from the first write**; generated REST; **thin MCP server (`doc.search / get / create`)**; **Seata spike** (AT + TCC + virtual threads, go/no-go for Phase 4); `astra-plugin-testkit`; SLSA Level 3 build pipeline; first public benchmarks.
 * [ ] **Phase 3: Control Plane & Compatibility**. Registry, signatures, SBOM, provenance policy, four-eyes production approvals, canary rollout, pod join; `astra-compat` shims; conformance suite including tenant overlays; data patches; DORA metrics.
 * [ ] **Phase 4: Transactions, Ledgers & Cache**. Quarkus Seata extension (or the fallback chosen by the Phase 2 spike: transactional outbox plus idempotent TCC without a central coordinator); `ledger` storage with expand/contract; materialised projections with backfill jobs; L1/L2 cache bus; upcasters; date-versioned APIs.
@@ -1020,9 +1022,7 @@ The most useful contributions right now are challenges to the DocType model (sto
 
 **Contributors must not copy code, schema, fixtures, or UI assets from ERPNext (GPL-3.0) or any GPL project.** Frappe concepts may be referenced; implementations must be original.
 
-Security issues go through the coordinated disclosure process in `SECURITY.md` (arriving with the Phase 1 skeleton), never through public issues.
-
-`CONTRIBUTING.md`, build setup, and code of conduct ship with the Phase 1 skeleton.
+Development setup and pull request guidelines are in [CONTRIBUTING.md](CONTRIBUTING.md). Report security vulnerabilities privately as described in [SECURITY.md](SECURITY.md), not in public issues. All participants follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ---
 
