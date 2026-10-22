@@ -503,7 +503,7 @@
       "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
     },
     {
-      "username": "lan", "email": "lan@express.test", "firstName": "Lan", "lastName": "Nguyễn",
+      "username": "hanh", "email": "hanh@express.test", "firstName": "Hạnh", "lastName": "Nguyễn",
       "enabled": true, "emailVerified": true,
       "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/hr"],
       "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]

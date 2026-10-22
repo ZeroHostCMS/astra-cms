@@ -16,7 +16,7 @@ T=saigon-express
 START=2026-09-01; END=2026-09-30
 cd "$(dirname "$0")/.."
 source scripts/lib/demo-common.sh
-AS=lan   # the signed-in Keycloak user for the next calls: lan is HR of saigon-express
+AS=hanh   # the signed-in Keycloak user for the next calls: hanh is HR of saigon-express
 
 title() { printf '\n\033[1;35m━━━ HRM %s · %s ━━━\033[0m\n' "$1" "$2"; }
 say()   { printf '\n\033[1;36m▸ %s\033[0m\n' "$*"; }
@@ -41,7 +41,7 @@ mcp() { api "$1" POST /mcp "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"$2\",\"pa
 
 # run_of DOCSTATUS — the newest payroll entry for September 2026 in that state (0 draft, 1 submitted), or empty
 run_of() {
-  http lan $T GET "/api/doc/PayrollEntry?start_date=${START}&docstatus=$1&limit=1"
+  http hanh $T GET "/api/doc/PayrollEntry?start_date=${START}&docstatus=$1&limit=1"
   jq -r '.[0].name // empty' <<<"$HTTP_BODY"
 }
 SLIPS='[.[] | {name, employee: .data.employee, payment_days: .data.payment_days, gross: .data.gross_pay, deductions: .data.total_deduction, net: .data.net_pay, docstatus}] | sort_by(.employee)'
@@ -85,7 +85,7 @@ scene3() {
   as tuan
   say "Nor sales'"
   api $T GET /api/doc/PayrollEntry
-  as lan; wait_key
+  as hanh; wait_key
 }
 
 scene4() {
@@ -129,8 +129,8 @@ scene6() {
   api $T GET "/api/ledger/entries?voucher_no=$run" '[.[] | {voucher_type, account, debit, credit}]'
   api $T GET /api/ledger/trial-balance "$PAYROLL_ACCOUNTS"
   say "A slip of a submitted run is cancelled only with its run"
-  local slip; slip=$(http lan $T GET "/api/doc/SalarySlip?payroll_entry=$run&employee=NV001" && jq -r '.[0].name' <<<"$HTTP_BODY")
-  as lan
+  local slip; slip=$(http hanh $T GET "/api/doc/SalarySlip?payroll_entry=$run&employee=NV001" && jq -r '.[0].name' <<<"$HTTP_BODY")
+  as hanh
   api $T POST "/api/doc/SalarySlip/$slip/cancel"
   say "A salary period is paid once: a second September run is refused"
   api $T POST /api/doc/PayrollEntry "{\"start_date\":\"$START\",\"end_date\":\"$END\"}"; wait_key
@@ -146,7 +146,7 @@ scene7() {
   say "The ledger is append-only: the reversal mirrors every line of the run's voucher"
   api $T GET "/api/ledger/entries?voucher_no=$run" '[.[] | {account, debit, credit, is_reversal}]'
   api $T GET /api/ledger/trial-balance "$PAYROLL_ACCOUNTS"
-  as lan; wait_key
+  as hanh; wait_key
 }
 
 scene8() {
@@ -164,7 +164,7 @@ scene8() {
   as tuan
   say "The tool reads PayrollEntry and SalarySlip, so a salesperson's agent is refused"
   mcp $T tools/call '{"name":"payroll_summary","arguments":{}}' '.result | {isError, text: .content[0].text}'
-  as lan; wait_key
+  as hanh; wait_key
 }
 
 for s in "${SCENES[@]}"; do "scene$s"; done
