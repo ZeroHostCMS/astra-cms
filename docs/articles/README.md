@@ -6,7 +6,7 @@ technical leader should weigh, how to run it yourself, what is not built yet, an
 figures that explain the idea.
 
 The videos are listed in the [README](../../README.md#demo-videos); the scene-by-scene scripts are in
-[demo-video-series.en.md](../demo-video-series.en.md).
+[demo-video-series.en.md](../demo-video-series.en.md). Bản tiếng Việt: [README.vi.md](./README.vi.md).
 
 ## Figure prompts
 
