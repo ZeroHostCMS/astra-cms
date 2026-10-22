@@ -1,4 +1,4 @@
-.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam demo-seed demo-express demo-reset
+.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam demo-seed demo-express demo-reset demo-sso
 
 export PATH := $(HOME)/.local/bin:$(PATH)
 
@@ -48,3 +48,6 @@ demo-express:     ## scene-by-scene terminal demo; SCENES="3 4" picks scenes, PA
 
 demo-reset:       ## delete the demo tenants from the Docker Compose database
 	scripts/demo-reset.sh
+
+demo-sso:         ## SAML SSO and SCIM provisioning scenes; SCENES="1 5" picks scenes, PAUSE=0 runs straight through
+	scripts/demo-sso.sh $(or $(BASE),http://localhost:8080) $(SCENES)
