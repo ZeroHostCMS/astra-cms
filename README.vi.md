@@ -4,12 +4,13 @@
 
 <p><a href="README.md">English</a> · <b>Tiếng Việt</b></p>
 
-<a href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4" title="Xem video: Astra trong 5 phút">
+<a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-intro.mp4" title="Xem video: Astra trong 5 phút">
   <img src="docs/astra-intro-poster.jpg" width="820" alt="Xem video: Astra trong 5 phút (phụ đề tiếng Việt)">
 </a>
 
-**Nền tảng ứng dụng metadata-driven, plugin-first cho những doanh nghiệp thay đổi liên tục và không thể chấp nhận downtime.**  
-*Lấy cảm hứng từ Frappe / ERPNext, xây lại từ đầu trên Java 25 và Quarkus. DocType định nghĩa schema, form, API, quyền, workflow và metadata tuân thủ dưới dạng dữ liệu. Ba tầng cô lập plugin: dùng chung (shared), JVM cô lập, Wasm. Các phiên bản app chạy song song với canary rollout và rollback tự động. Giao dịch phân tán có sẵn trong nền tảng. AI-native: mọi DocType và extension point đều là một tool. Metadata tuân thủ là một phần của mô hình dữ liệu, nên bằng chứng kiểm toán cho SOC 2, ISO 27001, GDPR và các luật bảo vệ dữ liệu khu vực được sinh ra tự động thay vì phải gom lại về sau. Các app đầu tiên: Astra CMS, sau đó là Astra ERP.*
+**Nền tảng ứng dụng nghiệp vụ mã nguồn mở: khai báo chứng từ bằng YAML, nhận về API, giao diện, quyền và lưu trữ.**
+
+Astra theo mô hình DocType của Frappe/ERPNext, viết lại từ đầu bằng Java 25 và Quarkus, cho hệ thống nhiều công ty (tenant) cùng chạy trên một cụm Kubernetes. Bản demo chuyển phát nhanh trong repo chạy thật: đơn hàng, vận đơn, chăm sóc khách hàng, sổ cái, overlay theo tenant, script WebAssembly, MCP cho AI agent, CDC bằng Rust và giao dịch phân tán Seata. Astra CMS là app đầu tiên, Astra ERP là app thứ hai.
 
 [![Compliance](https://img.shields.io/badge/Compliance-SOC%202%20%7C%20ISO%2027001%20%7C%20GDPR%20ready-2e7d32.svg)](#tuân-thủ-tích-hợp-sẵn-trong-metadata)
 
@@ -21,24 +22,140 @@
 [![Apache Seata](https://img.shields.io/badge/Apache%20Seata-2.6%20(incubating)%20Raft%20AT%2FTCC-red.svg)](https://seata.apache.org/)
 [![Wasm](https://img.shields.io/badge/WebAssembly-Chicory%20%2B%20Extism%20ABI-654ff0.svg)](https://chicory.dev/)
 [![MCP](https://img.shields.io/badge/MCP-Agent%20Tool%20Surface-111.svg)](https://modelcontextprotocol.io/)
-[![Status](https://img.shields.io/badge/Status-Design%20%26%20Spec%20Phase-yellow.svg)](#trạng-thái-dự-án)
+[![Status](https://img.shields.io/badge/Status-Demo%20ch%E1%BA%A1y%20%C4%91%C6%B0%E1%BB%A3c%20%C2%B7%20%C4%91ang%20ph%C3%A1t%20tri%E1%BB%83n-yellow.svg)](#trạng-thái-dự-án)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
+
+## Video demo
+
+19 video tiếng Việt, quay từ bản demo đang chạy: màn hình Desk và output terminal thật, không lời thoại, không dựng cảnh. Các video về cơ chế nền tảng (8 đến 18) có mục "Nói đúng" ghi rõ phần nào chưa làm. Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md).
+
+<table>
+<tr><th colspan="2" align="left">Video 0 · Teaser: Một nền tảng, mọi nghiệp vụ <sub>(1:30)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4"><img src="docs/video-thumbs/video-00.jpg" width="320" alt="Xem video 0: Teaser: Một nền tảng, mọi nghiệp vụ"></a></td>
+<td>Dựng nhanh từ cảnh thật của bản demo: DocType thành Desk, Submit sinh vận đơn và bút toán, overlay theo tenant, sandbox Wasm, MCP che PII, CDC Rust và Seata rollback.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 1 · Astra là gì &amp; chạy trong 5 phút <sub>(2:32)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-vi.mp4"><img src="docs/video-thumbs/video-01.jpg" width="320" alt="Xem video 1: Astra là gì &amp; chạy trong 5 phút"></a></td>
+<td>Kiến trúc kernel + DocType engine + plugin host, rồi dựng cả cụm k3d bằng <code>make k3d-up</code>, nạp dữ liệu qua REST API và đăng nhập Desk.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 2 · DocType: từ một file YAML đến API, giao diện và index <sub>(2:38)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-vi.mp4"><img src="docs/video-thumbs/video-02.jpg" width="320" alt="Xem video 2: DocType: từ một file YAML đến API, giao diện và index"></a></td>
+<td>Một file YAML sinh ra form, REST API, validation và index biểu thức online; mọi DocType chung một bảng JSONB, không ALTER TABLE.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 3 · Quy tắc nghiệp vụ: hook &amp; validation <sub>(2:53)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-3-hooks-vi.mp4"><img src="docs/video-thumbs/video-03.jpg" width="320" alt="Xem video 3: Quy tắc nghiệp vụ: hook &amp; validation"></a></td>
+<td>Phí ship 73.000 ₫ do hook tính, lỗi validation trả về cùng lúc, Link kiểm tra trong tenant; Desk và API gặp cùng một luật.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-3-hooks-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 4 · Vòng đời chứng từ: Submit, Cancel, Amend <sub>(3:10)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-4-lifecycle-vi.mp4"><img src="docs/video-thumbs/video-04.jpg" width="320" alt="Xem video 4: Vòng đời chứng từ: Submit, Cancel, Amend"></a></td>
+<td>Submit sinh vận đơn và bút toán trong một transaction; chứng từ đã duyệt bất biến; hủy ghi bút toán đảo; amend tạo bản sửa đổi.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-4-lifecycle-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 5 · Vận hành: máy trạng thái bưu kiện <sub>(3:00)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-5-ops-vi.mp4"><img src="docs/video-thumbs/video-05.jpg" width="320" alt="Xem video 5: Vận hành: máy trạng thái bưu kiện"></a></td>
+<td>Lọc theo trường projected, timeline quét mã, không nhảy cóc trạng thái, lỗi rồi thành công trên cùng form, không hủy được đơn đã giao.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-5-ops-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 6 · CSKH nhìn thấy vận hành <sub>(2:30)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-6-care-vi.mp4"><img src="docs/video-thumbs/video-06.jpg" width="320" alt="Xem video 6: CSKH nhìn thấy vận hành"></a></td>
+<td>Ticket tự lên mức High và SLA +24h theo từ khoá; thẻ CARE replica đọc bản sao do worker CDC giữ.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-6-care-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 7 · Đa thuê bao <sub>(2:28)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-vi.mp4"><img src="docs/video-thumbs/video-07.jpg" width="320" alt="Xem video 7: Đa thuê bao"></a></td>
+<td>Hai công ty trên cùng một server: cùng URL, dữ liệu khác hẳn; Link không vượt tenant, 403/400 khi không rõ tenant, RLS trả 0 dòng.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 8 · Bảo mật fail-closed <sub>(2:02)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-vi.mp4"><img src="docs/video-thumbs/video-08.jpg" width="320" alt="Xem video 8: Bảo mật fail-closed"></a></td>
+<td>Kết nối bằng superuser thì kernel từ chối khởi động, trước cả khi Flyway chạy migration; role ứng dụng NOSUPERUSER NOBYPASSRLS.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 9 · Dành cho developer: viết một app Astra <sub>(2:22)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4"><img src="docs/video-thumbs/video-09.jpg" width="320" alt="Xem video 9: Dành cho developer: viết một app Astra"></a></td>
+<td>App là Java thường + YAML trên astra-spi; dev mode live reload thêm cột mới trong 0,73 s; 44 test tích hợp với PostgreSQL, Seata và Redis thật.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 10 · Chạy trên Kubernetes <sub>(2:06)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-vi.mp4"><img src="docs/video-thumbs/video-10.jpg" width="320" alt="Xem video 10: Chạy trên Kubernetes"></a></td>
+<td>Hai pod kernel ghi song song mà chuỗi số không trùng, không lỗ; rolling restart dưới tải và phần còn thiếu (chưa có drain).<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 11 · Keycloak: một danh tính, role theo tenant, quyền theo DocType <sub>(2:18)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-vi.mp4"><img src="docs/video-thumbs/video-11.jpg" width="320" alt="Xem video 11: Keycloak: một danh tính, role theo tenant, quyền theo DocType"></a></td>
+<td>Đăng nhập PKCE theme Astra, role là nhóm Keycloak, quyền khai báo trên DocType; người lập phiếu chi không tự duyệt được (403).<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 12 · Sổ cái append-only <sub>(2:32)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-vi.mp4"><img src="docs/video-thumbs/video-12.jpg" width="320" alt="Xem video 12: Sổ cái append-only"></a></td>
+<td>Bút toán kép đi cùng transaction của chứng từ, hủy là đảo, trigger chặn UPDATE kể cả chủ bảng, phân vùng theo tháng.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 13 · Overlay theo tenant <sub>(2:24)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-13-overlay-vi.mp4"><img src="docs/video-thumbs/video-13.jpg" width="320" alt="Xem video 13: Overlay theo tenant"></a></td>
+<td>Hà Nội thêm trường VAT và vùng đảo bằng một file YAML, có hiệu lực ngay; app Express không đổi một dòng.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-13-overlay-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 14 · Tier 2 Wasm: công thức cước của riêng tenant <sub>(2:20)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-14-wasm-vi.mp4"><img src="docs/video-thumbs/video-14.jpg" width="320" alt="Xem video 14: Tier 2 Wasm: công thức cước của riêng tenant"></a></td>
+<td>Khuyến mãi Tết viết bằng Rust (421 byte), bật lên đổi phí 73.000 → 51.000; vòng lặp vô hạn bị dừng ở 50 ms.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-14-wasm-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 15 · MCP: agent AI dùng Astra bằng quyền của người dùng <sub>(2:24)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4"><img src="docs/video-thumbs/video-15.jpg" width="320" alt="Xem video 15: MCP: agent AI dùng Astra bằng quyền của người dùng"></a></td>
+<td>Claude thật gọi tool qua MCP: PII bị che, agent của nhân viên CSKH không tạo được đơn, kế toán hỏi COD trả lời từ sổ cái.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 16 · Rust CDC + Sync-Aware LSN <sub>(2:36)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-16-cdc-vi.mp4"><img src="docs/video-thumbs/video-16.jpg" width="320" alt="Xem video 16: Rust CDC + Sync-Aware LSN"></a></td>
+<td>Worker Rust đọc WAL, lệnh ghi trả X-Tx-LSN, đọc replica chưa kịp thì nhận 202 Sync Pending thay vì dữ liệu cũ.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-16-cdc-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 17 · Seata: một lần submit, ba tài nguyên <sub>(2:26)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4"><img src="docs/video-thumbs/video-17.jpg" width="320" alt="Xem video 17: Seata: một lần submit, ba tài nguyên"></a></td>
+<td>Nhánh AT trừ hạn mức BMS, nhánh TCC giữ chỗ trên Redis, kernel commit cuối; một nhánh từ chối là tất cả quay lại.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 18 · Roadmap: phần còn lại của use-case-01 <sub>(1:36)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4"><img src="docs/video-thumbs/video-18.jpg" width="320" alt="Xem video 18: Roadmap: phần còn lại của use-case-01"></a></td>
+<td>Những gì 17 video đã chạy thật và những gì còn đang phát triển: multi-schema, Tier 1, streaming CDC, agent tự hành, STMS, SCS.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4">▶ Xem video</a></td>
+</tr>
+</table>
+
+Nhạc nền: "Corporate Tower" của Mare Production ([freesound.org/s/612264](https://freesound.org/s/612264/)), CC BY 4.0, đã cắt ghép.
+
+---
+
+## Đọc theo vai trò
+
+| Bạn là | Astra cho bạn gì | Bắt đầu từ |
+| --- | --- | --- |
+| **Developer đang tìm CMS mới** | Một file YAML là có REST API, form, list, quyền và index. Không viết migration khi thêm trường. Hook nghiệp vụ là class Java bình thường. | Video [1](https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-vi.mp4), [2](https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-vi.mp4), [9](https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4) · [Chạy lát cắt mỏng](#chạy-lát-cắt-mỏng-ngay-hôm-nay) · [DocType engine](#doctype-engine) |
+| **Nhà đầu tư** | Một nền tảng cho cả CMS lẫn ERP, nhắm doanh nghiệp cần tùy biến liên tục mà không fork. Phần lõi đã chạy được; phần còn lại ghi rõ là lộ trình. | Video [0](https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4), [18](https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4) · [Trạng thái dự án](#trạng-thái-dự-án) · [Lộ trình](#lộ-trình) |
+| **Nhà nghiên cứu** | Các lựa chọn thiết kế có thể kiểm chứng: lưu trữ JSONB không DDL kèm index biểu thức, RLS fail-closed, đọc-sau-ghi giữa các module bằng LSN, Seata AT/TCC, sandbox Wasm giới hạn theo thời gian. | [docs/explain.md](docs/explain.md) · [Tham chiếu thiết kế](#tham-chiếu-thiết-kế) · [Hiệu năng](#hiệu-năng-nguyên-tắc-và-mục-tiêu) |
+| **Lập trình bằng AI (vibe code)** | Mỗi việc đủ nhỏ để agent làm trọn: một DocType là một file YAML, một hook là một class. 44 test tích hợp cho vòng lặp pass/fail. Agent dùng app qua MCP với đúng quyền của người dùng. | Video [9](https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4), [15](https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4) · app mẫu [astra-apps/express](astra-apps/express) · [docs/demo-code-snippets.md](docs/demo-code-snippets.md) |
+| **Tech lead doanh nghiệp** | Đa tenant bằng PostgreSQL RLS, Keycloak với role theo tenant và tách nhiệm vụ, sổ cái append-only, giao dịch phân tán, chạy trên Kubernetes. Mỗi giới hạn hiện tại đều được ghi ra. | Video [7](https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-vi.mp4), [8](https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-vi.mp4), [10](https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-vi.mp4), [11](https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-vi.mp4), [12](https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-vi.mp4), [17](https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4) · [Đa tenant](#đa-tenant-multi-tenancy) |
 
 ---
 
 ## Trạng thái dự án
 
-> **Astra đang ở giai đoạn kiến trúc & đặc tả, với một lát cắt mỏng (thin slice) đã chạy được.** Repository
-> gồm bản blueprint này cùng lát cắt dọc đầu tiên của nền tảng: build Maven multi-module
-> (`astra-spi`, `astra-kernel`, `astra-doctype`, `astra-apps/cms`, `astra-server`), tenancy bằng
-> `ScopedValue` và row-level security của PostgreSQL với guard fail-closed, kho DocType JSONB zero-DDL
-> kèm REST sinh tự động, một hook vòng đời Tier 0, dev stack Docker Compose và bản triển khai k3d cục bộ
-> với hai kernel pod. Xem [Chạy lát cắt mỏng ngay hôm nay](#chạy-lát-cắt-mỏng-ngay-hôm-nay).
-> Mọi nội dung còn lại bên dưới mô tả **kiến trúc mục tiêu và public API dự kiến**; các đoạn code mẫu
-> đó chưa compile được. Số liệu hiệu năng là **mục tiêu thiết kế**, sẽ được kiểm chứng bằng benchmark
-> công khai, không phải số đo thực tế.
+> **Đã chạy được:** build Maven nhiều module, tenancy bằng `ScopedValue` và row-level security của PostgreSQL
+> (kernel từ chối khởi động nếu kết nối bằng superuser), kho DocType JSONB kèm REST sinh tự động, vòng đời
+> submit/cancel/amend, sổ cái append-only, overlay theo tenant, sandbox WebAssembly, MCP server, worker CDC bằng
+> Rust, Seata AT/TCC, đăng nhập Keycloak, Desk sinh từ metadata, và bản triển khai k3d hai kernel pod. Xem
+> [Chạy lát cắt mỏng ngay hôm nay](#chạy-lát-cắt-mỏng-ngay-hôm-nay) và phần [Video demo](#video-demo).
+>
+> **Chưa có:** các phần còn lại bên dưới mô tả **kiến trúc mục tiêu và public API dự kiến**; code mẫu ở đó chưa
+> compile được. Số liệu hiệu năng là **mục tiêu thiết kế**, chưa phải số đo; chúng sẽ được kiểm chứng bằng
+> benchmark công khai.
 >
 > **Thông báo clean-room.** Astra lấy cảm hứng từ kiến trúc của Frappe Framework (MIT) và ERPNext (GPL-3.0).
 > Astra **không dùng chung code, schema hay asset** nào với hai dự án này. Các khái niệm như "DocType" chỉ được dùng như từ vựng chung;
@@ -50,11 +167,11 @@ Muốn hiểu lý do đằng sau từng lựa chọn thiết kế: xem [docs/exp
 
 ## Vì sao có Astra
 
-ERPNext đã chứng minh một điều mà ngành phần mềm doanh nghiệp gần như đã bỏ cuộc: một nền tảng mở có thể chạy nội dung, thương mại, kế toán, kho, sản xuất, nhân sự và dự án của cả một công ty, và team nhỏ có thể tùy biến mà không cần fork. Lý do nằm ở ý tưởng lõi của Frappe chứ không ở một module cụ thể nào: **ứng dụng là metadata**. Một DocType định nghĩa field, validation, quyền, form, list, API và workflow của một chứng từ dưới dạng dữ liệu, và mọi thứ còn lại (REST, UI, báo cáo, in ấn, thông báo) được sinh ra từ đó.
+ERPNext cho thấy một nền tảng mở có thể chạy nội dung, thương mại, kế toán, kho, sản xuất, nhân sự và dự án của cả một công ty, và team nhỏ có thể tùy biến mà không cần fork. Lý do nằm ở ý tưởng lõi của Frappe chứ không ở một module cụ thể nào: **ứng dụng là metadata**. Một DocType định nghĩa field, validation, quyền, form, list, API và workflow của một chứng từ dưới dạng dữ liệu, và mọi thứ còn lại (REST, UI, báo cáo, in ấn, thông báo) được sinh ra từ đó.
 
 Astra lấy ý tưởng đó và xây lại cho bốn ràng buộc mà Frappe chưa từng được thiết kế để giải quyết:
 
-1. **Thông lượng và độ trễ ở quy mô cụm.** Java 25 virtual thread, Generational ZGC, wiring lúc build của Quarkus, cô lập plugin trong tiến trình. Mật độ tenant cao trên mỗi pod thay vì mỗi site một tiến trình - đây là mục tiêu phải chứng minh bằng benchmark, không phải điều mặc nhiên.
+1. **Thông lượng và độ trễ ở quy mô cụm.** Java 25 virtual thread, Generational ZGC, wiring lúc build của Quarkus, cô lập plugin trong tiến trình. Mật độ tenant cao trên mỗi pod thay vì mỗi site một tiến trình. Đây là mục tiêu, cần benchmark để chứng minh.
 2. **Thay đổi mỗi ngày mà không phá vỡ hôm qua.** DocType zero-DDL (tùy biến form không bao giờ khóa bảng), các phiên bản app chạy song song, ghim phiên bản theo tenant, canary rollout kèm auto-rollback, SPI có phiên bản với chính sách deprecation thành văn, và tùy biến của tenant được lưu dưới dạng overlay, giữ nguyên qua mọi lần nâng cấp.
 3. **Agent vừa là tác giả vừa là người dùng.** Agent xây app trên các extension point có kiểu, với sandbox và bộ test kit; agent sử dụng nền tảng qua bề mặt MCP tool sinh ra từ chính các DocType đó, dưới cùng cơ chế quyền và audit.
 4. **Tuân thủ là thuộc tính của metadata.** Mỗi field của DocType mang phân loại dữ liệu, thời hạn lưu giữ, cơ sở pháp lý và nơi lưu trữ dữ liệu (residency). Hồ sơ hoạt động xử lý dữ liệu, yêu cầu của chủ thể dữ liệu, lịch lưu giữ, audit trail và rà soát quyền truy cập đều được sinh ra từ metadata đó, nên đơn vị vận hành có thể đạt mức sẵn sàng SOC 2 Type II, ISO 27001 và GDPR mà không phải làm lại mô hình dữ liệu về sau.
@@ -75,7 +192,7 @@ Một ứng dụng Astra gồm một kernel cộng với một tập plugin ("ap
 | **Shopify Functions** | Logic của merchant chạy dưới dạng Wasm với giới hạn lệnh xác định cho mỗi lần chạy. | Wasm sandbox Tier 2 với ngân sách tài nguyên và metric theo từng lần gọi. |
 | **Cloudflare Workers** | Isolate trong tiến trình thay vì container; Cloudflare tuyên bố khởi động nhanh hơn ~100 lần. | Cô lập plugin trong tiến trình thay vì mỗi tùy biến một microservice. |
 | **Envoy / Proxy-Wasm** | Control plane phân phối Wasm filter tới mọi proxy. | Control plane của plugin đưa cùng một phiên bản tới mọi pod, kể cả pod tham gia muộn. |
-| **VS Code** | Extension chạy trong host riêng trên API ổn định, có kiểu; hàng chục nghìn extension. | Extension point có kiểu + cô lập = hệ sinh thái lớn nhưng không mong manh. |
+| **VS Code** | Extension chạy trong host riêng trên API ổn định, có kiểu; hàng chục nghìn extension. | Extension point có kiểu và cô lập, để nhiều app cùng chạy mà không làm hỏng nhau. |
 | **Google SRE / Netflix** | Canary, error budget, rollback tự động. | Các bước rollout có health gate, auto-rollback, DORA metric theo từng plugin. |
 | **Alibaba → Apache Seata** | Điều phối giao dịch ở quy mô Singles' Day. | AT trên PostgreSQL, TCC trên Redis Cluster, smart bypass khi không cần giao dịch. |
 | **Model Context Protocol (Linux Foundation / AAIF)** | Chuẩn mở để agent gọi tool, được ChatGPT, Gemini, Copilot, Cursor, VS Code áp dụng; 10.000+ server công khai. | DocType và extension point được chiếu (projection) thành MCP tool dưới cùng cơ chế quyền. |
@@ -130,7 +247,7 @@ Một ứng dụng Astra gồm một kernel cộng với một tập plugin ("ap
 
 ## DocType engine
 
-DocType engine là thứ biến Astra thành một nền tảng cùng hạng với Frappe chứ không chỉ là một CMS có plugin. Một **DocType** là một bản ghi metadata mô tả đầy đủ một loại bản ghi nghiệp vụ. Mọi thứ người dùng hay agent chạm vào đều là DocType: bài viết blog, khách hàng, hoá đơn bán hàng, bút toán sổ kho, định nghĩa workflow, thậm chí chính DocType.
+DocType engine là phần lõi của Astra. Một **DocType** là một bản ghi metadata mô tả đầy đủ một loại bản ghi nghiệp vụ. Mọi thứ người dùng hay agent chạm vào đều là DocType: bài viết blog, khách hàng, hoá đơn bán hàng, bút toán sổ kho, định nghĩa workflow, thậm chí chính DocType.
 
 ### 1. DocType khai báo gì
 
@@ -599,9 +716,9 @@ Runtime Java 25: virtual thread không bị pin (JEP 491), `ScopedValue` (JEP 50
 
 ---
 
-## AI-native: do agent xây, cho agent dùng
+## AI: agent viết app và dùng app
 
-**Với agent xây app.** SPI khá lớn: hơn hai mươi extension point, mô hình DocType, manifest, overlay và metadata tuân thủ. Điều khiến agent làm việc được với nó là mỗi tác vụ đều **hẹp**: một lifecycle hook chạm hai interface, một DocType là một file YAML, một script Wasm là một hàm export. `AGENTS.md` được tổ chức theo từng extension point để agent chỉ nạp đúng lát cắt cần thiết, `astra mcp --dev` trả lời câu hỏi "đang có gì" từ kernel đang chạy, và contract test, assertion capability, assertion ngân sách của `astra-plugin-testkit` cho agent một vòng lặp pass/fail. Test kit là thứ làm cho app do agent viết trở nên đáng tin. Code do AI sinh mặc định chạy ở Tier 2 Wasm; `provenance.generator` được ghi lại và policy môi trường có thể bắt buộc tier sandbox. Canary và auto-rollback hoàn tác thay đổi qua được test nhưng hoạt động sai dưới traffic thật. Repository có sẵn `AGENTS.md`, `CLAUDE.md` và `llms.txt`.
+**Với agent xây app.** SPI khá lớn: hơn hai mươi extension point, mô hình DocType, manifest, overlay và metadata tuân thủ. Điều khiến agent làm việc được với nó là mỗi tác vụ đều **hẹp**: một lifecycle hook chạm hai interface, một DocType là một file YAML, một script Wasm là một hàm export. `AGENTS.md` được tổ chức theo từng extension point để agent chỉ nạp đúng lát cắt cần thiết, `astra mcp --dev` trả lời câu hỏi "đang có gì" từ kernel đang chạy, và contract test, assertion capability, assertion ngân sách của `astra-plugin-testkit` cho agent một vòng lặp pass/fail. Test kit là cách kiểm tra app do agent viết. Code do AI sinh mặc định chạy ở Tier 2 Wasm; `provenance.generator` được ghi lại và policy môi trường có thể bắt buộc tier sandbox. Canary và auto-rollback hoàn tác thay đổi qua được test nhưng hoạt động sai dưới traffic thật. `AGENTS.md`, `CLAUDE.md` và `llms.txt` sẽ có cùng bộ khung Phase 1.
 
 **Với agent dùng một ứng dụng Astra.** Mọi DocType (search, get, create, submit, cancel), event, job và `ToolContributor` được chiếu thành MCP tool kèm JSON Schema của DocType, giới hạn theo role và tenant, và được audit như mọi lời gọi khác. `AgentContributor` chạy agent có ngân sách ngay trong nền tảng với bộ nhớ có phạm vi (DocType + pgvector). `ModelProvider` trừu tượng hoá Claude, OpenAI, Gemini và model local sau một gateway có fallback và hạch toán chi phí. Prompt và eval là artifact có phiên bản, đi cùng đường rollout với code.
 
@@ -792,110 +909,6 @@ Những gì demo kiểm chứng, tất cả từ code thật trong repository n�
 | Global transaction Apache Seata 2.6: nhánh AT trên schema của module, nhánh TCC trên Redis, kernel commit cuối | `astra-tx-seata`, `OrderCreditHook`, `PickupCapacity` |
 
 Chưa có trong lát cắt mỏng: điều kiện quyền theo dòng, projection materialised, loader Tier 1, rollout control plane, audit hash-chain, mã hoá trường, Apache Doris, AI agent ngoài các tool MCP và Desk đầy đủ (dashboard, báo cáo). Lộ trình bên dưới sắp thứ tự cho các phần này. Bộ kịch bản video đi qua bản demo nằm ở [docs/demo-video-series.md](docs/demo-video-series.md).
-
-### Video demo
-
-19 video tiếng Việt quay từ bản demo đang chạy (màn hình Desk và output terminal thật, không lời thoại). Kịch bản từng video: [docs/demo-video-series.md](docs/demo-video-series.md).
-
-<table>
-<tr><th colspan="2" align="left">Video 0 · Teaser: Một nền tảng, mọi nghiệp vụ <sub>(1:30)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4"><img src="docs/video-thumbs/video-00.jpg" width="320" alt="Xem video 0: Teaser: Một nền tảng, mọi nghiệp vụ"></a></td>
-<td>Dựng nhanh từ cảnh thật của bản demo: DocType thành Desk, Submit sinh vận đơn và bút toán, overlay theo tenant, sandbox Wasm, MCP che PII, CDC Rust và Seata rollback.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 1 · Astra là gì &amp; chạy trong 5 phút <sub>(2:32)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-vi.mp4"><img src="docs/video-thumbs/video-01.jpg" width="320" alt="Xem video 1: Astra là gì &amp; chạy trong 5 phút"></a></td>
-<td>Kiến trúc kernel + DocType engine + plugin host, rồi dựng cả cụm k3d bằng <code>make k3d-up</code>, nạp dữ liệu qua REST API và đăng nhập Desk.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 2 · DocType: từ một file YAML đến API, giao diện và index <sub>(2:38)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-vi.mp4"><img src="docs/video-thumbs/video-02.jpg" width="320" alt="Xem video 2: DocType: từ một file YAML đến API, giao diện và index"></a></td>
-<td>Một file YAML sinh ra form, REST API, validation và index biểu thức online; mọi DocType chung một bảng JSONB, không ALTER TABLE.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 3 · Quy tắc nghiệp vụ: hook &amp; validation <sub>(2:53)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-3-hooks-vi.mp4"><img src="docs/video-thumbs/video-03.jpg" width="320" alt="Xem video 3: Quy tắc nghiệp vụ: hook &amp; validation"></a></td>
-<td>Phí ship 73.000 ₫ do hook tính, lỗi validation trả về cùng lúc, Link kiểm tra trong tenant; Desk và API gặp cùng một luật.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-3-hooks-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 4 · Vòng đời chứng từ: Submit, Cancel, Amend <sub>(3:10)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-4-lifecycle-vi.mp4"><img src="docs/video-thumbs/video-04.jpg" width="320" alt="Xem video 4: Vòng đời chứng từ: Submit, Cancel, Amend"></a></td>
-<td>Submit sinh vận đơn và bút toán trong một transaction; chứng từ đã duyệt bất biến; hủy ghi bút toán đảo; amend tạo bản sửa đổi.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-4-lifecycle-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 5 · Vận hành: máy trạng thái bưu kiện <sub>(3:00)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-5-ops-vi.mp4"><img src="docs/video-thumbs/video-05.jpg" width="320" alt="Xem video 5: Vận hành: máy trạng thái bưu kiện"></a></td>
-<td>Lọc theo trường projected, timeline quét mã, không nhảy cóc trạng thái, lỗi rồi thành công trên cùng form, không hủy được đơn đã giao.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-5-ops-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 6 · CSKH nhìn thấy vận hành <sub>(2:30)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-6-care-vi.mp4"><img src="docs/video-thumbs/video-06.jpg" width="320" alt="Xem video 6: CSKH nhìn thấy vận hành"></a></td>
-<td>Ticket tự lên mức High và SLA +24h theo từ khoá; thẻ CARE replica đọc bản sao do worker CDC giữ.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-6-care-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 7 · Đa thuê bao <sub>(2:28)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-vi.mp4"><img src="docs/video-thumbs/video-07.jpg" width="320" alt="Xem video 7: Đa thuê bao"></a></td>
-<td>Hai công ty trên cùng một server: cùng URL, dữ liệu khác hẳn; Link không vượt tenant, 403/400 khi không rõ tenant, RLS trả 0 dòng.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 8 · Bảo mật fail-closed <sub>(2:02)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-vi.mp4"><img src="docs/video-thumbs/video-08.jpg" width="320" alt="Xem video 8: Bảo mật fail-closed"></a></td>
-<td>Kết nối bằng superuser thì kernel từ chối khởi động — trước cả khi Flyway chạy migration; role ứng dụng NOSUPERUSER NOBYPASSRLS.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 9 · Dành cho developer: viết một app Astra <sub>(2:22)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4"><img src="docs/video-thumbs/video-09.jpg" width="320" alt="Xem video 9: Dành cho developer: viết một app Astra"></a></td>
-<td>App là Java thường + YAML trên astra-spi; dev mode live reload thêm cột mới trong 0,73 s; 44 test tích hợp với PostgreSQL, Seata và Redis thật.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 10 · Chạy trên Kubernetes <sub>(2:06)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-vi.mp4"><img src="docs/video-thumbs/video-10.jpg" width="320" alt="Xem video 10: Chạy trên Kubernetes"></a></td>
-<td>Hai pod kernel ghi song song mà chuỗi số không trùng, không lỗ; rolling restart dưới tải và phần còn thiếu (chưa có drain).<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 11 · Keycloak: một danh tính, role theo tenant, quyền theo DocType <sub>(2:18)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-vi.mp4"><img src="docs/video-thumbs/video-11.jpg" width="320" alt="Xem video 11: Keycloak: một danh tính, role theo tenant, quyền theo DocType"></a></td>
-<td>Đăng nhập PKCE theme Astra, role là nhóm Keycloak, quyền khai báo trên DocType; người lập phiếu chi không tự duyệt được (403).<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 12 · Sổ cái append-only <sub>(2:32)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-vi.mp4"><img src="docs/video-thumbs/video-12.jpg" width="320" alt="Xem video 12: Sổ cái append-only"></a></td>
-<td>Bút toán kép đi cùng transaction của chứng từ, hủy là đảo, trigger chặn UPDATE kể cả chủ bảng, phân vùng theo tháng.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 13 · Overlay theo tenant <sub>(2:24)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-13-overlay-vi.mp4"><img src="docs/video-thumbs/video-13.jpg" width="320" alt="Xem video 13: Overlay theo tenant"></a></td>
-<td>Hà Nội thêm trường VAT và vùng đảo bằng một file YAML, có hiệu lực ngay; app Express không đổi một dòng.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-13-overlay-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 14 · Tier 2 Wasm: công thức cước của riêng tenant <sub>(2:20)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-14-wasm-vi.mp4"><img src="docs/video-thumbs/video-14.jpg" width="320" alt="Xem video 14: Tier 2 Wasm: công thức cước của riêng tenant"></a></td>
-<td>Khuyến mãi Tết viết bằng Rust (421 byte), bật lên đổi phí 73.000 → 51.000; vòng lặp vô hạn bị dừng ở 50 ms.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-14-wasm-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 15 · MCP: agent AI dùng Astra bằng quyền của người dùng <sub>(2:24)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4"><img src="docs/video-thumbs/video-15.jpg" width="320" alt="Xem video 15: MCP: agent AI dùng Astra bằng quyền của người dùng"></a></td>
-<td>Claude thật gọi tool qua MCP: PII bị che, agent của nhân viên CSKH không tạo được đơn, kế toán hỏi COD trả lời từ sổ cái.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 16 · Rust CDC + Sync-Aware LSN <sub>(2:36)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-16-cdc-vi.mp4"><img src="docs/video-thumbs/video-16.jpg" width="320" alt="Xem video 16: Rust CDC + Sync-Aware LSN"></a></td>
-<td>Worker Rust đọc WAL, lệnh ghi trả X-Tx-LSN, đọc replica chưa kịp thì nhận 202 Sync Pending thay vì dữ liệu cũ.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-16-cdc-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 17 · Seata: một lần submit, ba tài nguyên <sub>(2:26)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4"><img src="docs/video-thumbs/video-17.jpg" width="320" alt="Xem video 17: Seata: một lần submit, ba tài nguyên"></a></td>
-<td>Nhánh AT trừ hạn mức BMS, nhánh TCC giữ chỗ trên Redis, kernel commit cuối; một nhánh từ chối là tất cả quay lại.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4">▶ Xem video</a></td>
-</tr>
-<tr><th colspan="2" align="left">Video 18 · Roadmap: phần còn lại của use-case-01 <sub>(1:36)</sub></th></tr>
-<tr>
-<td width="330"><a href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4"><img src="docs/video-thumbs/video-18.jpg" width="320" alt="Xem video 18: Roadmap: phần còn lại của use-case-01"></a></td>
-<td>Những gì 17 video đã chạy thật và những gì còn đang phát triển: multi-schema, Tier 1, streaming CDC, agent tự hành, STMS, SCS.<br><a href="https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4">▶ Xem video</a></td>
-</tr>
-</table>
-
-Nhạc nền: "Corporate Tower" của Mare Production ([freesound.org/s/612264](https://freesound.org/s/612264/)), CC BY 4.0, đã cắt ghép.
 
 ## Bắt đầu (quy trình mục tiêu)
 
