@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video nine, for developers: an Astra app in plain Java and YAML.",
+  "s02-dev": "Two commands start a kernel with live reload: make infra up, then make dev. Dev mode uses Docker Compose; k three d holds port eighty eighty, so dev runs on eighty eighty-one.",
+  "s03-tree": "An app needs no framework of its own, just plain Java and YAML: the ExpressApp class, hooks, MCP tools, seven DocType files and two Wasm modules. The app only sees astra spi; the kernel provides the rest.",
+  "s04-hooks": "Hooks join the transaction. When an order is submitted, one hook creates the waybill and another posts the journal entry to the ledger. Both run inside the order's transaction, so the documents never drift apart.",
+  "s05-live": "Add one line of YAML and a new column appears. Dev mode restarts in zero point seven three seconds, and Desk shows the Zalo id column. No migration, no ALTER TABLE, because the new field lives in JSONB.",
+  "s06-api": "Form, list and REST read the same definition. Call the Customer DocType API: zalo id is already there.",
+  "s07-tests": "Integration tests run against real PostgreSQL, a real Seata Server and real Redis. Forty-four tests, zero failures, build success.",
+  "s08-honest": "To be accurate: adding fields is easy; removing them breaks editing of old documents. Safe schema evolution is on the roadmap.",
+  "s99-recap": "Recap: two make commands run the kernel, apps see only astra spi, hooks put waybill and ledger in one transaction. Next: Kubernetes.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

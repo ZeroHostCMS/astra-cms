@@ -1,0 +1,13 @@
+{
+  "s01-title": "Video twelve: the append-only ledger. Add entries, never edit them.",
+  "s02-gl": "The general ledger, Vietnamese chart of accounts: one one two, one three one, one three eight eight, three three eight eight, five one one. Balances come from the ledger itself, no summary table.",
+  "s03-post": "When an order is submitted, the journal entry is written in the same transaction as the order. Shipping fee seventy-three thousand dong: Debit one three one, Credit five one one.",
+  "s04-reverse": "Cancelling the order deletes no rows. The ledger adds two new reversing lines and keeps the two original lines. The balance returns to zero, and the history stays intact.",
+  "s05-cod": "Courier-collected COD is owed to the shop. On delivery: Debit one three eight eight, Credit three three eight eight, eight hundred fifty thousand, in the scan's transaction.",
+  "s06-guard": "The database protects itself. Even the table owner role running UPDATE is refused: the ledger is append-only, post a reversing entry instead. A trigger in the database does the blocking.",
+  "s07-parts": "The ledger is partitioned by month. At startup, the kernel creates partitions for this month and the next two. Outside that range there is a default partition.",
+  "s08-payout": "A COD payout of ninety-nine million against three hundred fifty thousand owed: refused, four twenty-two. The creator cannot approve it; Thu does. The amount owed comes from the ledger, inside the hook.",
+  "s09-honest": "To be accurate: the trigger blocks only UPDATE and DELETE. The owner can still DROP or ALTER. Audit hash chains are on the roadmap.",
+  "s99-recap": "Submit: Debit one three one, Credit five one one. Cancel: a reversing entry. Delivered: Debit one three eight eight. UPDATE and DELETE: blocked.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

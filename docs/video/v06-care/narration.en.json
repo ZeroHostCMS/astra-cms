@@ -1,0 +1,11 @@
+{
+  "s01-title": "Video six: customer care that can see operations.",
+  "s02-new": "A customer calls: the goods arrived broken. In Desk, the care account ha creates a Support Ticket and links an existing, delivered waybill. Priority is Normal, and the three hook fields are empty.",
+  "s03-created": "Click Create, and the hook does the rest. Because the text mentions broken goods, priority goes up to High and the reason goes into the triage note. The SLA deadline is creation time plus twenty-four hours, and the waybill status, Delivered, is copied onto the ticket.",
+  "s04-hook": "This part is code for developers. The hook is a plain rule: seven keywords, and it only raises priority to High when it is Low or Normal. To be accurate: today this is rule-based. AI triage over MCP is still on the roadmap.",
+  "s05-kernel": "The same kind of hook as earlier videos, running inside the transaction. The kernel calls before save right before the INSERT, so the hook writes straight into the document being created.",
+  "s06-replica": "The card under the form reads a replica, not the operations table. A CDC worker written in Rust copies from the astra doc table through logical replication into replica waybill. The card says in sync, and the worker lag is forty-seven milliseconds. Details in video sixteen.",
+  "s07-api": "The same flow over REST. A complaint about damaged goods is raised to High, gets an SLA deadline and a snapshot of the waybill status, just like in Desk.",
+  "s08-recap": "Recap: create a ticket, the hook sets priority and SLA, the card reads a replica, and the API runs the same flow. Next: multi-tenancy.",
+  "s09-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

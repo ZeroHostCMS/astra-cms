@@ -1,0 +1,11 @@
+{
+  "s01-hook": "One platform, every business process. Everything here is running.",
+  "s02-doctype": "Declare a DocType in YAML. Forms, API, validation and indexes are all generated from the metadata.",
+  "s03-submit": "One Submit, one transaction. A waybill is created, the customer care replica syncs, the ledger posts debit one three one, credit five one one.",
+  "s04-overlay": "Each tenant has its own configuration. Hanoi adds VAT and a tax code; the app code stays the same.",
+  "s05-wasm": "The tenant's pricing formula runs in a Wasm sandbox. An infinite loop is stopped after fifty milliseconds.",
+  "s06-mcp": "The AI agent works with the user's own permissions. Names, phone numbers and addresses are masked before they reach the model.",
+  "s07-cdc": "Write in operations, read right away in customer care. No stale data, thanks to a CDC worker written in Rust.",
+  "s08-seata": "Seata keeps three resources consistent. When an order goes over the credit limit, everything is rolled back.",
+  "s09-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

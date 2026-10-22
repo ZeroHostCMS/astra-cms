@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video seven: multi-tenancy. One server, many companies.",
+  "s02-list": "Same URL, same DocType, two companies. The demo account belongs to both tenants. Each pane calls the same API with a different X Astra Tenant header: Saigon has three customers, Hanoi has two.",
+  "s03-form": "Same document code, but C zero zero one in Saigon is not C zero zero one in Hanoi. Each tenant has its own record, even with the same code.",
+  "s04-resolve": "No API takes the tenant as a parameter. The kernel tries header, subdomain, then the user's only tenant. Unresolved: four hundred. Non-members: four oh three. Then it rides a scoped value into the PostgreSQL transaction.",
+  "s05-links": "Links respect tenants. C zero zero one is a different customer in each tenant. C zero zero three exists only in Saigon: Hanoi gets four oh four, and an order using it fails.",
+  "s06-members": "Members only. User Nam, a Hanoi admin, calls Saigon: four oh three. User demo is in two tenants and sends none: four hundred. Fail-closed: if it is ambiguous, the kernel refuses.",
+  "s07-rls": "If you forget to set the tenant, the application role sees zero rows. Set the Saigon tenant inside a transaction, and it sees that tenant's data. Force row level security applies to the table owner too.",
+  "s08-code": "For developers: the tenant follows the flow, not a parameter, from scoped value to transaction. At startup, Row Level Security Guard stops the kernel if the role is superuser or bypasses RLS. Details in video eight.",
+  "s09-recap": "Four layers of isolation: one URL, Links, Keycloak per tenant, and zero rows without a tenant. Next: fail-closed security.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

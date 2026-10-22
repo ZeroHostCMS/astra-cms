@@ -6,6 +6,6 @@
   "s05-wasm": "Công thức cước của tenant chạy trong sandbox Wasm. Một vòng lặp vô hạn bị dừng sau năm mươi mili giây.",
   "s06-mcp": "Agent AI dùng đúng quyền của người dùng. Tên, số điện thoại và địa chỉ bị che trước khi tới mô hình.",
   "s07-cdc": "Ghi ở vận hành, đọc ngay ở chăm sóc khách hàng. Không có dữ liệu cũ, nhờ CDC viết bằng Rust.",
-  "s08-seata": "Seata giữ ba tài nguyên nhất quán. Đơn vượt hạn mức thì mọi thứ được hoàn lại: tất cả, hoặc không gì cả.",
+  "s08-seata": "Seata giữ ba tài nguyên nhất quán. Đơn vượt hạn mức thì mọi thứ được hoàn lại.",
   "s09-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
 }

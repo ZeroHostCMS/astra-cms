@@ -7,6 +7,6 @@
   "s06-cod": "Với user khoa, kế toán, câu hỏi khách nào đang chờ trả COD được trả lời từ sổ cái: Shop Hoa Mai, ba trăm năm mươi nghìn đồng đã thu hộ nhưng chưa trả.",
   "s07-code": "Với developer, app đóng góp tool bằng một class. Tool khai báo DocType mà nó đọc, và kernel kiểm quyền đọc của user trước khi gọi. Xác thực, tenant, RLS và che PII đều do kernel làm.",
   "s08-honest": "Nói cho đúng, client dùng bearer token tĩnh hết hạn sau một giờ. OAuth discovery, agent tự hành và vector search còn trên roadmap.",
-  "s99-recap": "Tóm lại: agent là một người dùng, không hơn. Bảy tool, PII được che, ha không tạo được đơn, và Claude thật dùng track waybill. Video sau: Rust CDC.",
+  "s99-recap": "Tóm lại: agent cũng là một người dùng. Bảy tool, PII được che, ha không tạo được đơn, và Claude thật dùng track waybill. Video sau: Rust CDC.",
   "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
 }

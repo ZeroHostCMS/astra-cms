@@ -1,0 +1,11 @@
+{
+  "s01-title": "Video ten: running on Kubernetes. Two pods, one gapless number sequence.",
+  "s02-deploy": "Two kernel replicas run behind a Service, with a rolling update, max unavailable zero, and readiness and liveness probes. Two pods from the start, since tenancy and numbering must be cluster safe.",
+  "s03-parallel": "Twelve orders are created at once, six on each pod. The order numbers run straight from seven to eighteen: no duplicates, no skipped numbers. Which pod gets which number is random, but the sequence stays continuous.",
+  "s04-desk": "The same sequence, seen from Desk. The numbering pattern counts per tenant and per day.",
+  "s05-code": "For developers: one upsert and one row lock. The second pod waits for the first pod's lock. If the transaction rolls back, so does the number: no gaps. No separate sequence, no Redis.",
+  "s06-rollout": "A rolling restart with users online. A client reads orders every quarter second. During the restart there were forty-seven requests: forty-five returned two hundred, and two got no response as the old pod stopped.",
+  "s07-honest": "To be accurate: nearly uninterrupted, not zero downtime. No preStop hook or drain time: requests to a stopping pod can fail. One Desk action may need a retry.",
+  "s99-recap": "Recap: two replicas, gapless numbering with upsert and row lock, forty-five of forty-seven requests served in the restart. Next: Keycloak.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

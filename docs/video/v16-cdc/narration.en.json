@@ -1,0 +1,13 @@
+{
+  "s01-title": "Write in OPS, read at once in customer care, no stale data.",
+  "s02-page": "A Rust worker decodes the PostgreSQL WAL. Customer care never reads the operations tables, only the worker's replica waybill table. The Desk shows a lag of seventy-seven milliseconds.",
+  "s03-code": "For developers, routes go in one YAML file: DocType, target table, columns. The worker decodes the P G output protocol itself, and writes replica and watermark in one transaction. The slot advances only after commit.",
+  "s04-write": "Scene fourteen. Worker paused, quang in OPS updates a waybill. Each write returns an X Tx LSN header, the post-commit WAL position. Clients send it when reading another module.",
+  "s05-pending": "Ha in customer care reads the replica with X Required LSN. The kernel compares it with the worker's watermark, sees it is behind, and returns two oh two, sync pending, not stale data.",
+  "s06-resume": "With the worker back on, the read succeeds just twenty-six milliseconds later: Out for Delivery. In steady state, a write then an immediate read with the LSN caught up in one hundred seventeen milliseconds. Numbers vary per run.",
+  "s07-desk": "The Desk works the same way. After you save, the customer care card waits for your exact record. The Desk retries for ten seconds. In this recording the worker was off longer, so the card was reopened once the worker ran.",
+  "s08-slot": "PostgreSQL has one logical slot, and replica tables are under RLS too. Active f is normal: the worker reads the slot over SQL, without streaming.",
+  "s09-honest": "To be accurate: the worker polls the slot every fifty milliseconds, at-least-once delivery, no streaming yet. No Apache Doris export yet.",
+  "s99-recap": "Recap: a Rust replica for customer care, every write reports its WAL position, and reads that are behind get two oh two. Next: Seata.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

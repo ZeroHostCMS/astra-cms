@@ -1,0 +1,12 @@
+{
+  "s01-title": "One submit, three resources, in one global transaction.",
+  "s02-yaml": "One YAML line: transaction global. The kernel opens a global transaction around submit and cancel. AT uses credit limit, TCC reserves a pickup slot in Redis, and the kernel commits last. Any failure rolls it all back.",
+  "s03-ok": "Scene fifteen, the success case. On submit, used credit goes from one hundred twenty-three thousand to one hundred ninety-six thousand, pickup slots go up by one, and a waybill is created. Seata Server records two branches, AT and TCC, and commits both.",
+  "s04-c002": "C zero zero two is over its limit. BMS refuses, the API returns four twenty-two. The order stays a draft, no waybill, no journal entry. AT refused first; TCC never reserved.",
+  "s05-tcc": "The harder case: rollback after one branch has committed. AT has already taken the credit, then TCC refuses because the day is fully booked. Seata restores the credit from the undo log, and reserved pickup slots stay at zero.",
+  "s06-server": "The real log of Seata Server two point six point oh. From begin, through two branch registrations, to both rolled back: about seventy-five milliseconds on its clock.",
+  "s07-code": "For developers, the app hook calls an SPI, not Seata, and sees no Seata types. AT is plain JDBC on a proxied datasource. TCC is an app participant that throws when slots run out, so Seata rolls back.",
+  "s08-honest": "To be accurate: Seata Server uses file store; production should use a database or Raft. TCC skips Seata's fence table. The kernel commits last, not as a branch.",
+  "s99-recap": "Recap: one YAML line, AT restores from undo log, TCC releases its slot on rollback, real Seata logs. Next: Roadmap.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

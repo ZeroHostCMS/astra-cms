@@ -1,0 +1,13 @@
+{
+  "s01-title": "Video five: operations. The parcel state machine, one milestone per scan.",
+  "s02-filter": "As Quang from operations, we filter waybills by status At Hub. The field is projected: it has its own index, no JSON B scan. Result: one waybill, at the Tan Binh hub.",
+  "s03-timeline": "Open waybill one. Every scan leaves a trace: six milestones from Created to Delivered, each with a time and a hub. Users cannot write the scan log; only WaybillScanHook appends milestones.",
+  "s04-diagram": "The state machine is a data table. Each state can move to only a few next states, and Delivered, Cancelled and Returned are final. Before every save, the hook checks this table. A transition not in the table returns a four twenty-two and writes nothing.",
+  "s05-skip": "A new waybill is at Created. We choose Delivered directly, and the kernel refuses. From Created, only Picked Up or Cancelled are allowed. The scan log still has one milestone.",
+  "s06-hub": "Picked Up succeeds. At Hub with an empty hub fails, because the hub is required for At Hub. Enter hub Hai Chau and save: it succeeds, and the timeline gains a milestone. The customer care replica also reaches three milestones.",
+  "s07-cancel": "As Mai, we try to cancel a delivered order. The hook allows it only while the waybill is Created or Picked Up, so it is rejected. After a reload: still Submitted, still Delivered, since both share one transaction.",
+  "s08-api": "Same rules over REST. Transitions in order return two hundred. Jumping from At Hub to Delivered, or cancelling the order once the waybill is At Hub, returns a four twenty-two, and the order stays Submitted. Desk and API hit the same hook.",
+  "s09-code": "Developer code: one table, one veto. The NEXT table lists valid transitions; beforeSave throws for any other. On the order side, onCancel allows cancelling only while the waybill is Created or Picked Up, and updates it in the order's transaction.",
+  "s10-recap": "Recap: projected filters, a hook-only scan log, no skipped states, At Hub needs a hub, and delivered orders cannot be cancelled.",
+  "s11-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

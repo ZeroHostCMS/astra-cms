@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video three: hooks and validation. One rule, enforced on every channel.",
+  "s02-create": "Signed in as Tuan, we create an order for C zero zero one: Domestic, Express, two point two kilograms, five hundred thousand dong COD. The number comes from a daily series, and ShippingFeeHook sets the seventy-three thousand dong fee in the same transaction as the write.",
+  "s03-fee": "How the fee adds up: the first Domestic kilogram is thirty thousand. Plus three half-kilogram steps of five thousand: forty-five thousand. Times one point five for Express: sixty-seven thousand five hundred. Plus five thousand COD: seventy-two thousand five hundred. The hook rounds up: seventy-three thousand.",
+  "s04-errors": "Now change the phone number to one two three and the weight to forty-five. The hook returns both errors at once, in a single four twenty-two, before anything is written. One round of fixes is enough.",
+  "s05-link": "Valid values now, but customer C nine nine nine does not exist. Not a hook: the DocType declares customer as a Link, and the kernel checks the target exists. Two rejections later, the draft is unchanged.",
+  "s06-channels": "Desk or curl, same rule. The REST API, with the same data, returns the same two messages in order. The hook runs in the kernel, so Desk, REST and MCP cannot bypass it.",
+  "s07-code": "Now the code, for developers. The app only declares its DocTypes. The business rule is a CDI bean, plain Java. In beforeSave the hook validates, collects every error, throws one exception, and sets the fee. No registration, no configuration: the kernel finds hooks by doctype and calls them before the write.",
+  "s08-api": "Through the API, three more rules. A read-only field like shipping fee can only be written by a hook. An unknown field like discount is rejected. So is an invalid Select value. All three come from the YAML, with no extra app code, and every rejection leaves the data unchanged.",
+  "s09-recap": "Recap: the hook prices the order, errors return together, the kernel checks Links, and YAML guards the fields. Next: the document lifecycle.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

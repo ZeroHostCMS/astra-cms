@@ -1,7 +1,7 @@
 {
   "s01-title": "Video ba: hook và validation. Viết quy tắc một lần, kernel bắt buộc nó ở mọi kênh.",
   "s02-create": "Đăng nhập bằng tài khoản tuan, tạo đơn cho C001, Domestic, Express, hai phẩy hai ki lô gam, COD năm trăm nghìn. Mã đơn lấy từ series theo ngày, và phí bảy mươi ba nghìn đồng do ShippingFeeHook tính, chạy trong cùng transaction với lệnh ghi.",
-  "s03-fee": "Bảy mươi ba nghìn đến từ đâu? Ki lô gam đầu tiên Domestic là ba mươi nghìn. Cộng ba bước, mỗi bước năm nghìn cho mỗi nửa ki lô gam thêm, thành bốn mươi lăm nghìn. Nhân một phẩy năm vì Express, được sáu mươi bảy nghìn năm trăm. Cộng phí COD năm nghìn thành bảy mươi hai nghìn năm trăm, rồi hook làm tròn lên bội số của một nghìn, ra bảy mươi ba nghìn.",
+  "s03-fee": "Cách tính bảy mươi ba nghìn: ki lô gam đầu tiên Domestic là ba mươi nghìn. Cộng ba bước, mỗi bước năm nghìn cho mỗi nửa ki lô gam thêm, thành bốn mươi lăm nghìn. Nhân một phẩy năm vì Express, được sáu mươi bảy nghìn năm trăm. Cộng phí COD năm nghìn thành bảy mươi hai nghìn năm trăm, rồi hook làm tròn lên bội số của một nghìn, ra bảy mươi ba nghìn.",
   "s04-errors": "Giờ sửa số điện thoại thành một hai ba và cân nặng thành bốn mươi lăm. Hook trả về hai lỗi cùng lúc, trong một lỗi bốn trăm hai mươi hai, trước khi ghi. Sửa một lần là xong.",
   "s05-link": "Lần này giá trị hợp lệ, nhưng khách là C999, không tồn tại. Đây không phải hook: DocType khai báo customer là Link, và kernel tự kiểm tra chứng từ đích có thật. Sau hai lần bị từ chối, bản nháp vẫn nguyên như cũ.",
   "s06-channels": "Desk hay curl, cùng một quy tắc. Gọi qua REST API với cùng dữ liệu, ta nhận lại đúng hai thông báo, đúng thứ tự. Hook chạy trong kernel, nên Desk, REST hay MCP đều không lách được.",

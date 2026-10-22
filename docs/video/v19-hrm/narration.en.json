@@ -1,0 +1,16 @@
+{
+  "s01-title": "Video nineteen: attendance, payroll, and one journal entry in the ledger.",
+  "s02-app": "The HRM app is Tier zero, uses only the SPI, and adds eight new DocTypes. Frappe HRMS concept names, no code.",
+  "s03-components": "Components: base pay, lunch and fuel allowances, a KPI bonus, and employee insurance. Rates are demo seed values.",
+  "s04-wasm": "The courier bonus is tenant Wasm code in Rust, tiered by parcel count. Each save test-runs it. An infinite loop stops at fifty milliseconds and never reaches payroll.",
+  "s05-attendance": "Attendance sets working days. A day with no record counts as worked: N V zero zero two has twenty-four point five.",
+  "s06-entry": "Saving a Payroll Entry creates the draft slips: four in parallel, one virtual thread each, in one transaction.",
+  "s07-slip": "N V zero zero two's slip traces every line: base pay by working days, KPI bonus from Wasm, insurance on contract salary. Net is gross minus insurance.",
+  "s08-submit": "Submit commits the entry, slips and ledger in one transaction. One accrual entry for the period: debit six four two; credit insurance and three three four, payable to employees. It balances.",
+  "s09-guards": "Three rejections. Cancel one slip, you cancel the entry. Rerunning September is blocked. Clients can't set pay.",
+  "s10-mcp": "An AI agent asking about payroll over MCP sees masked names. It has the caller's permissions, so sales is refused.",
+  "s11-cancel": "Cancel writes a reversing entry and deletes no rows. Payroll account balances return to zero, and the original history stays in the ledger.",
+  "s12-honest": "To be accurate: a demo payroll app, not yet payroll software. Missing: personal income tax, salary payment, a month-end job, and employee self-service slips.",
+  "s99-recap": "Recap: attendance sets working days, Wasm computes the bonus, four salary slips in one transaction, and one accrual entry. Next: STMS.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

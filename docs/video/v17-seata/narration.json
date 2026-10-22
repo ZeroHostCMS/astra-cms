@@ -1,5 +1,5 @@
 {
-  "s01-title": "Một lần submit, ba tài nguyên. Tất cả, hoặc không gì cả, trong một giao dịch toàn cục.",
+  "s01-title": "Một lần submit, ba tài nguyên, trong một giao dịch toàn cục.",
   "s02-yaml": "Chỉ cần một dòng YAML: transaction global. Kernel mở giao dịch toàn cục quanh submit và cancel. Nhánh AT trừ hạn mức công nợ, nhánh TCC giữ chỗ lấy hàng trong Redis, và transaction của kernel commit cuối cùng. Lỗi ở bước nào thì tất cả quay lại.",
   "s03-ok": "Cảnh mười lăm, trường hợp thành công. Submit đơn, hạn mức đã dùng tăng từ một trăm hai mươi ba nghìn lên một trăm chín mươi sáu nghìn, chỗ lấy hàng tăng một, và vận đơn được sinh ra. Seata Server ghi nhận hai nhánh, AT và TCC, rồi commit cả hai.",
   "s04-c002": "Bây giờ khách C002 vượt hạn mức. BMS từ chối, API trả bốn trăm hai mươi hai. Đơn vẫn là nháp, không có vận đơn, không có bút toán. Nhánh AT từ chối trước, nên nhánh TCC chưa từng giữ chỗ.",

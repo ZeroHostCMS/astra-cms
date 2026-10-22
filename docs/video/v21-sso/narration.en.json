@@ -1,0 +1,16 @@
+{
+  "s01-title": "Sign in with your company IDP. The company directory manages the accounts.",
+  "s02-login": "One button: Acme Corp SSO. The password stays at the IDP; Astra gets only an OIDC code. This Linh is an IDP user, not STMS's.",
+  "s03-flow": "SP initiated flow: Desk, Keycloak, IDP, and back. The realms speak real SAML two point oh; the Desk speaks only OIDC with Keycloak.",
+  "s04-assertion": "The IDP signs an assertion with the user's groups. Keycloak maps them to tenants acme editor in the token; Astra reads the role there.",
+  "s05-desk": "Linh Vo signs in as acme editor and creates an article. No SSO code in the kernel; DocType permissions apply as for local users.",
+  "s06-tamper": "Change one word of the assertion in transit. The signature breaks, and Keycloak stops the flow. No code, so nobody signs in.",
+  "s07-discovery": "SCIM two point oh, at scim v two. The tenant comes only from Keycloak's scim tenant claim on the client, never from the request.",
+  "s08-create": "POST creates the user: two oh one. A repeat user name gets four oh nine. New users have no role, so no rights yet.",
+  "s09-role": "Groups are roles. Join the editor group, sign in again, and the user can create articles. Changes apply at the next sign-in or refresh.",
+  "s10-deactivate": "Setting active to false blocks sign-in at once. Tokens already issued stay valid until they expire, since Astra verifies JWTs offline.",
+  "s11-failclosed": "Fail closed: a globex token can't reach acme users. Errors follow RFC seventy-six forty-four; deleted users are gone.",
+  "s12-honest": "To be accurate: the IDP is a local Keycloak realm, not Okta or Entra. SP initiated only; no Single Logout or SCIM Bulk yet.",
+  "s99-recap": "Recap: sign-in through the IDP, accounts provisioned with SCIM. Next: Roadmap.",
+  "s13-outro": "Astra. One platform, every business process. Open source."
+}

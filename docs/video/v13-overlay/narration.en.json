@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video thirteen: tenant overlays. Per-company configuration, same app code.",
+  "s02-file": "A YAML file for the Hanoi tenant adds VAT invoice, tax code and invoice email fields, an Island zone, and a required delivery note. The tenant admin applies it through the overlay API; the file lives in Git.",
+  "s03-compare": "Comparing two tenants on the same New Customer Order form. Hanoi shows fields labeled tenant overlay; Saigon is unchanged.",
+  "s04-api": "Validation is per tenant. Hanoi accepts an Island order with a VAT invoice. Saigon refuses the same body: unknown fields, invalid zone. Hanoi refuses a missing note. Form, API and validation read one effective definition.",
+  "s05-live": "Editing live in the Desk. Mai, an admin, writes an overlay adding a gift wrap field, clicks Save, and it takes effect at once: no restart, no migration. Other pods pick up the change within two seconds.",
+  "s06-guard": "Overlays cannot break the app. Changing a field type: four twenty-two. A sales user editing the overlay: four oh three. Only some properties can change, and only tenant admins edit.",
+  "s07-code": "For developers, overlays are tenant data. The kernel applies the current tenant's overlay to the app's definition. Overlays live in their own table with the same RLS, so tenants can't read each other's.",
+  "s08-honest": "To be accurate: overlays add fields and edit some properties. No hooks or permissions yet, no field removal.",
+  "s99-recap": "Recap: customization without a fork. Tenant YAML takes effect at once, validation is per tenant, with guardrails. Next: Wasm tier two.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

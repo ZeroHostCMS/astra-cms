@@ -1,0 +1,15 @@
+{
+  "s01-title": "Timefold plans and re-plans routes. The copilot's LLM is simulated.",
+  "s02-data": "One depot in Tan Binh, three vehicles, twenty stops with time windows and VIP customers. Five new DocTypes. The map draws straight lines, not roads.",
+  "s03-solve": "Saving a plan with solve true gives routes. Timefold has hard constraints on capacity and time windows, soft ones on distance, priority and load balance. Result: feasible, two vehicles, ninety-eight point eight kilometers.",
+  "s04-breakdown": "Vehicle fifty-one C breaks down in Thu Duc. One Vietnamese sentence, and the copilot calls two real tools. Ten stops move, re-solved feasibly in about a second. Its replies are a simulated LLM.",
+  "s05-weights": "New weights: VIPs before ten, even load. VIPs get served earlier, load balances, distance grows. Soft scores change scale; compare same-weight plans only.",
+  "s06-urgent": "Over MCP, an urgent thirty-kilo order at Ben Thanh joins the plan. VIPs stay on time. Ben Thanh's coordinates come from the simulation's fixed place list.",
+  "s07-live": "Over MCP: a Thu Duc jam, two point five times slower, and a new time window. Each re-solve stays feasible and logs a DispatchEvent with both scores.",
+  "s08-desk": "Same copilot, in the Desk. Create a plan with Solve on save, and the hook solves it instantly. The simulated LLM label shows from the start. Then send the VIP before ten suggestion.",
+  "s09-desk-result": "The result in the Desk: the tools that ran, the scores, and nine reassigned stops, highlighted. Load is more even, and all three VIP stops come before ten. The simulated LLM label stays on the result.",
+  "s10-guard": "Permissions and plan locking. Only admin and dispatcher can re-solve; others are refused, and other tenants can't see the plan. Submitted means frozen: to change it, amend.",
+  "s11-honest": "To be accurate: the solver, replanning and tools are real; the copilot's LLM is a simulated script. No maps, live traffic, driver app or load forecasting yet.",
+  "s98-recap": "Timefold solves in the kernel, again on each incident. Real MCP tools, simulated LLM. Submit freezes plans.",
+  "s99-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

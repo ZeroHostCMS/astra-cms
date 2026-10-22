@@ -1,0 +1,10 @@
+{
+  "s01-title": "Video eighteen. The rest is running code. This is work in progress.",
+  "s02-runs": "What exists are thin slices that prove the mechanism, from DocType to Seata, plus three new videos: HRM, STMS and SAML SSO. Each video lists its limits; this one collects them.",
+  "s03-storage": "Storage. Running: JSON B, an append-only ledger, a BMS schema, Seata. In development: a schema per module, the TCC fence table, Seata store.",
+  "s04-identity": "Identity. Running: Keycloak, SAML SSO, SCIM and Wasm. In development: row-level permissions, Single Logout, SCIM Bulk, and Tier one isolated JVMs.",
+  "s05-data-ai": "Data. Running: Rust CDC, MCP with personal data masked. In development: streaming, Apache Doris, autonomous agents, vector RAG.",
+  "s06-modules": "HRM needs income tax, payouts and a month-end job. STMS needs a real LLM, real maps and a driver app. Audit hash chains and field encryption have not started.",
+  "s07-close": "Each step runs for real before its video. The README has the roadmap. Most useful now: critiquing the DocType model and overlays.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

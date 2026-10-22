@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video eleven: Keycloak. One identity, roles per tenant, permissions per DocType.",
+  "s02-login": "Desk signs in with Authorization Code and PKCE, right in the browser. The password is typed only into Keycloak; Astra gets back an authorization code and never sees the password.",
+  "s03-token": "Roles are Keycloak groups: tenants, tenant name, role. Tuan is in saigon express sales. The tenant header only picks the tenant; permissions come from the signed token.",
+  "s04-me": "Permissions are declared per DocType in YAML. Tuan can read, create and submit orders, not cancel. Desk reads the effective permissions from the I A M me API.",
+  "s05-desk": "On Desk, permissions decide which buttons appear. Tuan's order has Save and Submit; a submitted order has no Cancel button. Someone else's order cannot be saved, but sales can still submit it, exactly as the YAML says.",
+  "s06-api": "One order, four roles. Tuan, sales, cannot edit the waybill or cancel. Quang, ops, edits the waybill but cannot create orders. Ha, care, opens a ticket. Khoa, accounting, cancels. The kernel checks, so the API blocks too.",
+  "s07-sod": "Segregation of duties: the maker cannot approve. Khoa's COD payment voucher, three hundred fifty thousand dong: his own Submit is refused. Thu, a second accountant, submits it, and the ledger posts at once. Desk and API both get four oh three.",
+  "s08-honest": "To be accurate: no row-level conditions beyond if owner, and no SAML sign-on yet. Both are on the roadmap.",
+  "s99-recap": "Recap: Keycloak with PKCE, tenant roles read from the token, permissions declared on the DocType, and no self-approval. Next: the ledger.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

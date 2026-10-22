@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video fourteen: WebAssembly. Tenant formulas, running in a sandbox.",
+  "s02-rust": "The formula is a pure Rust function: it takes weight, zone, service and COD, returns a fee. It compiles to four hundred twenty-one bytes: no standard library, no I O, only computation. The tenant uploads the file like any other document.",
+  "s03-rule": "In a Pricing Rule, saving means a test run in the sandbox. The hook prices a sample order; a module that fails to run is never saved.",
+  "s04-onoff": "Same B2B order: rule off, seventy-three thousand. Rule on, no deploy or restart: fifty-one thousand. By hand: forty-five thousand, minus twenty percent, plus thirty percent for Express, plus the COD fee, rounded up to fifty-one thousand.",
+  "s05-order": "In the Desk, the order shows who priced it: fifty-one thousand dong, by rule one, Wasm. The hook sets the fee and source; users can't edit them.",
+  "s06-runaway": "A hostile script: an infinite loop. On save, it is rejected after fifty milliseconds and never switched on. The next order is still priced normally.",
+  "s07-limits": "Chicory runs WebAssembly in pure Java. One mebibyte memory cap, no host imports, no I O or network, a fresh instance per call. Each rule sets a deadline, at most two hundred milliseconds.",
+  "s08-honest": "To be accurate: Chicory can't count instructions yet, so CPU is time-capped. Tier one is on the roadmap.",
+  "s99-recap": "Recap: tenants write formulas in Rust, checked on save, switched on without a deploy; infinite loops stop at fifty milliseconds. Next: MCP.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

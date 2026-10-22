@@ -1,0 +1,14 @@
+{
+  "s01-title": "Video four: the document lifecycle. Submitted is final: cancel, then amend.",
+  "s02-states": "Three states, one direction. Draft, still editable. Submitted, immutable. Cancelled, immutable, and amendable into a new draft. Today, a new order for C zero zero one.",
+  "s03-create": "Signed in as Mai, we create a new order: a draft, with the fifty-eight thousand dong fee set by the hook on save. The waybill is empty until Submit.",
+  "s04-submit": "One Submit: the status becomes submitted, the waybill is created automatically, and the fee entry appears on the Ledger entries tab: debit one three one, credit five one one, fifty-eight thousand. All in one transaction.",
+  "s05-onetx": "The submit function runs the hooks on the same connection. The waybill hook joins the open transaction instead of starting a new one. The waybill and the journal entry take the same path, so a failure at any step rolls everything back, and nothing is half written.",
+  "s06-locked": "After submit, the form is locked. Editing the order through the API returns a four twenty-two: submitted documents are immutable, cancel and amend instead. Only the Cancel button remains.",
+  "s07-cancel": "Cancel does not delete or edit; it writes a reversal. The waybill is cancelled with it. The ledger gets two reversing lines, debit five one one, credit one three one, and the two original lines stay as they were. All in the same transaction as the cancel.",
+  "s08-amend": "Amend creates a new draft with the suffix minus one, linked to the original. The waybill stays empty until the new version is submitted. The cancelled version stays in the history.",
+  "s09-reamend": "Amending the cancelled order again is rejected: it already has an amendment. Each cancelled document gets only one. Further changes go on the minus one version.",
+  "s10-api": "The same lifecycle through the REST API: create, submit, a rejected edit, cancel, check the cancelled waybill, then amend. Desk calls these same endpoints, with no private shortcut.",
+  "s11-recap": "Recap: drafts are editable, submit posts the waybill and entry in one transaction, cancel reverses, and amend works once per cancelled version.",
+  "s12-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

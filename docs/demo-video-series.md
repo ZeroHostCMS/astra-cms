@@ -1,15 +1,18 @@
-# Astra Express — Bộ demo & kịch bản video giới thiệu Astra
+# Astra Express: bộ demo và kịch bản video giới thiệu Astra
+
+English version: [demo-video-series.en.md](demo-video-series.en.md).
 
 Tài liệu này dùng để quay một loạt video marketing giới thiệu Astra. Câu chuyện xuyên suốt lấy từ
 [`use-case-01.md`](use-case-01.md): một công ty chuyển phát nhận đơn (**OMS**), vận hành bưu kiện
 (**OPS**), chăm sóc khách hàng (**CARE**) và quản lý công nợ, sổ cái (**BMS**). Mọi thứ chiếu trong video
 đều là **code đang chạy thật** trong repository, ở dạng *thin slice*: đủ để chứng minh cơ chế, chưa phải
-toàn bộ phạm vi của use-case. Các video về cơ chế nền tảng (9, 11–17) và các video nghiệp vụ mới (19–21) có mục **"Nói đúng"** ghi rõ giới hạn hiện tại; mỗi video link tới đoạn code để chiếu cho developer trong
+toàn bộ phạm vi của use-case. Các video về cơ chế nền tảng (9, 11 đến 17) và các video nghiệp vụ mới (19 đến 21) có mục **"Nói đúng"** ghi rõ giới hạn hiện tại; mỗi video link tới đoạn code để chiếu cho developer trong
 [`demo-code-snippets.md`](demo-code-snippets.md) (code trích từ repo, kèm sơ đồ luồng).
 
 Nhạc nền của các video: "Corporate Tower" của Mare Production ([freesound.org/s/612264](https://freesound.org/s/612264/)), CC BY 4.0, đã cắt ghép.
 
-Giọng đọc tiếng Việt: giọng nam "Xuân Vĩnh" của [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) v3 Turbo (Apache-2.0), tổng hợp bằng `scripts/video-voiceover.py` từ file `narration.json` trong từng thư mục video. Font: Be Vietnam Pro (SIL OFL 1.1) cho chữ thường, JetBrains Mono cho mã.
+Giọng đọc tiếng Việt: giọng nam "Xuân Vĩnh" của [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) v3 Turbo (Apache-2.0), tổng hợp bằng `scripts/video-voiceover.py` từ file `narration.json` trong từng thư mục video.
+Bản tiếng Anh dùng giọng `am_michael` của Kokoro-82M (Apache-2.0) qua `hyperframes tts`, tổng hợp bằng `scripts/video-voiceover.py --lang en` từ file `narration.en.json`. Font: Be Vietnam Pro (SIL OFL 1.1) cho chữ thường, JetBrains Mono cho mã.
 
 ---
 
@@ -21,7 +24,7 @@ Rust (chỉ cần khi sửa module Wasm hoặc worker CDC).
 
 ```bash
 make k3d-up          # cụm k3d: 2 pod kernel, PostgreSQL (wal_level=logical), Redis, Keycloak, Seata, worker CDC Rust
-make demo-seed       # 2 tenant: saigon-express, hanoi-express — dữ liệu qua REST API, đăng nhập Keycloak
+make demo-seed       # 2 tenant: saigon-express, hanoi-express; dữ liệu qua REST API, đăng nhập Keycloak
 open http://localhost:8080/desk/          # Desk (đăng nhập Keycloak, PKCE)
 
 make demo-reset && make demo-seed         # làm sạch trước mỗi buổi quay (chứng từ, sổ cái, overlay, BMS, Redis)
@@ -65,7 +68,7 @@ BASE=http://localhost:8081 make demo-seed            # seed vào dev mode; reset
 | **Script theo cảnh** | 15 cảnh terminal, mỗi cảnh ứng với một video | `scripts/demo-express.sh` |
 | **Claude Code + MCP** | Agent AI thật gọi Astra | `scripts/mcp-claude.sh tuan saigon-express` |
 
-Mẹo: cửa sổ 1440×900; terminal 16–18pt; quay ngay sau `demo-reset` + `demo-seed` để mã chứng từ khớp
+Mẹo: cửa sổ 1440×900; terminal 16 đến 18 pt; quay ngay sau `demo-reset` + `demo-seed` để mã chứng từ khớp
 kịch bản (`ORD-<ngày>-00007`…). Ngày trong mã đơn là ngày chạy seed.
 
 ---
@@ -90,18 +93,18 @@ kịch bản (`ORD-<ngày>-00007`…). Ngày trong mã đơn là ngày chạy se
 | **MCP server, PII masking, tool do app đóng góp** | 15 | 13 | `astra-ai`, `McpTool` SPI |
 | **Rust CDC (pgoutput) + Sync-Aware LSN** | 16 | 14 | `astra-cdc-rust`, `SyncAwareLsnFilter` |
 | **Seata 2.6 AT + TCC: global transaction** | 17 | 15 | `astra-tx-seata`, `OrderCreditHook`, `PickupCapacity` |
-| Kubernetes: 2 pod, series an toàn giữa pod | 10 | — | `deploy/k8s`, `SeriesService` |
-| **HRM: chấm công, Payroll Entry, phiếu lương, thưởng KPI bằng Wasm, bút toán dồn tích** | 19 | `demo-hrm` 1–8 | `astra-apps/hrm`, `PayrollEntryHook`, `SalaryCalculator` |
-| **STMS: Timefold VRP, lập lại kế hoạch, tool MCP, copilot (LLM giả lập)** | 20 | `demo-stms` 1–8 | `astra-apps/stms`, `RoutePlanner`, `Replanner`, `DispatchCopilot` |
-| **SAML SSO qua Keycloak, SCIM 2.0 theo tenant** | 21 | `demo-sso` 1–8 | `deploy/keycloak/realm`, `ScimResource`, `ScimDirectory` |
+| Kubernetes: 2 pod, series an toàn giữa pod | 10 | (không có) | `deploy/k8s`, `SeriesService` |
+| **HRM: chấm công, Payroll Entry, phiếu lương, thưởng KPI bằng Wasm, bút toán dồn tích** | 19 | `demo-hrm` 1 đến 8 | `astra-apps/hrm`, `PayrollEntryHook`, `SalaryCalculator` |
+| **STMS: Timefold VRP, lập lại kế hoạch, tool MCP, copilot (LLM giả lập)** | 20 | `demo-stms` 1 đến 8 | `astra-apps/stms`, `RoutePlanner`, `Replanner`, `DispatchCopilot` |
+| **SAML SSO qua Keycloak, SCIM 2.0 theo tenant** | 21 | `demo-sso` 1 đến 8 | `deploy/keycloak/realm`, `ScimResource`, `ScimDirectory` |
 
 ---
 
 ## 3. Danh sách video
 
-Thời lượng gợi ý: teaser 60–90 giây, video tính năng 3–6 phút, video cho developer 6–8 phút.
+Thời lượng gợi ý: teaser 60 đến 90 giây, video tính năng 3 đến 6 phút, video cho developer 6 đến 8 phút.
 
-### Video 0 — Teaser: "Một nền tảng, mọi nghiệp vụ" (90 giây)
+### Video 0: Teaser "Một nền tảng, mọi nghiệp vụ" (90 giây)
 
 **Code cho developer:** [S0](demo-code-snippets.md#s0-big-picture)
 
@@ -113,9 +116,9 @@ Dựng nhanh từ cảnh quay của các video sau:
 5. Claude hỏi "bưu kiện WB-… đang ở đâu?", số điện thoại hiện `*******567`.
 6. Thẻ "sync pending" → "in sync" sau vài chục ms (CDC Rust).
 7. Seata: đơn vượt hạn mức, mọi thứ rollback, undo log sạch.
-8. Kết: "Astra — Java 25, Quarkus, PostgreSQL, Rust. Mã nguồn mở."
+8. Kết: "Astra: Java 25, Quarkus, PostgreSQL, Rust. Mã nguồn mở."
 
-### Video 1 — Astra là gì & chạy trong 5 phút
+### Video 1: Astra là gì & chạy trong 5 phút
 
 **Code cho developer:** [S0](demo-code-snippets.md#s0-big-picture)
 
@@ -127,7 +130,7 @@ Dựng nhanh từ cảnh quay của các video sau:
 | 4 | `make demo-express SCENES=1` | `/api/app`: 2 app; `/api/doctype`: 8 DocType. |
 | 5 | Desk → đăng nhập `mai` → Installed apps | App Express đóng góp OMS, OPS, CARE, BMS. |
 
-### Video 2 — DocType: từ một file YAML đến API, giao diện và index
+### Video 2: DocType: từ một file YAML đến API, giao diện và index
 
 **Code cho developer:** [S1](demo-code-snippets.md#s1-doctype-is-the-source-of-truth), [S12](demo-code-snippets.md#s12-desk-generated-from-metadata)
 
@@ -138,7 +141,7 @@ Dựng nhanh từ cảnh quay của các video sau:
 | 3 | Mục Projections | `projected: true` → `CREATE INDEX CONCURRENTLY`, không khoá ghi. |
 | 4 | Terminal: `\d astra_doc` | Mọi DocType chung một bảng JSONB. |
 
-### Video 3 — Quy tắc nghiệp vụ: hook & validation
+### Video 3: Quy tắc nghiệp vụ: hook & validation
 
 **Code cho developer:** [S2](demo-code-snippets.md#s2-an-app-and-a-hook)
 
@@ -150,19 +153,19 @@ Dựng nhanh từ cảnh quay của các video sau:
 | 4 | Sửa lại hợp lệ, khách `C999` → Save | Kernel kiểm tra Link. |
 | 5 | `SCENES=3` + API inspector | Read-only, trường lạ, Select sai đều bị chặn. |
 
-### Video 4 — Vòng đời chứng từ: Submit, Cancel, Amend
+### Video 4: Vòng đời chứng từ: Submit, Cancel, Amend
 
 **Code cho developer:** [S3](demo-code-snippets.md#s3-lifecycle-in-one-transaction)
 
 | Bước | Thao tác | Lời dẫn |
 | --- | --- | --- |
 | 1 | Desk (`mai`) → New Customer Order cho C001 → Create | Thanh trạng thái 0 → 1 → 2 → Amend. (Đơn nháp `ORD-…-00005` của C002 dành cho Video 17: nó vượt hạn mức công nợ.) |
-| 2 | **Submit** | Vận đơn tự tạo, bút toán cước hiện ở thẻ "Ledger entries" — tất cả trong một transaction. |
+| 2 | **Submit** | Vận đơn tự tạo, bút toán cước hiện ở thẻ "Ledger entries", trong cùng một transaction. |
 | 3 | Form bị khoá | Chứng từ đã duyệt là bất biến. |
 | 4 | **Cancel** | Vận đơn hủy theo; sổ cái ghi bút toán đảo (không sửa dòng cũ). |
 | 5 | **Amend**, rồi Amend lần nữa trên bản đã hủy | Bản sửa đổi `-1`; lần hai bị từ chối. |
 
-### Video 5 — Vận hành: máy trạng thái bưu kiện
+### Video 5: Vận hành: máy trạng thái bưu kiện
 
 **Code cho developer:** [S3](demo-code-snippets.md#s3-lifecycle-in-one-transaction)
 
@@ -172,9 +175,9 @@ Dựng nhanh từ cảnh quay của các video sau:
 | 2 | `WB-…-000001` | Timeline quét mã đầy đủ đến Delivered. |
 | 3 | Vận đơn `Created` → chọn `Delivered` | Không nhảy cóc trạng thái. |
 | 4 | `Picked Up`; rồi `At Hub` để trống hub; rồi nhập hub | Lỗi rồi thành công, timeline thêm mốc. |
-| 5 | Desk (`mai`) → hủy đơn đã giao | Bị từ chối, không có gì thay đổi nửa vời. |
+| 5 | Desk (`mai`) → hủy đơn đã giao | Bị từ chối; không dữ liệu nào thay đổi. |
 
-### Video 6 — CSKH nhìn thấy vận hành
+### Video 6: CSKH nhìn thấy vận hành
 
 **Code cho developer:** [S3](demo-code-snippets.md#s3-lifecycle-in-one-transaction) (hook `TicketTriageHook` cùng kiểu với các hook ở S2/S3)
 
@@ -184,24 +187,24 @@ Dựng nhanh từ cảnh quay của các video sau:
 | 2 | Cuối form: thẻ "CARE replica (CDC)" | Thẻ này đọc bản sao do worker CDC giữ, không đọc thẳng bảng vận hành (chi tiết ở Video 16). Trường `waybill_status` của ticket thì do hook đọc Waybill lúc lưu. |
 | 3 | `SCENES=6` | Bản API. |
 
-### Video 7 — Đa thuê bao
+### Video 7: Đa thuê bao
 
 **Code cho developer:** [S4](demo-code-snippets.md#s4-tenants-and-row-level-security)
 
 | Bước | Thao tác | Lời dẫn |
 | --- | --- | --- |
 | 1 | Đăng nhập `demo`, mở `compare.html`, Screen `#/list/Customer` | Cùng URL, cùng DocType, hai tenant. |
-| 2 | Screen `#/form/Customer/C001` | Cùng mã, dữ liệu khác hẳn. |
+| 2 | Screen `#/form/Customer/C001` | Cùng mã, dữ liệu khác nhau. |
 | 3 | `SCENES=7` | Link không vượt tenant; `nam` vào saigon → 403; thiếu tenant → 400; SQL: chưa gắn tenant → 0 dòng. |
 
-### Video 8 — Bảo mật fail-closed
+### Video 8: Bảo mật fail-closed
 
 **Code cho developer:** [S4](demo-code-snippets.md#s4-tenants-and-row-level-security)
 
 `make infra-up && make build && make demo-express SCENES=8`: kernel thứ hai kết nối bằng superuser và tự
 từ chối khởi động. Mở `deploy/docker/init/01-app-role.sql`: role ứng dụng `NOSUPERUSER NOBYPASSRLS`.
 
-### Video 9 — Dành cho developer: viết một app Astra
+### Video 9: Dành cho developer, viết một app Astra
 
 **Code cho developer:** [S2](demo-code-snippets.md#s2-an-app-and-a-hook), [S12](demo-code-snippets.md#s12-desk-generated-from-metadata)
 
@@ -213,10 +216,10 @@ từ chối khởi động. Mở `deploy/docker/init/01-app-role.sql`: role ứn
 | 4 | **Live**: thêm `- { name: zalo_id, type: Data, in-list: true }` vào `customer.doctype.yaml` | Không migration, không restart: cột mới xuất hiện ngay. |
 | 5 | `ExpressFlowTest`, `LedgerTest`, `SeataTest` | Test tích hợp với PostgreSQL thật; `SeataTest` chạy cả Seata Server và Redis thật. |
 
-**Nói đúng:** sau bước 4 hãy `make demo-reset && make demo-seed` — xoá trường khỏi DocType khiến chứng từ
+**Nói đúng:** sau bước 4 hãy `make demo-reset && make demo-seed`, vì xoá trường khỏi DocType khiến chứng từ
 cũ còn trường đó không sửa được nữa; tiến hoá schema an toàn còn trên roadmap.
 
-### Video 10 — Chạy trên Kubernetes
+### Video 10: Chạy trên Kubernetes
 
 | Bước | Thao tác | Lời dẫn |
 | --- | --- | --- |
@@ -224,7 +227,7 @@ cũ còn trường đó không sửa được nữa; tiến hoá schema an toàn
 | 2 | Desk → Customer Order | Mã đơn liên tục dù 2 pod cùng ghi: counter dùng row lock. |
 | 3 | `kubectl -n astra rollout restart deployment/astra-server` trong khi Desk mở | Rolling restart, `maxUnavailable: 0`: Desk vẫn dùng được. **Nói đúng:** chưa có preStop/drain, request rơi đúng lúc pod cũ dừng có thể lỗi (lần đo: 2/47). |
 
-### Video 11 — Keycloak: một danh tính, role theo tenant, quyền theo DocType (cảnh 9)
+### Video 11: Keycloak, một danh tính, role theo tenant, quyền theo DocType (cảnh 9)
 
 **Code cho developer:** [S5](demo-code-snippets.md#s5-keycloak-permissions-and-sod)
 
@@ -238,7 +241,7 @@ cũ còn trường đó không sửa được nữa; tiến hoá schema an toàn
 
 **Nói đúng:** điều kiện quyền theo từng dòng (row-level conditions) và SSO SAML còn trên roadmap.
 
-### Video 12 — Sổ cái append-only (cảnh 10)
+### Video 12: Sổ cái append-only (cảnh 10)
 
 **Code cho developer:** [S6](demo-code-snippets.md#s6-append-only-ledger)
 
@@ -248,27 +251,27 @@ cũ còn trường đó không sửa được nữa; tiến hoá schema an toàn
 | 2 | `tuan` submit đơn → form hiện thẻ "Ledger entries" | Nợ 131 / Có 511 trong cùng transaction với đơn. |
 | 3 | Hủy đơn | Hai dòng **đảo** mới (`reversal`), dòng cũ giữ nguyên. |
 | 4 | `quang` quét Delivered | Nợ 1388 / Có 3388: tiền COD bưu tá thu, nợ shop. |
-| 5 | Terminal: `UPDATE astra_ledger …` | `ERROR: astra_ledger is append-only` — chặn ở database, kể cả chủ bảng. |
+| 5 | Terminal: `UPDATE astra_ledger …` | `ERROR: astra_ledger is append-only`, chặn ở database, kể cả chủ bảng. |
 | 6 | Mục Partitions | Phân vùng theo tháng, kernel tạo trước. |
 | 7 | CODRemittance vượt số nợ shop → 422; maker/checker | Không chi quá số đang nợ; người lập ≠ người duyệt. |
 
-**Nói đúng:** trigger chặn UPDATE/DELETE; role sở hữu bảng vẫn có thể DROP/ALTER — production nên chạy
+**Nói đúng:** trigger chặn UPDATE/DELETE; role sở hữu bảng vẫn có thể DROP/ALTER; production nên chạy
 kernel bằng role không sở hữu bảng. Chuỗi hash audit (hash-chain) còn trên roadmap.
 
-### Video 13 — Overlay theo tenant (cảnh 11)
+### Video 13: Overlay theo tenant (cảnh 11)
 
 **Code cho developer:** [S7](demo-code-snippets.md#s7-tenant-overlays)
 
 | Bước | Thao tác | Lời dẫn |
 | --- | --- | --- |
-| 1 | `tenants/hanoi-express/overlays/customer-order.overlay.yaml` | Hà Nội thêm trường VAT, vùng "Island", bắt buộc ghi chú — app Express không đổi một dòng. |
+| 1 | `tenants/hanoi-express/overlays/customer-order.overlay.yaml` | Hà Nội thêm trường VAT, vùng "Island", bắt buộc ghi chú; app Express không đổi dòng nào. |
 | 2 | `compare.html`, Screen `#/new/CustomerOrder` | Bên Hà Nội có trường gắn nhãn "✚ tenant overlay". |
 | 3 | Desk (`mai`) → DocType metadata → CustomerOrder → Tenant overlay → thêm `gift_wrap` → Save overlay | Áp dụng ngay, không restart; tenant khác không bị ảnh hưởng. Quay xong bấm Remove overlay, để cảnh 11 vẫn cho thấy saigon-express không có overlay. |
 | 4 | Overlay đổi kiểu trường → 422; `tuan` sửa overlay → 403 | Overlay không được phá app; chỉ admin của tenant được sửa. |
 
 **Nói đúng:** overlay thêm/chỉnh trường, chưa thêm hook hay quyền; không xoá được trường của app.
 
-### Video 14 — Tier 2 Wasm: công thức cước của riêng tenant (cảnh 12)
+### Video 14: Tier 2 Wasm, công thức cước của riêng tenant (cảnh 12)
 
 **Code cho developer:** [S8](demo-code-snippets.md#s8-wasm-tier-2)
 
@@ -277,13 +280,13 @@ kernel bằng role không sở hữu bảng. Chuỗi hash audit (hash-chain) cò
 | 1 | `astra-apps/express/wasm/tet-promo/src/lib.rs` | Khuyến mãi Tết viết bằng Rust, biên dịch ra 421 byte WebAssembly. |
 | 2 | Desk (`mai`) → Pricing Rule → mở rule → `self_test` | Kernel chạy thử module trong sandbox khi lưu. |
 | 3 | Bật `active` → tạo đơn B2B (C001, Domestic, Express, 2.2 kg, COD 500.000) | Phí 73.000 → **51.000 ₫**, "Priced by: PRL-001 … (Wasm)". Quay xong tắt `active` lại, nếu không mọi đơn B2B ở các video khác sẽ không còn 73.000. |
-| 4 | New Pricing Rule → chọn file `astra-apps/express/wasm/modules/runaway.wasm` (vòng lặp vô hạn) → Create | "module rejected (timeout): script exceeded its 50 ms deadline and was stopped" — kernel không hề hấn gì. |
+| 4 | New Pricing Rule → chọn file `astra-apps/express/wasm/modules/runaway.wasm` (vòng lặp vô hạn) → Create | "module rejected (timeout): script exceeded its 50 ms deadline and was stopped"; kernel vẫn chạy bình thường. |
 | 5 | Nói về giới hạn | Bộ nhớ tối đa 1 MiB, không host function, mỗi lần gọi một instance mới. |
 
 **Nói đúng:** Chicory chưa có đếm lệnh (fuel), nên giới hạn CPU là deadline thời gian. Tier 1
 (hot-swap JVM) còn trên roadmap.
 
-### Video 15 — MCP: agent AI dùng Astra bằng quyền của người dùng (cảnh 13)
+### Video 15: MCP, agent AI dùng Astra bằng quyền của người dùng (cảnh 13)
 
 **Code cho developer:** [S9](demo-code-snippets.md#s9-mcp-for-ai-agents)
 
@@ -292,13 +295,13 @@ kernel bằng role không sở hữu bảng. Chuỗi hash audit (hash-chain) cò
 | 1 | `SCENES=13` | Handshake MCP 2025-11-25, 7 tool (5 của kernel, 2 do app Express đóng góp). |
 | 2 | `search_documents` | Trường `pii: true` bị che trước khi tới mô hình: SĐT chỉ còn 3 số cuối (`*******567`), tên và địa chỉ chỉ còn chữ cái đầu mỗi từ (`L*** V*** D***`); `shipping_fee` giữ nguyên. |
 | 3 | `scripts/mcp-claude.sh ha saigon-express` → `claude` → "Bưu kiện WB-2610-000002 đang ở đâu, có khiếu nại không?" | Claude gọi `track_waybill`, trả lời kèm hành trình và ticket. |
-| 4 | Hỏi "tạo đơn hàng mới cho C001" | Bị từ chối: `ha` (care) không có quyền tạo đơn — agent không vượt quyền người dùng. |
+| 4 | Hỏi "tạo đơn hàng mới cho C001" | Bị từ chối: `ha` (care) không có quyền tạo đơn, agent không vượt quyền người dùng. |
 | 5 | `scripts/mcp-claude.sh khoa` → "Khách nào đang chờ trả COD?" | `cod_outstanding` đọc từ sổ cái. |
 
 **Nói đúng:** client dùng bearer token tĩnh (token 1 giờ của client dev); OAuth discovery cho MCP,
 AI agent tự hành và vector search còn trên roadmap. Che PII áp dụng cho kênh MCP, không áp cho Desk.
 
-### Video 16 — Rust CDC + Sync-Aware LSN (cảnh 14)
+### Video 16: Rust CDC + Sync-Aware LSN (cảnh 14)
 
 **Code cho developer:** [S10](demo-code-snippets.md#s10-rust-cdc-and-sync-aware-lsn)
 
@@ -306,7 +309,7 @@ AI agent tự hành và vector search còn trên roadmap. Che PII áp dụng cho
 | --- | --- | --- |
 | 1 | Desk → Replication (CDC) | Worker Rust giải mã WAL (`pgoutput`), lag vài ms, số byte còn lại. |
 | 2 | `SCENES=14`: tạm dừng worker, `quang` quét mã | Response có `X-Tx-LSN`. |
-| 3 | `ha` đọc replica với `X-Required-LSN` | **202 Sync Pending** — không trả dữ liệu cũ. |
+| 3 | `ha` đọc replica với `X-Required-LSN` | **202 Sync Pending**, không trả dữ liệu cũ. |
 | 4 | Bật lại worker | 200 sau vài chục ms; trạng thái ổn định: replica bắt kịp vài chục tới hơn trăm ms sau lần ghi (đo mỗi lần mỗi khác). |
 | 5 | Desk: mở Waybill vừa quét → thẻ "CARE replica (CDC)" | "sync pending" → "in sync" tự động (read-your-writes) nếu worker bắt kịp trong 10 s Desk tự hỏi lại; worker tắt lâu hơn thì mở lại form. |
 | 6 | `pg_replication_slots` | Slot logical `astra_cdc` (cột `active = f` là bình thường: worker đọc slot bằng SQL peek/advance, không giữ kết nối streaming); worker ghi replica **dưới RLS**, không BYPASSRLS. |
@@ -314,7 +317,7 @@ AI agent tự hành và vector search còn trên roadmap. Che PII áp dụng cho
 **Nói đúng:** worker đọc slot bằng `pg_logical_slot_peek_binary_changes` mỗi 50 ms (ít nhất một lần,
 upsert idempotent), chưa dùng giao thức streaming; chưa đẩy sang Apache Doris.
 
-### Video 17 — Seata: một lần submit, ba tài nguyên, tất cả hoặc không gì cả (cảnh 15)
+### Video 17: Seata, một lần submit trên ba tài nguyên (cảnh 15)
 
 **Code cho developer:** [S11](demo-code-snippets.md#s11-seata-at-and-tcc)
 
@@ -330,7 +333,7 @@ upsert idempotent), chưa dùng giao thức streaming; chưa đẩy sang Apache 
 idempotent/empty-rollback/suspension theo branch, chưa dùng bảng fence của Seata; kernel commit transaction
 của mình cuối cùng (last-resource), chưa là một nhánh Seata.
 
-### Video 19 — HRM: nhân sự và tiền lương
+### Video 19: HRM, nhân sự và tiền lương
 
 **Code cho developer:** `astra-apps/hrm` (`PayrollEntryHook`, `SalaryCalculator`, `astra-apps/hrm/wasm/courier-kpi`); test `HrmPayrollTest`.
 
@@ -370,18 +373,18 @@ lương 29/9. Script đăng nhập `hanh` (hr). Nếu realm vừa đổi, chạy
 - Chưa có Desk riêng cho tính lương: Desk chung hiển thị các dòng phiếu dưới dạng "N item(s)".
 - Số liệu ở bảng trên là kết quả mong đợi tính theo logic của hook; lấy số trên màn hình từ chính lần quay.
 
-### Video 20 — STMS: điều phối xe với Timefold + AI copilot
+### Video 20: STMS, điều phối xe với Timefold + AI copilot
 
 **Code cho developer:** `astra-apps/stms` (`solver/RoutePlanner`, `Replanner`, `copilot/DispatchCopilot`, `copilot/MockLlmClient`); test `RoutePlannerTest`, `StmsDispatchTest`, `StmsMcpTest`.
 
 Mục tiêu: bài toán điều xe (VRP có tải trọng và khung giờ) giải bằng Timefold Solver ngay trong kernel; khi có
 sự cố, kế hoạch được giải lại từ tuyến hiện tại; người điều phối ra lệnh bằng tiếng Việt qua copilot, copilot
 gọi đúng các tool MCP đó. **Solver, việc lập lại kế hoạch và các tool là thật; mô hình ngôn ngữ của copilot là
-kịch bản giả lập cho demo** (`llm: "mock"`). Mọi khung hình có copilot phải hiện nhãn "LLM giả lập – kịch bản demo".
+kịch bản giả lập cho demo** (`llm: "mock"`). Mọi khung hình có copilot phải hiện nhãn "LLM giả lập (kịch bản demo)".
 
 Chuẩn bị: `make demo-seed` tạo cho mỗi tenant một kho hư cấu (saigon-express: HCM-TB Kho Tân Bình), 3 xe và 20
 điểm giao/nhận cho ngày chạy seed (`STMS_DATE`, mặc định hôm nay theo giờ Việt Nam; dùng cùng giá trị cho seed
-và demo). Script đăng nhập `linh` (dispatcher). Chạy các cảnh theo thứ tự: cảnh 3–8 dùng plan do cảnh 2 tạo.
+và demo). Script đăng nhập `linh` (dispatcher). Chạy các cảnh theo thứ tự: cảnh 3 đến 8 dùng plan do cảnh 2 tạo.
 
 | Bước | Thao tác | Lời dẫn |
 | --- | --- | --- |
@@ -390,8 +393,8 @@ và demo). Script đăng nhập `linh` (dispatcher). Chạy các cảnh theo th�
 | 3 | `SCENES=3`: copilot "Xe 51C-12345 hỏng ở Thủ Đức, chuyển hết đơn sang xe khác" | Response có `llm: "mock"` và `llm_note`; tool call `stms_vehicle_unavailable` rồi `stms_explain_plan`. Lời giải thích bắt đầu bằng `[LLM giả lập – kịch bản demo]`, nêu số điểm chuyển xe, điểm số trước → sau, vẫn 0hard. Solver giải lại từ tuyến hiện tại (warm start). |
 | 4 | `SCENES=4`: "Ưu tiên khách VIP trước 10h, cân bằng tải giữa các xe" | Copilot gọi `stms_set_weights` (priority 500, balance 10). Các điểm VIP/gấp được phục vụ trước 10:00, đổi lại quãng đường dài hơn. Điểm mềm đổi thang đo khi đổi trọng số, chỉ so sánh giữa các plan cùng trọng số. |
 | 5 | `SCENES=5`: "Thêm đơn gấp 30kg ở Bến Thành trước 11h" | `stms_add_urgent_stop` với toạ độ lấy từ danh sách địa danh cố định của bản giả lập; đơn được chèn vào một xe, các điểm VIP/gấp vẫn đúng hạn. |
-| 6 | `SCENES=6` | Không qua copilot: `stms_traffic_delay` (Thủ Đức, bán kính 4 km, chậm 2,5 lần) và `stms_change_time_window` (Linh kiện Tân Tiến → 08:00–09:00). Mỗi lần in điểm số trước/sau, km, `solve_ms` và các điểm bị dời; vẫn 0hard. |
-| 7 | Desk (`linh`) → trang copilot điều phối, gõ một câu lệnh của cảnh 3–5 | Trang gửi câu lệnh tới `POST /api/stms/copilot`, cùng copilot với tool `stms_copilot`; hiện nhãn LLM giả lập, các tool call đã chạy và lời giải thích. Mở DispatchPlan: `route_summary` (bảng tuyến dạng chữ) và `last_change` (các điểm bị dời). |
+| 6 | `SCENES=6` | Không qua copilot: `stms_traffic_delay` (Thủ Đức, bán kính 4 km, chậm 2,5 lần) và `stms_change_time_window` (Linh kiện Tân Tiến → 08:00 đến 09:00). Mỗi lần in điểm số trước/sau, km, `solve_ms` và các điểm bị dời; vẫn 0hard. |
+| 7 | Desk (`linh`) → trang copilot điều phối, gõ một câu lệnh của cảnh 3 đến 5 | Trang gửi câu lệnh tới `POST /api/stms/copilot`, cùng copilot với tool `stms_copilot`; hiện nhãn LLM giả lập, các tool call đã chạy và lời giải thích. Mở DispatchPlan: `route_summary` (bảng tuyến dạng chữ) và `last_change` (các điểm bị dời). |
 | 8 | `SCENES=7` | `quang` (ops) gọi `stms_vehicle_unavailable` → "not permitted: read DispatchEvent"; `ha` (care) gọi `stms_explain_plan` → not permitted; cùng tên plan ở hanoi-express → "not found". |
 | 9 | `SCENES=8` | Nhật ký DispatchEvent: nguồn (Copilot hoặc MCP), điểm số trước → sau, điểm bị dời, `solve_ms`. Submit → docstatus 1, Dispatched; PUT `{solve: true}` → 422 "submitted documents are immutable"; `stms_set_weights` → "is dispatched and frozen; amend it to replan". |
 
@@ -408,12 +411,12 @@ và demo). Script đăng nhập `linh` (dispatcher). Chạy các cảnh theo th�
   ca và nghỉ của tài xế, hạn quay về kho, loại xe hay chi phí xe. Mỗi plan một kho, không trung chuyển giữa kho.
 - Chưa có dự báo tải bằng AI (Tier 1), app tài xế, GPS hay cập nhật ETA từ hiện trường. Chưa có bản đồ tuyến:
   Desk hiện bảng tuyến dạng chữ và JSON.
-- Demo khoảng 20 điểm, giải trong 1–2 giây; chưa đo với bài toán lớn hơn. Số trên màn hình lấy từ chính lần
+- Demo khoảng 20 điểm, giải trong 1 đến 2 giây; chưa đo với bài toán lớn hơn. Số trên màn hình lấy từ chính lần
   quay; số trong báo cáo phase đo trên dữ liệu test, sẽ lệch nhẹ so với dữ liệu seed.
 - DispatchEvent và đơn gấp do tool tạo mang chủ sở hữu `stms-mcp` / `stms-copilot`; người gọi thật được ghi
   trong log của MCP server.
 
-### Video 21 — SAML SSO và SCIM
+### Video 21: SAML SSO và SCIM
 
 **Code cho developer:** `deploy/keycloak/realm/acme-corp-idp-realm.json`, `deploy/keycloak/realm/astra-realm.json` (identity provider `acme-corp`), `astra-iam` (`ScimResource`, `ScimDirectory`, `ScimPatch`); test `SamlBrokerTest`, `ScimTest`.
 
@@ -457,11 +460,11 @@ của Video 20.
 - Liệt kê user lấy thành viên từ Keycloak và phân trang trong bộ nhớ, mỗi user thêm một lời gọi đọc group: đủ
   cho demo, chưa dành cho hàng trăm nghìn user. Secret của client SCIM trong realm JSON chỉ dùng cho môi trường local.
 
-### Video 18 — Roadmap: phần còn lại của use-case-01 *(Đang phát triển)*
+### Video 18: Roadmap, phần còn lại của use-case-01 *(Đang phát triển)*
 
 Mọi khung hình gắn nhãn **"Roadmap / Đang phát triển"**.
 
-| Đã có (Video 1–17, 19–21) | Còn trên roadmap |
+| Đã có (Video 1 đến 17, 19 đến 21) | Còn trên roadmap |
 | --- | --- |
 | JSONB + projection index, ledger, schema riêng cho BMS | Multi-schema cho mọi module, hot-column materialised |
 | Seata AT + TCC | AT cho chính kernel, bảng fence TCC, Seata DB/Raft store |
@@ -472,7 +475,7 @@ Mọi khung hình gắn nhãn **"Roadmap / Đang phát triển"**.
 | Video 19: HRM (nhân sự, tiền lương), bút toán dồn tích qua `GeneralLedger` | Thuế TNCN, phần doanh nghiệp đóng bảo hiểm, chi trả lương, job lương nền cuối tháng, nhân viên tự xem phiếu lương |
 | Video 20: STMS (Timefold), lập lại kế hoạch, copilot điều phối | LLM thật cho copilot, bản đồ và giao thông thật, dự báo tải (Tier 1), app tài xế |
 | Video 21: SAML SSO, SCIM 2.0 theo tenant | Single Logout, SCIM Bulk/ETag, bộ lọc SCIM đầy đủ |
-| — | Audit hash-chain, mã hoá trường |
+| (chưa có) | Audit hash-chain, mã hoá trường |
 
 ---
 
@@ -480,7 +483,7 @@ Mọi khung hình gắn nhãn **"Roadmap / Đang phát triển"**.
 
 - [ ] Mỗi video chỉ khẳng định những gì có trong bảng mục 2; đọc mục "Nói đúng" trước khi thu âm.
 - [ ] Video 18 và mọi khung hình roadmap có nhãn "Đang phát triển".
-- [ ] Video 20: mọi khung hình có copilot ghi rõ "LLM giả lập – kịch bản demo"; không nói hay ngụ ý là có mô hình ngôn ngữ thật.
+- [ ] Video 20: mọi khung hình có copilot ghi rõ "LLM giả lập (kịch bản demo)"; không nói hay ngụ ý là có mô hình ngôn ngữ thật.
 - [ ] Số liệu hiệu năng (lag CDC, thời gian sandbox) lấy từ chính lần quay, không làm tròn đẹp hơn thực tế.
 - [ ] Dữ liệu khách hàng là dữ liệu seed hư cấu (`scripts/demo-seed.sh`).
 - [ ] Mật khẩu demo chỉ xuất hiện trên stack local; không quay màn hình có token.

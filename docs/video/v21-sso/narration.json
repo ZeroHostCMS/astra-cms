@@ -11,6 +11,6 @@
   "s10-deactivate": "Đặt active bằng false chặn đăng nhập ngay. Nhưng access token đã cấp vẫn hợp lệ đến khi hết hạn, vì Astra xác minh JWT offline.",
   "s11-failclosed": "Fail closed. Token của globex không chạm được user của acme. Lỗi trả theo RFC bảy sáu bốn bốn, và xoá user thì không còn tìm thấy nữa.",
   "s12-honest": "Nói đúng: IdP chỉ là realm Keycloak cùng container, không phải Okta hay Entra. Chỉ có SP initiated, chưa có Single Logout. SCIM chưa có Bulk.",
-  "s99-recap": "Doanh nghiệp giữ danh tính, Astra giữ quyền. Video sau: Roadmap.",
+  "s99-recap": "Đăng nhập qua IdP, cấp tài khoản qua SCIM. Video sau: Roadmap.",
   "s13-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
 }

@@ -1,0 +1,11 @@
+{
+  "s01-title": "Video eight: fail-closed security. Wrong config, and the kernel won't run.",
+  "s02-risk": "The risk: a superuser bypasses row level security. In Docker Compose, astra is a superuser and astra app is not. One wrong connection string lets tenants see each other's data, with no error.",
+  "s03-attempt": "We try to start a second kernel as the superuser. It stops with a message that role astra is a superuser, and exits with code one. The guard runs before Flyway, so no migration runs and no DocType is loaded.",
+  "s04-guard": "For developers: Row Level Security Guard queries the current role. If it is a superuser or has bypass RLS, it throws. The guard is called twice: before the Flyway migration and at startup.",
+  "s05-role": "The kernel runs as the unprivileged role astra app: no superuser, no bypass RLS, and it cannot create roles or databases. Force row level security covers the table owner too.",
+  "s06-live": "In the running k three d cluster, the kernel log confirms astra app is under row level security. Kernel, Seata and the CDC worker use non-superuser roles.",
+  "s07-honest": "To be accurate: a switch, astra tenancy allow RLS bypass, defaults to false. When on, the kernel starts with a warning. Dev machines only.",
+  "s99-recap": "Superuser or bypass RLS blocks startup. The cluster uses plain roles, and the dev switch is off by default. Next: for developers.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

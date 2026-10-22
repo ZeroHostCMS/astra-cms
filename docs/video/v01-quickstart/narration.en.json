@@ -1,0 +1,12 @@
+{
+  "s01-title": "This is Astra. Five commands, a real Kubernetes cluster on your laptop.",
+  "s02-arch": "Astra is a business kernel; apps plug in via metadata. Its DocType Engine handles storage, UI, API, permissions and lifecycle; its Plugin Host runs compiled apps and sandboxed Wasm. We only cover what runs; the rest is marked design.",
+  "s03-prereq": "JDK twenty-five, Docker Desktop, kube control, k three d, J Q and Bash five. Rust only for Wasm.",
+  "s04-k3d": "One command builds the whole cluster: make k three d up. This is real output, sped up. The cluster already exists on this machine, so it rebuilds all three images and redeploys every pod, which takes one minute twenty-nine seconds.",
+  "s05-pods": "Check with kube control: seven pods, all running. Two kernel pods behind one Service, plus PostgreSQL, Redis, Keycloak, Seata, and the CDC worker written in Rust.",
+  "s06-seed": "Next, make demo seed. Two courier companies are loaded fully through the REST API, logging in to Keycloak like real users. Hooks, lifecycle, ledger and overlays all run during the load, with no SQL.",
+  "s07-api": "Calling the API in scene one: one server, two apps, eight DocTypes, across the OMS, OPS, CARE, BMS and CMS modules.",
+  "s08-desk": "Open Desk and log in with the Keycloak account Mai. The Installed apps page shows the Express app is already there. The left menu is generated from the DocTypes the app contributes: orders, operations, customer care and accounting.",
+  "s09-recap": "To recap, five commands: build the cluster, check seven pods, seed two tenants, call the API, log in to Desk. Next: DocType.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

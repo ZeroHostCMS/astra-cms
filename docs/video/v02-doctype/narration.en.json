@@ -1,0 +1,11 @@
+{
+  "s01-title": "Video two: DocType. From YAML to API, UI and indexes.",
+  "s02-yaml": "A DocType is a YAML file inside an app. This is Customer Order. It declares the module, the fields, Select and Link types, read-only flags, a P I I flag that masks sensitive data, and submittable, which means the document has a lifecycle from draft to submitted, cancelled and amended. Transaction global means submit and cancel run in a Seata transaction.",
+  "s03-derive": "From that file alone, the kernel generates an API and a Desk form. Bad Select values get four twenty-two. Links must point to records in the tenant. Clients can't write read-only fields. Projected fields get an index.",
+  "s04-desk": "On Desk, the Customer Order metadata page is a field table read from the metadata API. Desk knows nothing about Customer Order in advance. The table is built from the definition the API returns, with the tenant overlay already applied.",
+  "s05-render": "Desk dot js never names Customer Order. Each field type is a control; permissions decide Submit. A new field in YAML or overlay updates form, list, API and MCP tools.",
+  "s06-proj": "The Projections section. Every field marked projected gets an index built online, with create index concurrently, at kernel startup, without locking writes and without alter table. To be accurate: pg index stores only the index definition, so this table does not show the word concurrently.",
+  "s07-table": "Last, PostgreSQL. Every DocType shares one JSONB table. The doctype column tells document types apart, and the data column holds business fields, with a GIN index and ten indexes from projected fields. Row level security is forced per tenant, and the astra cdc publication feeds the sync.",
+  "s08-recap": "Recap: one YAML declaration, Desk forms from the API, indexes without alter table, and one JSONB table for every DocType.",
+  "s09-outro": "Astra. One platform, every business process. Open source, MIT license."
+}

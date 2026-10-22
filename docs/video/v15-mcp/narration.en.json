@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video fifteen: MCP. AI agents act with the user's permissions.",
+  "s02-tools": "One MCP endpoint, seven tools, protocol twenty twenty-five eleven. Five kernel tools read, search, create documents and get the trial balance; Express adds two. Keycloak token: same tenant, RLS and permissions.",
+  "s03-pii": "Personal data is masked before reaching the model. For pii fields, phones keep the last three digits, text keeps each word's first letter, others stay as is. The signed-in Desk shows full data.",
+  "s04-track": "This is the real Claude, signed in as user ha from care. The question is in Vietnamese. The agent picks the track waybill tool on its own, then answers with the route and the open ticket.",
+  "s05-refuse": "Care cannot create orders, and neither can its agent. Claude calls create document and the kernel refuses: not permitted, create Customer Order. The problem is permissions, not data.",
+  "s06-cod": "Accountant khoa asks who is owed COD. The answer comes from the ledger: Shop Hoa Mai, three hundred fifty thousand dong collected, not yet paid out.",
+  "s07-code": "For developers, an app adds a tool with one class. The tool declares the DocTypes it reads; the kernel checks the user's read permission first, and handles auth, tenant, RLS and PII masking.",
+  "s08-honest": "To be accurate: the client uses a static bearer token valid for one hour. OAuth discovery, autonomous agents and vector search are planned.",
+  "s99-recap": "Recap: the agent is a user too. Seven tools, masked PII, ha can't create orders, real Claude used track waybill. Next: Rust CDC.",
+  "s10-outro": "Astra. One platform, every business process. Open source, MIT license."
+}
