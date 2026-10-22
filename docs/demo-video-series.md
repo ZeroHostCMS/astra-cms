@@ -32,7 +32,7 @@ cùng mặc định cổng 8080, nên chạy dev mode ở cổng khác và trỏ
 
 ```bash
 make infra-up && make build                          # PostgreSQL :5432, Redis, Keycloak :8180 (Video 8 chỉ cần tới đây)
-scripts/keycloak-sync-realm.sh http://localhost:8180 # realm của Compose nhận thêm tenant/user/client Desk mới
+                                                     # infra-up chạy scripts/keycloak-compose-dev.sh: Keycloak dev nhận HTTP từ máy host + đồng bộ realm
 make dev DEV_ARGS=-Dquarkus.http.port=8081           # Video 9
 BASE=http://localhost:8081 make demo-seed            # seed vào dev mode; reset bằng: scripts/demo-reset.sh compose
 ```
@@ -69,7 +69,7 @@ kịch bản (`ORD-<ngày>-00007`…). Ngày trong mã đơn là ngày chạy se
 | Tính năng (đang chạy thật) | Video | Cảnh | Code |
 | --- | --- | --- | --- |
 | App là plugin Tier 0, chỉ dùng `astra-spi` | 1, 9 | 1 | `astra-apps/express`, `astra-apps/cms` |
-| DocType YAML → REST + Desk tự sinh; Zero-DDL JSONB | 2, 9 | 2 | `*.doctype.yaml`, `DocResource`, Desk |
+| DocType YAML → REST + Desk tự sinh; JSONB, không ALTER TABLE | 2, 9 | 2 | `*.doctype.yaml`, `DocResource`, Desk |
 | `projected: true` → index biểu thức online | 2, 5 | 2, 5 | `ProjectionIndexer` |
 | Validation theo metadata, hook nghiệp vụ | 3 | 3 | `DocumentValidator`, `ShippingFeeHook` |
 | Vòng đời Draft → Submitted → Cancelled → Amend | 4 | 4 | `DocumentStore.submit/cancel/amend` |
@@ -125,7 +125,7 @@ Dựng nhanh từ cảnh quay của các video sau:
 | Bước | Thao tác | Lời dẫn |
 | --- | --- | --- |
 | 1 | `SCENES=2`: YAML của `CustomerOrder` | Trường, Select, Link, read-only, `pii`, `submittable`, `transaction: global`. |
-| 2 | Desk → DocType metadata → CustomerOrder | Bảng trường đọc từ `GET /api/doctype/CustomerOrder`. |
+| 2 | Desk → DocType metadata → CustomerOrder | Bảng trường đọc từ `GET /api/doctype` (cùng định nghĩa với `GET /api/doctype/CustomerOrder`, đã áp overlay của tenant). |
 | 3 | Mục Projections | `projected: true` → `CREATE INDEX CONCURRENTLY`, không khoá ghi. |
 | 4 | Terminal: `\d astra_doc` | Mọi DocType chung một bảng JSONB. |
 
@@ -136,7 +136,7 @@ Dựng nhanh từ cảnh quay của các video sau:
 | Bước | Thao tác | Lời dẫn |
 | --- | --- | --- |
 | 1 | Desk (`tuan`) → New Customer Order: C001, Domestic, Express, 2.2 kg, COD 500.000 → Create | Mã từ series theo ngày; **phí 73.000 ₫** do `ShippingFeeHook` tính; "Priced by: Standard tariff". |
-| 2 | Giải thích phí | 30.000 + 3 × 5.000 = 45.000; ×1.5 = 67.500; COD 1% = 5.000 → 73.000. |
+| 2 | Giải thích phí | 30.000 + 3 × 5.000 (mỗi 0,5 kg trên kg đầu) = 45.000; ×1,5 (Express) = 67.500; phí COD max(5.000; 1%) = 5.000 → 72.500; làm tròn lên nghìn → 73.000. |
 | 3 | Sửa SĐT `123`, cân nặng `45` → Save | Hook trả 2 lỗi cùng lúc (422). |
 | 4 | Sửa lại hợp lệ, khách `C999` → Save | Kernel kiểm tra Link. |
 | 5 | `SCENES=3` + API inspector | Read-only, trường lạ, Select sai đều bị chặn. |
@@ -172,7 +172,7 @@ Dựng nhanh từ cảnh quay của các video sau:
 | Bước | Thao tác | Lời dẫn |
 | --- | --- | --- |
 | 1 | Desk (`ha`) → New Support Ticket "Hàng bị vỡ, khách yêu cầu đền bù", chọn waybill | Priority tự lên High, SLA +24h, trạng thái waybill. |
-| 2 | Cuối form: thẻ "CARE replica (CDC)" | CSKH đọc bản sao do worker CDC giữ, không đọc dữ liệu vận hành (chi tiết ở Video 16). |
+| 2 | Cuối form: thẻ "CARE replica (CDC)" | Thẻ này đọc bản sao do worker CDC giữ, không đọc thẳng bảng vận hành (chi tiết ở Video 16). Trường `waybill_status` của ticket thì do hook đọc Waybill lúc lưu. |
 | 3 | `SCENES=6` | Bản API. |
 
 ### Video 7 — Đa thuê bao
@@ -213,7 +213,7 @@ cũ còn trường đó không sửa được nữa; tiến hoá schema an toàn
 | --- | --- | --- |
 | 1 | `kubectl -n astra get pods` | 2 replica kernel + hạ tầng (Keycloak, Seata, CDC, PostgreSQL, Redis). |
 | 2 | Desk → Customer Order | Mã đơn liên tục dù 2 pod cùng ghi: counter dùng row lock. |
-| 3 | `kubectl -n astra rollout restart deployment/astra-server` trong khi Desk mở | Rolling restart; Desk vẫn dùng được. |
+| 3 | `kubectl -n astra rollout restart deployment/astra-server` trong khi Desk mở | Rolling restart, `maxUnavailable: 0`: Desk vẫn dùng được. **Nói đúng:** chưa có preStop/drain, request rơi đúng lúc pod cũ dừng có thể lỗi (lần đo: 2/47). |
 
 ### Video 11 — Keycloak: một danh tính, role theo tenant, quyền theo DocType (cảnh 9)
 
@@ -298,8 +298,8 @@ AI agent tự hành và vector search còn trên roadmap. Che PII áp dụng cho
 | 1 | Desk → Replication (CDC) | Worker Rust giải mã WAL (`pgoutput`), lag vài ms, số byte còn lại. |
 | 2 | `SCENES=14`: tạm dừng worker, `quang` quét mã | Response có `X-Tx-LSN`. |
 | 3 | `ha` đọc replica với `X-Required-LSN` | **202 Sync Pending** — không trả dữ liệu cũ. |
-| 4 | Bật lại worker | 200 sau vài chục ms; trạng thái ổn định: replica bắt kịp ~50 ms sau lần ghi. |
-| 5 | Desk: mở Waybill vừa quét → thẻ "CARE replica (CDC)" | "sync pending" → "in sync" tự động (read-your-writes). |
+| 4 | Bật lại worker | 200 sau vài chục ms; trạng thái ổn định: replica bắt kịp vài chục tới hơn trăm ms sau lần ghi (đo mỗi lần mỗi khác). |
+| 5 | Desk: mở Waybill vừa quét → thẻ "CARE replica (CDC)" | "sync pending" → "in sync" tự động (read-your-writes) nếu worker bắt kịp trong 10 s Desk tự hỏi lại; worker tắt lâu hơn thì mở lại form. |
 | 6 | `pg_replication_slots` | Slot logical `astra_cdc` (cột `active = f` là bình thường: worker đọc slot bằng SQL peek/advance, không giữ kết nối streaming); worker ghi replica **dưới RLS**, không BYPASSRLS. |
 
 **Nói đúng:** worker đọc slot bằng `pg_logical_slot_peek_binary_changes` mỗi 50 ms (ít nhất một lần,
@@ -344,3 +344,4 @@ Mọi khung hình gắn nhãn **"Roadmap / Đang phát triển"**.
 - [ ] Số liệu hiệu năng (lag CDC, thời gian sandbox) lấy từ chính lần quay, không làm tròn đẹp hơn thực tế.
 - [ ] Dữ liệu khách hàng là dữ liệu seed hư cấu (`scripts/demo-seed.sh`).
 - [ ] Mật khẩu demo chỉ xuất hiện trên stack local; không quay màn hình có token.
+- [ ] Video có nhạc CC BY: mô tả video có dòng ghi công (Video 0: xem `docs/video/teaser/CREDITS.txt`).

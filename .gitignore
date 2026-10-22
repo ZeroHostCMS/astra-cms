@@ -28,3 +28,5 @@ docs/video/*.mp4
 docs/video/*.wav
 docs/video/out/
 docs/video/node_modules/
+docs/video/*/.hyperframes/
+docs/video/*/.thumbnails/

@@ -206,7 +206,7 @@ flowchart LR
     D --> E["PostgreSQL RLS policy<br/>tenant_id = current_setting('astra.tenant')"]
 ```
 
-`TenantTransactions.inTenantTx` — tenant không bao giờ là tham số của API nào:
+`TenantTransactions.inTenantTx` (`astra-doctype`) — tenant không bao giờ là tham số của API nào:
 
 ```java
 String tenant = TenantContext.require();                        // ← đọc từ ScopedValue, không từ caller
@@ -229,12 +229,15 @@ CREATE POLICY astra_doc_tenant_isolation ON astra_doc
     WITH CHECK (tenant_id = current_setting('astra.tenant', true));
 ```
 
-Fail-closed — `RowLevelSecurityGuard.java`:
+Fail-closed — `astra-doctype/…/store/RowLevelSecurityGuard.java` (rút gọn; `RowLevelSecurityFlywayCustomizer` gọi nó **trước khi Flyway migrate**, rồi gọi lại ở `StartupEvent`):
 
 ```java
 if (superuser || bypass) {
-    throw new IllegalStateException("Database role '" + role + "' is a SUPERUSER: row-level security would be ignored …");
-}                                                    // ← kernel từ chối khởi động
+    String msg = "Database role '" + role + "' is " + (superuser ? "a SUPERUSER" : "BYPASSRLS")
+            + ": row-level security would be ignored and tenants would see each other's data. …";
+    if (allowBypass) LOG.warn(msg + " … NEVER use this in production.");   // ← chỉ khi astra.tenancy.allow-rls-bypass=true
+    else throw new IllegalStateException(msg);                             // ← mặc định: kernel từ chối khởi động
+}
 ```
 
 ---

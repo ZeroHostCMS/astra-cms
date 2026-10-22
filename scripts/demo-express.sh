@@ -145,7 +145,8 @@ scene7() {
   api hanoi-express  GET /api/doc/Customer/C001 "" '{name, customer_name: .data.customer_name}'; wait_key
   say "hanoi-express cannot even reference saigon-express data: links resolve inside the tenant only"
   api hanoi-express GET /api/doc/Customer/C003
-  api hanoi-express POST /api/doc/CustomerOrder "${ORDER/C001/C003}"; wait_key
+  # the hanoi overlay requires a delivery note; send one so the Link check is what rejects the order
+  api hanoi-express POST /api/doc/CustomerOrder "$(jq -c '.customer = "C003" | .note = "Giao giờ hành chính"' <<<"$ORDER")"; wait_key
   say "Users only reach tenants they belong to: nam is admin of hanoi-express only"
   AS=nam api saigon-express GET /api/doc/Customer
   say "demo belongs to two tenants, so it must say which one"
