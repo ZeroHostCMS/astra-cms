@@ -10,6 +10,8 @@
 
 **Nền tảng ứng dụng metadata-driven, plugin-first cho doanh nghiệp thay đổi liên tục và không chấp nhận downtime.**
 
+<div align="left">
+
 Lấy cảm hứng từ Frappe/ERPNext, viết lại từ đầu bằng Java 25 và Quarkus.<br>
 **DocType** mô tả schema, form, API, quyền, workflow và metadata tuân thủ dưới dạng dữ liệu.<br>
 **Plugin** chạy ở ba tầng cô lập: dùng chung (shared), JVM riêng, hoặc WebAssembly.<br>
@@ -18,6 +20,8 @@ Lấy cảm hứng từ Frappe/ERPNext, viết lại từ đầu bằng Java 25 
 **AI:** mọi DocType và extension point đều là một tool cho agent.<br>
 **Tuân thủ** nằm trong mô hình dữ liệu, nên bằng chứng kiểm toán cho SOC 2, ISO 27001, GDPR và luật bảo vệ dữ liệu khu vực được sinh tự động, không phải gom lại về sau.<br>
 App đầu tiên là Astra CMS, tiếp theo là Astra ERP.
+
+</div>
 
 [![Compliance](https://img.shields.io/badge/Compliance-SOC%202%20%7C%20ISO%2027001%20%7C%20GDPR%20ready-2e7d32.svg)](#tuân-thủ-tích-hợp-sẵn-trong-metadata)
 
