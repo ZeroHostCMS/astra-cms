@@ -1,0 +1,91 @@
+{
+  "realm": "acme-corp-idp",
+  "enabled": true,
+  "displayName": "Acme Corp SSO (demo SAML IdP)",
+  "displayNameHtml": "Acme Corp SSO",
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "rememberMe": false,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 10,
+  "permanentLockout": false,
+  "passwordPolicy": "length(8)",
+  "eventsEnabled": true,
+  "eventsExpiration": 86400,
+  "groups": [
+    { "name": "astra-admins" },
+    { "name": "astra-editors" },
+    { "name": "astra-authors" },
+    { "name": "astra-readers" }
+  ],
+  "clients": [
+    {
+      "clientId": "urn:astra:sp",
+      "name": "Astra (SAML service provider)",
+      "description": "Astra realm broker (IdP alias acme-corp). Responses and assertions are signed; redirect URIs follow the public URL via scripts/keycloak-sync-realm.sh.",
+      "enabled": true,
+      "protocol": "saml",
+      "frontchannelLogout": true,
+      "fullScopeAllowed": false,
+      "redirectUris": [
+        "http://localhost:8080/auth/realms/astra/broker/acme-corp/endpoint*",
+        "http://localhost:8180/auth/realms/astra/broker/acme-corp/endpoint*"
+      ],
+      "attributes": {
+        "saml.assertion.signature": "true",
+        "saml.server.signature": "true",
+        "saml.server.signature.keyinfo.ext": "false",
+        "saml.signature.algorithm": "RSA_SHA256",
+        "saml_signature_canonicalization_method": "http://www.w3.org/2001/10/xml-exc-c14n#",
+        "saml.client.signature": "false",
+        "saml.encrypt": "false",
+        "saml.authnstatement": "true",
+        "saml.force.name.id.format": "true",
+        "saml_name_id_format": "username",
+        "saml.onetimeuse.condition": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "email",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "config": { "user.attribute": "email", "attribute.name": "email", "attribute.nameformat": "Basic", "friendly.name": "email" }
+        },
+        {
+          "name": "firstName",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "config": { "user.attribute": "firstName", "attribute.name": "firstName", "attribute.nameformat": "Basic", "friendly.name": "givenName" }
+        },
+        {
+          "name": "lastName",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "config": { "user.attribute": "lastName", "attribute.name": "lastName", "attribute.nameformat": "Basic", "friendly.name": "surname" }
+        },
+        {
+          "name": "memberOf",
+          "protocol": "saml",
+          "protocolMapper": "saml-group-membership-mapper",
+          "config": { "attribute.name": "memberOf", "attribute.nameformat": "Basic", "friendly.name": "memberOf", "full.path": "false", "single": "true" }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "linh", "email": "linh@acme-corp.test", "firstName": "Linh", "lastName": "Võ",
+      "enabled": true, "emailVerified": true, "groups": ["/astra-editors"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "bao", "email": "bao@acme-corp.test", "firstName": "Bảo", "lastName": "Đặng",
+      "enabled": true, "emailVerified": true, "groups": ["/astra-readers"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    }
+  ]
+}

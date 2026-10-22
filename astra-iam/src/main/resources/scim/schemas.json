@@ -1,0 +1,78 @@
+[
+  {
+    "id": "urn:ietf:params:scim:schemas:core:2.0:User",
+    "name": "User",
+    "description": "Astra user account, stored in Keycloak. Only the attributes below are kept; others are ignored.",
+    "attributes": [
+      { "name": "userName", "type": "string", "multiValued": false, "required": true, "caseExact": false,
+        "mutability": "readWrite", "returned": "default", "uniqueness": "server",
+        "description": "Unique login name. The realm does not allow changing it after creation." },
+      { "name": "name", "type": "complex", "multiValued": false, "required": false,
+        "mutability": "readWrite", "returned": "default", "uniqueness": "none",
+        "subAttributes": [
+          { "name": "formatted", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "mutability": "readOnly", "returned": "default", "uniqueness": "none" },
+          { "name": "givenName", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "mutability": "readWrite", "returned": "default", "uniqueness": "none" },
+          { "name": "familyName", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "mutability": "readWrite", "returned": "default", "uniqueness": "none" }
+        ] },
+      { "name": "displayName", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+        "mutability": "readOnly", "returned": "default", "uniqueness": "none",
+        "description": "givenName and familyName joined." },
+      { "name": "emails", "type": "complex", "multiValued": true, "required": false,
+        "mutability": "readWrite", "returned": "default", "uniqueness": "none",
+        "description": "One address is kept: the primary one, else the first.",
+        "subAttributes": [
+          { "name": "value", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "mutability": "readWrite", "returned": "default", "uniqueness": "server" },
+          { "name": "type", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "canonicalValues": ["work"], "mutability": "readWrite", "returned": "default", "uniqueness": "none" },
+          { "name": "primary", "type": "boolean", "multiValued": false, "required": false,
+            "mutability": "readWrite", "returned": "default" }
+        ] },
+      { "name": "active", "type": "boolean", "multiValued": false, "required": false,
+        "mutability": "readWrite", "returned": "default",
+        "description": "false disables the Keycloak account and ends its sessions." },
+      { "name": "password", "type": "string", "multiValued": false, "required": false, "caseExact": true,
+        "mutability": "writeOnly", "returned": "never", "uniqueness": "none",
+        "description": "Sets a permanent password, subject to the realm password policy." },
+      { "name": "groups", "type": "complex", "multiValued": true, "required": false,
+        "mutability": "readOnly", "returned": "default",
+        "description": "The user's roles in this tenant. Change them through the Groups endpoint.",
+        "subAttributes": [
+          { "name": "value", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "mutability": "readOnly", "returned": "default", "uniqueness": "none" },
+          { "name": "$ref", "type": "reference", "referenceTypes": ["Group"], "multiValued": false, "required": false,
+            "caseExact": false, "mutability": "readOnly", "returned": "default", "uniqueness": "none" },
+          { "name": "display", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "mutability": "readOnly", "returned": "default", "uniqueness": "none" },
+          { "name": "type", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "canonicalValues": ["direct"], "mutability": "readOnly", "returned": "default", "uniqueness": "none" }
+        ] }
+    ]
+  },
+  {
+    "id": "urn:ietf:params:scim:schemas:core:2.0:Group",
+    "name": "Group",
+    "description": "A role of the tenant (/tenants/<tenant>/<role> in Keycloak). Groups are fixed; their members are not.",
+    "attributes": [
+      { "name": "displayName", "type": "string", "multiValued": false, "required": true, "caseExact": false,
+        "mutability": "readOnly", "returned": "default", "uniqueness": "server",
+        "description": "The role name, for example editor." },
+      { "name": "members", "type": "complex", "multiValued": true, "required": false,
+        "mutability": "readWrite", "returned": "default",
+        "description": "Users this tenant provisioned that hold the role.",
+        "subAttributes": [
+          { "name": "value", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "mutability": "immutable", "returned": "default", "uniqueness": "none" },
+          { "name": "$ref", "type": "reference", "referenceTypes": ["User"], "multiValued": false, "required": false,
+            "caseExact": false, "mutability": "immutable", "returned": "default", "uniqueness": "none" },
+          { "name": "display", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "mutability": "readOnly", "returned": "default", "uniqueness": "none" },
+          { "name": "type", "type": "string", "multiValued": false, "required": false, "caseExact": false,
+            "canonicalValues": ["User"], "mutability": "immutable", "returned": "default", "uniqueness": "none" }
+        ] }
+    ]
+  }
+]

@@ -21,9 +21,13 @@ for _ in $(seq 60); do   # the container reports healthy before the admin API an
     --password "$ADMIN_PASSWORD" >/dev/null 2>&1 && break
   sleep 2
 done
-for realm in master astra; do
-  kcadm get "realms/$realm" --fields realm >/dev/null 2>&1 || continue
-  kcadm update "realms/$realm" -s sslRequired=NONE
-done
-echo "Compose Keycloak: master and astra accept plain HTTP from the host (dev only)."
+plain_http() {
+  for realm in "$@"; do
+    kcadm get "realms/$realm" --fields realm >/dev/null 2>&1 || continue
+    kcadm update "realms/$realm" -s sslRequired=NONE
+  done
+  echo "Compose Keycloak: $* accept plain HTTP from the host (dev only)."
+}
+plain_http master astra
 KC_ADMIN_PASSWORD="$ADMIN_PASSWORD" scripts/keycloak-sync-realm.sh http://localhost:8180
+plain_http acme-corp-idp   # the demo SAML IdP realm; the sync above creates it on a Keycloak older than the realm file
