@@ -15,8 +15,9 @@ build:            ## compile and package all modules
 test:             ## run tests (Dev Services starts PostgreSQL in Docker)
 	./mvnw -q test
 
-infra-up:         ## PostgreSQL + Redis via docker compose for local dev
+infra-up:         ## PostgreSQL, Redis and Keycloak (:8180) via docker compose for local dev
 	docker compose -f deploy/docker/docker-compose.yml up -d --wait
+	scripts/keycloak-compose-dev.sh
 
 infra-down:
 	docker compose -f deploy/docker/docker-compose.yml down

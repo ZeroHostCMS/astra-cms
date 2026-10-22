@@ -96,6 +96,17 @@ astra:
     datasource:
       jdbc:
         url: ${ASTRA_DB_URL:jdbc:postgresql://localhost:5432/astra}   # deploy/docker compose stack
+    live-reload:
+      # DocType YAML is read once at startup; without this, dev mode sees the edit but does not restart
+      watched-resources:
+        - META-INF/astra/doctypes/account.doctype.yaml
+        - META-INF/astra/doctypes/article.doctype.yaml
+        - META-INF/astra/doctypes/cod-remittance.doctype.yaml
+        - META-INF/astra/doctypes/customer-order.doctype.yaml
+        - META-INF/astra/doctypes/customer.doctype.yaml
+        - META-INF/astra/doctypes/pricing-rule.doctype.yaml
+        - META-INF/astra/doctypes/support-ticket.doctype.yaml
+        - META-INF/astra/doctypes/waybill.doctype.yaml
 
 "%prod":
   quarkus:
