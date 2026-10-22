@@ -2,8 +2,11 @@ package io.astra.doctype.store;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.astra.doctype.permission.DocPermissions;
+import io.astra.doctype.permission.DocPermissions.Action;
 import io.astra.doctype.registry.DocTypeOverlays;
 import io.astra.kernel.extension.HookRegistry;
+import io.astra.kernel.tenant.TenantRequest;
 import io.astra.spi.doc.DocValidationException;
 import io.astra.spi.doc.Document;
 import io.astra.spi.doc.DocumentService;
@@ -11,6 +14,7 @@ import io.astra.spi.doctype.DocTypeDefinition;
 import io.astra.spi.doctype.FieldDefinition;
 import io.astra.spi.doctype.FieldType;
 import io.astra.spi.tenant.TenantContext;
+import io.quarkus.arc.Arc;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -25,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -50,6 +55,7 @@ public class DocumentStore implements DocumentService {
     @Inject DocTypeOverlays overlays;
     @Inject HookRegistry hooks;
     @Inject SeriesService series;
+    @Inject DocPermissions permissions;
 
     /**
      * Lists documents, newest first. {@code filters} match declared fields by equality (the generated
@@ -131,7 +137,12 @@ public class DocumentStore implements DocumentService {
         });
     }
 
-    /** Draft → Submitted. Submitted documents are immutable; {@code onSubmit} hooks run in the same transaction. */
+    /**
+     * Draft → Submitted. Submitted documents are immutable; {@code onSubmit} hooks run in the same transaction.
+     * When a user is signed in, their submit permission is checked here too, so a hook that submits other
+     * documents (through {@link DocumentService}) cannot do more than its caller may.
+     */
+    @Override
     public Optional<Document> submit(String doctype, String name) {
         DocTypeDefinition def = requireSubmittable(doctype);
         return global(def, "submit " + doctype + " " + name, () -> inTenantTx(conn -> {
@@ -139,6 +150,7 @@ public class DocumentStore implements DocumentService {
             if (existing.isEmpty()) return Optional.empty();
             Document doc = existing.get();
             requireDraft(doc);
+            requireCaller(doc, Action.SUBMIT);
             hooks.onSubmit(doc);
             DocumentValidator.applyDefaultsAndValidate(def, doc);
             validateLinks(conn, def, doc);
@@ -146,7 +158,11 @@ public class DocumentStore implements DocumentService {
         }));
     }
 
-    /** Submitted → Cancelled. {@code onCancel} hooks reverse side effects in the same transaction or veto it. */
+    /**
+     * Submitted → Cancelled. {@code onCancel} hooks reverse side effects in the same transaction or veto it.
+     * A signed-in caller needs cancel permission, also when a hook cancels on their behalf.
+     */
+    @Override
     public Optional<Document> cancel(String doctype, String name) {
         DocTypeDefinition def = requireSubmittable(doctype);
         return global(def, "cancel " + doctype + " " + name, () -> inTenantTx(conn -> {
@@ -154,6 +170,7 @@ public class DocumentStore implements DocumentService {
             if (existing.isEmpty()) return Optional.empty();
             Document doc = existing.get();
             if (doc.docstatus() != 1) throw new DocValidationException("only submitted documents can be cancelled");
+            requireCaller(doc, Action.CANCEL);
             hooks.onCancel(doc);
             return Optional.of(write(conn, doc, 2));
         }));
@@ -239,6 +256,21 @@ public class DocumentStore implements DocumentService {
                 return read(rs);
             }
         }
+    }
+
+    /**
+     * The signed-in user's permission for a lifecycle step, evaluated with their roles in the tenant being
+     * written (none when that is not the request's tenant). Without a user (startup or background jobs,
+     * kernel fixtures) there is no caller to check. The REST resource checks the same rule before calling in,
+     * so for a direct request this repeats an identical decision.
+     */
+    private void requireCaller(Document doc, Action action) {
+        TenantRequest request = Arc.container().requestContext().isActive()
+                ? Arc.container().instance(TenantRequest.class).get() : null;
+        if (request == null || request.userId() == null) return;
+        Set<String> roles = TenantContext.require().equals(request.tenantId()) ? request.roles() : Set.of();
+        if (action == Action.SUBMIT) permissions.requireSubmit(doc.doctype(), roles, request.userId(), doc);
+        else permissions.require(doc.doctype(), roles, action);
     }
 
     /** Every non-empty Link field must name an existing document of its target DocType in this tenant. */

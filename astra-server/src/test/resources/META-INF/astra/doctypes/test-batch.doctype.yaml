@@ -1,0 +1,13 @@
+# Test-only: a submittable parent whose hook submits and cancels its items through DocumentService.
+name: TestBatch
+module: test
+kind: transaction
+submittable: true
+naming: { field: code }
+
+fields:
+  - { name: code, type: Data, required: true }
+
+permissions:
+  - { role: admin, read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: clerk, read: true, create: true, write: true, submit: true, cancel: true }
