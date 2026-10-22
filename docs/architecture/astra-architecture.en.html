@@ -15,9 +15,9 @@
 </head>
 <body>
 <div class="diagram-container">
-<svg viewBox="0 0 1280 936" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="astra-architecture-en-title astra-architecture-en-desc">
-<title id="astra-architecture-en-title">Astra CMS: one server, one data model</title>
-<desc id="astra-architecture-en-desc">Architecture of Astra CMS: clients reach a single Quarkus server whose layers (HTTP edge, kernel, business apps, engines) persist to PostgreSQL, with Keycloak for identity, Redis and Seata for distributed transactions, and a Rust CDC worker.</desc>
+<svg viewBox="0 0 1280 816" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="astra-architecture-en-title astra-architecture-en-desc">
+<title id="astra-architecture-en-title">Astra CMS: every write goes through one engine</title>
+<desc id="astra-architecture-en-desc">Clients call one Quarkus server; requests pass the REST API and the tenant-scoping kernel into the DocType engine, which writes to PostgreSQL under row-level security. Apps plug in as hooks, Wasm runs in a sandbox, Seata and Redis coordinate distributed transactions, Keycloak handles identity and a Rust CDC worker keeps replicas.</desc>
 <defs>
 <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
 <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
@@ -25,223 +25,169 @@
 </defs>
 <rect width="100%" height="100%" fill="#f5f5f5"/>
 <text x="32" y="40" fill="#4f5d75" font-size="9" font-weight="500" font-family="'Geist Mono', ui-monospace, Menlo, monospace" letter-spacing="0.18em">ARCHITECTURE · WHAT RUNS TODAY</text>
-<text x="32" y="76" fill="#2d3142" font-size="30" font-family="'Instrument Serif', 'Noto Serif', serif" letter-spacing="-0.01em">Astra CMS: one server, one data model</text>
-<rect x="32" y="112" width="752" height="112" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.14)" stroke-width="0.8"/>
-<rect x="44" y="118" width="48" height="12" rx="2" fill="#f5f5f5"/>
-<text x="68.0" y="127" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.14em">CLIENTS</text>
-<rect x="32" y="256" width="1216" height="440" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.14)" stroke-width="0.8"/>
-<rect x="664" y="262" width="188" height="12" rx="2" fill="#f5f5f5"/>
-<text x="758.0" y="271" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.14em">ASTRA-SERVER · QUARKUS · JAVA 25 · :8080</text>
-<rect x="32" y="728" width="1216" height="120" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.14)" stroke-width="0.8"/>
-<rect x="44" y="734" width="76" height="12" rx="2" fill="#f5f5f5"/>
-<text x="82.0" y="743" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.14em">INFRASTRUCTURE</text>
-<line x1="140" y1="200" x2="140" y2="296" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
-<line x1="356" y1="200" x2="356" y2="296" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
-<rect x="148" y="236" width="36" height="12" rx="2" fill="#f5f5f5"/>
-<text x="166.0" y="245" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">HTTPS</text>
-<rect x="364" y="236" width="36" height="12" rx="2" fill="#f5f5f5"/>
-<text x="382.0" y="245" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">HTTPS</text>
-<line x1="620" y1="200" x2="620" y2="296" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
-<rect x="628" y="236" width="80" height="12" rx="2" fill="#f5f5f5"/>
-<text x="668.0" y="245" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">MCP · JSON-RPC</text>
-<line x1="784" y1="172" x2="900" y2="172" stroke="#2e5aa8" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-link)"/>
-<rect x="796" y="152" width="60" height="12" rx="2" fill="#f5f5f5"/>
-<text x="826.0" y="161" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">OIDC LOGIN</text>
-<line x1="1012" y1="296" x2="1012" y2="204" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<rect x="1020" y="236" width="60" height="12" rx="2" fill="#f5f5f5"/>
-<text x="1050.0" y="245" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">ADMIN REST</text>
-<line x1="140" y1="360" x2="140" y2="388" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<line x1="620" y1="360" x2="620" y2="388" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<line x1="1012" y1="360" x2="1012" y2="388" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<line x1="336" y1="444" x2="336" y2="588" stroke="#bf4520" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
-<line x1="560" y1="560" x2="560" y2="588" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
-<line x1="184" y1="664" x2="184" y2="764" stroke="#bf4520" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
-<rect x="192" y="704" width="60" height="12" rx="2" fill="#f5f5f5"/>
-<text x="222.0" y="713" fill="#bf4520" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">JDBC · RLS</text>
-<line x1="892" y1="664" x2="892" y2="764" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<rect x="900" y="704" width="56" height="12" rx="2" fill="#f5f5f5"/>
-<text x="928.0" y="713" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">SEATA RPC</text>
-<line x1="1132" y1="664" x2="1132" y2="764" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<rect x="1140" y="704" width="24" height="12" rx="2" fill="#f5f5f5"/>
-<text x="1152.0" y="713" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">TCC</text>
-<line x1="320" y1="784" x2="380" y2="784" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
-<rect x="332" y="764" width="24" height="12" rx="2" fill="#f5f5f5"/>
-<text x="344.0" y="773" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">WAL</text>
-<line x1="380" y1="812" x2="320" y2="812" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
-<rect x="326" y="820" width="44" height="12" rx="2" fill="#f5f5f5"/>
-<text x="348.0" y="829" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">REPLICA</text>
-<g data-node="Desk web UI">
-<rect x="48" y="144" width="184" height="56" rx="6" fill="#f5f5f5"/>
-<rect x="48" y="144" width="184" height="56" rx="6" fill="rgba(79,93,117,0.10)" stroke="#5a6580" stroke-width="1"/>
-<rect x="56" y="152" width="24" height="12" rx="2" fill="none" stroke="rgba(90,101,128,0.40)" stroke-width="0.8"/>
-<text x="68.0" y="161" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">UI</text>
-<text x="140.0" y="176.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Desk web UI</text>
-<text x="140.0" y="192.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">/desk · OIDC PKCE</text>
+<text x="32" y="76" fill="#2d3142" font-size="30" font-family="'Instrument Serif', 'Noto Serif', serif" letter-spacing="-0.01em">Astra CMS: every write goes through one engine</text>
+<g transform="translate(0,40)">
+<rect x="200" y="72" width="736" height="488" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.14)" stroke-width="0.8"/>
+<rect x="212" y="78" width="148" height="12" rx="2" fill="#f5f5f5"/><text x="286.0" y="87" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.14em">ASTRA-SERVER · QUARKUS · :8080</text>
+<rect x="536" y="104" width="376" height="92" rx="6" fill="#f5f5f5"/>
+<rect x="536" y="104" width="376" height="92" rx="6" fill="none" stroke="rgba(45,49,66,0.30)" stroke-width="1" stroke-dasharray="4,3"/>
+<text x="548" y="118" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" letter-spacing="0.14em">APPS · ASTRA-SPI</text>
+<line x1="152" y1="276" x2="224" y2="276" stroke="#bf4520" stroke-width="1.6" marker-end="url(#arrow-accent)"/>
+<line x1="352" y1="326" x2="392" y2="326" stroke="#bf4520" stroke-width="1.6" marker-end="url(#arrow-accent)"/>
+<line x1="488" y1="326" x2="576" y2="326" stroke="#bf4520" stroke-width="1.6" marker-end="url(#arrow-accent)"/>
+<line x1="872" y1="326" x2="1024" y2="326" stroke="#bf4520" stroke-width="1.6" marker-end="url(#arrow-accent)"/>
+<rect x="918.0" y="302" width="60" height="12" rx="2" fill="#f5f5f5"/><text x="948.0" y="311" fill="#bf4520" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">JDBC · RLS</text>
+<line x1="152" y1="376" x2="224" y2="376" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+<rect x="170.0" y="356" width="36" height="12" rx="2" fill="#f5f5f5"/><text x="188.0" y="365" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">HTTPS</text>
+<line x1="152" y1="496" x2="224" y2="496" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+<rect x="176.0" y="476" width="24" height="12" rx="2" fill="#f5f5f5"/><text x="188.0" y="485" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">MCP</text>
+<line x1="352" y1="496" x2="392" y2="496" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<line x1="92" y1="236" x2="92" y2="200" stroke="#2e5aa8" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow-link)"/>
+<rect x="100" y="212" width="28" height="12" rx="2" fill="#f5f5f5"/><text x="114.0" y="221" fill="#2e5aa8" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">OIDC</text>
+<line x1="224" y1="156" x2="156" y2="156" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<rect x="160.0" y="136" width="56" height="12" rx="2" fill="#f5f5f5"/><text x="188.0" y="145" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">ADMIN API</text>
+<line x1="724" y1="196" x2="724" y2="232" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<rect x="732" y="208" width="36" height="12" rx="2" fill="#f5f5f5"/><text x="750.0" y="217" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">HOOKS</text>
+<line x1="536" y1="168" x2="492" y2="168" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<rect x="496" y="148" width="28" height="12" rx="2" fill="#f5f5f5"/><text x="510.0" y="157" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">WASM</text>
+<line x1="724" y1="416" x2="724" y2="452" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<rect x="732" y="428" width="40" height="12" rx="2" fill="#f5f5f5"/><text x="752.0" y="437" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">SUBMIT</text>
+<line x1="832" y1="496" x2="1020" y2="496" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<rect x="900.0" y="476" width="56" height="12" rx="2" fill="#f5f5f5"/><text x="928.0" y="485" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">RPC :8091</text>
+<path d="M 680,536 V 608 Q 680,616 688,616 H 1020" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<rect x="916.0" y="596" width="24" height="12" rx="2" fill="#f5f5f5"/><text x="928.0" y="605" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">TCC</text>
+<line x1="1092" y1="266" x2="1092" y2="200" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<rect x="1060" y="228" width="24" height="12" rx="2" fill="#f5f5f5"/><text x="1072.0" y="237" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">WAL</text>
+<line x1="1140" y1="196" x2="1140" y2="262" stroke="#4f5d75" stroke-width="1" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<rect x="1148" y="228" width="44" height="12" rx="2" fill="#f5f5f5"/><text x="1170.0" y="237" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.06em">REPLICA</text>
+<g data-node="Keycloak">
+<rect x="32" y="116" width="120" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="32" y="116" width="120" height="80" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+<g transform="translate(80.0,134.0) scale(1)" color="#5a6580" fill="currentColor" stroke="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><title>Keycloak</title><path d="m18.742 1.182-12.493.002C4.155 4.784 2.079 8.393 0 12.002c2.071 3.612 4.162 7.214 6.252 10.816l12.49-.004 3.089-5.404h2.158v-.002H24L23.996 6.59h-2.168zM8.327 4.792h2.081l1.04 1.8-3.12 5.413 3.117 5.403-1.035 1.81H8.327a2047.566 2047.566 0 0 0-4.168-7.204C5.547 9.606 6.937 7.2 8.327 4.792Zm6.241 0 2.086.003c1.393 2.405 2.78 4.813 4.166 7.222l-4.167 7.2h-2.08c-.382-.562-1.038-1.808-1.038-1.808l3.123-5.405-3.124-5.413z"/></g>
+<text x="92.0" y="175.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Keycloak</text>
 </g>
-<g data-node="Mobile app">
-<rect x="264" y="144" width="184" height="56" rx="6" fill="#f5f5f5"/>
-<rect x="264" y="144" width="184" height="56" rx="6" fill="rgba(79,93,117,0.10)" stroke="#5a6580" stroke-width="1"/>
-<rect x="272" y="152" width="36" height="12" rx="2" fill="none" stroke="rgba(90,101,128,0.40)" stroke-width="0.8"/>
-<text x="290.0" y="161" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">MOBILE</text>
-<text x="356.0" y="176.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Mobile app</text>
-<text x="356.0" y="192.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">astra-mobile · OIDC</text>
+<g data-node="Desk">
+<rect x="32" y="236" width="120" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="32" y="236" width="120" height="80" rx="6" fill="rgba(79,93,117,0.10)" stroke="#5a6580" stroke-width="1"/>
+<g transform="translate(80.0,254.0) scale(1)" color="#4f5d75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19l18 0" /> <path d="M5 7a1 1 0 0 1 1 -1h12a1 1 0 0 1 1 1v8a1 1 0 0 1 -1 1h-12a1 1 0 0 1 -1 -1l0 -8" /></g>
+<text x="92.0" y="295.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Desk</text>
 </g>
-<g data-node="AI agents">
-<rect x="472" y="144" width="296" height="56" rx="6" fill="#f5f5f5"/>
-<rect x="472" y="144" width="296" height="56" rx="6" fill="rgba(79,93,117,0.10)" stroke="#5a6580" stroke-width="1"/>
-<rect x="480" y="152" width="28" height="12" rx="2" fill="none" stroke="rgba(90,101,128,0.40)" stroke-width="0.8"/>
-<text x="494.0" y="161" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
-<text x="620.0" y="176.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">AI agents</text>
-<text x="620.0" y="192.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">MCP clients · Claude</text>
+<g data-node="Mobile">
+<rect x="32" y="336" width="120" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="32" y="336" width="120" height="80" rx="6" fill="rgba(79,93,117,0.10)" stroke="#5a6580" stroke-width="1"/>
+<g transform="translate(80.0,354.0) scale(1)" color="#4f5d75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2v-14" /> <path d="M11 4h2" /> <path d="M12 17v.01" /></g>
+<text x="92.0" y="395.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Mobile</text>
 </g>
-<g data-node="Keycloak 26">
-<rect x="900" y="144" width="224" height="56" rx="6" fill="#f5f5f5"/>
-<rect x="900" y="144" width="224" height="56" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
-<rect x="908" y="152" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.22)" stroke-width="0.8"/>
-<text x="920.0" y="161" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">IDP</text>
-<text x="1012.0" y="176.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Keycloak 26</text>
-<text x="1012.0" y="192.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">realm astra · :8180</text>
+<g data-node="AI agent">
+<rect x="32" y="456" width="120" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="32" y="456" width="120" height="80" rx="6" fill="rgba(79,93,117,0.10)" stroke="#5a6580" stroke-width="1"/>
+<g transform="translate(80.0,474.0) scale(1)" color="#4f5d75" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -4" /> <path d="M12 2v2" /> <path d="M9 12v9" /> <path d="M15 12v9" /> <path d="M5 16l4 -2" /> <path d="M15 14l4 2" /> <path d="M9 18h6" /> <path d="M10 8v.01" /> <path d="M14 8v.01" /></g>
+<text x="92.0" y="515.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">AI agent</text>
+</g>
+<g data-node="IAM · SCIM">
+<rect x="224" y="116" width="128" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="224" y="116" width="128" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<g transform="translate(276.0,134.0) scale(1)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-.301 -.301l-6.558 6.558a2 2 0 0 1 -1.239 .578l-.175 .008h-1.172a1 1 0 0 1 -.993 -.883l-.007 -.117v-1.172a2 2 0 0 1 .467 -1.284l.119 -.13l.414 -.414h2v-2h2v-2l2.144 -2.144l-.301 -.301a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0" /> <path d="M15 9h.01" /></g>
+<text x="288.0" y="175.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">IAM · SCIM</text>
 </g>
 <g data-node="REST API">
-<rect x="48" y="296" width="400" height="64" rx="6" fill="#f5f5f5"/>
-<rect x="48" y="296" width="400" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<rect x="56" y="304" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
-<text x="68.0" y="313" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
-<text x="248.0" y="330.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">REST API</text>
-<text x="248.0" y="346.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">/api/doc · /api/doctype · /api/ledger</text>
+<rect x="224" y="236" width="128" height="180" rx="6" fill="#f5f5f5"/>
+<rect x="224" y="236" width="128" height="180" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<g transform="translate(276.0,304.0) scale(1)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4a2 2 0 0 0 -2 2v3a2 3 0 0 1 -2 3a2 3 0 0 1 2 3v3a2 2 0 0 0 2 2" /> <path d="M17 4a2 2 0 0 1 2 2v3a2 3 0 0 0 2 3a2 3 0 0 0 -2 3v3a2 2 0 0 1 -2 2" /></g>
+<text x="288.0" y="345.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">REST API</text>
 </g>
 <g data-node="MCP server">
-<rect x="472" y="296" width="296" height="64" rx="6" fill="#f5f5f5"/>
-<rect x="472" y="296" width="296" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<rect x="480" y="304" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
-<text x="492.0" y="313" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">AI</text>
-<text x="620.0" y="330.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">MCP server</text>
-<text x="620.0" y="346.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">/mcp · PII masking</text>
+<rect x="224" y="456" width="128" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="224" y="456" width="128" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<g transform="translate(276.0,474.0) scale(1)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -4" /> <path d="M12 2v2" /> <path d="M9 12v9" /> <path d="M15 12v9" /> <path d="M5 16l4 -2" /> <path d="M15 14l4 2" /> <path d="M9 18h6" /> <path d="M10 8v.01" /> <path d="M14 8v.01" /></g>
+<text x="288.0" y="515.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">MCP server</text>
 </g>
-<g data-node="Identity &amp; SCIM">
-<rect x="792" y="296" width="440" height="64" rx="6" fill="#f5f5f5"/>
-<rect x="792" y="296" width="440" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<rect x="800" y="304" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
-<text x="812.0" y="313" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">IAM</text>
-<text x="1012.0" y="330.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Identity &amp; SCIM</text>
-<text x="1012.0" y="346.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">/api/iam · SCIM 2.0 per tenant</text>
+<g data-node="Wasm host">
+<rect x="392" y="116" width="96" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="392" y="116" width="96" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<g transform="translate(428.0,134.0) scale(1)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" /> <path d="M11 11a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /> <path d="M12 12l0 2.5" /></g>
+<text x="440.0" y="175.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Wasm host</text>
 </g>
 <g data-node="Kernel">
-<rect x="48" y="388" width="1184" height="56" rx="6" fill="#f5f5f5"/>
-<rect x="48" y="388" width="1184" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<rect x="56" y="396" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
-<text x="68.0" y="405" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">CORE</text>
-<text x="640.0" y="420.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Kernel</text>
-<text x="640.0" y="436.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">tenant scope · hook registry · app registry · memberships</text>
-</g>
-<g data-node="CMS">
-<rect x="48" y="476" width="272" height="84" rx="6" fill="#f5f5f5"/>
-<rect x="48" y="476" width="272" height="84" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
-<rect x="56" y="484" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.30)" stroke-width="0.8"/>
-<text x="68.0" y="493" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
-<text x="184.0" y="520.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">CMS</text>
-<text x="184.0" y="536.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">articles · slug hook</text>
-</g>
-<g data-node="Express">
-<rect x="352" y="476" width="272" height="84" rx="6" fill="#f5f5f5"/>
-<rect x="352" y="476" width="272" height="84" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
-<rect x="360" y="484" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.30)" stroke-width="0.8"/>
-<text x="372.0" y="493" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
-<text x="488.0" y="520.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Express</text>
-<text x="488.0" y="536.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">orders · COD · Wasm promo</text>
-</g>
-<g data-node="HRM">
-<rect x="656" y="476" width="272" height="84" rx="6" fill="#f5f5f5"/>
-<rect x="656" y="476" width="272" height="84" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
-<rect x="664" y="484" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.30)" stroke-width="0.8"/>
-<text x="676.0" y="493" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
-<text x="792.0" y="520.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">HRM</text>
-<text x="792.0" y="536.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">payroll · attendance · Wasm KPI</text>
-</g>
-<g data-node="STMS">
-<rect x="960" y="476" width="272" height="84" rx="6" fill="#f5f5f5"/>
-<rect x="960" y="476" width="272" height="84" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
-<rect x="968" y="484" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.30)" stroke-width="0.8"/>
-<text x="980.0" y="493" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">APP</text>
-<text x="1096.0" y="520.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">STMS</text>
-<text x="1096.0" y="536.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">Timefold routing · copilot</text>
+<rect x="392" y="236" width="96" height="300" rx="6" fill="#f5f5f5"/>
+<rect x="392" y="236" width="96" height="300" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<g transform="translate(428.0,357.0) scale(1)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16.008v-8.018a1.98 1.98 0 0 0 -1 -1.717l-7 -4.008a2.016 2.016 0 0 0 -2 0l-7 4.008c-.619 .355 -1 1.01 -1 1.718v8.018c0 .709 .381 1.363 1 1.717l7 4.008a2.016 2.016 0 0 0 2 0l7 -4.008c.619 -.355 1 -1.01 1 -1.718" /> <path d="M12 22v-10" /> <path d="M12 12l8.73 -5.04" /> <path d="M3.27 6.96l8.73 5.04" /></g>
+<text x="440.0" y="398.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Kernel</text>
+<text x="440.0" y="412.6" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">tenant scope</text>
 </g>
 <g data-node="DocType engine">
-<rect x="48" y="588" width="400" height="76" rx="6" fill="#f5f5f5"/>
-<rect x="48" y="588" width="400" height="76" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.2"/>
-<rect x="56" y="596" width="36" height="12" rx="2" fill="none" stroke="rgba(191,69,32,0.50)" stroke-width="0.8"/>
-<text x="74.0" y="605" fill="#bf4520" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">ENGINE</text>
-<text x="248.0" y="628.0" fill="#2d3142" font-size="13" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">DocType engine</text>
-<text x="248.0" y="644.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">one JSONB table · RLS · overlays</text>
-<text x="248.0" y="658.0" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.04em">generates forms · API · validation · series · ledger</text>
+<rect x="576" y="236" width="296" height="180" rx="6" fill="#f5f5f5"/>
+<rect x="576" y="236" width="296" height="180" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+<g transform="translate(704.0,287.0) scale(1.66667)" color="#bf4520" fill="none" stroke="currentColor" stroke-width="0.8999999999999999" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4" /> <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2" /> <path d="M9 9l1 0" /> <path d="M9 13l6 0" /> <path d="M9 17l6 0" /></g>
+<text x="724.0" y="347.8" fill="#2d3142" font-size="16" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">DocType engine</text>
+<text x="724.0" y="361.8" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">1 JSONB table · RLS · overlays</text>
 </g>
-<g data-node="Plugin host">
-<rect x="472" y="588" width="296" height="76" rx="6" fill="#f5f5f5"/>
-<rect x="472" y="588" width="296" height="76" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<rect x="480" y="596" width="36" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
-<text x="498.0" y="605" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">TIER 2</text>
-<text x="620.0" y="628.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Plugin host</text>
-<text x="620.0" y="644.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">Wasm sandbox · Chicory</text>
-</g>
-<g data-node="Distributed transactions">
-<rect x="792" y="588" width="440" height="76" rx="6" fill="#f5f5f5"/>
-<rect x="792" y="588" width="440" height="76" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<rect x="800" y="596" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
-<text x="812.0" y="605" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">TX</text>
-<text x="1012.0" y="628.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Distributed transactions</text>
-<text x="1012.0" y="644.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">Seata AT + TCC</text>
-</g>
-<g data-node="PostgreSQL 16">
-<rect x="48" y="764" width="272" height="68" rx="6" fill="#f5f5f5"/>
-<rect x="48" y="764" width="272" height="68" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
-<rect x="56" y="772" width="24" height="12" rx="2" fill="none" stroke="rgba(79,93,117,0.50)" stroke-width="0.8"/>
-<text x="68.0" y="781" fill="#4f5d75" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">DB</text>
-<text x="184.0" y="800.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">PostgreSQL 16</text>
-<text x="184.0" y="816.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">astra_doc · bms · pgvector</text>
+<g data-node="Transactions">
+<rect x="616" y="456" width="216" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="616" y="456" width="216" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<g transform="translate(712.0,467.0) scale(1)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /> <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></g>
+<text x="724.0" y="508.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Transactions</text>
+<text x="724.0" y="522.6" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">Seata AT + TCC</text>
 </g>
 <g data-node="CDC worker">
-<rect x="380" y="764" width="236" height="68" rx="6" fill="#f5f5f5"/>
-<rect x="380" y="764" width="236" height="68" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<rect x="388" y="772" width="36" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
-<text x="406.0" y="781" fill="#2d3142" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">WORKER</text>
-<text x="498.0" y="800.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">CDC worker</text>
-<text x="498.0" y="816.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">Rust · logical replication</text>
+<rect x="1024" y="116" width="184" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="1024" y="116" width="184" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+<g transform="translate(1104.0,127.0) scale(1)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 18a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /> <path d="M5 6a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /> <path d="M15 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /> <path d="M7 8l0 8" /> <path d="M7 8a4 4 0 0 0 4 4h4" /></g>
+<text x="1116.0" y="168.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">CDC worker</text>
+<text x="1116.0" y="182.6" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">Rust</text>
+</g>
+<g data-node="PostgreSQL 16">
+<rect x="1024" y="266" width="184" height="120" rx="6" fill="#f5f5f5"/>
+<rect x="1024" y="266" width="184" height="120" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+<g transform="translate(1100.0,292.0) scale(1.33333)" color="#bf4520" fill="currentColor" stroke="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><title>PostgreSQL</title><path d="M23.5594 14.7228a.5269.5269 0 0 0-.0563-.1191c-.139-.2632-.4768-.3418-1.0074-.2321-1.6533.3411-2.2935.1312-2.5256-.0191 1.342-2.0482 2.445-4.522 3.0411-6.8297.2714-1.0507.7982-3.5237.1222-4.7316a1.5641 1.5641 0 0 0-.1509-.235C21.6931.9086 19.8007.0248 17.5099.0005c-1.4947-.0158-2.7705.3461-3.1161.4794a9.449 9.449 0 0 0-.5159-.0816 8.044 8.044 0 0 0-1.3114-.1278c-1.1822-.0184-2.2038.2642-3.0498.8406-.8573-.3211-4.7888-1.645-7.2219.0788C.9359 2.1526.3086 3.8733.4302 6.3043c.0409.818.5069 3.334 1.2423 5.7436.4598 1.5065.9387 2.7019 1.4334 3.582.553.9942 1.1259 1.5933 1.7143 1.7895.4474.1491 1.1327.1441 1.8581-.7279.8012-.9635 1.5903-1.8258 1.9446-2.2069.4351.2355.9064.3625 1.39.3772a.0569.0569 0 0 0 .0004.0041 11.0312 11.0312 0 0 0-.2472.3054c-.3389.4302-.4094.5197-1.5002.7443-.3102.064-1.1344.2339-1.1464.8115-.0025.1224.0329.2309.0919.3268.2269.4231.9216.6097 1.015.6331 1.3345.3335 2.5044.092 3.3714-.6787-.017 2.231.0775 4.4174.3454 5.0874.2212.5529.7618 1.9045 2.4692 1.9043.2505 0 .5263-.0291.8296-.0941 1.7819-.3821 2.5557-1.1696 2.855-2.9059.1503-.8707.4016-2.8753.5388-4.1012.0169-.0703.0357-.1207.057-.1362.0007-.0005.0697-.0471.4272.0307a.3673.3673 0 0 0 .0443.0068l.2539.0223.0149.001c.8468.0384 1.9114-.1426 2.5312-.4308.6438-.2988 1.8057-1.0323 1.5951-1.6698zM2.371 11.8765c-.7435-2.4358-1.1779-4.8851-1.2123-5.5719-.1086-2.1714.4171-3.6829 1.5623-4.4927 1.8367-1.2986 4.8398-.5408 6.108-.13-.0032.0032-.0066.0061-.0098.0094-2.0238 2.044-1.9758 5.536-1.9708 5.7495-.0002.0823.0066.1989.0162.3593.0348.5873.0996 1.6804-.0735 2.9184-.1609 1.1504.1937 2.2764.9728 3.0892.0806.0841.1648.1631.2518.2374-.3468.3714-1.1004 1.1926-1.9025 2.1576-.5677.6825-.9597.5517-1.0886.5087-.3919-.1307-.813-.5871-1.2381-1.3223-.4796-.839-.9635-2.0317-1.4155-3.5126zm6.0072 5.0871c-.1711-.0428-.3271-.1132-.4322-.1772.0889-.0394.2374-.0902.4833-.1409 1.2833-.2641 1.4815-.4506 1.9143-1.0002.0992-.126.2116-.2687.3673-.4426a.3549.3549 0 0 0 .0737-.1298c.1708-.1513.2724-.1099.4369-.0417.156.0646.3078.26.3695.4752.0291.1016.0619.2945-.0452.4444-.9043 1.2658-2.2216 1.2494-3.1676 1.0128zm2.094-3.988-.0525.141c-.133.3566-.2567.6881-.3334 1.003-.6674-.0021-1.3168-.2872-1.8105-.8024-.6279-.6551-.9131-1.5664-.7825-2.5004.1828-1.3079.1153-2.4468.079-3.0586-.005-.0857-.0095-.1607-.0122-.2199.2957-.2621 1.6659-.9962 2.6429-.7724.4459.1022.7176.4057.8305.928.5846 2.7038.0774 3.8307-.3302 4.7363-.084.1866-.1633.3629-.2311.5454zm7.3637 4.5725c-.0169.1768-.0358.376-.0618.5959l-.146.4383a.3547.3547 0 0 0-.0182.1077c-.0059.4747-.054.6489-.115.8693-.0634.2292-.1353.4891-.1794 1.0575-.11 1.4143-.8782 2.2267-2.4172 2.5565-1.5155.3251-1.7843-.4968-2.0212-1.2217a6.5824 6.5824 0 0 0-.0769-.2266c-.2154-.5858-.1911-1.4119-.1574-2.5551.0165-.5612-.0249-1.9013-.3302-2.6462.0044-.2932.0106-.5909.019-.8918a.3529.3529 0 0 0-.0153-.1126 1.4927 1.4927 0 0 0-.0439-.208c-.1226-.4283-.4213-.7866-.7797-.9351-.1424-.059-.4038-.1672-.7178-.0869.067-.276.1831-.5875.309-.9249l.0529-.142c.0595-.16.134-.3257.213-.5012.4265-.9476 1.0106-2.2453.3766-5.1772-.2374-1.0981-1.0304-1.6343-2.2324-1.5098-.7207.0746-1.3799.3654-1.7088.5321a5.6716 5.6716 0 0 0-.1958.1041c.0918-1.1064.4386-3.1741 1.7357-4.4823a4.0306 4.0306 0 0 1 .3033-.276.3532.3532 0 0 0 .1447-.0644c.7524-.5706 1.6945-.8506 2.802-.8325.4091.0067.8017.0339 1.1742.081 1.939.3544 3.2439 1.4468 4.0359 2.3827.8143.9623 1.2552 1.9315 1.4312 2.4543-1.3232-.1346-2.2234.1268-2.6797.779-.9926 1.4189.543 4.1729 1.2811 5.4964.1353.2426.2522.4522.2889.5413.2403.5825.5515.9713.7787 1.2552.0696.087.1372.1714.1885.245-.4008.1155-1.1208.3825-1.0552 1.717-.0123.1563-.0423.4469-.0834.8148-.0461.2077-.0702.4603-.0994.7662zm.8905-1.6211c-.0405-.8316.2691-.9185.5967-1.0105a2.8566 2.8566 0 0 0 .135-.0406 1.202 1.202 0 0 0 .1342.103c.5703.3765 1.5823.4213 3.0068.1344-.2016.1769-.5189.3994-.9533.6011-.4098.1903-1.0957.333-1.7473.3636-.7197.0336-1.0859-.0807-1.1721-.151zm.5695-9.2712c-.0059.3508-.0542.6692-.1054 1.0017-.055.3576-.112.7274-.1264 1.1762-.0142.4368.0404.8909.0932 1.3301.1066.887.216 1.8003-.2075 2.7014a3.5272 3.5272 0 0 1-.1876-.3856c-.0527-.1276-.1669-.3326-.3251-.6162-.6156-1.1041-2.0574-3.6896-1.3193-4.7446.3795-.5427 1.3408-.5661 2.1781-.463zm.2284 7.0137a12.3762 12.3762 0 0 0-.0853-.1074l-.0355-.0444c.7262-1.1995.5842-2.3862.4578-3.4385-.0519-.4318-.1009-.8396-.0885-1.2226.0129-.4061.0666-.7543.1185-1.0911.0639-.415.1288-.8443.1109-1.3505.0134-.0531.0188-.1158.0118-.1902-.0457-.4855-.5999-1.938-1.7294-3.253-.6076-.7073-1.4896-1.4972-2.6889-2.0395.5251-.1066 1.2328-.2035 2.0244-.1859 2.0515.0456 3.6746.8135 4.8242 2.2824a.908.908 0 0 1 .0667.1002c.7231 1.3556-.2762 6.2751-2.9867 10.5405zm-8.8166-6.1162c-.025.1794-.3089.4225-.6211.4225a.5821.5821 0 0 1-.0809-.0056c-.1873-.026-.3765-.144-.5059-.3156-.0458-.0605-.1203-.178-.1055-.2844.0055-.0401.0261-.0985.0925-.1488.1182-.0894.3518-.1226.6096-.0867.3163.0441.6426.1938.6113.4186zm7.9305-.4114c.0111.0792-.049.201-.1531.3102-.0683.0717-.212.1961-.4079.2232a.5456.5456 0 0 1-.075.0052c-.2935 0-.5414-.2344-.5607-.3717-.024-.1765.2641-.3106.5611-.352.297-.0414.6111.0088.6356.1851z"/></g>
+<text x="1116.0" y="343.2" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">PostgreSQL 16</text>
+<text x="1116.0" y="357.2" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">astra_doc · bms</text>
 </g>
 <g data-node="Seata server">
-<rect x="792" y="764" width="200" height="68" rx="6" fill="#f5f5f5"/>
-<rect x="792" y="764" width="200" height="68" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
-<rect x="800" y="772" width="24" height="12" rx="2" fill="none" stroke="rgba(45,49,66,0.22)" stroke-width="0.8"/>
-<text x="812.0" y="781" fill="#5a6580" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">TC</text>
-<text x="892.0" y="800.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Seata server</text>
-<text x="892.0" y="816.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">RPC :8091</text>
+<rect x="1024" y="456" width="184" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="1024" y="456" width="184" height="80" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.30)" stroke-width="1"/>
+<g transform="translate(1104.0,474.0) scale(1)" color="#5a6580" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3" /> <path d="M3 15a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -2" /> <path d="M7 8l0 .01" /> <path d="M7 16l0 .01" /></g>
+<text x="1116.0" y="515.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Seata server</text>
 </g>
 <g data-node="Redis 7">
-<rect x="1032" y="764" width="200" height="68" rx="6" fill="#f5f5f5"/>
-<rect x="1032" y="764" width="200" height="68" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
-<rect x="1040" y="772" width="28" height="12" rx="2" fill="none" stroke="rgba(79,93,117,0.50)" stroke-width="0.8"/>
-<text x="1054.0" y="781" fill="#4f5d75" font-size="7" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle" letter-spacing="0.08em">CACHE</text>
-<text x="1132.0" y="800.0" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Redis 7</text>
-<text x="1132.0" y="816.0" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="middle">TCC reservations · counters</text>
+<rect x="1024" y="576" width="184" height="80" rx="6" fill="#f5f5f5"/>
+<rect x="1024" y="576" width="184" height="80" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+<g transform="translate(1104.0,594.0) scale(0.24)" color="#4f5d75" fill="currentColor" stroke="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g id="redis"> <path fill="currentColor" d="M91.5,70.8c-4.8,2.5-29.7,12.7-35,15.5C51.2,89,48.3,89,44.1,87c-4.2-2-30.7-12.7-35.4-15 C6.3,70.9,5,69.9,5,69v-9.1c0,0,34.5-7.5,40-9.5c5.6-2,7.5-2.1,12.2-0.3c4.7,1.7,33.1,6.8,37.7,8.6l0,9 C95,68.5,93.9,69.5,91.5,70.8"/> <path fill="currentColor" d="M91.5,61.7c-4.8,2.5-29.7,12.7-35,15.5C51.2,80,48.3,80,44.1,78c-4.2-2-30.7-12.7-35.4-15 c-4.8-2.3-4.9-3.8-0.2-5.7c4.7-1.8,31-12.2,36.6-14.2c5.6-2,7.5-2.1,12.2-0.3c4.7,1.7,29.5,11.6,34.1,13.3 C96.1,57.8,96.3,59.2,91.5,61.7"/> <path fill="currentColor" d="M91.5,56c-4.8,2.5-29.7,12.7-35,15.5c-5.3,2.8-8.2,2.7-12.4,0.7c-4.2-2-30.7-12.7-35.4-15 c-2.4-1.1-3.6-2.1-3.6-3v-9.1c0,0,34.5-7.5,40-9.5c5.6-2,7.5-2.1,12.2-0.3c4.7,1.7,33.1,6.8,37.7,8.6l0,9 C95,53.8,93.9,54.8,91.5,56"/> <path fill="currentColor" d="M91.5,47c-4.8,2.5-29.7,12.7-35,15.5c-5.3,2.8-8.2,2.7-12.4,0.7c-4.2-2-30.7-12.7-35.4-15 c-4.8-2.3-4.9-3.8-0.2-5.7c4.7-1.8,31-12.2,36.6-14.2c5.6-2,7.5-2.1,12.2-0.3c4.7,1.7,29.5,11.6,34.1,13.3 C96.1,43.1,96.3,44.5,91.5,47"/> <path fill="currentColor" d="M91.5,40.8c-4.8,2.5-29.7,12.7-35,15.5C51.2,59,48.3,59,44.1,57c-4.2-2-30.7-12.7-35.4-15 C6.3,40.9,5,39.9,5,39v-9.1c0,0,34.5-7.5,40-9.5c5.6-2,7.5-2.1,12.2-0.3c4.7,1.7,33.1,6.8,37.7,8.6l0,9 C95,38.5,93.9,39.5,91.5,40.8"/> <path fill="currentColor" d="M91.5,31.7c-4.8,2.5-29.7,12.7-35,15.5C51.2,50,48.3,50,44.1,48c-4.2-2-30.7-12.7-35.4-15 c-4.8-2.3-4.9-3.8-0.2-5.7c4.7-1.8,31-12.2,36.6-14.2c5.6-2,7.5-2.1,12.2-0.3c4.7,1.7,29.5,11.6,34.1,13.3 C96.1,27.8,96.3,29.2,91.5,31.7"/> <path fill="currentColor" d="M61,22.9l-7.7,0.8l-1.7,4.2l-2.8-4.7l-8.9-0.8l6.7-2.4l-2-3.7l6.2,2.4l5.9-1.9L55,20.6L61,22.9 M51.1,43.1 l-14.4-6l20.7-3.2L51.1,43.1 M31,25.2c6.1,0,11.1,1.9,11.1,4.3c0,2.4-5,4.3-11.1,4.3S20,31.9,20,29.5C20,27.1,24.9,25.2,31,25.2"/> <path fill="currentColor" d="M70.1,24l12.2,4.8l-12.2,4.8L70.1,24"/> <path fill="currentColor" d="M56.6,29.4L70.1,24l0,9.7l-1.3,0.5L56.6,29.4"/> </g></g>
+<text x="1116.0" y="635.6" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Redis 7</text>
 </g>
-<text x="1232" y="468" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" text-anchor="end" letter-spacing="0.04em">apps = plain Java + YAML on astra-spi</text>
-<line x1="32" y1="868" x2="1248" y2="868" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
-<text x="32" y="892" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, Menlo, monospace" letter-spacing="0.14em">LEGEND</text>
-<rect x="112" y="883" width="14" height="10" rx="2" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1"/>
-<text x="132" y="892" fill="#4f5d75" font-size="9" font-family="'Geist', system-ui, sans-serif">Core engine (focal)</text>
-<rect x="251" y="883" width="14" height="10" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
-<text x="271" y="892" fill="#4f5d75" font-size="9" font-family="'Geist', system-ui, sans-serif">Server module</text>
-<rect x="360" y="883" width="14" height="10" rx="2" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
-<text x="380" y="892" fill="#4f5d75" font-size="9" font-family="'Geist', system-ui, sans-serif">App</text>
-<rect x="419" y="883" width="14" height="10" rx="2" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
-<text x="439" y="892" fill="#4f5d75" font-size="9" font-family="'Geist', system-ui, sans-serif">Data store</text>
-<rect x="513" y="883" width="14" height="10" rx="2" fill="rgba(79,93,117,0.10)" stroke="#5a6580" stroke-width="1"/>
-<text x="533" y="892" fill="#4f5d75" font-size="9" font-family="'Geist', system-ui, sans-serif">Client / external</text>
-<line x1="642" y1="888" x2="662" y2="888" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
-<text x="670" y="892" fill="#4f5d75" font-size="9" font-family="'Geist', system-ui, sans-serif">HTTP / API call</text>
-<line x1="769" y1="888" x2="789" y2="888" stroke="#bf4520" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
-<text x="797" y="892" fill="#4f5d75" font-size="9" font-family="'Geist', system-ui, sans-serif">Main write path</text>
-<line x1="896" y1="888" x2="916" y2="888" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
-<text x="924" y="892" fill="#4f5d75" font-size="9" font-family="'Geist', system-ui, sans-serif">Async / auth</text>
+<rect x="552" y="128" width="80" height="56" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.40)" stroke-width="1"/>
+<g transform="translate(582,136) scale(0.833333)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.7999999999999998" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v4a1 1 0 0 0 1 1h4" /> <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2" /></g>
+<text x="592" y="174" fill="#2d3142" font-size="11" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">CMS</text>
+<rect x="640" y="128" width="80" height="56" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.40)" stroke-width="1"/>
+<g transform="translate(670,136) scale(0.833333)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.7999999999999998" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /> <path d="M12 12l8 -4.5" /> <path d="M12 12l0 9" /> <path d="M12 12l-8 -4.5" /> <path d="M16 5.25l-8 4.5" /></g>
+<text x="680" y="174" fill="#2d3142" font-size="11" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Express</text>
+<rect x="728" y="128" width="80" height="56" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.40)" stroke-width="1"/>
+<g transform="translate(758,136) scale(0.833333)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.7999999999999998" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /> <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /> <path d="M16 3.13a4 4 0 0 1 0 7.75" /> <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" /></g>
+<text x="768" y="174" fill="#2d3142" font-size="11" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">HRM</text>
+<rect x="816" y="128" width="80" height="56" rx="6" fill="#ffffff" stroke="rgba(45,49,66,0.40)" stroke-width="1"/>
+<g transform="translate(846,136) scale(0.833333)" color="#2d3142" fill="none" stroke="currentColor" stroke-width="1.7999999999999998" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 17h-8l-3.5 -5h-6.5" /> <path d="M21 7h-8l-3.495 5" /> <path d="M18 10l3 -3l-3 -3" /> <path d="M18 20l3 -3l-3 -3" /></g>
+<text x="856" y="174" fill="#2d3142" font-size="11" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">STMS</text>
+<circle cx="188" cy="276" r="9" fill="#bf4520"/><text x="188" y="279.5" fill="#ffffff" font-size="10" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">1</text>
+<circle cx="372" cy="326" r="9" fill="#bf4520"/><text x="372" y="329.5" fill="#ffffff" font-size="10" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">2</text>
+<circle cx="532" cy="326" r="9" fill="#bf4520"/><text x="532" y="329.5" fill="#ffffff" font-size="10" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">3</text>
+<circle cx="900" cy="326" r="9" fill="#bf4520"/><text x="900" y="329.5" fill="#ffffff" font-size="10" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">4</text>
+</g>
+<line x1="32" y1="744" x2="1248" y2="744" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+<circle cx="41" cy="768" r="9" fill="#bf4520"/><text x="41" y="771.5" fill="#ffffff" font-size="10" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">1</text>
+<line x1="54" y1="768" x2="76" y2="768" stroke="#bf4520" stroke-width="1.6" marker-end="url(#arrow-accent)"/>
+<text x="84" y="772" fill="#4f5d75" font-size="10" font-family="'Geist', system-ui, sans-serif">Main write path</text>
+<line x1="206" y1="768" x2="230" y2="768" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+<text x="238" y="772" fill="#4f5d75" font-size="10" font-family="'Geist', system-ui, sans-serif">HTTP / API</text>
+<line x1="330" y1="768" x2="354" y2="768" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+<text x="362" y="772" fill="#4f5d75" font-size="10" font-family="'Geist', system-ui, sans-serif">Internal call</text>
+<line x1="472" y1="768" x2="496" y2="768" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+<text x="504" y="772" fill="#4f5d75" font-size="10" font-family="'Geist', system-ui, sans-serif">Auth / async</text>
+<rect x="608" y="762" width="16" height="12" rx="2" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1"/>
+<text x="632" y="772" fill="#4f5d75" font-size="10" font-family="'Geist', system-ui, sans-serif">Core</text>
+<rect x="688" y="762" width="16" height="12" rx="2" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+<text x="712" y="772" fill="#4f5d75" font-size="10" font-family="'Geist', system-ui, sans-serif">Data store</text>
+<rect x="804" y="762" width="16" height="12" rx="2" fill="rgba(79,93,117,0.10)" stroke="#5a6580" stroke-width="1"/>
+<text x="828" y="772" fill="#4f5d75" font-size="10" font-family="'Geist', system-ui, sans-serif">Client / external</text>
 </svg>
 </div>
 </body>
