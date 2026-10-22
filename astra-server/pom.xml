@@ -51,6 +51,10 @@
       <artifactId>astra-app-hrm</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.astra</groupId>
+      <artifactId>astra-app-stms</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-config-yaml</artifactId>
     </dependency>

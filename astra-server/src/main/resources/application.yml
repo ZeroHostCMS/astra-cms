@@ -81,7 +81,7 @@ astra:
     realm: astra
     # Issuer that clients see; behind an ingress it differs from the in-cluster auth-server-url.
     issuer: ${ASTRA_OIDC_ISSUER:http://localhost:8180/auth/realms/astra}
-    tenant-roles: admin,editor,author,reader,sales,ops,care,accountant
+    tenant-roles: admin,editor,author,reader,sales,ops,care,accountant,hr,dispatcher
     self-join-role: reader
     desk:
       client-id: astra-desk               # browser Desk at /desk/, Authorization Code + PKCE
