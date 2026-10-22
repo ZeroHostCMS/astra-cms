@@ -22,9 +22,9 @@ rendered video (19, 20, 21). Nothing is mocked; what a slice does not do is stat
 | 1a | HRM: `astra-apps/hrm` module, HRMS DocTypes, Tier 2 Wasm KPI formula, payroll batch, Salary Slip submit posts GL via `GeneralLedger`, `scripts/demo-hrm.sh`, tests | agent | done |
 | 1b | STMS: `astra-apps/stms` module, Timefold VRP (time windows + capacity), `stms_optimize_route` MCP tool, `scripts/demo-stms.sh`, tests | agent | done |
 | 1c | IAM: SAML IdP brokering in the Keycloak realm, SCIM 2.0 `/scim/v2` Users/Groups per tenant mapped to tenant groups, `scripts/demo-sso.sh`, tests | agent | done |
-| 2 | Merge to `feat/roadmap-business-apps`, full test suite, run all three scenes on one stack, capture output | controller | done (76/76 tests green; live run pending backup approval) |
+| 2 | Merge to `feat/roadmap-business-apps`, full test suite, run all three scenes on one stack, capture output | controller | done (76/76 green; k3d live run of all three demos OK after raising server memory to 1536Mi) |
 | 2b | STMS copilot REST endpoint + Desk copilot page (kernel side) | agent | done |
-| 3 | Videos 19–21 (HyperFrames, Be Vietnam Pro), scripts in `docs/demo-video-series.md`, Video 18 table + README.vi/README updates | agents + controller | in progress (scripts done; recording pending live run) |
+| 3 | Videos 19–21 (HyperFrames, Be Vietnam Pro), scripts in `docs/demo-video-series.md`, Video 18 table + README.vi/README updates | agents + controller | done: videos 18–21 rendered (Be Vietnam Pro); README video rows wait for the R2 upload |
 
 ## Shared-file contract (parallel safety)
 - Flyway in `astra-doctype/.../db/migration`: HRM may use `V6__*`, STMS `V7__*`, IAM `V8__*`. Skip if not needed.
@@ -37,3 +37,10 @@ rendered video (19, 20, 21). Nothing is mocked; what a slice does not do is stat
 - `./mvnw -pl astra-server -am test` green with new tests per feature.
 - `make demo-seed` then `make demo-hrm demo-stms demo-sso` run on the Compose stack.
 - Videos 19–21 rendered to `docs/video/out`, Vietnamese text in Be Vietnam Pro.
+
+## Follow-ups (found while recording)
+- `astra-server` needs ~1 Gi while Timefold solves; k3d limit raised to 1536Mi. Size production limits from a measured solve.
+- `scripts/demo-stms.sh` is not re-runnable without `make demo-reset demo-seed`: the urgent stop and the changed time window stay, and the second run ends infeasible.
+- Desk copilot result panel: the before → after score wraps on two lines; the copilot summary row of the event log has empty "Điểm đổi xe" and "Giải (ms)" cells.
+- Employees cannot read their own salary slip (needs a read-if-owner permission in the kernel).
+- Video 11's "Nói đúng" still says SAML is on the roadmap; Video 21 now covers it.
