@@ -7,6 +7,8 @@ Tài liệu này dùng để quay một loạt video marketing giới thiệu As
 toàn bộ phạm vi của use-case. Các video về cơ chế nền tảng (9, 11–17) và các video nghiệp vụ mới (19–21) có mục **"Nói đúng"** ghi rõ giới hạn hiện tại; mỗi video link tới đoạn code để chiếu cho developer trong
 [`demo-code-snippets.md`](demo-code-snippets.md) (code trích từ repo, kèm sơ đồ luồng).
 
+Nhạc nền của các video: "Corporate Tower" của Mare Production ([freesound.org/s/612264](https://freesound.org/s/612264/)), CC BY 4.0, đã cắt ghép.
+
 ---
 
 ## 1. Chuẩn bị môi trường quay

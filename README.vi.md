@@ -25,16 +25,6 @@ App đầu tiên là Astra CMS, tiếp theo là Astra ERP.
 
 </div>
 
-[![Compliance](https://img.shields.io/badge/Compliance-SOC%202%20%7C%20ISO%2027001%20%7C%20GDPR%20ready-2e7d32.svg)](#tuân-thủ-tích-hợp-sẵn-trong-metadata)
-
-[![Java Version](https://img.shields.io/badge/Java-25%20LTS%20(Gen%20ZGC)-orange.svg)](https://openjdk.org/projects/jdk/25/)
-[![Quarkus](https://img.shields.io/badge/Quarkus-3.27%20LTS%20%2F%203.31%2B-blue.svg)](https://quarkus.io/)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-Cloud%20Native%20HA-326ce5.svg)](https://kubernetes.io/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%2B%20JSONB%20%2B%20pgvector-blueviolet.svg)](https://www.postgresql.org/)
-[![Redis Cluster](https://img.shields.io/badge/Redis%20Cluster-Hash--Tag%20TCC%20%26%20L2-dc382d.svg)](https://redis.io/)
-[![Apache Seata](https://img.shields.io/badge/Apache%20Seata-2.6%20(incubating)%20Raft%20AT%2FTCC-red.svg)](https://seata.apache.org/)
-[![Wasm](https://img.shields.io/badge/WebAssembly-Chicory%20%2B%20Extism%20ABI-654ff0.svg)](https://chicory.dev/)
-[![MCP](https://img.shields.io/badge/MCP-Agent%20Tool%20Surface-111.svg)](https://modelcontextprotocol.io/)
 [![Status](https://img.shields.io/badge/Status-Demo%20ch%E1%BA%A1y%20%C4%91%C6%B0%E1%BB%A3c%20%C2%B7%20%C4%91ang%20ph%C3%A1t%20tri%E1%BB%83n-yellow.svg)](#trạng-thái-dự-án)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -177,8 +167,6 @@ Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang ch
 <td>Đăng nhập qua IdP SAML có chữ ký, nhóm của IdP thành role của tenant; SCIM 2.0 tạo, đổi nhóm, vô hiệu hoá và xoá user theo từng tenant, token của tenant khác bị chặn.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4">▶ Xem video</a></td>
 </tr>
 </table>
-
-Nhạc nền: "Corporate Tower" của Mare Production ([freesound.org/s/612264](https://freesound.org/s/612264/)), CC BY 4.0, đã cắt ghép.
 
 ---
 
@@ -759,9 +747,6 @@ Mọi mục tiêu đều được nêu kèm điều kiện đo.
 | Pod kernel sẵn sàng, native | như trên | < 1 s |
 
 Runtime Java 25: virtual thread không bị pin (JEP 491), `ScopedValue` (JEP 506, final), structured concurrency (JEP 505, preview, được cô lập sau một executor nội bộ), Generational ZGC (JEP 490, `-XX:+UseZGC`; `-XX:+ZGenerational` đã lỗi thời). Quarkus 3.27 LTS / 3.31+ hỗ trợ đầy đủ JDK 25; build-time augmentation là thứ làm Tier 0 khả thi.
-
-> **Ghi chú về sandbox.** Chicory cung cấp giới hạn bộ nhớ và huỷ bằng interrupt nhưng không có sẵn cơ chế đo fuel ở cấp lệnh. Không đếm lệnh thì một vòng lặp CPU sẽ chạy cho tới khi deadline kích hoạt, nên hiện nay Tier 2 là sandbox **giới hạn cứng về bộ nhớ, giới hạn theo thời gian**, chưa phải sandbox đo fuel. Đếm lệnh (instrument bytecode đã compile hoặc vòng lặp interpreter) là yêu cầu của Phase 2 trước khi Tier 2 được gọi là "hard"; cho tới lúc đó, deadline là cơ chế kiểm soát CPU duy nhất và được kiểm chứng ở cả chế độ interpreter lẫn compiled trong test kit.
-> **Ghi chú về native image.** Compiler của Chicory phải chạy lúc build dưới GraalVM Native; Wasm hot-swap trên native image sẽ chạy ở chế độ interpreted.
 
 ---
 

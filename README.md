@@ -13,17 +13,7 @@
 **A metadata-driven, plugin-first application platform for enterprises that change constantly and cannot afford downtime.**  
 *Inspired by Frappe / ERPNext, rebuilt from scratch on Java 25 and Quarkus. DocTypes define schema, form, API, permissions, workflow and compliance metadata as data. Three plugin isolation tiers: shared, isolated JVM, Wasm. Versioned apps run side by side with canary rollout and automatic rollback. Distributed transactions are built in. AI-native: every DocType and extension point is a tool. Compliance metadata is part of the data model, so the audit evidence for SOC 2, ISO 27001, GDPR and regional privacy laws is generated instead of assembled later. First apps: Astra CMS, then Astra ERP.*
 
-[![Compliance](https://img.shields.io/badge/Compliance-SOC%202%20%7C%20ISO%2027001%20%7C%20GDPR%20ready-2e7d32.svg)](#compliance-built-into-the-metadata)
-
-[![Java Version](https://img.shields.io/badge/Java-25%20LTS%20(Gen%20ZGC)-orange.svg)](https://openjdk.org/projects/jdk/25/)
-[![Quarkus](https://img.shields.io/badge/Quarkus-3.27%20LTS%20%2F%203.31%2B-blue.svg)](https://quarkus.io/)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-Cloud%20Native%20HA-326ce5.svg)](https://kubernetes.io/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16%2B%20JSONB%20%2B%20pgvector-blueviolet.svg)](https://www.postgresql.org/)
-[![Redis Cluster](https://img.shields.io/badge/Redis%20Cluster-Hash--Tag%20TCC%20%26%20L2-dc382d.svg)](https://redis.io/)
-[![Apache Seata](https://img.shields.io/badge/Apache%20Seata-2.6%20(incubating)%20Raft%20AT%2FTCC-red.svg)](https://seata.apache.org/)
-[![Wasm](https://img.shields.io/badge/WebAssembly-Chicory%20%2B%20Extism%20ABI-654ff0.svg)](https://chicory.dev/)
-[![MCP](https://img.shields.io/badge/MCP-Agent%20Tool%20Surface-111.svg)](https://modelcontextprotocol.io/)
-[![Status](https://img.shields.io/badge/Status-Design%20%26%20Spec%20Phase-yellow.svg)](#project-status)
+[![Status](https://img.shields.io/badge/Status-Demo%20running%20%C2%B7%20in%20development-yellow.svg)](#project-status)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 </div>
@@ -621,9 +611,6 @@ Every target is stated with the conditions under which it is measured.
 | Kernel pod ready, native | same | < 1 s |
 
 Java 25 runtime: unpinned virtual threads (JEP 491), `ScopedValue` (JEP 506, final), structured concurrency (JEP 505, preview, isolated behind an internal executor), Generational ZGC (JEP 490, `-XX:+UseZGC`; `-XX:+ZGenerational` is obsolete). Quarkus 3.27 LTS / 3.31+ with full JDK 25 support; build-time augmentation is what makes Tier 0 possible.
-
-> **Sandbox note.** Chicory provides memory limits and interrupt-driven cancellation but no built-in instruction-level fuel metering. Without instruction counting, a CPU loop runs until the deadline fires, so today Tier 2 is a **memory-hard, time-bounded** sandbox, not a fuel-metered one. Instruction counting (instrumenting the compiled bytecode or interpreter loop) is a Phase 2 requirement before Tier 2 is described as "hard"; until then the deadline is the only CPU control and is verified for both interpreter and compiled modes in the test kit.
-> **Native image note.** Chicory's compiler must run at build time under GraalVM Native; hot-swapped Wasm on a native image runs interpreted.
 
 ---
 
