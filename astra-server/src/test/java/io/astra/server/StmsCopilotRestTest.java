@@ -56,7 +56,7 @@ class StmsCopilotRestTest {
         JsonPath r = copilot("stms-r", plan, BREAKDOWN).statusCode(200)
                 .header("X-Tx-LSN", matchesPattern(LSN))
                 .body("llm", equalTo("mock"))
-                .body("llm_note", containsString("no language model"))
+                .body("llm_note", startsWith("LLM giả lập cho demo: không gọi mô hình ngôn ngữ nào"))
                 .body("tool_calls.name", equalTo(List.of("stms_vehicle_unavailable", "stms_set_weights", "stms_explain_plan")))
                 .body("tool_calls.type", everyItem(equalTo("tool_use")))
                 .body("results.ok", everyItem(equalTo(true)))
@@ -71,6 +71,14 @@ class StmsCopilotRestTest {
         assertTrue(r.getList("routes_before.vehicle").contains("51C-12345"), "the baseline used the vehicle");
         assertFalse(r.getList("routes_after.vehicle").contains("51C-12345"), "the replan does not");
         assertEquals(20, r.getList("routes_after").size());
+        // the explanation counts the broken vehicle's own stops apart from the solver's other moves in that step
+        List<Map<String, Object>> step = r.getList("results[0].result.moved");
+        long forced = step.stream().filter(m -> "51C-12345".equals(m.get("from"))).count();
+        assertTrue(forced > 0, step::toString);
+        String explanation = r.getString("explanation");
+        assertTrue(explanation.contains("Xe 51C-12345 ngừng chạy: " + forced + " điểm của xe 51C-12345 chuyển sang xe khác ("), explanation);
+        long others = step.size() - forced;
+        if (others > 0) assertTrue(explanation.contains("bộ giải chuyển thêm " + others + " điểm giữa các xe còn lại"), explanation);
         List<Map<String, Object>> after = r.getList("routes_after");
         for (Map<String, Object> row : after) assertEquals(0, ((Number) row.get("late_min")).intValue(), row::toString);
 

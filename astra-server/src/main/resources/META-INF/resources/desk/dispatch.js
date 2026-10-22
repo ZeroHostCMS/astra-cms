@@ -12,6 +12,17 @@ const STMS_TOOL_LABEL = {
   stms_optimize_route: 'Tối ưu lại tuyến',
   stms_explain_plan: 'Giải thích kế hoạch',
 };
+// Stored DispatchEvent values stay English (they are Select options and API values); the Desk shows them in Vietnamese.
+const EVENT_TYPE_LABEL = {
+  Solve: 'Giải tuyến',
+  'Vehicle unavailable': 'Xe ngừng chạy',
+  'Urgent stop': 'Thêm đơn gấp',
+  'Traffic delay': 'Kẹt xe',
+  'Time window': 'Đổi khung giờ',
+  Weights: 'Đổi trọng số',
+  Copilot: 'Trợ lý điều phối',
+};
+const EVENT_SOURCE_LABEL = { Copilot: 'Trợ lý điều phối', MCP: 'Tác tử AI (MCP)' };
 const PLAN_STATUS = { Draft: 'Nháp', Solved: 'Đã giải', Infeasible: 'Không khả thi', Dispatched: 'Đã điều xe', Cancelled: 'Đã hủy' };
 const kg = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 });
 
@@ -56,7 +67,7 @@ function routeTables(rows, mark, compact) {
           const m = mark ? mark(r) : null;
           return h('tr', { class: m ? m.cls : null },
             h('td', { class: 'num' }, r.sequence),
-            h('td', null, h('code', null, r.stop), ' ', r.label || '', m && m.note ? h('span', { class: 'move-note' }, m.note) : null),
+            h('td', { class: 'stop' }, h('code', null, r.stop), ' ', r.label || '', m && m.note ? h('span', { class: 'move-note' }, m.note) : null),
             h('td', null, priorityBadge(r.priority)),
             h('td', null, r.eta, r.late_min > 0 ? h('span', { class: 'badge cancelled' }, 'trễ ' + r.late_min + ' phút') : null),
             compact ? null : h('td', null, r.start),
@@ -93,6 +104,35 @@ function suggestions(plan, hub) {
   ];
 }
 
+/**
+ * Splits stops that changed vehicle by cause: {@code forced} were on a vehicle taken off the plan and had to move,
+ * {@code added} are new stops, {@code solver} are the ones the solver chose to move between the remaining vehicles.
+ */
+function moveCauses(moved, offVehicles) {
+  const off = new Set(offVehicles);
+  const out = { forced: [], added: [], solver: [] };
+  for (const m of moved || []) (m.from == null ? out.added : off.has(m.from) ? out.forced : out.solver).push(m);
+  return out;
+}
+
+/** Vehicles the copilot's successful calls took off the plan. */
+function offVehicles(result) {
+  const byId = Object.fromEntries((result.results || []).map((r) => [r.tool_use_id, r]));
+  return (result.tool_calls || []).filter((c) => c.name === 'stms_vehicle_unavailable' && byId[c.id] && byId[c.id].ok)
+    .map((c) => c.input && c.input.vehicle).filter(Boolean);
+}
+
+/** One step's vehicle changes, with the stops the step forced to move apart from the solver's own moves. */
+function stepMoves(call, res) {
+  const plate = call.name === 'stms_vehicle_unavailable' && call.input ? call.input.vehicle : null;
+  const c = moveCauses(res.moved, plate ? [plate] : []);
+  const parts = [];
+  if (plate) parts.push(c.forced.length + ' điểm của xe ' + plate + ' chuyển đi');
+  if (c.added.length) parts.push(c.added.length + ' điểm mới');
+  parts.push(c.solver.length + (plate || c.added.length ? ' điểm khác' : ' điểm') + ' bộ giải đổi xe');
+  return parts.join(' · ');
+}
+
 function inputSummary(input) {
   return Object.entries(input || {}).filter(([k]) => k !== 'plan')
     .map(([k, v]) => k + ': ' + (typeof v === 'object' ? JSON.stringify(v) : v)).join(' · ');
@@ -110,7 +150,7 @@ function toolTimeline(result) {
       inputSummary(c.input) ? h('div', { class: 'muted small' }, inputSummary(c.input)) : null,
       r && !r.ok ? h('div', { class: 'small bad' }, r.error) : null,
       replan ? h('div', { class: 'when' }, 'Điểm số ', h('code', null, res.score_before), ' → ', h('code', null, res.score_after),
-        ' · ', (res.moved || []).length, ' điểm đổi xe · ', res.resequenced ?? 0, ' điểm đổi thứ tự · giải ', res.solve_ms ?? '—', ' ms') : null,
+        ' · ', stepMoves(c, res), ' · ', res.resequenced ?? 0, ' điểm đổi thứ tự · giải ', res.solve_ms ?? '—', ' ms') : null,
       r && r.ok && c.name === 'stms_explain_plan' && res.priority_stops ? h('div', { class: 'when' },
         res.priority_stops.served_by_deadline, '/', res.priority_stops.total, ' điểm VIP/gấp phục vụ trước ', res.priority_stops.deadline) : null);
   }));
@@ -122,8 +162,14 @@ function routeDiff(result) {
   if (!moved.size) {
     return h('p', { class: 'muted' }, 'Không có điểm nào đổi xe', result.resequenced ? ' (' + result.resequenced + ' điểm đổi thứ tự trong cùng xe).' : '.');
   }
-  return h('div', null,
-    h('p', { class: 'muted small' }, moved.size, ' điểm đổi xe (tô màu), ', result.resequenced ?? 0, ' điểm đổi thứ tự trong cùng xe.'),
+  const c = moveCauses(result.moved_stops, offVehicles(result));
+  const parts = [];
+  if (c.forced.length) parts.push(c.forced.length + ' điểm của xe ngừng chạy chuyển sang xe khác');
+  if (c.added.length) parts.push(c.added.length + ' điểm mới được xếp vào tuyến');
+  if (c.solver.length || !parts.length) parts.push('bộ giải chuyển ' + (parts.length ? 'thêm ' : '') + c.solver.length + ' điểm giữa các xe');
+  return h('div', { class: 'diff-host' },
+    h('p', { class: 'muted small' }, 'Tô màu ', moved.size, ' điểm đổi xe: ', parts.join('; '), '. ',
+      result.resequenced ?? 0, ' điểm đổi thứ tự trong cùng xe.'),
     h('div', { class: 'diff' },
       h('section', { 'aria-label': 'Tuyến trước khi đổi' }, h('h4', null, 'Trước'),
         routeTables(result.routes_before, (r) => (moved.has(r.stop) ? { cls: 'moved-out', note: '→ ' + moved.get(r.stop).to } : null), true)),
@@ -166,7 +212,8 @@ async function eventsCard(planName) {
     body.replaceChildren(h('div', { class: 'table-wrap' }, h('table', null,
       h('thead', null, h('tr', null, ['Sự kiện', 'Loại', 'Nguồn', 'Điểm số trước → sau', 'Điểm đổi xe', 'Giải (ms)', 'Lúc'].map((c) => h('th', { scope: 'col' }, c)))),
       h('tbody', null, res.data.map((e) => h('tr', { style: 'cursor:default' },
-        h('td', null, h('code', null, e.name)), h('td', null, e.data.event_type), h('td', null, e.data.source),
+        h('td', null, h('code', null, e.name)), h('td', { title: e.data.event_type }, EVENT_TYPE_LABEL[e.data.event_type] || e.data.event_type),
+        h('td', null, EVENT_SOURCE_LABEL[e.data.source] || e.data.source),
         h('td', null, h('code', null, e.data.score_before || '—'), ' → ', h('code', null, e.data.score_after || '—')),
         h('td', { class: 'num' }, e.data.moved_stops ?? ''), h('td', { class: 'num' }, e.data.solve_ms ?? ''),
         h('td', { class: 'muted small' }, e.createdAt ? new Date(e.createdAt).toLocaleString('vi-VN') : '')))))));
@@ -247,7 +294,9 @@ async function dispatchView(q, lastResult) {
   };
 
   const copilotCard = h('form', { class: 'card copilot', onsubmit: submit, 'aria-labelledby': 'copilot-title' },
-    h('h3', { id: 'copilot-title' }, 'Trợ lý điều phối ', lastResult && lastResult.llm === 'mock' ? mockBadge() : null),
+    // Only the scripted mock is installed, so the badge shows before the first call; a response naming another LLM replaces it.
+    h('h3', { id: 'copilot-title' }, 'Trợ lý điều phối ',
+      !lastResult || lastResult.llm === 'mock' ? mockBadge() : h('span', { class: 'badge accent' }, 'LLM: ' + lastResult.llm)),
     h('label', { class: 'field-label', for: 'copilot-instruction' }, 'Yêu cầu bằng tiếng Việt'),
     prompt,
     h('p', { id: 'copilot-help', class: 'muted small' }, frozen ? 'Kế hoạch đã điều xe hoặc đã hủy nên không thể lập lại tuyến; hãy sửa đổi (amend) để tạo bản mới.'

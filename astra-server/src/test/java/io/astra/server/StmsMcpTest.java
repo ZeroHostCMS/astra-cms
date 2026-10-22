@@ -96,7 +96,7 @@ class StmsMcpTest {
                 + "\"Xe 51C-12345 hỏng ở Thủ Đức, chuyển hết đơn sang xe khác, ưu tiên khách VIP trước 10h\"}")
                 .body("result.isError", equalTo(false))
                 .body("result.structuredContent.llm", equalTo("mock"))
-                .body("result.structuredContent.llm_note", containsString("no language model"))
+                .body("result.structuredContent.llm_note", containsString("không gọi mô hình ngôn ngữ nào"))
                 .body("result.structuredContent.tool_calls.name",
                         equalTo(List.of("stms_vehicle_unavailable", "stms_set_weights", "stms_explain_plan")))
                 .body("result.structuredContent.tool_calls.type", everyItem(equalTo("tool_use")))

@@ -38,8 +38,8 @@ public class DispatchCopilot {
     static final Set<String> TOOLS = Set.of("stms_vehicle_unavailable", "stms_add_urgent_stop", "stms_traffic_delay",
             "stms_change_time_window", "stms_set_weights", "stms_optimize_route", "stms_explain_plan");
 
-    static final String MOCK_NOTE = "Scripted mock for the demo: no language model was called. "
-            + "The tool calls below were executed for real by the Timefold solver.";
+    static final String MOCK_NOTE = "LLM giả lập cho demo: không gọi mô hình ngôn ngữ nào, câu trả lời theo kịch bản soạn sẵn. "
+            + "Các lệnh gọi công cụ bên dưới được thực thi thật bằng bộ giải Timefold.";
 
     @ConfigProperty(name = "astra.stms.llm", defaultValue = "mock") String llmId;
     @Inject Instance<LlmClient> llms;
@@ -145,17 +145,21 @@ public class DispatchCopilot {
             Map<String, Object> detail = res.get("detail") instanceof Map<?, ?> d ? (Map<String, Object>) d : Map.of();
             switch (String.valueOf(r.get("tool"))) {
                 case "stms_vehicle_unavailable" -> {
+                    Object plate = detail.get("vehicle");
+                    // forced: the stops that were on the unavailable vehicle; the rest the solver chose to move
+                    List<Map<String, Object>> forced = moved.stream().filter(m -> plate != null && plate.equals(m.get("from"))).toList();
                     Map<String, Integer> to = new TreeMap<>();
-                    moved.forEach(m -> to.merge(String.valueOf(m.get("to")), 1, Integer::sum));
-                    sb.append("Xe ").append(detail.get("vehicle")).append(" ngừng chạy: ").append(moved.size())
-                            .append(" điểm chuyển sang xe khác");
-                    if (!to.isEmpty()) {
-                        sb.append(" (");
+                    forced.forEach(m -> to.merge(String.valueOf(m.get("to")), 1, Integer::sum));
+                    sb.append("Xe ").append(plate).append(" ngừng chạy: ");
+                    if (forced.isEmpty()) {
+                        sb.append("xe không có điểm nào trên tuyến nên không điểm nào phải chuyển");
+                    } else {
+                        sb.append(forced.size()).append(" điểm của xe ").append(plate).append(" chuyển sang xe khác (");
                         to.forEach((v, n) -> sb.append(v).append(": ").append(n).append(", "));
                         sb.setLength(sb.length() - 2);
                         sb.append(")");
                     }
-                    sb.append(". ");
+                    sb.append(solverChanges(moved.size() - forced.size(), res.get("resequenced"), "chuyển thêm %d điểm giữa các xe còn lại")).append(". ");
                 }
                 case "stms_add_urgent_stop" -> {
                     Object stop = res.get("stop");
@@ -163,19 +167,19 @@ public class DispatchCopilot {
                     sb.append("Đã chèn đơn gấp ").append(stop).append(" (").append(detail.get("label")).append(", ")
                             .append(fmt(detail.get("demand_kg"))).append(" kg, khung ").append(detail.get("window")).append(")");
                     if (placed.get("to") != null) sb.append(" vào xe ").append(placed.get("to")).append(", phục vụ lúc ").append(placed.get("start"));
-                    sb.append(". ");
+                    long others = moved.stream().filter(m -> !stop.equals(m.get("stop"))).count();
+                    sb.append(solverChanges(others, res.get("resequenced"), "chuyển thêm %d điểm khác giữa các xe")).append(". ");
                 }
                 case "stms_traffic_delay" -> sb.append("Kẹt xe ở ").append(detail.get("label")).append(" (thời gian ×")
                         .append(fmt(detail.get("factor"))).append(", bán kính ").append(fmt(detail.get("radius_km")))
-                        .append(" km): ").append(moved.size()).append(" điểm đổi xe, ").append(res.get("resequenced"))
-                        .append(" điểm đổi thứ tự. ");
+                        .append(" km)").append(solverChanges(moved.size(), res.get("resequenced"), "chuyển %d điểm sang xe khác")).append(". ");
                 case "stms_change_time_window" -> sb.append("Điểm ").append(detail.get("stop")).append(" đổi khung giờ ")
                         .append(detail.get("window_before")).append(" → ").append(detail.get("window_after")).append(". ");
                 case "stms_set_weights" -> {
                     Map<String, Object> w = (Map<String, Object>) detail.get("weights");
                     sb.append("Trọng số mới: quãng đường ").append(w.get("distance")).append(", ưu tiên VIP/gấp ")
-                            .append(w.get("priority")).append(", cân bằng tải ").append(w.get("balance")).append("; ")
-                            .append(moved.size()).append(" điểm đổi xe, ").append(res.get("resequenced")).append(" điểm đổi thứ tự. ");
+                            .append(w.get("priority")).append(", cân bằng tải ").append(w.get("balance"))
+                            .append(solverChanges(moved.size(), res.get("resequenced"), "chuyển %d điểm sang xe khác")).append(". ");
                 }
                 case "stms_optimize_route" -> sb.append("Đã tối ưu lại toàn bộ tuyến. ");
                 case "stms_explain_plan" -> {
@@ -192,6 +196,21 @@ public class DispatchCopilot {
                 .append(Values.flag(after.get("feasible")) ? " (khả thi)" : " (KHÔNG khả thi)")
                 .append("; tổng quãng đường ").append(fmt(before.get("distance_km"))).append(" → ")
                 .append(fmt(after.get("distance_km"))).append(" km; Timefold giải trong ").append(solveMs).append(" ms.");
+        return sb.toString();
+    }
+
+    /**
+     * What the solver changed on its own initiative, beyond what the event forced: {@code reassigned} stops it moved to
+     * another vehicle (worded by {@code movePhrase}, a format with one {@code %d}) and {@code resequenced} stops it kept
+     * on their vehicle but put in another order.
+     */
+    static String solverChanges(long reassigned, Object resequenced, String movePhrase) {
+        long reseq = resequenced instanceof Number n ? n.longValue() : 0;
+        if (reassigned <= 0 && reseq <= 0) return "; bộ giải không đổi thêm điểm nào";
+        StringBuilder sb = new StringBuilder("; bộ giải ");
+        if (reassigned > 0) sb.append(String.format(VI, movePhrase, reassigned));
+        if (reassigned > 0 && reseq > 0) sb.append(" và ");
+        if (reseq > 0) sb.append("đổi thứ tự ").append(reseq).append(" điểm trong cùng xe");
         return sb.toString();
     }
 
