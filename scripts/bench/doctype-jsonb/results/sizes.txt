@@ -1,0 +1,89 @@
+                             relname                             | heap_toast | indexes |   total    |  rows   
+-----------------------------------------------------------------+------------+---------+------------+---------
+ astra_doc                                                       | 3004 MB    | 2327 MB | 5332 MB    | 6009127
+ astra_doc_part_2026_10_18                                       | 8192 bytes | 48 kB   | 56 kB      |       0
+ astra_doc_part_2026_10_18_pkey                                  | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_18_tenant_id_doctype_expr_idx            | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_18_tenant_id_doctype_expr_idx1           | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_18_tenant_id_doctype_expr_idx2           | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_18_tenant_id_doctype_modified_at_idx     | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_18_tenant_id_doctype_name_created_at_key | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_19                                       | 324 MB     | 157 MB  | 481 MB     |  583320
+ astra_doc_part_2026_10_19_pkey                                  | 30 MB      | 0 bytes | 30 MB      |  583320
+ astra_doc_part_2026_10_19_tenant_id_doctype_expr_idx            | 38 MB      | 0 bytes | 38 MB      |  583320
+ astra_doc_part_2026_10_19_tenant_id_doctype_expr_idx1           | 4184 kB    | 0 bytes | 4184 kB    |  583320
+ astra_doc_part_2026_10_19_tenant_id_doctype_expr_idx2           | 4192 kB    | 0 bytes | 4192 kB    |  583320
+ astra_doc_part_2026_10_19_tenant_id_doctype_modified_at_idx     | 33 MB      | 0 bytes | 33 MB      |  583320
+ astra_doc_part_2026_10_19_tenant_id_doctype_name_created_at_key | 49 MB      | 0 bytes | 49 MB      |  583320
+ astra_doc_part_2026_10_20                                       | 1110 MB    | 508 MB  | 1618 MB    | 1999926
+ astra_doc_part_2026_10_20_pkey                                  | 102 MB     | 0 bytes | 102 MB     | 1999926
+ astra_doc_part_2026_10_20_tenant_id_doctype_expr_idx            | 98 MB      | 0 bytes | 98 MB      | 1999926
+ astra_doc_part_2026_10_20_tenant_id_doctype_expr_idx1           | 14 MB      | 0 bytes | 14 MB      | 1999926
+ astra_doc_part_2026_10_20_tenant_id_doctype_expr_idx2           | 14 MB      | 0 bytes | 14 MB      | 1999926
+ astra_doc_part_2026_10_20_tenant_id_doctype_modified_at_idx     | 113 MB     | 0 bytes | 113 MB     | 1999926
+ astra_doc_part_2026_10_20_tenant_id_doctype_name_created_at_key | 167 MB     | 0 bytes | 167 MB     | 1999926
+ astra_doc_part_2026_10_21                                       | 1110 MB    | 506 MB  | 1616 MB    | 2000433
+ astra_doc_part_2026_10_21_pkey                                  | 100 MB     | 0 bytes | 100 MB     | 2000433
+ astra_doc_part_2026_10_21_tenant_id_doctype_expr_idx            | 98 MB      | 0 bytes | 98 MB      | 2000433
+ astra_doc_part_2026_10_21_tenant_id_doctype_expr_idx1           | 14 MB      | 0 bytes | 14 MB      | 2000433
+ astra_doc_part_2026_10_21_tenant_id_doctype_expr_idx2           | 14 MB      | 0 bytes | 14 MB      | 2000433
+ astra_doc_part_2026_10_21_tenant_id_doctype_modified_at_idx     | 113 MB     | 0 bytes | 113 MB     | 2000433
+ astra_doc_part_2026_10_21_tenant_id_doctype_name_created_at_key | 167 MB     | 0 bytes | 167 MB     | 2000433
+ astra_doc_part_2026_10_22                                       | 231 MB     | 112 MB  | 343 MB     |  416666
+ astra_doc_part_2026_10_22_pkey                                  | 21 MB      | 0 bytes | 21 MB      |  416666
+ astra_doc_part_2026_10_22_tenant_id_doctype_expr_idx            | 27 MB      | 0 bytes | 27 MB      |  416666
+ astra_doc_part_2026_10_22_tenant_id_doctype_expr_idx1           | 2992 kB    | 0 bytes | 2992 kB    |  416666
+ astra_doc_part_2026_10_22_tenant_id_doctype_expr_idx2           | 3000 kB    | 0 bytes | 3000 kB    |  416666
+ astra_doc_part_2026_10_22_tenant_id_doctype_modified_at_idx     | 23 MB      | 0 bytes | 23 MB      |  416666
+ astra_doc_part_2026_10_22_tenant_id_doctype_name_created_at_key | 35 MB      | 0 bytes | 35 MB      |  416666
+ astra_doc_part_2026_10_23                                       | 8192 bytes | 48 kB   | 56 kB      |       0
+ astra_doc_part_2026_10_23_pkey                                  | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_23_tenant_id_doctype_expr_idx            | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_23_tenant_id_doctype_expr_idx1           | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_23_tenant_id_doctype_expr_idx2           | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_23_tenant_id_doctype_modified_at_idx     | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_23_tenant_id_doctype_name_created_at_key | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_24                                       | 8192 bytes | 48 kB   | 56 kB      |       0
+ astra_doc_part_2026_10_24_pkey                                  | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_24_tenant_id_doctype_expr_idx            | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_24_tenant_id_doctype_expr_idx1           | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_24_tenant_id_doctype_expr_idx2           | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_24_tenant_id_doctype_modified_at_idx     | 8192 bytes | 0 bytes | 8192 bytes |       0
+ astra_doc_part_2026_10_24_tenant_id_doctype_name_created_at_key | 8192 bytes | 0 bytes | 8192 bytes |       0
+ gen                                                             | 1503 MB    | 0 bytes | 1503 MB    | 5000000
+ orders_rel                                                      | 1503 MB    | 855 MB  | 2358 MB    | 4999763
+(52 rows)
+
+           indexrelname            | pg_size_pretty 
+-----------------------------------+----------------
+ astra_doc_data_gin                | 1047 MB
+ astra_doc_list_idx                | 329 MB
+ astra_doc_p_customer              | 151 MB
+ astra_doc_p_ops_status            | 42 MB
+ astra_doc_p_zone                  | 42 MB
+ astra_doc_pkey                    | 240 MB
+ astra_doc_tenant_doctype_name_key | 477 MB
+ orders_rel_customer               | 114 MB
+ orders_rel_list_idx               | 194 MB
+ orders_rel_ops_status             | 34 MB
+ orders_rel_pkey                   | 194 MB
+ orders_rel_tenant_name_key        | 286 MB
+ orders_rel_zone                   | 34 MB
+(13 rows)
+
+  relname   |  toast  
+------------+---------
+ astra_doc  | 0 bytes
+ orders_rel | 0 bytes
+(2 rows)
+
+ avg_json_bytes | avg_row_bytes 
+----------------+---------------
+            417 |           549
+(1 row)
+
+ avg_row_bytes 
+---------------
+           300
+(1 row)
+

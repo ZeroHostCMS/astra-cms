@@ -1,0 +1,67 @@
+hanoi-express
+Limit  (cost=4.62..4.63 rows=4 width=291) (actual time=1.218..1.219 rows=3 loops=1)
+  Buffers: shared hit=3 read=6
+  I/O Timings: shared read=1.126
+  ->  Sort  (cost=4.62..4.63 rows=4 width=291) (actual time=1.217..1.218 rows=3 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=3 read=6
+        I/O Timings: shared read=1.126
+        ->  Index Scan using orders_rel_customer on orders_rel  (cost=0.43..4.58 rows=4 width=291) (actual time=1.156..1.203 rows=3 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (customer = 'CUST-0123456'::text))
+              Buffers: shared read=6
+              I/O Timings: shared read=1.126
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=265
+Planning Time: 0.539 ms
+Execution Time: 1.253 ms
+----- run 1: 1.253 ms
+hanoi-express
+Limit  (cost=4.62..4.63 rows=4 width=291) (actual time=0.041..0.042 rows=3 loops=1)
+  Buffers: shared hit=9
+  ->  Sort  (cost=4.62..4.63 rows=4 width=291) (actual time=0.040..0.041 rows=3 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=9
+        ->  Index Scan using orders_rel_customer on orders_rel  (cost=0.43..4.58 rows=4 width=291) (actual time=0.025..0.029 rows=3 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (customer = 'CUST-0123456'::text))
+              Buffers: shared hit=6
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=265
+Planning Time: 0.451 ms
+Execution Time: 0.079 ms
+----- run 2: 0.079 ms
+hanoi-express
+Limit  (cost=4.62..4.63 rows=4 width=291) (actual time=0.059..0.060 rows=3 loops=1)
+  Buffers: shared hit=9
+  ->  Sort  (cost=4.62..4.63 rows=4 width=291) (actual time=0.058..0.059 rows=3 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=9
+        ->  Index Scan using orders_rel_customer on orders_rel  (cost=0.43..4.58 rows=4 width=291) (actual time=0.024..0.027 rows=3 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (customer = 'CUST-0123456'::text))
+              Buffers: shared hit=6
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=265
+Planning Time: 0.579 ms
+Execution Time: 0.091 ms
+----- run 3: 0.091 ms
+hanoi-express
+Limit  (cost=4.62..4.63 rows=4 width=291) (actual time=0.037..0.037 rows=3 loops=1)
+  Buffers: shared hit=9
+  ->  Sort  (cost=4.62..4.63 rows=4 width=291) (actual time=0.036..0.036 rows=3 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=9
+        ->  Index Scan using orders_rel_customer on orders_rel  (cost=0.43..4.58 rows=4 width=291) (actual time=0.023..0.026 rows=3 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (customer = 'CUST-0123456'::text))
+              Buffers: shared hit=6
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=265
+Planning Time: 0.499 ms
+Execution Time: 0.065 ms
+----- run 4: 0.065 ms

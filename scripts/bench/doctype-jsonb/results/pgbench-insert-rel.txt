@@ -1,0 +1,17 @@
+pgbench (18.3, server 16.15 (Debian 16.15-1.pgdg12+2))
+progress: 10.0 s, 3060.4 tps, lat 5.190 ms stddev 3.613, 0 failed
+progress: 20.0 s, 3537.0 tps, lat 4.522 ms stddev 1.669, 0 failed
+progress: 30.0 s, 3532.9 tps, lat 4.524 ms stddev 1.962, 0 failed
+transaction type: /var/folders/dx/1ynqbct53v15xb_jhtmrwwkc0000gp/T/tmp.UMSwsaCPhS/insert-rel.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 16
+number of threads: 4
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 101336
+number of failed transactions: 0 (0.000%)
+latency average = 4.724 ms
+latency stddev = 2.521 ms
+initial connection time = 54.316 ms
+tps = 3381.483501 (without initial connection time)

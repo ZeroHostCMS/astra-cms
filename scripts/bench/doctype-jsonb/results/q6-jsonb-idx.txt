@@ -1,0 +1,54 @@
+hanoi-express
+Limit  (cost=0.56..1084.19 rows=50 width=497) (actual time=7.568..108.924 rows=50 loops=1)
+  Buffers: shared hit=72 read=98
+  I/O Timings: shared read=96.263
+  ->  Index Scan using astra_doc_created_idx on astra_doc  (cost=0.56..785330.14 rows=36236 width=497) (actual time=7.566..108.895 rows=50 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+        Filter: (astra_field(data, 'ops_status'::text) = 'Failed Delivery'::text)
+        Rows Removed by Filter: 1406
+        Buffers: shared hit=72 read=98
+        I/O Timings: shared read=96.263
+Planning:
+  Buffers: shared hit=376
+Planning Time: 1.471 ms
+Execution Time: 109.301 ms
+----- run 1: 109.301 ms
+hanoi-express
+Limit  (cost=0.56..1084.19 rows=50 width=497) (actual time=0.053..0.899 rows=50 loops=1)
+  Buffers: shared hit=170
+  ->  Index Scan using astra_doc_created_idx on astra_doc  (cost=0.56..785330.14 rows=36236 width=497) (actual time=0.052..0.893 rows=50 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+        Filter: (astra_field(data, 'ops_status'::text) = 'Failed Delivery'::text)
+        Rows Removed by Filter: 1406
+        Buffers: shared hit=170
+Planning:
+  Buffers: shared hit=376
+Planning Time: 0.797 ms
+Execution Time: 0.946 ms
+----- run 2: 0.946 ms
+hanoi-express
+Limit  (cost=0.56..1084.19 rows=50 width=497) (actual time=0.093..7.039 rows=50 loops=1)
+  Buffers: shared hit=170
+  ->  Index Scan using astra_doc_created_idx on astra_doc  (cost=0.56..785330.14 rows=36236 width=497) (actual time=0.092..7.030 rows=50 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+        Filter: (astra_field(data, 'ops_status'::text) = 'Failed Delivery'::text)
+        Rows Removed by Filter: 1406
+        Buffers: shared hit=170
+Planning:
+  Buffers: shared hit=376
+Planning Time: 3.446 ms
+Execution Time: 7.212 ms
+----- run 3: 7.212 ms
+hanoi-express
+Limit  (cost=0.56..1084.19 rows=50 width=497) (actual time=0.077..1.238 rows=50 loops=1)
+  Buffers: shared hit=170
+  ->  Index Scan using astra_doc_created_idx on astra_doc  (cost=0.56..785330.14 rows=36236 width=497) (actual time=0.076..1.231 rows=50 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+        Filter: (astra_field(data, 'ops_status'::text) = 'Failed Delivery'::text)
+        Rows Removed by Filter: 1406
+        Buffers: shared hit=170
+Planning:
+  Buffers: shared hit=376
+Planning Time: 1.244 ms
+Execution Time: 1.351 ms
+----- run 4: 1.351 ms

@@ -1,0 +1,206 @@
+hanoi-express
+Limit  (cost=384172.00..384172.03 rows=9 width=439) (actual time=3274.094..3312.983 rows=3 loops=1)
+  Buffers: shared hit=49502 read=305545 written=6456
+  I/O Timings: shared read=11063.042 write=251.871
+  ->  Sort  (cost=384172.00..384172.03 rows=9 width=439) (actual time=3263.079..3301.968 rows=3 loops=1)
+        Sort Key: astra_doc_part.modified_at DESC
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=49502 read=305545 written=6456
+        I/O Timings: shared read=11063.042 write=251.871
+        ->  Gather  (cost=1000.00..384171.86 rows=9 width=439) (actual time=733.589..3301.665 rows=3 loops=1)
+              Workers Planned: 4
+              Workers Launched: 4
+              Buffers: shared hit=49499 read=305545 written=6456
+              I/O Timings: shared read=11063.042 write=251.871
+              ->  Parallel Append  (cost=0.00..383170.96 rows=4 width=439) (actual time=2484.993..3243.221 rows=1 loops=5)
+                    Buffers: shared hit=49499 read=305545 written=6456
+                    I/O Timings: shared read=11063.042 write=251.871
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.00..153269.58 rows=1 width=544) (actual time=1421.823..1489.716 rows=0 loops=5)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 400000
+                          Buffers: shared read=142020
+                          I/O Timings: shared read=5648.214
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.00..153263.44 rows=1 width=544) (actual time=1929.230..2064.760 rows=0 loops=3)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 666666
+                          Buffers: shared read=142011 written=39
+                          I/O Timings: shared read=4724.110 write=5.864
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.00..44707.18 rows=1 width=544) (actual time=554.638..689.113 rows=0 loops=2)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 291666
+                          Buffers: shared hit=35709 read=5717 written=1787
+                          I/O Timings: shared read=166.087 write=163.077
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.00..31930.75 rows=1 width=544) (actual time=596.815..596.818 rows=0 loops=2)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 208333
+                          Buffers: shared hit=13790 read=15797 written=4630
+                          I/O Timings: shared read=524.630 write=82.930
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.00..0.00 rows=1 width=230) (actual time=0.000..0.000 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.00..0.00 rows=1 width=230) (actual time=0.000..0.011 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.00..0.00 rows=1 width=230) (actual time=0.001..0.001 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1369
+Planning Time: 4.833 ms
+JIT:
+  Functions: 72
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 6.321 ms, Inlining 0.000 ms, Optimization 2.580 ms, Emission 63.474 ms, Total 72.375 ms
+Execution Time: 3327.657 ms
+----- run 1: 3327.657 ms
+hanoi-express
+Limit  (cost=384172.00..384172.03 rows=9 width=439) (actual time=993.710..1001.469 rows=3 loops=1)
+  Buffers: shared hit=71272 read=283775
+  I/O Timings: shared read=1340.475
+  ->  Sort  (cost=384172.00..384172.03 rows=9 width=439) (actual time=973.044..980.802 rows=3 loops=1)
+        Sort Key: astra_doc_part.modified_at DESC
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=71272 read=283775
+        I/O Timings: shared read=1340.475
+        ->  Gather  (cost=1000.00..384171.86 rows=9 width=439) (actual time=482.700..980.721 rows=3 loops=1)
+              Workers Planned: 4
+              Workers Launched: 4
+              Buffers: shared hit=71269 read=283775
+              I/O Timings: shared read=1340.475
+              ->  Parallel Append  (cost=0.00..383170.96 rows=4 width=439) (actual time=814.146..942.937 rows=1 loops=5)
+                    Buffers: shared hit=71269 read=283775
+                    I/O Timings: shared read=1340.475
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.00..153269.58 rows=1 width=544) (actual time=317.624..331.160 rows=0 loops=5)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 400000
+                          Buffers: shared hit=160 read=141860
+                          I/O Timings: shared read=624.472
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.00..153263.44 rows=1 width=544) (actual time=565.215..589.414 rows=0 loops=3)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 666666
+                          Buffers: shared hit=96 read=141915
+                          I/O Timings: shared read=716.003
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.00..44707.18 rows=1 width=544) (actual time=339.265..365.666 rows=0 loops=2)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 291666
+                          Buffers: shared hit=41426
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.00..31930.75 rows=1 width=544) (actual time=279.635..279.635 rows=0 loops=2)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 208333
+                          Buffers: shared hit=29587
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.00..0.00 rows=1 width=230) (actual time=0.000..0.000 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.00..0.00 rows=1 width=230) (actual time=0.000..0.000 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.00..0.00 rows=1 width=230) (actual time=0.002..0.002 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1369
+Planning Time: 4.491 ms
+JIT:
+  Functions: 72
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 8.066 ms, Inlining 0.000 ms, Optimization 3.792 ms, Emission 64.482 ms, Total 76.341 ms
+Execution Time: 1070.567 ms
+----- run 2: 1070.567 ms
+hanoi-express
+Limit  (cost=384172.00..384172.03 rows=9 width=439) (actual time=696.551..704.120 rows=3 loops=1)
+  Buffers: shared hit=71528 read=283519
+  I/O Timings: shared read=781.313
+  ->  Sort  (cost=384172.00..384172.03 rows=9 width=439) (actual time=684.622..692.191 rows=3 loops=1)
+        Sort Key: astra_doc_part.modified_at DESC
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=71528 read=283519
+        I/O Timings: shared read=781.313
+        ->  Gather  (cost=1000.00..384171.86 rows=9 width=439) (actual time=684.388..692.128 rows=3 loops=1)
+              Workers Planned: 4
+              Workers Launched: 4
+              Buffers: shared hit=71525 read=283519
+              I/O Timings: shared read=781.313
+              ->  Parallel Append  (cost=0.00..383170.96 rows=4 width=439) (actual time=563.647..659.158 rows=1 loops=5)
+                    Buffers: shared hit=71525 read=283519
+                    I/O Timings: shared read=781.313
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.00..153269.58 rows=1 width=544) (actual time=244.283..252.408 rows=0 loops=5)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 400000
+                          Buffers: shared hit=320 read=141700
+                          I/O Timings: shared read=345.449
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.00..153263.44 rows=1 width=544) (actual time=439.635..464.463 rows=0 loops=3)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 666666
+                          Buffers: shared hit=192 read=141819
+                          I/O Timings: shared read=435.864
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.00..44707.18 rows=1 width=544) (actual time=164.294..177.585 rows=0 loops=2)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 291666
+                          Buffers: shared hit=41426
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.00..31930.75 rows=1 width=544) (actual time=142.567..142.567 rows=0 loops=2)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 208333
+                          Buffers: shared hit=29587
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.00..0.00 rows=1 width=230) (actual time=0.000..0.000 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.00..0.00 rows=1 width=230) (actual time=0.000..0.001 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.00..0.00 rows=1 width=230) (actual time=0.002..0.002 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1369
+Planning Time: 2.614 ms
+JIT:
+  Functions: 72
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 9.566 ms, Inlining 0.000 ms, Optimization 4.452 ms, Emission 76.896 ms, Total 90.913 ms
+Execution Time: 719.409 ms
+----- run 3: 719.409 ms
+hanoi-express
+Limit  (cost=384172.00..384172.03 rows=9 width=439) (actual time=539.945..546.135 rows=3 loops=1)
+  Buffers: shared hit=71784 read=283263
+  I/O Timings: shared read=474.232
+  ->  Sort  (cost=384172.00..384172.03 rows=9 width=439) (actual time=530.774..536.962 rows=3 loops=1)
+        Sort Key: astra_doc_part.modified_at DESC
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=71784 read=283263
+        I/O Timings: shared read=474.232
+        ->  Gather  (cost=1000.00..384171.86 rows=9 width=439) (actual time=530.101..536.878 rows=3 loops=1)
+              Workers Planned: 4
+              Workers Launched: 4
+              Buffers: shared hit=71781 read=283263
+              I/O Timings: shared read=474.232
+              ->  Parallel Append  (cost=0.00..383170.96 rows=4 width=439) (actual time=420.856..511.859 rows=1 loops=5)
+                    Buffers: shared hit=71781 read=283263
+                    I/O Timings: shared read=474.232
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.00..153269.58 rows=1 width=544) (actual time=200.098..206.867 rows=0 loops=5)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 400000
+                          Buffers: shared hit=480 read=141540
+                          I/O Timings: shared read=237.622
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.00..153263.44 rows=1 width=544) (actual time=314.706..341.515 rows=0 loops=3)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 666666
+                          Buffers: shared hit=288 read=141723
+                          I/O Timings: shared read=236.610
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.00..44707.18 rows=1 width=544) (actual time=137.325..151.137 rows=0 loops=2)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 291666
+                          Buffers: shared hit=41426
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.00..31930.75 rows=1 width=544) (actual time=99.029..99.030 rows=0 loops=2)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                          Rows Removed by Filter: 208333
+                          Buffers: shared hit=29587
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.00..0.00 rows=1 width=230) (actual time=0.000..0.000 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.00..0.00 rows=1 width=230) (actual time=0.000..0.000 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    ->  Parallel Seq Scan on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.00..0.00 rows=1 width=230) (actual time=0.001..0.001 rows=0 loops=1)
+                          Filter: ((doctype = 'CustomerOrder'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1369
+Planning Time: 2.643 ms
+JIT:
+  Functions: 72
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 6.129 ms, Inlining 0.000 ms, Optimization 1.927 ms, Emission 52.623 ms, Total 60.678 ms
+Execution Time: 558.438 ms
+----- run 4: 558.438 ms

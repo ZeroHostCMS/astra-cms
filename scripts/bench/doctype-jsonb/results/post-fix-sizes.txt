@@ -1,0 +1,35 @@
+  relname   |  heap   |   idx   | reltuples 
+------------+---------+---------+-----------
+ astra_doc  | 5314 MB | 4982 MB |   6070557
+ orders_rel | 1548 MB | 1284 MB |   5101057
+(2 rows)
+
+ table_len  | scanned_percent | approx_tuple_count | approx_tuple_len | approx_tuple_percent | dead_tuple_count | dead_tuple_len | dead_tuple_percent | approx_free_space | approx_free_percent 
+------------+-----------------+--------------------+------------------+----------------------+------------------+----------------+--------------------+-------------------+---------------------
+ 5570969600 |               0 |            6070557 |       3105047744 |   55.736217695390046 |                0 |              0 |                  0 |        2465921856 |  44.263782304609954
+(1 row)
+
+ table_len  | scanned_percent | approx_tuple_count | approx_tuple_len | approx_tuple_percent | dead_tuple_count | dead_tuple_len | dead_tuple_percent | approx_free_space | approx_free_percent 
+------------+-----------------+--------------------+------------------+----------------------+------------------+----------------+--------------------+-------------------+---------------------
+ 1622401024 |               0 |            5101057 |       1578946528 |    97.32159340648937 |                0 |              0 |                  0 |          43454496 |   2.678406593510631
+(1 row)
+
+     proname     | proleakproof 
+-----------------+--------------
+ booleq          | t
+ bpchareq        | t
+ date_ge         | t
+ float8gt        | t
+ int4gt          | t
+ int8eq          | t
+ int8ge          | t
+ int8gt          | t
+ numeric_eq      | f
+ numeric_ge      | f
+ text_pattern_ge | t
+ texticlike      | f
+ textlike        | f
+ timestamptz_lt  | t
+ uuid_eq         | t
+(15 rows)
+

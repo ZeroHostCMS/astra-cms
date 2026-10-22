@@ -1,0 +1,64 @@
+hanoi-express
+Limit  (cost=6.06..6.07 rows=4 width=497) (actual time=1.279..1.280 rows=3 loops=1)
+  Buffers: shared hit=6 read=4
+  I/O Timings: shared read=0.994
+  ->  Sort  (cost=6.06..6.07 rows=4 width=497) (actual time=1.278..1.278 rows=3 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=6 read=4
+        I/O Timings: shared read=0.994
+        ->  Index Scan using astra_doc_lp_customer on astra_doc  (cost=0.56..6.02 rows=4 width=497) (actual time=1.118..1.207 rows=3 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+              Buffers: shared hit=3 read=4
+              I/O Timings: shared read=0.994
+Planning:
+  Buffers: shared hit=359 read=9
+  I/O Timings: shared read=1.892
+Planning Time: 4.227 ms
+Execution Time: 1.450 ms
+----- run 1: 1.450 ms
+hanoi-express
+Limit  (cost=6.06..6.07 rows=4 width=497) (actual time=0.161..0.161 rows=3 loops=1)
+  Buffers: shared hit=10
+  ->  Sort  (cost=6.06..6.07 rows=4 width=497) (actual time=0.160..0.160 rows=3 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=10
+        ->  Index Scan using astra_doc_lp_customer on astra_doc  (cost=0.56..6.02 rows=4 width=497) (actual time=0.114..0.142 rows=3 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+              Buffers: shared hit=7
+Planning:
+  Buffers: shared hit=368
+Planning Time: 0.684 ms
+Execution Time: 0.204 ms
+----- run 2: 0.204 ms
+hanoi-express
+Limit  (cost=6.06..6.07 rows=4 width=497) (actual time=0.091..0.092 rows=3 loops=1)
+  Buffers: shared hit=10
+  ->  Sort  (cost=6.06..6.07 rows=4 width=497) (actual time=0.090..0.091 rows=3 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=10
+        ->  Index Scan using astra_doc_lp_customer on astra_doc  (cost=0.56..6.02 rows=4 width=497) (actual time=0.045..0.076 rows=3 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+              Buffers: shared hit=7
+Planning:
+  Buffers: shared hit=368
+Planning Time: 0.652 ms
+Execution Time: 0.130 ms
+----- run 3: 0.130 ms
+hanoi-express
+Limit  (cost=6.06..6.07 rows=4 width=497) (actual time=0.081..0.081 rows=3 loops=1)
+  Buffers: shared hit=10
+  ->  Sort  (cost=6.06..6.07 rows=4 width=497) (actual time=0.080..0.080 rows=3 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 28kB
+        Buffers: shared hit=10
+        ->  Index Scan using astra_doc_lp_customer on astra_doc  (cost=0.56..6.02 rows=4 width=497) (actual time=0.043..0.060 rows=3 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+              Buffers: shared hit=7
+Planning:
+  Buffers: shared hit=368
+Planning Time: 0.883 ms
+Execution Time: 0.147 ms
+----- run 4: 0.147 ms

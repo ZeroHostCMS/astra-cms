@@ -1,0 +1,88 @@
+hanoi-express
+Aggregate  (cost=417708.22..417708.23 rows=1 width=8) (actual time=1154.116..1184.411 rows=1 loops=1)
+  Buffers: shared hit=792064
+  ->  Gather  (cost=1000.43..417708.21 rows=4 width=0) (actual time=1153.250..1184.335 rows=3 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792064
+        ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..416707.81 rows=1 width=0) (actual time=898.970..1040.575 rows=1 loops=5)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'customer'::text) = 'CUST-0123456'::text)
+              Rows Removed by Filter: 800190
+              Buffers: shared hit=792064
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=198
+Planning Time: 2.341 ms
+JIT:
+  Functions: 32
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 15.485 ms, Inlining 0.000 ms, Optimization 4.903 ms, Emission 147.668 ms, Total 168.056 ms
+Execution Time: 1333.665 ms
+----- run 1: 1333.665 ms
+hanoi-express
+Aggregate  (cost=417708.22..417708.23 rows=1 width=8) (actual time=485.448..520.269 rows=1 loops=1)
+  Buffers: shared hit=792061
+  ->  Gather  (cost=1000.43..417708.21 rows=4 width=0) (actual time=185.440..520.228 rows=3 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792061
+        ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..416707.81 rows=1 width=0) (actual time=410.274..470.199 rows=1 loops=5)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'customer'::text) = 'CUST-0123456'::text)
+              Rows Removed by Filter: 800190
+              Buffers: shared hit=792061
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=198
+Planning Time: 0.711 ms
+JIT:
+  Functions: 32
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 2.608 ms, Inlining 0.000 ms, Optimization 1.555 ms, Emission 23.575 ms, Total 27.738 ms
+Execution Time: 547.388 ms
+----- run 2: 547.388 ms
+hanoi-express
+Aggregate  (cost=417708.22..417708.23 rows=1 width=8) (actual time=548.091..573.109 rows=1 loops=1)
+  Buffers: shared hit=792045
+  ->  Gather  (cost=1000.43..417708.21 rows=4 width=0) (actual time=547.507..573.045 rows=3 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792045
+        ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..416707.81 rows=1 width=0) (actual time=407.691..530.866 rows=1 loops=5)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'customer'::text) = 'CUST-0123456'::text)
+              Rows Removed by Filter: 800190
+              Buffers: shared hit=792045
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=198
+Planning Time: 0.774 ms
+JIT:
+  Functions: 32
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 1.266 ms, Inlining 0.000 ms, Optimization 1.016 ms, Emission 19.833 ms, Total 22.115 ms
+Execution Time: 585.671 ms
+----- run 3: 585.671 ms
+hanoi-express
+Aggregate  (cost=417708.22..417708.23 rows=1 width=8) (actual time=504.012..533.029 rows=1 loops=1)
+  Buffers: shared hit=792063
+  ->  Gather  (cost=1000.43..417708.21 rows=4 width=0) (actual time=229.752..532.962 rows=3 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792063
+        ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..416707.81 rows=1 width=0) (actual time=431.465..486.230 rows=1 loops=5)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'customer'::text) = 'CUST-0123456'::text)
+              Rows Removed by Filter: 800190
+              Buffers: shared hit=792063
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=198
+Planning Time: 0.856 ms
+JIT:
+  Functions: 32
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 1.712 ms, Inlining 0.000 ms, Optimization 1.170 ms, Emission 27.173 ms, Total 30.055 ms
+Execution Time: 545.166 ms
+----- run 4: 545.166 ms

@@ -1,0 +1,31 @@
+pgbench (18.3, server 16.15 (Debian 16.15-1.pgdg12+2))
+progress: 10.0 s, 2472.7 tps, lat 6.406 ms stddev 6.262, 0 failed
+progress: 20.0 s, 3501.5 tps, lat 4.562 ms stddev 1.970, 0 failed
+progress: 30.0 s, 4237.3 tps, lat 3.773 ms stddev 1.533, 0 failed
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 16
+number of threads: 4
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 102151
+number of failed transactions: 0 (0.000%)
+latency average = 4.681 ms
+latency stddev = 3.587 ms
+initial connection time = 79.350 ms
+tps = 3412.798816 (without initial connection time)
+SQL script 1: /var/folders/dx/1ynqbct53v15xb_jhtmrwwkc0000gp/T/tmp.UMSwsaCPhS/read-rel.sql
+ - weight: 7 (targets 70.0% of total)
+ - 71540 transactions (70.0% of total)
+ - number of transactions actually processed: 71540 (tps = 2390.105112)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 4.612 ms
+ - latency stddev = 3.501 ms
+SQL script 2: /var/folders/dx/1ynqbct53v15xb_jhtmrwwkc0000gp/T/tmp.UMSwsaCPhS/list-rel.sql
+ - weight: 3 (targets 30.0% of total)
+ - 30410 transactions (29.8% of total)
+ - number of transactions actually processed: 30410 (tps = 1015.978424)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 4.839 ms
+ - latency stddev = 3.769 ms

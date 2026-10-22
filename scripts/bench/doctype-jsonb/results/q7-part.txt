@@ -1,0 +1,116 @@
+hanoi-express
+GroupAggregate  (cost=0.87..425683.59 rows=1585375 width=72) (actual time=4328.223..5984.720 rows=3 loops=1)
+  Group Key: ((astra_doc_part.data ->> 'zone'::text))
+  Buffers: shared hit=401564 read=229920 written=16256
+  I/O Timings: shared read=3226.034 write=199.106
+  ->  Merge Append  (cost=0.87..378122.34 rows=1585375 width=448) (actual time=1471.441..5477.751 rows=1600143 loops=1)
+        Sort Key: ((astra_doc_part.data ->> 'zone'::text))
+        Buffers: shared hit=401564 read=229920 written=16256
+        I/O Timings: shared read=3226.034 write=199.106
+        ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_expr_idx1 on astra_doc_part_2026_10_20 astra_doc_part_1  (cost=0.43..180583.92 rows=461318 width=448) (actual time=1469.787..2843.178 rows=466699 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 1133518
+              Buffers: shared hit=201034 read=114849 written=16256
+              I/O Timings: shared read=1615.047 write=199.106
+        ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_expr_idx1 on astra_doc_part_2026_10_21 astra_doc_part_2  (cost=0.43..181684.66 rows=1124057 width=448) (actual time=1.650..2468.025 rows=1133444 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 467233
+              Buffers: shared hit=200530 read=115071
+              I/O Timings: shared read=1610.988
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=618
+Planning Time: 2.347 ms
+JIT:
+  Functions: 17
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 0.643 ms, Inlining 0.000 ms, Optimization 0.278 ms, Emission 7.395 ms, Total 8.316 ms
+Execution Time: 5995.408 ms
+----- run 1: 5995.408 ms
+hanoi-express
+GroupAggregate  (cost=0.87..425683.59 rows=1585375 width=72) (actual time=730.167..1889.839 rows=3 loops=1)
+  Group Key: ((astra_doc_part.data ->> 'zone'::text))
+  Buffers: shared hit=631279 read=205
+  I/O Timings: shared read=4.515
+  ->  Merge Append  (cost=0.87..378122.34 rows=1585375 width=448) (actual time=159.391..1439.310 rows=1600143 loops=1)
+        Sort Key: ((astra_doc_part.data ->> 'zone'::text))
+        Buffers: shared hit=631279 read=205
+        I/O Timings: shared read=4.515
+        ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_expr_idx1 on astra_doc_part_2026_10_20 astra_doc_part_1  (cost=0.43..180583.92 rows=461318 width=448) (actual time=159.324..598.412 rows=466699 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 1133518
+              Buffers: shared hit=315678 read=205
+              I/O Timings: shared read=4.515
+        ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_expr_idx1 on astra_doc_part_2026_10_21 astra_doc_part_2  (cost=0.43..181684.66 rows=1124057 width=448) (actual time=0.064..700.287 rows=1133444 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 467233
+              Buffers: shared hit=315601
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=616 read=2
+  I/O Timings: shared read=0.266
+Planning Time: 2.747 ms
+JIT:
+  Functions: 17
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 1.426 ms, Inlining 0.000 ms, Optimization 0.911 ms, Emission 10.085 ms, Total 12.421 ms
+Execution Time: 1944.496 ms
+----- run 2: 1944.496 ms
+hanoi-express
+GroupAggregate  (cost=0.87..425683.59 rows=1585375 width=72) (actual time=718.204..2267.124 rows=3 loops=1)
+  Group Key: ((astra_doc_part.data ->> 'zone'::text))
+  Buffers: shared hit=631484
+  ->  Merge Append  (cost=0.87..378122.34 rows=1585375 width=448) (actual time=160.887..1696.565 rows=1600143 loops=1)
+        Sort Key: ((astra_doc_part.data ->> 'zone'::text))
+        Buffers: shared hit=631484
+        ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_expr_idx1 on astra_doc_part_2026_10_20 astra_doc_part_1  (cost=0.43..180583.92 rows=461318 width=448) (actual time=160.845..619.029 rows=466699 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 1133518
+              Buffers: shared hit=315883
+        ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_expr_idx1 on astra_doc_part_2026_10_21 astra_doc_part_2  (cost=0.43..181684.66 rows=1124057 width=448) (actual time=0.039..918.528 rows=1133444 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 467233
+              Buffers: shared hit=315601
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=618
+Planning Time: 2.157 ms
+JIT:
+  Functions: 17
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 1.750 ms, Inlining 0.000 ms, Optimization 0.516 ms, Emission 9.700 ms, Total 11.966 ms
+Execution Time: 2296.267 ms
+----- run 3: 2296.267 ms
+hanoi-express
+GroupAggregate  (cost=0.87..425683.59 rows=1585375 width=72) (actual time=3239.822..6444.171 rows=3 loops=1)
+  Group Key: ((astra_doc_part.data ->> 'zone'::text))
+  Buffers: shared hit=631484
+  ->  Merge Append  (cost=0.87..378122.34 rows=1585375 width=448) (actual time=503.164..5824.904 rows=1600143 loops=1)
+        Sort Key: ((astra_doc_part.data ->> 'zone'::text))
+        Buffers: shared hit=631484
+        ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_expr_idx1 on astra_doc_part_2026_10_20 astra_doc_part_1  (cost=0.43..180583.92 rows=461318 width=448) (actual time=503.072..2342.958 rows=466699 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 1133518
+              Buffers: shared hit=315883
+        ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_expr_idx1 on astra_doc_part_2026_10_21 astra_doc_part_2  (cost=0.43..181684.66 rows=1124057 width=448) (actual time=0.084..3291.524 rows=1133444 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 467233
+              Buffers: shared hit=315601
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=618
+Planning Time: 2.457 ms
+JIT:
+  Functions: 17
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 2.379 ms, Inlining 0.000 ms, Optimization 0.553 ms, Emission 20.093 ms, Total 23.025 ms
+Execution Time: 6473.510 ms
+----- run 4: 6473.510 ms

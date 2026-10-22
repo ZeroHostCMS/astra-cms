@@ -1,0 +1,64 @@
+hanoi-express
+Limit  (cost=0.56..231.77 rows=20 width=491) (actual time=3375.212..12116.808 rows=3 loops=1)
+  Buffers: shared hit=3968529 read=60982
+  I/O Timings: shared read=3839.862
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..481147.89 rows=41620 width=491) (actual time=3375.210..12116.780 rows=3 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+        Rows Removed by Filter: 4000949
+        Buffers: shared hit=3968529 read=60982
+        I/O Timings: shared read=3839.862
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 2.668 ms
+Execution Time: 12116.902 ms
+----- run 1: 12116.902 ms
+hanoi-express
+Limit  (cost=0.56..231.77 rows=20 width=491) (actual time=3288.416..9076.686 rows=3 loops=1)
+  Buffers: shared hit=4000929 read=28582
+  I/O Timings: shared read=624.635
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..481147.89 rows=41620 width=491) (actual time=3288.415..9076.665 rows=3 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+        Rows Removed by Filter: 4000949
+        Buffers: shared hit=4000929 read=28582
+        I/O Timings: shared read=624.635
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=262 read=9
+  I/O Timings: shared read=4.257
+Planning Time: 7.369 ms
+Execution Time: 9076.844 ms
+----- run 2: 9076.844 ms
+hanoi-express
+Limit  (cost=0.56..231.77 rows=20 width=491) (actual time=2449.542..6536.565 rows=3 loops=1)
+  Buffers: shared hit=4028145 read=1366
+  I/O Timings: shared read=22.241
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..481147.89 rows=41620 width=491) (actual time=2449.541..6536.556 rows=3 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+        Rows Removed by Filter: 4000949
+        Buffers: shared hit=4028145 read=1366
+        I/O Timings: shared read=22.241
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=262 read=9
+  I/O Timings: shared read=0.946
+Planning Time: 3.865 ms
+Execution Time: 6536.600 ms
+----- run 3: 6536.600 ms
+hanoi-express
+Limit  (cost=0.56..231.77 rows=20 width=491) (actual time=1605.867..6943.300 rows=3 loops=1)
+  Buffers: shared hit=4029511
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..481147.89 rows=41620 width=491) (actual time=1605.866..6943.253 rows=3 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+        Rows Removed by Filter: 4000949
+        Buffers: shared hit=4029511
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 0.455 ms
+Execution Time: 6943.424 ms
+----- run 4: 6943.424 ms
