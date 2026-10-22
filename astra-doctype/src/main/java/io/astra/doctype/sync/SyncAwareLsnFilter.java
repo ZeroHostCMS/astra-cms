@@ -13,7 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Sync-Aware LSN. Successful writes carry {@code X-Tx-LSN}. Reads from replicas that send
+ * Sync-Aware LSN. Successful document writes through the REST API carry {@code X-Tx-LSN} (the MCP server,
+ * where every call is a POST, adds it itself and only after a tool that wrote). Reads from replicas that send
  * {@code X-Required-LSN} get {@code 202 Sync Pending} until the CDC watermark has caught up, so a client
  * that just wrote in one module never reads stale data in another, without anyone waiting on a lock.
  */
@@ -53,7 +54,7 @@ public class SyncAwareLsnFilter implements ContainerRequestFilter, ContainerResp
     @Override
     public void filter(ContainerRequestContext req, ContainerResponseContext res) {
         String path = path(req);
-        if (WRITES.contains(req.getMethod()) && res.getStatus() / 100 == 2 && (path.startsWith("api/doc/") || path.equals("mcp"))) {
+        if (WRITES.contains(req.getMethod()) && res.getStatus() / 100 == 2 && path.startsWith("api/doc/")) {
             res.getHeaders().putSingle(TX_LSN, watermark.currentLsn());
         }
     }

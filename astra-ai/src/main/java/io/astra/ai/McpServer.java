@@ -8,6 +8,8 @@ import io.astra.doctype.permission.DocPermissions.Action;
 import io.astra.doctype.registry.DocTypeOverlays;
 import io.astra.doctype.registry.DocTypeRegistry.DocTypeNotFoundException;
 import io.astra.doctype.store.DocumentStore;
+import io.astra.doctype.sync.SyncAwareLsnFilter;
+import io.astra.doctype.sync.SyncWatermark;
 import io.astra.kernel.tenant.TenantRequest;
 import io.astra.spi.ai.McpTool;
 import io.astra.spi.doc.DocValidationException;
@@ -45,6 +47,8 @@ public class McpServer {
 
     private static final Logger LOG = Logger.getLogger(McpServer.class);
     static final List<String> PROTOCOL_VERSIONS = List.of("2025-11-25", "2025-06-18", "2025-03-26");
+    /** Kernel tools that write; app tools only read the DocTypes they declare in {@link McpTool#reads()}. */
+    static final Set<String> WRITE_TOOLS = Set.of("create_document");
 
     @Inject TenantRequest tenant;
     @Inject DocumentStore store;
@@ -52,6 +56,7 @@ public class McpServer {
     @Inject DocPermissions permissions;
     @Inject LedgerStore ledger;
     @Inject PiiMasking pii;
+    @Inject SyncWatermark watermark;
     @Inject Instance<McpTool> appTools;
     @Inject ObjectMapper json;
 
@@ -77,10 +82,23 @@ public class McpServer {
             case "initialize" -> ok(id, initialize(params));
             case "ping" -> ok(id, Map.of());
             case "tools/list" -> ok(id, Map.of("tools", tools()));
-            case "tools/call" -> ok(id, TenantContext.call(tenant.tenantId(), () -> call(params)));
+            case "tools/call" -> toolCall(id, params);
             default -> Response.ok(Map.of("jsonrpc", "2.0", "id", id,
                     "error", Map.of("code", -32601, "message", "method not found: " + method))).build();
         };
+    }
+
+    /**
+     * Every MCP call is a POST, so the response carries {@code X-Tx-LSN} only when the call committed a write
+     * (a successful {@code create_document}); reads would otherwise hand the agent a position it never wrote.
+     */
+    private Response toolCall(Object id, Map<String, Object> params) {
+        Map<String, Object> result = TenantContext.call(tenant.tenantId(), () -> call(params));
+        Response.ResponseBuilder response = Response.ok(envelope(id, result));
+        if (WRITE_TOOLS.contains(String.valueOf(params.get("name"))) && Boolean.FALSE.equals(result.get("isError"))) {
+            response.header(SyncAwareLsnFilter.TX_LSN, watermark.currentLsn());
+        }
+        return response.build();
     }
 
     private Map<String, Object> initialize(Map<String, Object> params) {
@@ -229,11 +247,15 @@ public class McpServer {
     }
 
     private static Response ok(Object id, Object result) {
+        return Response.ok(envelope(id, result)).build();
+    }
+
+    private static Map<String, Object> envelope(Object id, Object result) {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("jsonrpc", "2.0");
         m.put("id", id);
         m.put("result", result);
-        return Response.ok(m).build();
+        return m;
     }
 
     private static Map<String, Object> tool(String name, String description, Map<String, Object> properties, List<String> required) {

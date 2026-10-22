@@ -15,7 +15,9 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 /** The MCP server: same identity, tenant and permissions as the REST API, with personal data masked. */
 @QuarkusTest
@@ -55,6 +57,7 @@ class McpTest {
         given().header("X-Astra-Tenant", "mcp-a").contentType("application/json")
                 .body("{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}").post("/mcp").then().statusCode(202);
         rpc("mcp-a", "tools/list", "{}")
+                .header("X-Tx-LSN", nullValue())
                 .body("result.tools.name", hasItems("list_doctypes", "search_documents", "get_document", "create_document",
                         "ledger_trial_balance", "track_waybill", "cod_outstanding"));
     }
@@ -83,14 +86,17 @@ class McpTest {
     void agentsActWithTheUsersPermissions() {
         ExpressFixtures.tenant(store, "mcp-c");
         rpc("mcp-c", "tools/call", "{\"name\":\"create_document\",\"arguments\":{\"doctype\":\"CustomerOrder\",\"data\":{}}}")
+                .header("X-Tx-LSN", nullValue())                       // refused: nothing was written
                 .body("result.isError", equalTo(true))
                 .body("result.content[0].text", containsString("not permitted: create CustomerOrder"));
         rpc("mcp-c", "tools/call", "{\"name\":\"ledger_trial_balance\",\"arguments\":{}}")
                 .body("result.isError", equalTo(true));
         rpc("mcp-c", "tools/call", "{\"name\":\"list_doctypes\",\"arguments\":{}}")
+                .header("X-Tx-LSN", nullValue())                       // a read reports no WAL position
                 .body("result.structuredContent.items.name", hasItem("SupportTicket"))
                 .body("result.structuredContent.items.name", not(hasItem("Account")));
         rpc("mcp-c", "tools/call", "{\"name\":\"create_document\",\"arguments\":{\"doctype\":\"SupportTicket\",\"data\":{\"subject\":\"Khách báo hàng bị vỡ\"}}}")
+                .header("X-Tx-LSN", matchesPattern("[0-9A-F]+/[0-9A-F]+")) // a committed write does
                 .body("result.isError", equalTo(false))
                 .body("result.structuredContent.data.priority", equalTo("High"));
     }
