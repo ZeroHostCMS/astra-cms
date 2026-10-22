@@ -344,11 +344,11 @@ lương 29/9. Script đăng nhập `hanh` (hr). Nếu realm vừa đổi, chạy
 | 1 | `make demo-hrm SCENES=1` | App `io.astra.hrm`, 8 DocType module `hrm`, chỉ phụ thuộc `astra-spi`. 8 Salary Component, gồm BHXH 8 %, BHYT 1,5 %, BHTN 1 % (tài khoản 3383, 3384, 3386); Salary Structure COURIER và 4 assignment. |
 | 2 | `SCENES=2`: mã Rust trong `astra-apps/hrm/wasm/courier-kpi` | Thưởng theo bậc: 1.500 đ/kiện đến kiện 600, 2.000 đ đến kiện 1.000, 2.500 đ từ kiện 1.001, cộng 500.000 chuyên cần nếu đủ công. Khi lưu, kernel chạy thử: `kpi(1000 pieces, 26/26 days) = 2200000 VND`. Module vòng lặp vô hạn (LOOP) → 422 "module rejected (timeout)". |
 | 3 | `SCENES=3` | NV002: Absent 15/9, Half Day 22/9; NV004: On Leave / Leave Without Pay 29/9. `quang` (ops) tạo và submit chấm công hôm nay được, xem Salary Slip bị 403; `tuan` (sales) xem Payroll Entry bị 403. |
-| 4 | `SCENES=4` | Lưu nháp một Payroll Entry `PAY-2609-…`: 4 phiếu lương nháp, tính song song mỗi phiếu một virtual thread, trong cùng transaction với entry. |
+| 4 | `SCENES=4` | Lưu nháp một Payroll Entry `PAY-2610-001` (series theo ngày tạo): 4 phiếu lương nháp, tính song song mỗi phiếu một virtual thread, trong cùng transaction với entry. |
 | 5 | `SCENES=5` | Phiếu NV002 từng dòng: `100% of 6500000 (base) × 24.5/26 days` = 6.125.000; KPI `Wasm kpi(1007 pieces, 24.5/26 days)` = 1.717.500; BHXH `8% of 6500000 (base)` = 520.000. NV003: 15 ngày công, BONUS 500.000. Sửa `net_pay` → 422 read-only. |
 | 6 | `SCENES=6`: submit entry | Phiếu lương và sổ cái trong một transaction. Entry: 4 nhân viên, gross 35.837.501, khấu trừ 3.517.500, net 32.320.001. Một bút toán dồn tích 5 dòng: Nợ 642 35.837.501; Có 3383 2.680.000; Có 3384 502.500; Có 3386 335.000; Có 334 32.320.001. Mỗi phiếu có `accrual_voucher` là tên entry. Cancel riêng phiếu NV001 → 422 "cancel the payroll entry instead"; chạy lương tháng 9 lần nữa → 422 "NV001 already has submitted salary slip …". |
-| 7 | `SCENES=7`: cancel entry | Các phiếu sang docstatus 2; bút toán của entry có thêm 5 dòng `is_reversal: true`; số dư các tài khoản lương về 0. Không dòng nào bị xoá. |
-| 8 | `SCENES=8` | Tool MCP `payroll_summary` trả tổng và dòng phiếu, tên nhân viên đã che (`N*** V*** A***`); `tuan` gọi → `isError: true`, not permitted. |
+| 7 | `SCENES=7` | Tool MCP `payroll_summary` trả tổng và dòng phiếu, tên nhân viên đã che (`N*** V*** A***`); `tuan` gọi → `isError: true`, not permitted. |
+| 8 | `SCENES=8`: cancel entry | Các phiếu sang docstatus 2; bút toán của entry có thêm 5 dòng `is_reversal: true`; số dư các tài khoản lương về 0. Không dòng nào bị xoá. |
 
 **Nói đúng:**
 - Không tính thuế TNCN; net là gross trừ bảo hiểm phần người lao động. Không tính phần doanh nghiệp đóng

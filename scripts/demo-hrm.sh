@@ -137,23 +137,10 @@ scene6() {
 }
 
 scene7() {
-  title 7 "Cancel: the accrual reversed once, nothing deleted"
-  local run; run=$(run_of 1)
-  [[ -n $run ]] || { say "No submitted September payroll: run scene 6 first"; return; }
-  api $T POST "/api/doc/PayrollEntry/$run/cancel" "" '{name, docstatus}'
-  api $T GET "/api/doc/SalarySlip?payroll_entry=$run" '[.[] | {name, employee: .data.employee, docstatus}] | sort_by(.employee)'; wait_key
-  as khoa
-  say "The ledger is append-only: the reversal mirrors every line of the run's voucher"
-  api $T GET "/api/ledger/entries?voucher_no=$run" '[.[] | {account, debit, credit, is_reversal}]'
-  api $T GET /api/ledger/trial-balance "$PAYROLL_ACCOUNTS"
-  as hanh; wait_key
-}
-
-scene8() {
-  title 8 "An AI agent asks for the payroll — without names"
+  title 7 "An AI agent asks for the payroll — without names"
   mcp $T initialize '{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"demo","version":"1"}}' '.result | {protocolVersion, serverInfo}'
   mcp $T tools/list '{}' '[.result.tools[] | select(.name == "payroll_summary") | {name, description}]'; wait_key
-  local run; run=$(run_of 0); [[ -n $run ]] || run=$(run_of 1)
+  local run; run=$(run_of 1); [[ -n $run ]] || run=$(run_of 0)
   say "payroll_summary: totals and one line per slip; employee names are personal data and leave masked"
   if [[ -n $run ]]; then
     mcp $T tools/call "{\"name\":\"payroll_summary\",\"arguments\":{\"payroll_entry\":\"$run\"}}" '.result.structuredContent'
@@ -164,6 +151,19 @@ scene8() {
   as tuan
   say "The tool reads PayrollEntry and SalarySlip, so a salesperson's agent is refused"
   mcp $T tools/call '{"name":"payroll_summary","arguments":{}}' '.result | {isError, text: .content[0].text}'
+  as hanh; wait_key
+}
+
+scene8() {
+  title 8 "Cancel: the accrual reversed once, nothing deleted"
+  local run; run=$(run_of 1)
+  [[ -n $run ]] || { say "No submitted September payroll: run scene 6 first"; return; }
+  api $T POST "/api/doc/PayrollEntry/$run/cancel" "" '{name, docstatus}'
+  api $T GET "/api/doc/SalarySlip?payroll_entry=$run" '[.[] | {name, employee: .data.employee, docstatus}] | sort_by(.employee)'; wait_key
+  as khoa
+  say "The ledger is append-only: the reversal mirrors every line of the run's voucher"
+  api $T GET "/api/ledger/entries?voucher_no=$run" '[.[] | {account, debit, credit, is_reversal}]'
+  api $T GET /api/ledger/trial-balance "$PAYROLL_ACCOUNTS"
   as hanh; wait_key
 }
 
