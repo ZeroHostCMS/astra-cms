@@ -42,6 +42,14 @@ tool() {
   api $T POST /mcp "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"$1\",\"arguments\":$2}}" \
     ".result | if .isError then {isError, error: .content[0].text} else (.structuredContent | $filter) end"
 }
+# copilot INSTRUCTION — POST /api/stms/copilot (the Desk's path): same tenant, role check, PII masking and audit as MCP
+copilot() {
+  local body
+  body=$(jq -cn --arg plan "$PLAN" --arg instruction "$1" '{plan: $plan, instruction: $instruction}')
+  api $T POST /api/stms/copilot "$body" "$COPILOT_REST"
+  [[ -n ${TX_LSN:-} ]] && printf '\033[2m← X-Tx-LSN: %s (read-your-writes position of this replan)\033[0m\n' "$TX_LSN"
+  return 0
+}
 routes() { # the plan's route table, as the Desk shows it
   http "$AS" $T GET "/api/doc/DispatchPlan/$PLAN"
   jq -r '.data.route_summary' <<<"$HTTP_BODY"
@@ -51,6 +59,11 @@ CHANGE='{event, score: "\(.score_before) → \(.score_after)", feasible, km: "\(
   moved: [.moved[] | "\(.stop) \(.label): \(.from // "new") → \(.to) (start \(.start))"], resequenced}'
 COPILOT='{llm, llm_note, tool_calls: [.tool_calls[] | {name, input: (.input | del(.plan))}], explanation,
   moved: [.results[] | select(.ok) | .result.moved? // [] | .[] | "\(.stop) \(.label): \(.from // "new") → \(.to) (start \(.start))"],
+  solve_ms: [.results[] | select(.tool != "stms_explain_plan") | .result.solve_ms? // empty]}'
+# The REST answer also carries the net effect of all calls: moved_stops and the routes before and after
+COPILOT_REST='{llm, llm_note, tool_calls: [.tool_calls[] | {name, input: (.input | del(.plan))}], explanation,
+  score: "\(.score_before) → \(.score_after)", feasible,
+  moved_stops: [.moved_stops[] | "\(.stop) \(.label): \(.from // "new") → \(.to) (start \(.start))"], resequenced,
   solve_ms: [.results[] | select(.tool != "stms_explain_plan") | .result.solve_ms? // empty]}'
 
 PLAN="${PLAN:-}"
@@ -86,8 +99,9 @@ scene2() {
 scene3() {
   title 3 "Copilot: a vehicle breaks down"
   need_plan
-  say "The dispatcher types in Vietnamese. The LLM is a scripted MOCK; the tool calls it returns run for real"
-  tool stms_copilot "{\"plan\":\"$PLAN\",\"instruction\":\"Xe 51C-12345 hỏng ở Thủ Đức, chuyển hết đơn sang xe khác\"}" "$COPILOT"
+  say "The dispatcher types in Vietnamese (Desk → Điều phối (Copilot), i.e. POST /api/stms/copilot)."
+  say "The LLM is a scripted MOCK; the tool calls it returns run for real"
+  copilot "Xe 51C-12345 hỏng ở Thủ Đức, chuyển hết đơn sang xe khác"
   wait_key
   say "Replanned routes: 51C-12345 is gone, its stops are on the other vehicles, every window still holds"
   routes; wait_key
@@ -96,7 +110,7 @@ scene3() {
 scene4() {
   title 4 "Copilot: VIP customers first, balance the load (constraint weights)"
   need_plan
-  tool stms_copilot "{\"plan\":\"$PLAN\",\"instruction\":\"Ưu tiên khách VIP trước 10h, cân bằng tải giữa các xe\"}" "$COPILOT"
+  copilot "Ưu tiên khách VIP trước 10h, cân bằng tải giữa các xe"
   wait_key
   say "The weights now in force, and the VIP stops' service times"
   tool stms_explain_plan "{\"plan\":\"$PLAN\",\"priority_deadline\":\"10:00\"}" '{weights, priority_stops, vehicles}'
@@ -104,9 +118,11 @@ scene4() {
 }
 
 scene5() {
-  title 5 "Copilot: an urgent order comes in"
+  title 5 "Copilot over MCP: an urgent order comes in"
   need_plan
+  say "The same copilot as an MCP tool, for AI agents: tools/call stms_copilot on /mcp"
   tool stms_copilot "{\"plan\":\"$PLAN\",\"instruction\":\"Thêm đơn gấp 30kg ở Bến Thành trước 11h\"}" "$COPILOT"
+  [[ -n ${TX_LSN:-} ]] && printf '\033[2m← X-Tx-LSN: %s (MCP reports the write position too)\033[0m\n' "$TX_LSN"
   wait_key
   routes; wait_key
 }
@@ -128,7 +144,8 @@ scene6() {
 scene7() {
   title 7 "Same tenant, same permissions: who may replan"
   need_plan
-  say "quang (ops) can read the plan but the replanning tools are refused"
+  say "quang (ops) can read the plan, but the copilot is refused (REST 403) and so are the replanning tools (MCP)"
+  AS=quang api $T POST /api/stms/copilot "{\"plan\":\"$PLAN\",\"instruction\":\"Xe 51C-67890 hỏng, chuyển hết đơn sang xe khác\"}"
   AS=quang tool stms_vehicle_unavailable "{\"plan\":\"$PLAN\",\"vehicle\":\"51C-67890\"}"
   say "ha (customer care) does not even see routing"
   AS=ha tool stms_explain_plan "{\"plan\":\"$PLAN\"}"
@@ -142,7 +159,7 @@ scene8() {
   title 8 "Dispatch: submit freezes the plan; the event log stays"
   need_plan
   say "Every live change was logged as a DispatchEvent (readable by dispatcher and admin only)"
-  api $T GET "/api/doc/DispatchEvent?plan=$PLAN&limit=20" \
+  api $T GET "/api/stms/plans/$PLAN/events" \
     '[.[] | {name, event_type: .data.event_type, source: .data.source, score: "\(.data.score_before) → \(.data.score_after)", moved_stops: .data.moved_stops, solve_ms: .data.solve_ms}] | reverse'
   wait_key
   say "Submit: only a solved, feasible plan can be dispatched"
