@@ -5,7 +5,8 @@ submittable: true
 naming: { series: "PAY-.YYMM.-.###" }
 
 # Saving a draft creates (or refreshes) a draft Salary Slip for every active employee who matches;
-# submitting submits those slips, which post to the ledger; cancelling cancels them. One transaction each.
+# submitting submits those slips and accrues the run in one ledger voucher; cancelling cancels them and
+# reverses the voucher once. One transaction each.
 fields:
   - { name: start_date,      type: Date,     required: true, in-list: true }
   - { name: end_date,        type: Date,     required: true, in-list: true }

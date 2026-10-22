@@ -1,7 +1,7 @@
 name: SalarySlip
 module: hrm
 kind: transaction
-submittable: true                   # submit posts salary expense, statutory deductions and net pay to the ledger
+submittable: true                   # a run's slips are accrued in one ledger voucher when their PayrollEntry is submitted
 naming: { series: "SAL-.YYMM.-.#####" }
 
 # Everything below the period is computed by SalarySlipHook from the employee's structure assignment,
@@ -24,6 +24,7 @@ fields:
   - { name: gross_pay,        type: Currency, read-only: true, in-list: true }
   - { name: total_deduction,  type: Currency, read-only: true }
   - { name: net_pay,          type: Currency, read-only: true, in-list: true }
+  - { name: accrual_voucher,  type: Data,     read-only: true }   # ledger voucher (the PayrollEntry) that accrued this slip
 
 permissions:
   - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }

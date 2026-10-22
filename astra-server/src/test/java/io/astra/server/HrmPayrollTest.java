@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Payroll end to end: structure assignment → attendance → payroll entry → salary slips with payment-day
- * proration, statutory insurance and the Wasm delivery bonus → submit posts balanced vouchers → cancel reverses.
+ * proration, statutory insurance and the Wasm delivery bonus → submit accrues the run in one balanced voucher →
+ * cancel reverses it once.
  *
  * <p>September 2026 has 26 working days (Monday–Saturday). Expected slips:
  * NV001 courier, 7,000,000 base, full month, 1,100 pieces: 7,000,000 + 730,000 + 500,000 + KPI 2,450,000 = 10,680,000 gross;
@@ -115,7 +116,7 @@ class HrmPayrollTest {
         in(t).body("{\"net_pay\":1}").put("/api/doc/SalarySlip/" + slip).then().statusCode(422)
                 .body("errors[0]", equalTo("field 'net_pay' is read-only"));
 
-        // Submit: every slip is submitted and posted in the entry's transaction.
+        // Submit: every slip is submitted and the run is accrued in one voucher, in the entry's transaction.
         in(t).post("/api/doc/PayrollEntry/" + run + "/submit").then().statusCode(200)
                 .body("docstatus", equalTo(1)).body("data.employee_count", equalTo(3))
                 .body("data.total_gross", equalTo(26_098_654)).body("data.total_deduction", equalTo(2_677_500))
@@ -126,24 +127,33 @@ class HrmPayrollTest {
         assertEquals(0, balance(t, "3384").compareTo(new BigDecimal("-382500")));
         assertEquals(0, balance(t, "3386").compareTo(new BigDecimal("-255000")));
         assertEquals(0, balance(t, "334").compareTo(new BigDecimal("-23421154")));
-        List<Map<String, Object>> voucher = TenantContext.call(t, () -> ledger.entries(slip, null, 20));
-        assertEquals(5, voucher.size());   // Dr 642 · Cr 3383, 3384, 3386 and 334, all with party NV001
+        List<Map<String, Object>> voucher = TenantContext.call(t, () -> ledger.entries(run, null, 20));
+        assertEquals(5, voucher.size());   // Dr 642 · Cr 3383, 3384, 3386 and 334: totals of the run
+        assertTrue(voucher.stream().allMatch(e -> "PayrollEntry".equals(e.get("voucher_type"))));
         assertEquals(0, voucher.stream().map(e -> ((BigDecimal) e.get("debit")).subtract((BigDecimal) e.get("credit")))
                 .reduce(BigDecimal.ZERO, BigDecimal::add).signum());
+        assertEquals(0, ((BigDecimal) voucher.stream().filter(e -> "334".equals(e.get("account"))).findFirst().orElseThrow()
+                .get("credit")).compareTo(new BigDecimal("23421154")));
+        assertTrue(TenantContext.call(t, () -> ledger.entries(slip, null, 20)).isEmpty());   // slips do not post on their own
+        in(t).get("/api/doc/SalarySlip/" + slip).then().body("data.accrual_voucher", equalTo(run));
 
-        // Slips of a submitted run are immutable, and the same period cannot be paid twice.
+        // Slips of a submitted run are immutable, are cancelled only with their run, and a period is paid once.
         in(t).body("{\"posting_date\":\"2026-10-05\"}").put("/api/doc/SalarySlip/" + slip).then().statusCode(422);
+        in(t).post("/api/doc/SalarySlip/" + slip + "/cancel").then().statusCode(422)
+                .body("errors[0]", containsString("cancel the payroll entry instead"));
         in(t).body("{\"start_date\":\"" + HrmFixtures.START + "\",\"end_date\":\"" + HrmFixtures.END + "\"}")
                 .post("/api/doc/PayrollEntry").then().statusCode(422)
                 .body("errors[0]", startsWith("NV001 already has submitted salary slip " + slip));
 
-        // Cancel: the slips are cancelled and every voucher is reversed.
+        // Cancel: the slips are cancelled and the accrual voucher is reversed once.
         in(t).post("/api/doc/PayrollEntry/" + run + "/cancel").then().statusCode(200).body("docstatus", equalTo(2));
         in(t).get("/api/doc/SalarySlip?payroll_entry=" + run).then().body("docstatus", equalTo(List.of(2, 2, 2)));
         for (String account : List.of("642", "3383", "3384", "3386", "334")) {
             assertEquals(0, balance(t, account).signum(), account);
         }
-        assertTrue(TenantContext.call(t, () -> ledger.entries(slip, null, 20)).stream().anyMatch(e -> Boolean.TRUE.equals(e.get("is_reversal"))));
+        List<Map<String, Object>> after = TenantContext.call(t, () -> ledger.entries(run, null, 20));
+        assertEquals(10, after.size());
+        assertEquals(5, after.stream().filter(e -> Boolean.TRUE.equals(e.get("is_reversal"))).count());
     }
 
     @Test

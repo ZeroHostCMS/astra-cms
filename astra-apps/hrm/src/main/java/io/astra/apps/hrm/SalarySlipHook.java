@@ -4,29 +4,20 @@ import io.astra.spi.doc.DocValidationException;
 import io.astra.spi.doc.Document;
 import io.astra.spi.doc.DocumentService;
 import io.astra.spi.hook.DocLifecycleHook;
-import io.astra.spi.ledger.GeneralLedger;
-import io.astra.spi.ledger.GeneralLedger.Entry;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
- * Computes a slip on every save of a draft, and on submit posts it to the ledger in the same transaction:
- * Dr each earning's expense account (gross), Cr each deduction's liability account (statutory insurance),
- * Cr 334 the net pay owed to the employee. Cancelling posts the reversal. One submitted slip per employee
- * and period start.
+ * Computes a slip on every save of a draft. A slip does not post to the ledger itself: its payroll entry
+ * accrues all of its slips in one voucher on submit (see {@link PayrollEntryHook}), and the slip records that
+ * voucher. While the entry stays submitted, its slips can only be cancelled by cancelling the entry, which
+ * reverses the voucher once. One submitted slip per employee and period start.
  */
 @ApplicationScoped
 public class SalarySlipHook implements DocLifecycleHook {
-
-    /** Account 334 of Circular 200: Phải trả người lao động (net salary owed to employees). */
-    static final String SALARY_PAYABLE = "334";
 
     /**
      * Slips a payroll batch has already computed, by employee, bound only while {@link PayrollEntryHook} writes
@@ -34,10 +25,12 @@ public class SalarySlipHook implements DocLifecycleHook {
      */
     static final ScopedValue<Map<String, Map<String, Object>>> PRECOMPUTED = ScopedValue.newInstance();
 
+    /** Bound to the entry's name while {@link PayrollEntryHook} cancels its own slips. */
+    static final ScopedValue<String> CANCELLING_ENTRY = ScopedValue.newInstance();
+
     @Inject DocumentService docs;
     @Inject PayrollInputs inputs;
     @Inject SalaryCalculator calculator;
-    @Inject GeneralLedger ledger;
 
     @Override
     public String doctype() { return "SalarySlip"; }
@@ -72,20 +65,19 @@ public class SalarySlipHook implements DocLifecycleHook {
     @Override
     public void onSubmit(Document slip) {
         requireNoOtherSubmitted(slip);
-        String employee = slip.getString("employee");
-        Map<String, BigDecimal> expense = byAccount(slip, "earnings");
-        Map<String, BigDecimal> liability = byAccount(slip, "deductions");
-        List<Entry> entries = new ArrayList<>();
-        expense.forEach((account, amount) -> entries.add(Entry.debit(account, employee, amount)));
-        liability.forEach((account, amount) -> entries.add(Entry.credit(account, employee, amount)));
-        entries.add(Entry.credit(SALARY_PAYABLE, employee, Values.vnd(slip.get("net_pay"))));
-        ledger.post("SalarySlip", slip.name(), Values.requireDate(slip, "posting_date"), entries,
-                "Salary " + employee + " " + slip.getString("start_date") + " – " + slip.getString("end_date"));
+        String entry = slip.getString("payroll_entry");
+        if (entry != null && !entry.isBlank()) slip.set("accrual_voucher", entry);
     }
 
     @Override
     public void onCancel(Document slip) {
-        ledger.reverse("SalarySlip", slip.name());
+        String entryName = slip.getString("payroll_entry");
+        if (entryName == null || entryName.isBlank()) return;
+        if (CANCELLING_ENTRY.isBound() && CANCELLING_ENTRY.get().equals(entryName)) return;
+        docs.get("PayrollEntry", entryName).filter(e -> e.docstatus() == 1).ifPresent(e -> {
+            throw new DocValidationException("salary slip " + slip.name() + " is accrued by payroll entry " + entryName
+                    + "; cancel the payroll entry instead");
+        });
     }
 
     private void requireNoOtherSubmitted(Document slip) {
@@ -97,18 +89,5 @@ public class SalarySlipHook implements DocLifecycleHook {
                     throw new DocValidationException(slip.getString("employee") + " already has submitted salary slip "
                             + other.name() + " for the period from " + slip.getString("start_date"));
                 });
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, BigDecimal> byAccount(Document slip, String field) {
-        Map<String, BigDecimal> out = new TreeMap<>();
-        Object rows = slip.get(field);
-        if (rows instanceof List<?> list) {
-            for (Object r : list) {
-                Map<String, Object> row = (Map<String, Object>) r;
-                out.merge(row.get("account").toString(), Values.vnd(row.get("amount")), BigDecimal::add);
-            }
-        }
-        return out;
     }
 }

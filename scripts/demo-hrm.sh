@@ -121,29 +121,30 @@ scene6() {
   title 6 "Submit: slips and ledger in one transaction"
   local run; run=$(run_of 0)
   [[ -n $run ]] || { say "No draft September payroll: run scene 4 first"; return; }
-  say "Submitting the entry submits every slip; each slip posts Dr 642 / Cr 3383, 3384, 3386 / Cr 334 through the GeneralLedger SPI"
+  say "Submitting the entry submits every slip and accrues the whole run in one voucher through the GeneralLedger SPI"
   api $T POST "/api/doc/PayrollEntry/$run/submit" "" '{name, docstatus, employees: .data.employee_count, gross: .data.total_gross, deductions: .data.total_deduction, net: .data.total_net}'
-  api $T GET "/api/doc/SalarySlip?payroll_entry=$run" '[.[] | {name, employee: .data.employee, docstatus}] | sort_by(.employee)'; wait_key
+  api $T GET "/api/doc/SalarySlip?payroll_entry=$run" '[.[] | {name, employee: .data.employee, docstatus, accrual_voucher: .data.accrual_voucher}] | sort_by(.employee)'; wait_key
   as khoa
-  say "The accountant sees one balanced voucher per slip"
-  local slip; slip=$(http lan $T GET "/api/doc/SalarySlip?payroll_entry=$run&employee=NV001" && jq -r '.[0].name' <<<"$HTTP_BODY")
-  api $T GET "/api/ledger/entries?voucher_no=$slip" '[.[] | {account, party, debit, credit}]'
+  say "The accountant sees one balanced accrual voucher for the run: Dr 642 gross · Cr 3383, 3384, 3386 insurance · Cr 334 net"
+  api $T GET "/api/ledger/entries?voucher_no=$run" '[.[] | {voucher_type, account, debit, credit}]'
   api $T GET /api/ledger/trial-balance "$PAYROLL_ACCOUNTS"
-  say "A salary period is paid once: a second September run is refused"
+  say "A slip of a submitted run is cancelled only with its run"
+  local slip; slip=$(http lan $T GET "/api/doc/SalarySlip?payroll_entry=$run&employee=NV001" && jq -r '.[0].name' <<<"$HTTP_BODY")
   as lan
+  api $T POST "/api/doc/SalarySlip/$slip/cancel"
+  say "A salary period is paid once: a second September run is refused"
   api $T POST /api/doc/PayrollEntry "{\"start_date\":\"$START\",\"end_date\":\"$END\"}"; wait_key
 }
 
 scene7() {
-  title 7 "Cancel: every voucher reversed, nothing deleted"
+  title 7 "Cancel: the accrual reversed once, nothing deleted"
   local run; run=$(run_of 1)
   [[ -n $run ]] || { say "No submitted September payroll: run scene 6 first"; return; }
   api $T POST "/api/doc/PayrollEntry/$run/cancel" "" '{name, docstatus}'
   api $T GET "/api/doc/SalarySlip?payroll_entry=$run" '[.[] | {name, employee: .data.employee, docstatus}] | sort_by(.employee)'; wait_key
   as khoa
-  local slip; slip=$(http lan $T GET "/api/doc/SalarySlip?payroll_entry=$run&employee=NV001" && jq -r '.[0].name' <<<"$HTTP_BODY")
-  say "The ledger is append-only: the reversal mirrors every line"
-  api $T GET "/api/ledger/entries?voucher_no=$slip" '[.[] | {account, debit, credit, is_reversal}]'
+  say "The ledger is append-only: the reversal mirrors every line of the run's voucher"
+  api $T GET "/api/ledger/entries?voucher_no=$run" '[.[] | {account, debit, credit, is_reversal}]'
   api $T GET /api/ledger/trial-balance "$PAYROLL_ACCOUNTS"
   as lan; wait_key
 }
