@@ -68,7 +68,7 @@ Phần mềm không nên là một sản phẩm tĩnh chờ bản phát hành k�
 
 ## Video demo
 
-Một teaser 90 giây và 17 video tiếng Việt, quay từ bản demo đang chạy: màn hình Desk và output terminal thật, không lời thoại, không dựng cảnh. Các video về cơ chế nền tảng (8 đến 17) có mục "Nói đúng" ghi rõ phần nào chưa làm. Video về lộ trình nằm ở mục [Lộ trình](#lộ-trình). Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md).
+Một teaser 90 giây và 20 video tiếng Việt, quay từ bản demo đang chạy: màn hình Desk và output terminal thật, không lời thoại, không dựng cảnh. Các video về cơ chế nền tảng và nghiệp vụ (8 đến 17, 19 đến 21) có mục "Nói đúng" ghi rõ phần nào chưa làm. Video về lộ trình nằm ở mục [Lộ trình](#lộ-trình). Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md).
 
 <table>
 <tr><th colspan="2" align="left">Teaser: Một nền tảng, mọi nghiệp vụ <sub>(1:30)</sub></th></tr>
@@ -161,6 +161,21 @@ Một teaser 90 giây và 17 video tiếng Việt, quay từ bản demo đang ch
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4"><img src="docs/video-thumbs/video-17.jpg" width="320" alt="Xem video 17: Seata: một lần submit, ba tài nguyên"></a></td>
 <td>Nhánh AT trừ hạn mức BMS, nhánh TCC giữ chỗ trên Redis, kernel commit cuối; một nhánh từ chối là tất cả quay lại.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4">▶ Xem video</a></td>
 </tr>
+<tr><th colspan="2" align="left">Video 19 · HRM: nhân sự và tiền lương <sub>(2:40)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-19-hrm-vi.mp4"><img src="docs/video-thumbs/video-19.jpg" width="320" alt="Xem video 19: HRM: nhân sự và tiền lương"></a></td>
+<td>Theo khái niệm Frappe HRMS: chấm công quyết định ngày công, Payroll Entry tính phiếu lương song song, thưởng bưu tá bằng Wasm, một bút toán dồn tích cho cả kỳ, huỷ là đảo; agent AI chỉ thấy tên đã che.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-19-hrm-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 20 · STMS: điều phối xe với Timefold + AI copilot <sub>(2:58)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-20-stms-vi.mp4"><img src="docs/video-thumbs/video-20.jpg" width="320" alt="Xem video 20: STMS: điều phối xe với Timefold + AI copilot"></a></td>
+<td>Timefold xếp tuyến theo tải trọng và khung giờ, giải lại khi xe hỏng, đơn gấp, kẹt xe; copilot nhận lệnh tiếng Việt và gọi tool thật. LLM của copilot là giả lập theo kịch bản demo, ghi rõ trên mọi khung hình.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-20-stms-vi.mp4">▶ Xem video</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 21 · SAML SSO và SCIM <sub>(2:32)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4"><img src="docs/video-thumbs/video-21.jpg" width="320" alt="Xem video 21: SAML SSO và SCIM"></a></td>
+<td>Đăng nhập qua IdP SAML có chữ ký, nhóm của IdP thành role của tenant; SCIM 2.0 tạo, đổi nhóm, vô hiệu hoá và xoá user theo từng tenant, token của tenant khác bị chặn.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4">▶ Xem video</a></td>
+</tr>
 </table>
 
 Nhạc nền: "Corporate Tower" của Mare Production ([freesound.org/s/612264](https://freesound.org/s/612264/)), CC BY 4.0, đã cắt ghép.
@@ -172,10 +187,10 @@ Nhạc nền: "Corporate Tower" của Mare Production ([freesound.org/s/612264](
 | Bạn là | Astra cho bạn gì | Bắt đầu từ |
 | --- | --- | --- |
 | **Developer đang tìm CMS mới** | Một file YAML là có REST API, form, list, quyền và index. Không viết migration khi thêm trường. Hook nghiệp vụ là class Java bình thường. | Video [1](https://media.zerohostcms.com/astra-cms/astra-video-1-quickstart-vi.mp4), [2](https://media.zerohostcms.com/astra-cms/astra-video-2-doctype-vi.mp4), [9](https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4) · [Chạy lát cắt mỏng](#chạy-lát-cắt-mỏng-ngay-hôm-nay) · [DocType engine](#doctype-engine) |
-| **Nhà đầu tư** | Một nền tảng cho cả CMS lẫn ERP, nhắm doanh nghiệp cần tùy biến liên tục mà không fork. Phần lõi đã chạy được; phần còn lại ghi rõ là lộ trình. | [Teaser](https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4), [video lộ trình](https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4) · [Trạng thái dự án](#trạng-thái-dự-án) · [Lộ trình](#lộ-trình) |
+| **Nhà đầu tư** | Một nền tảng cho cả CMS lẫn ERP, nhắm doanh nghiệp cần tùy biến liên tục mà không fork. Phần lõi đã chạy được; phần còn lại ghi rõ là lộ trình. | [Teaser](https://media.zerohostcms.com/astra-cms/astra-video-0-teaser-vi.mp4), video nghiệp vụ [19](https://media.zerohostcms.com/astra-cms/astra-video-19-hrm-vi.mp4) và [20](https://media.zerohostcms.com/astra-cms/astra-video-20-stms-vi.mp4), [video lộ trình](https://media.zerohostcms.com/astra-cms/astra-video-18-roadmap-vi.mp4) · [Trạng thái dự án](#trạng-thái-dự-án) · [Lộ trình](#lộ-trình) |
 | **Nhà nghiên cứu** | Các lựa chọn thiết kế có thể kiểm chứng: lưu trữ JSONB không DDL kèm index biểu thức, RLS fail-closed, đọc-sau-ghi giữa các module bằng LSN, Seata AT/TCC, sandbox Wasm giới hạn theo thời gian. | [docs/explain.md](docs/explain.md) · [Tham chiếu thiết kế](#tham-chiếu-thiết-kế) · [Hiệu năng](#hiệu-năng-nguyên-tắc-và-mục-tiêu) |
-| **Lập trình bằng AI (vibe code)** | Mỗi việc đủ nhỏ để agent làm trọn: một DocType là một file YAML, một hook là một class. 44 test tích hợp cho vòng lặp pass/fail. Agent dùng app qua MCP với đúng quyền của người dùng. | Video [9](https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4), [15](https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4) · app mẫu [astra-apps/express](astra-apps/express) · [docs/demo-code-snippets.md](docs/demo-code-snippets.md) |
-| **Tech lead doanh nghiệp** | Đa tenant bằng PostgreSQL RLS, Keycloak với role theo tenant và tách nhiệm vụ, sổ cái append-only, giao dịch phân tán, chạy trên Kubernetes. Mỗi giới hạn hiện tại đều được ghi ra. | Video [7](https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-vi.mp4), [8](https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-vi.mp4), [10](https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-vi.mp4), [11](https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-vi.mp4), [12](https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-vi.mp4), [17](https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4) · [Đa tenant](#đa-tenant-multi-tenancy) |
+| **Lập trình bằng AI (vibe code)** | Mỗi việc đủ nhỏ để agent làm trọn: một DocType là một file YAML, một hook là một class. 76 test tích hợp cho vòng lặp pass/fail. Agent dùng app qua MCP với đúng quyền của người dùng. | Video [9](https://media.zerohostcms.com/astra-cms/astra-video-9-developer-vi.mp4), [15](https://media.zerohostcms.com/astra-cms/astra-video-15-mcp-vi.mp4) · app mẫu [astra-apps/express](astra-apps/express) · [docs/demo-code-snippets.md](docs/demo-code-snippets.md) |
+| **Tech lead doanh nghiệp** | Đa tenant bằng PostgreSQL RLS, Keycloak với role theo tenant và tách nhiệm vụ, sổ cái append-only, giao dịch phân tán, chạy trên Kubernetes. Mỗi giới hạn hiện tại đều được ghi ra. | Video [7](https://media.zerohostcms.com/astra-cms/astra-video-7-tenants-vi.mp4), [8](https://media.zerohostcms.com/astra-cms/astra-video-8-failclosed-vi.mp4), [10](https://media.zerohostcms.com/astra-cms/astra-video-10-k8s-vi.mp4), [11](https://media.zerohostcms.com/astra-cms/astra-video-11-keycloak-vi.mp4), [12](https://media.zerohostcms.com/astra-cms/astra-video-12-ledger-vi.mp4), [17](https://media.zerohostcms.com/astra-cms/astra-video-17-seata-vi.mp4), [21](https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4) · [Đa tenant](#đa-tenant-multi-tenancy) |
 
 ---
 

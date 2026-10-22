@@ -72,7 +72,7 @@ Software should no longer be a static product that waits for its next release. I
 > It shares **no code, schema, or assets** with either. Concepts such as "DocType" are used as common vocabulary;
 > every implementation is original, in Java, under MIT. Nothing from ERPNext may be copied into this repository.
 
-Why each choice was made, written as a 40-minute talk: [docs/explain.en.md](docs/explain.en.md). Vietnamese readers: [README.vi.md](README.vi.md) is the full Vietnamese README with a Vietnamese-subtitled intro video, and [docs/explain.md](docs/explain.md) is the Vietnamese original of the explainer.
+Why each choice was made, written as a 40-minute talk: [docs/explain.en.md](docs/explain.en.md). Vietnamese readers: [README.vi.md](README.vi.md) is the full Vietnamese README with a Vietnamese-subtitled intro video, a teaser and 20 demo videos recorded from the running demo (including HRM payroll, STMS routing with a Timefold copilot, and SAML SSO + SCIM in Videos 19–21), and [docs/explain.md](docs/explain.md) is the Vietnamese original of the explainer.
 
 ---
 
