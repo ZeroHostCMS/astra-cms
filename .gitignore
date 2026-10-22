@@ -23,10 +23,8 @@ target/
 deploy/docker/data/
 *.log
 
-# Intro video build outputs (mp4 hosted on Cloudflare R2)
+# Demo video sources and renders stay local (mp4 hosted on Cloudflare R2);
+# only docs/video/README.md and the already-tracked narration JSON are in git
 docs/video/*.mp4
 docs/video/*.wav
-docs/video/out/
-docs/video/node_modules/
-docs/video/*/.hyperframes/
-docs/video/*/.thumbnails/
+docs/video/*/

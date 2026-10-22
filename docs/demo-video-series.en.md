@@ -239,7 +239,7 @@ older documents that still have that field impossible to edit; safe schema evolu
 | 4 | Keycloak group `/tenants/saigon-express/ops` | Roles are Keycloak groups; the kernel reads them from the token and does not trust headers. |
 | 5 | Desk (`khoa`) → CODRemittance `CODR-…-0002` (350,000, created by `khoa` during the seed) → Submit; then log in as `thu` → Submit | **Segregation of duties**: the maker cannot approve their own document (403); `thu` can. Record right after `demo-seed`: scene 10 pays out another 100,000 to C001, after which 350,000 would exceed the amount owed. |
 
-**To be accurate:** row-level permission conditions and SAML SSO are still on the roadmap.
+**To be accurate:** row-level permission conditions are still on the roadmap. SAML SSO and SCIM now run, see Video 21.
 
 ### Video 12: Append-only ledger (scene 10)
 

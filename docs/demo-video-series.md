@@ -239,7 +239,7 @@ cũ còn trường đó không sửa được nữa; tiến hoá schema an toàn
 | 4 | Nhóm Keycloak `/tenants/saigon-express/ops` | Role là nhóm trong Keycloak; kernel đọc từ token, không tin header. |
 | 5 | Desk (`khoa`) → CODRemittance `CODR-…-0002` (350.000, do `khoa` lập khi seed) → Submit; rồi đăng nhập `thu` → Submit | **Segregation of duties**: người lập không được tự duyệt (403); `thu` duyệt được. Quay ngay sau `demo-seed`: cảnh 10 chi thêm 100.000 cho C001, sau đó 350.000 sẽ vượt số đang nợ. |
 
-**Nói đúng:** điều kiện quyền theo từng dòng (row-level conditions) và SSO SAML còn trên roadmap.
+**Nói đúng:** điều kiện quyền theo từng dòng (row-level conditions) còn trên roadmap. SSO SAML và SCIM đã chạy, xem Video 21.
 
 ### Video 12: Sổ cái append-only (cảnh 10)
 

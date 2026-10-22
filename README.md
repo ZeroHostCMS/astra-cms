@@ -58,7 +58,7 @@ First apps: Astra CMS, then Astra ERP.
 
 ## Demo videos
 
-Recorded from the running demo: real Desk screens and terminal output. Videos 8 to 17 and 19 to 21 each end with a "To be accurate" note on what is not built yet. Script: [docs/demo-video-series.en.md](docs/demo-video-series.en.md).
+Recorded from the running demo: real Desk screens and terminal output. Videos 8 to 17 and 19 to 21 each end with a "To be accurate" note on what is not built yet. Script: [docs/demo-video-series.en.md](docs/demo-video-series.en.md). All 22 videos on one page, in English and Vietnamese: [docs/video](docs/video/README.md).
 
 <table>
 <tr><th colspan="2" align="left">Teaser: One platform, every business process <sub>(1:30)</sub></th></tr>

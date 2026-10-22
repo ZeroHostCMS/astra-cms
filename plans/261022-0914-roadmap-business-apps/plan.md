@@ -1,6 +1,6 @@
 # Roadmap wave D: HRM (HR + payroll), STMS dispatch, SAML + SCIM
 
-Status: in progress · Builds on: [platform feature demos](../261021-1723-astra-platform-feature-demos/plan.md)
+Status: done · Builds on: [platform feature demos](../261021-1723-astra-platform-feature-demos/plan.md)
 
 ## Outcome
 The roadmap items of group D in Video 18 ("Còn trên roadmap") become real, runnable thin slices in the Astra
@@ -24,7 +24,7 @@ rendered video (19, 20, 21). Nothing is mocked; what a slice does not do is stat
 | 1c | IAM: SAML IdP brokering in the Keycloak realm, SCIM 2.0 `/scim/v2` Users/Groups per tenant mapped to tenant groups, `scripts/demo-sso.sh`, tests | agent | done |
 | 2 | Merge to `feat/roadmap-business-apps`, full test suite, run all three scenes on one stack, capture output | controller | done (76/76 green; k3d live run of all three demos OK after raising server memory to 1536Mi) |
 | 2b | STMS copilot REST endpoint + Desk copilot page (kernel side) | agent | done |
-| 3 | Videos 19–21 (HyperFrames, Be Vietnam Pro), scripts in `docs/demo-video-series.md`, Video 18 table + README.vi/README updates | agents + controller | done: videos 18–21 rendered (Be Vietnam Pro); README video rows wait for the R2 upload |
+| 3 | Videos 19–21 (HyperFrames, Be Vietnam Pro), scripts in `docs/demo-video-series.md`, Video 18 table + README.vi/README updates | agents + controller | done: videos 18–21 rendered (Be Vietnam Pro), uploaded to R2 and listed in both READMEs and `docs/video/README.md` |
 
 ## Shared-file contract (parallel safety)
 - Flyway in `astra-doctype/.../db/migration`: HRM may use `V6__*`, STMS `V7__*`, IAM `V8__*`. Skip if not needed.
@@ -43,4 +43,4 @@ rendered video (19, 20, 21). Nothing is mocked; what a slice does not do is stat
 - `scripts/demo-stms.sh` is not re-runnable without `make demo-reset demo-seed`: the urgent stop and the changed time window stay, and the second run ends infeasible.
 - Desk copilot result panel: the before → after score wraps on two lines; the copilot summary row of the event log has empty "Điểm đổi xe" and "Giải (ms)" cells.
 - Employees cannot read their own salary slip (needs a read-if-owner permission in the kernel).
-- Video 11's "Nói đúng" still says SAML is on the roadmap; Video 21 now covers it.
+- ~~Video 11's "Nói đúng" still says SAML is on the roadmap~~: scene 8 now points to Video 21 (EN and VI re-voiced and re-rendered).
