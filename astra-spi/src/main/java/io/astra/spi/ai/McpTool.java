@@ -23,6 +23,14 @@ public interface McpTool {
     List<String> reads();
 
     /**
+     * Whether a successful call may commit a write. The kernel then answers with {@code X-Tx-LSN}, the WAL position
+     * after the call, so the client can demand read-your-writes from replicas. Read-only tools keep the default.
+     */
+    default boolean writes() {
+        return false;
+    }
+
+    /**
      * Runs the tool in the caller's tenant. Return plain maps and lists; documents should be returned
      * as {@code {doctype, name, data}} maps so that their PII fields can be masked.
      */

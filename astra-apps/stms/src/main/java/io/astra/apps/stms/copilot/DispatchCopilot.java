@@ -1,7 +1,10 @@
 package io.astra.apps.stms.copilot;
 
+import io.astra.apps.stms.DispatchProblems;
 import io.astra.apps.stms.Replanner;
 import io.astra.apps.stms.Values;
+import io.astra.apps.stms.solver.PlanDiff;
+import io.astra.apps.stms.solver.PlanResult.RouteRow;
 import io.astra.spi.ai.McpTool;
 import io.astra.spi.doc.DocValidationException;
 import io.astra.spi.doc.Document;
@@ -70,6 +73,14 @@ public class DispatchCopilot {
         out.put("feasible", Values.flag(after.get("feasible")));
         out.put("distance_km_before", before.get("distance_km"));
         out.put("distance_km_after", after.get("distance_km"));
+        // the net effect of all calls together, for a before/after route view
+        List<RouteRow> routesBefore = DispatchProblems.routes(before);
+        List<RouteRow> routesAfter = DispatchProblems.routes(after);
+        PlanDiff diff = PlanDiff.between(routesBefore, routesAfter);
+        out.put("moved_stops", diff.moved().stream().map(PlanDiff.Move::toMap).toList());
+        out.put("resequenced", diff.resequenced());
+        out.put("routes_before", routesBefore.stream().map(RouteRow::toMap).toList());
+        out.put("routes_after", routesAfter.stream().map(RouteRow::toMap).toList());
         out.put("explanation", explain(llm, calls, results, before, after));
 
         if (!calls.isEmpty()) {

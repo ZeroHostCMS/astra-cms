@@ -64,6 +64,8 @@ public final class ReplanTools {
 
         @Override public List<String> reads() { return Replanner.REPLAN_READS; }
 
+        @Override public boolean writes() { return true; }
+
         @Override public Object call(Map<String, Object> args) {
             if (args.get("plan") != null) {
                 String name = Values.text(args, "plan");
@@ -114,6 +116,8 @@ public final class ReplanTools {
 
         @Override public List<String> reads() { return Replanner.REPLAN_READS; }
 
+        @Override public boolean writes() { return true; }
+
         @Override public Object call(Map<String, Object> args) {
             String planName = Values.text(args, "plan");
             String plate = Values.text(args, "vehicle");
@@ -160,6 +164,8 @@ public final class ReplanTools {
         }
 
         @Override public List<String> reads() { return Replanner.REPLAN_READS; }
+
+        @Override public boolean writes() { return true; }
 
         @Override public Object call(Map<String, Object> args) {
             String planName = Values.text(args, "plan");
@@ -209,6 +215,8 @@ public final class ReplanTools {
 
         @Override public List<String> reads() { return Replanner.REPLAN_READS; }
 
+        @Override public boolean writes() { return true; }
+
         @Override public Object call(Map<String, Object> args) {
             String planName = Values.text(args, "plan");
             Document plan = replanner.draftPlan(planName);
@@ -243,6 +251,8 @@ public final class ReplanTools {
         }
 
         @Override public List<String> reads() { return Replanner.REPLAN_READS; }
+
+        @Override public boolean writes() { return true; }
 
         @Override public Object call(Map<String, Object> args) {
             String planName = Values.text(args, "plan");
@@ -283,6 +293,8 @@ public final class ReplanTools {
         }
 
         @Override public List<String> reads() { return Replanner.REPLAN_READS; }
+
+        @Override public boolean writes() { return true; }
 
         @Override public Object call(Map<String, Object> args) {
             String planName = Values.text(args, "plan");
