@@ -1,0 +1,16 @@
+name: Vehicle
+module: stms
+kind: master
+naming: { field: plate }
+
+fields:
+  - { name: plate,       type: Data,  required: true, in-list: true }
+  - { name: depot_hub,   type: Link,  options: Hub, required: true, in-list: true, projected: true }
+  - { name: capacity_kg, type: Float, required: true, in-list: true, label: Capacity (kg) }
+  - { name: driver_name, type: Data,  pii: true }
+  - { name: active,      type: Check, default: true, in-list: true }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true }
+  - { role: dispatcher, read: true, create: true, write: true }
+  - { role: ops,        read: true }

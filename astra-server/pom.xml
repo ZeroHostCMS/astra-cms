@@ -47,6 +47,11 @@
       <artifactId>astra-app-express</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.astra</groupId>
+      <artifactId>astra-app-stms</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-config-yaml</artifactId>
     </dependency>
