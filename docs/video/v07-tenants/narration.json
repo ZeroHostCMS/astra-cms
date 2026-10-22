@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video bảy: đa thuê bao. Một server, nhiều công ty.",
+  "s02-list": "Cùng URL, cùng DocType, hai công ty. Tài khoản demo thuộc cả hai tenant. Mỗi khung gọi cùng một API, chỉ khác header X Astra Tenant: Sài Gòn có ba khách, Hà Nội có hai.",
+  "s03-form": "Cùng mã chứng từ, nhưng C zero zero một ở Sài Gòn không phải C zero zero một ở Hà Nội. Mỗi tenant có một bản ghi riêng, dù cùng mã.",
+  "s04-resolve": "Không API nào nhận tenant làm tham số. Kernel xác định tenant theo thứ tự: header, rồi subdomain, rồi user chỉ thuộc một tenant. Không xác định được thì trả bốn trăm; không phải thành viên thì trả bốn trăm lẻ ba. Tenant được gắn vào ScopedValue, rồi vào transaction PostgreSQL.",
+  "s05-links": "Link không vượt qua tenant. Cùng mã C zero zero một trả về hai khách khác nhau ở hai tenant. Khách C zero zero ba chỉ có ở Sài Gòn, nên Hà Nội nhận bốn trăm lẻ bốn, và đơn trỏ tới đó bị từ chối.",
+  "s06-members": "Chỉ vào được tenant mình thuộc về. User nam, admin của Hà Nội, gọi vào Sài Gòn thì nhận bốn trăm lẻ ba. User demo thuộc hai tenant mà không gửi tenant thì nhận bốn trăm. Fail-closed: mơ hồ thì từ chối, kernel không chọn hộ.",
+  "s07-rls": "Quên gắn tenant thì sao? Role ứng dụng chỉ thấy không dòng, chứ không phải tất cả. Gắn tenant Sài Gòn trong một transaction thì mới thấy dữ liệu của tenant đó. FORCE ROW LEVEL SECURITY áp dụng cả với chủ bảng.",
+  "s08-code": "Cho developer: tenant đi theo luồng, không theo tham số. Nó lấy từ ScopedValue rồi đặt vào transaction. Ngoài ra RowLevelSecurityGuard chạy lúc khởi động: nếu role là superuser hoặc bypass RLS, kernel không khởi động. Chi tiết ở video tám.",
+  "s09-recap": "Cách ly ở cả bốn tầng: cùng URL, Link, Keycloak theo tenant, và PostgreSQL trả không dòng khi chưa gắn tenant. Video sau: bảo mật fail-closed.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

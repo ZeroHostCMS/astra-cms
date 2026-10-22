@@ -1,0 +1,11 @@
+{
+  "s01-title": "Video tám: bảo mật fail-closed. Cấu hình sai thì kernel không chạy.",
+  "s02-risk": "Rủi ro là superuser bỏ qua row level security. Trong stack Docker Compose, role astra là superuser, còn astra app thì không. Một connection string sai là đủ để mọi tenant thấy dữ liệu của nhau, mà không có lỗi nào báo ra.",
+  "s03-attempt": "Thử khởi động một kernel thứ hai bằng role superuser. Kernel dừng với thông báo rằng role astra là SUPERUSER, và thoát với mã một. Guard chạy trước cả Flyway, nên không có migration nào chạy, không DocType nào được nạp.",
+  "s04-guard": "Cho developer: RowLevelSecurityGuard truy vấn role hiện tại. Nếu là superuser hoặc có BYPASSRLS thì ném lỗi. Guard được gọi hai lần, trước khi Flyway migrate và lúc khởi động.",
+  "s05-role": "Kernel chạy bằng role không đặc quyền astra app: NOSUPERUSER, NOBYPASSRLS, không tạo được role hay database. FORCE ROW LEVEL SECURITY giữ cả chủ bảng.",
+  "s06-live": "Trong cụm k ba đê đang chạy, log kernel xác nhận role astra app chịu row level security. Kernel, Seata và worker CDC đều kết nối bằng role thường, không ai là superuser.",
+  "s07-honest": "Nói đúng: có công tắc astra tenancy allow rls bypass, mặc định false. Bật lên thì kernel chạy tiếp nhưng ghi cảnh báo. Chỉ dành cho máy dev.",
+  "s99-recap": "Tóm lại: superuser hoặc BYPASSRLS thì kernel từ chối khởi động, cụm thật dùng role thường, công tắc dev mặc định tắt. Video sau: developer.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

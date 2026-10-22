@@ -1,0 +1,12 @@
+{
+  "s01-title": "Một lần submit, ba tài nguyên. Tất cả, hoặc không gì cả, trong một giao dịch toàn cục.",
+  "s02-yaml": "Chỉ cần một dòng YAML: transaction global. Kernel mở giao dịch toàn cục quanh submit và cancel. Nhánh AT trừ hạn mức công nợ, nhánh TCC giữ chỗ lấy hàng trong Redis, và transaction của kernel commit cuối cùng. Lỗi ở bước nào thì tất cả quay lại.",
+  "s03-ok": "Cảnh mười lăm, trường hợp thành công. Submit đơn, hạn mức đã dùng tăng từ một trăm hai mươi ba nghìn lên một trăm chín mươi sáu nghìn, chỗ lấy hàng tăng một, và vận đơn được sinh ra. Seata Server ghi nhận hai nhánh, AT và TCC, rồi commit cả hai.",
+  "s04-c002": "Bây giờ khách C002 vượt hạn mức. BMS từ chối, API trả bốn trăm hai mươi hai. Đơn vẫn là nháp, không có vận đơn, không có bút toán. Nhánh AT từ chối trước, nên nhánh TCC chưa từng giữ chỗ.",
+  "s05-tcc": "Ca khó hơn: rollback sau khi một nhánh đã commit. Hạn mức AT đã bị trừ, rồi TCC từ chối vì ngày đã kín chỗ. Seata hoàn lại hạn mức từ undo log, và chỗ lấy hàng giữ nguyên số không.",
+  "s06-server": "Đây là log thật của Seata Server hai chấm sáu chấm không. Từ lúc begin, đăng ký hai nhánh, cho tới khi cả hai được hoàn tác, mất khoảng bảy mươi lăm mili giây theo đồng hồ của Seata Server.",
+  "s07-code": "Với developer, hook của app gọi một SPI, không gọi Seata. App không thấy một kiểu Seata nào. Nhánh AT là JDBC thường trên datasource đã proxy. Nhánh TCC là participant của app, và khi hết chỗ thì ném lỗi để Seata gọi rollback.",
+  "s08-honest": "Nói cho đúng: Seata Server dùng store file, production nên dùng database hoặc Raft. TCC chưa dùng bảng fence của Seata. Kernel commit cuối cùng, chưa là một nhánh Seata.",
+  "s99-recap": "Tóm lại: một dòng YAML, AT hoàn lại từ undo log, TCC hủy chỗ giữ khi rollback, và log thật của Seata hai chấm sáu. Video sau: Roadmap.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

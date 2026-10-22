@@ -1,0 +1,15 @@
+{
+  "s01-title": "Timefold lập tuyến. Sự cố thì giải lại. Copilot là LLM giả lập.",
+  "s02-data": "Dữ liệu gốc: một kho Tân Bình, ba xe, và hai mươi điểm giao trong ngày, có khung giờ và khách VIP. Có năm DocType mới. Sơ đồ chỉ minh hoạ, nối thẳng, không phải đường thật.",
+  "s03-solve": "Lưu kế hoạch với solve true là có tuyến. Timefold Solver có ràng buộc cứng về tải trọng và khung giờ, ràng buộc mềm về quãng đường, khách ưu tiên và cân bằng tải. Kết quả: không vi phạm ràng buộc cứng, hai xe, chín mươi tám phẩy tám ki lô mét.",
+  "s04-breakdown": "Xe năm mươi mốt C hỏng ở Thủ Đức. Người điều phối gõ một câu tiếng Việt, và copilot gọi hai tool thật. Mười điểm chuyển sang xe khác, giải lại trong khoảng một giây, vẫn không vi phạm ràng buộc cứng. Lưu ý, phần lời của copilot là LLM giả lập, theo kịch bản demo.",
+  "s05-weights": "Đổi trọng số: ưu tiên khách VIP trước mười giờ, tải chia đều. Giờ phục vụ điểm VIP sớm hơn, tải hai xe cân bằng, đổi lại quãng đường dài hơn. Điểm mềm đổi thang đo, chỉ so sánh trong cùng trọng số.",
+  "s06-urgent": "Qua MCP, một đơn gấp ba mươi ký ở Bến Thành được chèn vào kế hoạch. Khách VIP vẫn đúng hạn. Toạ độ Bến Thành lấy từ danh sách địa danh cố định của bản giả lập.",
+  "s07-live": "Hai sự kiện trực tiếp qua tool MCP. Kẹt xe ở Thủ Đức, chậm gấp hai phẩy năm lần, rồi khách đổi khung giờ. Mỗi lần giải lại đều khả thi, và ghi một DispatchEvent với điểm số trước và sau.",
+  "s08-desk": "Cùng copilot, trên Desk. Tạo kế hoạch, bật Solve on save, hook giải ngay. Nhãn LLM giả lập hiện từ đầu. Rồi chọn gợi ý ưu tiên khách VIP trước mười giờ và gửi.",
+  "s09-desk-result": "Đây là kết quả trên Desk: tool đã chạy, điểm số, và chín điểm đổi xe được tô màu. Tải các xe cân bằng hơn, ba trên ba điểm VIP trước mười giờ. Nhãn LLM giả lập vẫn hiện trên kết quả.",
+  "s10-guard": "Quyền và khoá kế hoạch. Chỉ admin và dispatcher giải lại được, người khác bị từ chối, và tenant khác không thấy kế hoạch. Đã submit là đóng băng: muốn đổi phải amend.",
+  "s11-honest": "Nói đúng: solver, việc lập lại kế hoạch và các tool là thật, nhưng LLM của copilot là kịch bản giả lập. Chưa có bản đồ hay giao thông trực tiếp, và chưa có app tài xế hay dự báo tải.",
+  "s98-recap": "Tóm lại: Timefold giải trong kernel, giải lại mỗi khi có sự cố, copilot gọi tool MCP thật dù LLM là giả lập, và submit là đóng băng.",
+  "s99-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

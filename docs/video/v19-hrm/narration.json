@@ -1,0 +1,16 @@
+{
+  "s01-title": "Chấm công, tính lương, và một bút toán vào sổ cái.",
+  "s02-app": "App io chấm astra chấm hrm là app Tier không, chỉ dùng astra SPI, thêm tám DocType mới. Chỉ lấy tên khái niệm của Frappe HRMS, không chép code.",
+  "s03-components": "Thành phần lương gồm lương cơ bản, phụ cấp ăn trưa, xăng, thưởng KPI, và các khoản bảo hiểm của người lao động. Tỷ lệ bảo hiểm là cấu hình seed để demo.",
+  "s04-wasm": "Thưởng bưu tá là mã Wasm của tenant, viết bằng Rust, thưởng theo bậc số kiện. Kernel chạy thử module ngay khi lưu. Vòng lặp vô hạn bị dừng ở hạn năm mươi mili giây, và không bao giờ tới bảng lương.",
+  "s05-attendance": "Chấm công quyết định ngày công. Ngày không chấm công tính là có đi làm, nên NV002 còn hai mươi bốn rưỡi trên hai mươi sáu ngày. Quang ở OPS không đọc được lương.",
+  "s06-entry": "Một lần lưu Payroll Entry là đủ phiếu lương nháp. Bốn phiếu được tính song song, mỗi phiếu một virtual thread, trong transaction của entry.",
+  "s07-slip": "Đây là phiếu lương của NV002, từng dòng đều có căn cứ: lương cơ bản theo ngày công, thưởng KPI từ Wasm, bảo hiểm tính trên lương hợp đồng. Net bằng gross trừ bảo hiểm của người lao động.",
+  "s08-submit": "Submit entry, phiếu lương và sổ cái cùng một transaction. Chỉ có một bút toán dồn tích cho cả kỳ lương: nợ tài khoản sáu bốn hai, có các tài khoản bảo hiểm và tài khoản ba ba bốn, phải trả người lao động. Hai bên cân đối.",
+  "s09-guards": "Ba lần từ chối. Hủy một phiếu thì phải hủy cả entry. Chạy lương tháng chín lần nữa bị chặn. Client không tự đặt được lương.",
+  "s10-mcp": "AI agent hỏi bảng lương qua MCP chỉ thấy tên đã che. Công cụ dùng đúng quyền người gọi, nên người bán hàng bị từ chối.",
+  "s11-cancel": "Hủy là ghi bút toán đảo, không xoá dòng nào. Số dư các tài khoản lương về không, còn lịch sử gốc vẫn nằm trong sổ cái.",
+  "s12-honest": "Nói cho đúng: đây là một app lương để demo, chưa phải phần mềm lương. Chưa tính thuế thu nhập cá nhân, chưa có chi trả lương, chưa có job nền cuối tháng, và nhân viên chưa tự xem được phiếu lương.",
+  "s99-recap": "Tóm lại: chấm công quyết định ngày công, Wasm tính thưởng, bốn phiếu lương trong một transaction, và một bút toán dồn tích. Video sau: STMS.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

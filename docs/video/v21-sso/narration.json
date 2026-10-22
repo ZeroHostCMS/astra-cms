@@ -1,0 +1,16 @@
+{
+  "s01-title": "Đăng nhập bằng IdP công ty. Tài khoản do danh bạ doanh nghiệp quản lý.",
+  "s02-login": "Chỉ một nút: Acme Corp SSO. Mật khẩu gõ ở IdP doanh nghiệp, Astra chỉ nhận lại mã OIDC từ Keycloak. Linh ở đây là nhân viên IdP, không phải Linh của STMS.",
+  "s03-flow": "Luồng SP initiated. Desk đi qua Keycloak tới IdP rồi quay lại Desk. Hai realm nói SAML hai chấm không thật với nhau, còn Desk chỉ nói OIDC với Keycloak.",
+  "s04-assertion": "IdP gửi assertion có ký, kèm nhóm của người dùng. Keycloak broker ánh xạ thành nhóm tenants acme editor trong token, và Astra đọc role từ token.",
+  "s05-desk": "Linh Võ vào Desk với role editor của tenant acme, và tạo được một bài viết. Kernel không có code riêng cho SSO: quyền DocType áp như với user local.",
+  "s06-tamper": "Giờ sửa assertion trên đường đi, đổi một chữ. Chữ ký không còn hợp lệ, Keycloak chặn luồng. Không có mã, không ai đăng nhập.",
+  "s07-discovery": "Tới SCIM hai chấm không, tại đường dẫn scim v hai. Tenant chỉ lấy từ claim scim tenant do Keycloak gắn cho client, không bao giờ từ request.",
+  "s08-create": "Tạo user bằng POST, trả về hai trăm linh một. Tạo lần hai cùng userName thì bị bốn trăm linh chín. User mới có tài khoản nhưng chưa có quyền, vì chưa thuộc role nào.",
+  "s09-role": "Group chính là role. Thêm user vào group editor, đăng nhập lại là có role editor và tạo được bài viết. Đổi role có hiệu lực từ lần đăng nhập hoặc refresh tiếp theo.",
+  "s10-deactivate": "Đặt active bằng false chặn đăng nhập ngay. Nhưng access token đã cấp vẫn hợp lệ đến khi hết hạn, vì Astra xác minh JWT offline.",
+  "s11-failclosed": "Fail closed. Token của globex không chạm được user của acme. Lỗi trả theo RFC bảy sáu bốn bốn, và xoá user thì không còn tìm thấy nữa.",
+  "s12-honest": "Nói đúng: IdP chỉ là realm Keycloak cùng container, không phải Okta hay Entra. Chỉ có SP initiated, chưa có Single Logout. SCIM chưa có Bulk.",
+  "s99-recap": "Doanh nghiệp giữ danh tính, Astra giữ quyền. Video sau: Roadmap.",
+  "s13-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

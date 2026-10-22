@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video mười ba: overlay theo tenant. Mỗi công ty một cấu hình, app không đổi một dòng.",
+  "s02-file": "Một file YAML của tenant Hà Nội thêm trường xuất hóa đơn VAT, mã số thuế, email nhận hóa đơn, thêm vùng Island, và bắt buộc ghi chú giao hàng. Admin của tenant áp dụng bằng API overlay, và file nằm trong Git cạnh cấu hình khác.",
+  "s03-compare": "So sánh hai tenant trên cùng form New Customer Order. Bên Hà Nội có các trường gắn nhãn tenant overlay; bên Sài Gòn không đổi.",
+  "s04-api": "Validation theo cấu hình của từng tenant. Hà Nội tạo đơn vùng Island kèm hóa đơn VAT thành công. Cùng body gửi sang Sài Gòn thì bị từ chối, vì trường lạ và vùng không hợp lệ. Thiếu ghi chú ở Hà Nội cũng bị từ chối. Form, API và validation đều đọc cùng một định nghĩa hiệu lực.",
+  "s05-live": "Sửa trực tiếp trên Desk. Mai, admin, viết overlay thêm trường gift wrap, bấm Save và có hiệu lực ngay, không restart, không migration. Pod khác nhận thay đổi trong tối đa hai giây.",
+  "s06-guard": "Overlay không được phá app. Đổi kiểu của một trường bị từ chối với mã bốn hai hai, và sales sửa overlay thì bị chặn với mã bốn không ba. Chỉ một số thuộc tính được chỉnh, và chỉ admin của tenant được sửa.",
+  "s07-code": "Với developer, overlay cũng là dữ liệu của tenant. Kernel lấy định nghĩa của app rồi áp overlay của tenant hiện tại. Overlay lưu trong một bảng riêng với cùng chính sách RLS, nên tenant này không đọc được overlay của tenant kia.",
+  "s08-honest": "Nói cho đúng, overlay thêm trường và chỉnh label, required, options, default. Chưa thêm được hook hay quyền, không xoá được trường của app.",
+  "s99-recap": "Tóm lại: tùy biến không cần fork. YAML của tenant có hiệu lực ngay, validation theo tenant, có rào chắn. Video sau: Wasm tier hai.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

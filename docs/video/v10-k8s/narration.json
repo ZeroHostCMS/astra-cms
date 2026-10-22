@@ -1,0 +1,11 @@
+{
+  "s01-title": "Video mười: chạy trên Kubernetes. Hai pod, một chuỗi số không lỗ.",
+  "s02-deploy": "Deployment có hai replica kernel sau một Service. Chiến lược là RollingUpdate với max unavailable bằng không, cùng readiness và liveness probe. Manifest chạy hai pod ngay từ đầu, vì tenancy và chuỗi đánh số phải an toàn trên cả cụm.",
+  "s03-parallel": "Mười hai đơn được tạo cùng lúc, sáu đơn vào mỗi pod. Số đơn chạy liền từ bảy đến mười tám: không số trùng, không số bị bỏ. Pod nào trả số nào là ngẫu nhiên, nhưng chuỗi vẫn liền mạch.",
+  "s04-desk": "Cùng chuỗi đó nhìn từ Desk. Mẫu đánh số đếm theo tenant và theo ngày.",
+  "s05-code": "Cho developer: một câu upsert và một khoá dòng. Pod thứ hai chờ khoá của pod thứ nhất. Nếu transaction rollback, số cũng được trả lại, nên không có lỗ. Không cần sequence riêng, không cần Redis.",
+  "s06-rollout": "Rolling restart khi đang có người dùng. Một client đọc đơn hàng mỗi phần tư giây. Trong lúc restart có bốn mươi bảy request: bốn mươi lăm trả về hai trăm, hai request không nhận được phản hồi khi pod cũ dừng.",
+  "s07-honest": "Nói đúng: gần như liền mạch, chưa phải zero downtime. Manifest chưa có preStop hook hay thời gian drain, nên request đang bay tới pod cũ đúng lúc nó tắt có thể lỗi. Một thao tác trên Desk có thể phải bấm lại.",
+  "s99-recap": "Tóm lại: hai replica, chuỗi số liền mạch, upsert cộng khoá dòng, và rolling restart thành công bốn mươi lăm trên bốn mươi bảy request. Video sau: Keycloak.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

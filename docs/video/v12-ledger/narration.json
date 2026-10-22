@@ -1,0 +1,13 @@
+{
+  "s01-title": "Video mười hai: sổ cái append only. Ghi thêm, không bao giờ sửa.",
+  "s02-gl": "General ledger cho bảng cân đối theo hệ tài khoản Việt Nam, gồm các tài khoản một một hai, một ba một, một ba tám tám, ba ba tám tám và năm một một. Số dư tính thẳng từ bảng ledger, không có bảng tổng hợp nào để bị lệch.",
+  "s03-post": "Khi đơn được submit, bút toán được ghi cùng lúc, trong cùng transaction với đơn. Phí vận chuyển bảy mươi ba nghìn: Nợ một ba một, Có năm một một.",
+  "s04-reverse": "Hủy đơn không xoá dòng nào. Sổ cái ghi hai dòng đảo mới, hai dòng gốc giữ nguyên. Số dư về không, lịch sử còn nguyên.",
+  "s05-cod": "Khi giao thành công, tiền COD bưu tá thu là tiền nợ shop. Vận đơn Delivered ghi Nợ một ba tám tám, Có ba ba tám tám tám trăm năm mươi nghìn, cũng trong transaction của lần quét.",
+  "s06-guard": "Database tự bảo vệ. Kể cả role chủ bảng chạy UPDATE cũng bị từ chối: sổ cái là append only, hãy ghi bút toán đảo. Việc chặn do một trigger trong database đảm nhiệm.",
+  "s07-parts": "Sổ cái được phân vùng theo tháng. Lúc khởi động, kernel tạo sẵn phân vùng tháng này và hai tháng tới; ngoài khoảng đó có phân vùng mặc định.",
+  "s08-payout": "Chi trả COD không được vượt số đang nợ. Chi chín mươi chín triệu khi chỉ nợ ba trăm năm mươi nghìn thì bị từ chối với mã bốn hai hai. Người lập cũng không tự duyệt được, chỉ Thu duyệt. Số nợ được đọc từ sổ cái ngay trong hook.",
+  "s09-honest": "Nói cho đúng, trigger chỉ chặn UPDATE và DELETE. Role chủ bảng vẫn DROP hay ALTER được. Hash chain cho audit còn trên roadmap.",
+  "s99-recap": "Tóm lại: Submit ghi Nợ một ba một, Có năm một một. Cancel ghi bút toán đảo. Delivered ghi Nợ một ba tám tám. Database chặn UPDATE và DELETE.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

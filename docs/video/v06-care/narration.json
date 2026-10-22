@@ -1,0 +1,11 @@
+{
+  "s01-title": "Video sáu: chăm sóc khách hàng nhìn thấy vận hành.",
+  "s02-new": "Khách gọi báo hàng bị vỡ. Trong Desk, tài khoản ha thuộc vai trò care tạo một Support Ticket và gắn vận đơn có sẵn, đã giao. Priority đang là Normal, và ba ô do hook điền vẫn còn trống.",
+  "s03-created": "Bấm Create, hook làm phần còn lại. Vì có chữ vỡ, priority tự lên High và ghi lý do vào triage note. Hạn SLA là lúc tạo cộng hai mươi bốn giờ, và trạng thái vận đơn Delivered được chép vào ticket.",
+  "s04-hook": "Đây là code cho developer. Hook này chỉ là quy tắc, không có phép màu: bảy từ khoá, và chỉ nâng lên High khi priority đang là Low hoặc Normal. Nói đúng: hôm nay đây là rule-based; AI triage qua MCP vẫn còn trên roadmap.",
+  "s05-kernel": "Cùng kiểu hook như các video trước, chạy trong transaction. Kernel gọi before save ngay trước câu INSERT, nên hook ghi thẳng vào chứng từ đang tạo.",
+  "s06-replica": "Thẻ cuối form đọc bản sao, không đọc thẳng bảng vận hành. Worker CDC viết bằng Rust chép từ bảng astra doc qua logical replication vào replica waybill. Thẻ báo in sync, độ trễ của worker là bốn mươi bảy mili giây. Chi tiết ở video mười sáu.",
+  "s07-api": "Cùng luồng đó qua REST. Một ticket khiếu nại về hàng hỏng được nâng lên High, có hạn SLA và bản chụp trạng thái vận đơn, đúng như trên Desk.",
+  "s08-recap": "Tóm lại: tạo ticket, hook xếp ưu tiên và đặt SLA, thẻ replica đọc bản sao, và cùng luồng qua API. Video sau: đa thuê bao.",
+  "s09-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

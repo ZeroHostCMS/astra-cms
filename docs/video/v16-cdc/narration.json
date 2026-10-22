@@ -1,0 +1,13 @@
+{
+  "s01-title": "Ghi ở OPS, đọc ngay ở chăm sóc khách hàng, không dữ liệu cũ.",
+  "s02-page": "Worker Rust giải mã WAL của PostgreSQL. Module chăm sóc khách hàng không đọc thẳng bảng vận hành, mà đọc bảng replica waybill do worker giữ. Trên Desk, độ trễ lúc này là bảy mươi bảy mili giây.",
+  "s03-code": "Với developer, chỉ cần khai báo tuyến trong một file YAML: DocType nào, bảng đích nào, cột nào. Worker tự giải mã giao thức pgoutput, rồi ghi replica và watermark trong cùng một transaction. Slot chỉ được đẩy lên sau khi commit.",
+  "s04-write": "Cảnh mười bốn. Tạm dừng worker, rồi quang ở OPS cập nhật vận đơn. Mỗi lệnh ghi trả về header X Tx LSN, là vị trí WAL sau khi commit. Client giữ lại giá trị này để gửi kèm khi đọc ở module khác.",
+  "s05-pending": "Giờ ha ở chăm sóc khách hàng đọc bản replica, kèm X Required LSN. Kernel so với watermark của worker, thấy chưa tới, nên trả mã hai trăm linh hai, sync pending, chứ không trả dữ liệu cũ. Chưa tới thì báo chờ, không đoán.",
+  "s06-resume": "Bật lại worker, chỉ hai mươi sáu mili giây sau là đọc được, trạng thái Out for Delivery. Ở trạng thái ổn định, ghi rồi đọc ngay với LSN, replica bắt kịp sau một trăm mười bảy mili giây. Con số mỗi lần chạy mỗi khác.",
+  "s07-desk": "Trên Desk cũng vậy. Lưu xong, thẻ chăm sóc khách hàng chờ đúng bản ghi của bạn. Desk tự hỏi lại trong mười giây. Lần quay này worker tắt lâu hơn thế, nên thẻ được mở lại sau khi worker chạy.",
+  "s08-slot": "Trong PostgreSQL chỉ có một slot logical, và bảng replica cũng nằm dưới RLS. Slot hiện active là f, điều này bình thường, vì worker đọc slot bằng SQL, không giữ kết nối streaming.",
+  "s09-honest": "Nói cho đúng: worker đọc slot mỗi năm mươi mili giây, giao hàng ít nhất một lần, chưa dùng giao thức streaming. Dữ liệu cũng chưa được đẩy sang Apache Doris.",
+  "s99-recap": "Tóm lại: replica Rust cho chăm sóc khách hàng, mỗi lệnh ghi báo vị trí WAL, chưa tới thì trả hai trăm linh hai. Video sau: Seata.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

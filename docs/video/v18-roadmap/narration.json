@@ -1,0 +1,10 @@
+{
+  "s01-title": "Video mười tám. Các video khác là code đang chạy. Video này là những gì còn đang làm.",
+  "s02-runs": "Những gì đã có là các lát cắt mỏng, đủ để chứng minh cơ chế, từ DocType tới Seata, cộng ba video mới: HRM, STMS và SAML SSO. Mỗi video có mục nói đúng, và video này gom các giới hạn lại.",
+  "s03-storage": "Về lưu trữ, đã chạy: JSONB, sổ cái append only, schema riêng cho BMS, Seata. Đang phát triển: multi schema cho mọi module, bảng fence TCC, Seata store.",
+  "s04-identity": "Về danh tính, đã chạy: Keycloak, SAML SSO, SCIM và Wasm. Đang phát triển: quyền theo dòng, Single Logout, SCIM Bulk, Tier một Isolated JVM.",
+  "s05-data-ai": "Về dữ liệu, đã chạy Rust CDC và MCP che dữ liệu cá nhân. Đang phát triển: giao thức streaming, Apache Doris, agent tự hành, pgvector RAG.",
+  "s06-modules": "HRM và STMS đã có lát cắt mỏng. HRM còn thiếu thuế thu nhập cá nhân, chi trả lương và job cuối tháng. STMS còn thiếu LLM thật, bản đồ thật và app tài xế. Audit hash chain và mã hoá trường chưa bắt đầu.",
+  "s07-close": "Mỗi bước tiếp theo cũng sẽ chạy thật trước khi lên video. Roadmap chi tiết nằm trong README. Hữu ích nhất: phản biện mô hình DocType, overlay.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

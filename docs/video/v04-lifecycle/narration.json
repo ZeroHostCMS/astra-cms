@@ -1,0 +1,14 @@
+{
+  "s01-title": "Video bốn: vòng đời chứng từ. Đã duyệt thì không sửa. Muốn đổi, hãy hủy rồi sửa đổi.",
+  "s02-states": "Ba trạng thái, đi một chiều. Nháp, còn sửa được. Đã duyệt, bất biến. Rồi đã hủy, cũng bất biến, và từ đó có thể sửa đổi thành một bản nháp mới. Hôm nay ta tạo đơn mới cho C001.",
+  "s03-create": "Đăng nhập bằng tài khoản mai, tạo đơn mới. Đây là một bản nháp, phí cước năm mươi tám nghìn do hook tính khi lưu. Vận đơn còn trống, vì chưa Submit thì chưa có vận đơn.",
+  "s04-submit": "Một lần Submit: trạng thái thành đã duyệt, vận đơn tự được tạo, và bút toán cước hiện ở thẻ Ledger entries: Nợ một ba một, Có năm một một, năm mươi tám nghìn. Tất cả trong một transaction.",
+  "s05-onetx": "Vì sao là một transaction? Hàm submit chạy hook trong cùng một connection. Hook tạo vận đơn tham gia transaction đang mở, không mở cái mới. Vận đơn và bút toán đi qua cùng một đường, nên lỗi ở bất kỳ bước nào cũng rollback, không có gì ghi nửa vời.",
+  "s06-locked": "Sau khi duyệt, form bị khoá. Sửa đơn qua API sẽ nhận lỗi bốn trăm hai mươi hai: chứng từ đã duyệt là bất biến, hãy hủy rồi sửa đổi. Chỉ còn nút Cancel.",
+  "s07-cancel": "Hủy không xoá và không sửa, mà ghi đảo. Vận đơn chuyển sang đã hủy theo. Sổ cái thêm hai dòng đảo, Nợ năm một một, Có một ba một, còn hai dòng cũ giữ nguyên. Tất cả cùng một transaction với lệnh hủy.",
+  "s08-amend": "Amend tạo bản sửa đổi, hậu tố trừ một, là một bản nháp mới liên kết về đơn gốc. Vận đơn để trống, và sẽ được tính lại khi Submit bản mới. Bản đã hủy vẫn nằm nguyên trong lịch sử.",
+  "s09-reamend": "Amend lần nữa trên bản đã hủy thì bị từ chối: đơn này đã được sửa đổi rồi. Mỗi bản đã hủy chỉ có một bản sửa đổi kế tiếp. Muốn đổi tiếp thì làm trên bản trừ một.",
+  "s10-api": "Cùng vòng đời đó, qua REST API: tạo đơn, submit, thử sửa và bị từ chối, cancel, kiểm tra vận đơn đã hủy, rồi amend. Desk cũng gọi đúng các endpoint này, không có đường tắt riêng.",
+  "s11-recap": "Tóm lại: tạo bản nháp, submit sinh vận đơn và bút toán trong một transaction, đơn đã duyệt bất biến, cancel ghi bút toán đảo, và amend chỉ một lần cho mỗi bản hủy.",
+  "s12-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

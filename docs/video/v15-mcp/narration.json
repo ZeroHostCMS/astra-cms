@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video mười lăm: MCP. AI agent dùng Astra bằng đúng quyền của người dùng.",
+  "s02-tools": "Một endpoint mcp, bảy tool. Sau handshake phiên bản hai nghìn không trăm hai mươi lăm, mười một, năm tool của kernel đọc, tìm, tạo chứng từ và lấy bảng cân đối, hai tool do app Express đóng góp. Token Keycloak cùng tenant, cùng RLS, cùng quyền.",
+  "s03-pii": "Dữ liệu cá nhân bị che trước khi tới mô hình. Trường khai báo pii true: số điện thoại giữ ba số cuối, chữ giữ ký tự đầu mỗi từ, trường khác giữ nguyên. Desk, nơi người dùng đã đăng nhập, vẫn thấy dữ liệu đầy đủ.",
+  "s04-track": "Đây là Claude thật, với user ha thuộc care. Hỏi bằng tiếng Việt, agent tự chọn tool track waybill, rồi trả lời kèm hành trình và ticket đang mở.",
+  "s05-refuse": "Care không được tạo đơn, agent cũng vậy. Claude gọi create document và bị kernel từ chối: not permitted, create CustomerOrder. Lỗi nằm ở phân quyền chứ không phải ở dữ liệu.",
+  "s06-cod": "Với user khoa, kế toán, câu hỏi khách nào đang chờ trả COD được trả lời từ sổ cái: Shop Hoa Mai, ba trăm năm mươi nghìn đồng đã thu hộ nhưng chưa trả.",
+  "s07-code": "Với developer, app đóng góp tool bằng một class. Tool khai báo DocType mà nó đọc, và kernel kiểm quyền đọc của user trước khi gọi. Xác thực, tenant, RLS và che PII đều do kernel làm.",
+  "s08-honest": "Nói cho đúng, client dùng bearer token tĩnh hết hạn sau một giờ. OAuth discovery, agent tự hành và vector search còn trên roadmap.",
+  "s99-recap": "Tóm lại: agent là một người dùng, không hơn. Bảy tool, PII được che, ha không tạo được đơn, và Claude thật dùng track waybill. Video sau: Rust CDC.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

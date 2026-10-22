@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video mười một: Keycloak. Một danh tính, role theo tenant, quyền theo DocType.",
+  "s02-login": "Desk đăng nhập bằng Authorization Code cùng PKCE, ngay trong trình duyệt. Mật khẩu chỉ gõ vào Keycloak; Astra chỉ nhận lại authorization code, không bao giờ thấy mật khẩu.",
+  "s03-token": "Role chính là nhóm trong Keycloak, theo dạng tenants, tên tenant, rồi role. Tài khoản tuan thuộc nhóm sales của saigon express. Header tenant chỉ chọn tenant; quyền thì kernel đọc từ token đã ký.",
+  "s04-me": "Quyền theo DocType được khai báo trong YAML. Với tuan, đơn hàng đọc, tạo và submit được, nhưng không hủy được. Desk đọc quyền hiệu lực này từ API iam me.",
+  "s05-desk": "Trên Desk, nút nào hiện là do quyền quyết định. Đơn của tuan có Save và Submit, đơn đã submit không có nút Cancel. Đơn của người khác không Save được, nhưng sales vẫn được Submit, đúng như YAML.",
+  "s06-api": "Cùng một đơn, bốn vai trò. Tuan thuộc sales bị chặn sửa vận đơn và hủy đơn. Quang thuộc ops sửa được vận đơn nhưng không tạo được đơn. Ha thuộc care mở được ticket. Khoa kế toán hủy được đơn. Kiểm tra nằm ở kernel, nên gọi thẳng API cũng bị chặn như trên Desk.",
+  "s07-sod": "Segregation of duties: người lập không tự duyệt. Khoa lập phiếu chi COD ba trăm năm mươi nghìn rồi tự Submit thì bị từ chối. Thu, kế toán thứ hai, duyệt được, và sổ cái ghi ngay. Kernel trả bốn không ba, cả trên Desk lẫn API.",
+  "s08-honest": "Nói cho đúng, bản demo chưa có điều kiện quyền theo từng dòng, ngoài if owner, và chưa có SSO SAML. Cả hai nằm trên roadmap.",
+  "s99-recap": "Tóm lại: Keycloak cùng PKCE, role theo tenant đọc từ token, quyền khai báo trên DocType, và người lập không tự duyệt. Video sau: sổ cái.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

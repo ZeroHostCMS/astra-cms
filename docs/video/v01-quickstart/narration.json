@@ -1,0 +1,12 @@
+{
+  "s01-title": "Xin chào, đây là Astra. Năm lệnh để có cả một cụm Kubernetes thật, ngay trên laptop.",
+  "s02-arch": "Astra là một kernel nghiệp vụ. Ứng dụng cắm vào bằng metadata. DocType Engine lo lưu trữ, giao diện, API, quyền và vòng đời. Plugin Host chạy ứng dụng biên dịch cùng kernel, và cả script Wasm trong sandbox. Hôm nay mình chỉ xem phần đã chạy thật; phần còn lại được đánh dấu là thiết kế.",
+  "s03-prereq": "Bạn cần JDK 25, Docker Desktop, kubectl, k ba đê, jq và Bash 5. Rust chỉ cần khi sửa module Wasm.",
+  "s04-k3d": "Một lệnh duy nhất dựng cả cụm: make k ba đê up. Đây là output thật, đã tua nhanh. Cụm trên máy này có sẵn, nên nó build lại cả ba image và triển khai lại mọi pod, mất một phút hai mươi chín giây.",
+  "s05-pods": "Kiểm tra bằng kubectl: bảy pod, tất cả đang chạy. Hai pod kernel đứng sau một Service, cùng PostgreSQL, Redis, Keycloak, Seata và worker CDC viết bằng Rust.",
+  "s06-seed": "Tiếp theo là make demo seed. Hai công ty chuyển phát được nạp hoàn toàn qua REST API, đăng nhập Keycloak như người dùng thật. Hook, vòng đời, sổ cái và overlay đều chạy khi nạp, không một câu SQL.",
+  "s07-api": "Gọi API ở cảnh một: một server, hai app, tám DocType, thuộc các module OMS, OPS, CARE, BMS và CMS.",
+  "s08-desk": "Mở Desk, đăng nhập bằng tài khoản mai của Keycloak. Trang Installed apps cho thấy app Express đã ở đó. Menu bên trái sinh ra từ các DocType mà app đóng góp: đơn hàng, vận hành, chăm sóc khách hàng và kế toán.",
+  "s09-recap": "Tóm lại, năm lệnh: dựng cụm, kiểm tra bảy pod, nạp hai tenant, gọi API, đăng nhập Desk. Video sau: DocType.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

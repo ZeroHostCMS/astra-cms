@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video chín, dành cho developer: viết một app Astra bằng Java thường và YAML.",
+  "s02-dev": "Hai lệnh là có kernel chạy với live reload: make infra up dựng hạ tầng, rồi make dev. Dev mode dùng stack Docker Compose; k ba đê giữ cổng tám nghìn không trăm tám mươi, nên dev chạy ở cổng tám nghìn không trăm tám mươi mốt.",
+  "s03-tree": "Một app không cần framework riêng, chỉ là Java thường và YAML. Có class ExpressApp, các hook, tool MCP, bảy file DocType, và hai module Wasm. App chỉ thấy astra spi; kernel cung cấp phần còn lại.",
+  "s04-hooks": "Hook tham gia transaction. Khi đơn được submit, một hook tạo vận đơn, một hook ghi bút toán sổ cái. Cả hai chạy trong transaction của đơn, nên các chứng từ không bao giờ lệch nhau.",
+  "s05-live": "Thêm một dòng YAML, cột mới xuất hiện. Dev mode tự khởi động lại trong không phẩy bảy mươi ba giây, và Desk hiện cột Zalo id. Không migration, không ALTER TABLE, vì trường mới nằm trong JSONB.",
+  "s06-api": "Form, list và REST đọc cùng một định nghĩa. Gọi API DocType của Customer, và trường zalo id đã nằm trong danh sách.",
+  "s07-tests": "Test tích hợp chạy với PostgreSQL thật, Seata Server thật và Redis thật. Bốn mươi bốn test, không lỗi, build thành công.",
+  "s08-honest": "Nói đúng: thêm trường thì dễ, bỏ trường thì chưa. Xoá một trường khiến chứng từ cũ không sửa được nữa; tiến hoá schema an toàn còn trên roadmap.",
+  "s99-recap": "Tóm lại: make infra up và make dev chạy kernel trên máy, app chỉ phụ thuộc astra spi, hook gom vận đơn và sổ cái vào một transaction. Video sau: Kubernetes.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

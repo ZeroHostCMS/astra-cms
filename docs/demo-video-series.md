@@ -9,6 +9,8 @@ toàn bộ phạm vi của use-case. Các video về cơ chế nền tảng (9, 
 
 Nhạc nền của các video: "Corporate Tower" của Mare Production ([freesound.org/s/612264](https://freesound.org/s/612264/)), CC BY 4.0, đã cắt ghép.
 
+Giọng đọc tiếng Việt: giọng nam "Xuân Vĩnh" của [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) v3 Turbo (Apache-2.0), tổng hợp bằng `scripts/video-voiceover.py` từ file `narration.json` trong từng thư mục video. Font: Be Vietnam Pro (SIL OFL 1.1) cho chữ thường, JetBrains Mono cho mã.
+
 ---
 
 ## 1. Chuẩn bị môi trường quay

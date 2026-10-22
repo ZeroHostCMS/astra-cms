@@ -1,0 +1,11 @@
+{
+  "s01-title": "Video hai: DocType. Một file YAML, kernel dựng API, giao diện, index.",
+  "s02-yaml": "Một DocType là một file YAML nằm trong app. Đây là CustomerOrder. Nó khai báo module, các trường, kiểu Select, Link, cờ read-only, cờ pii để che dữ liệu nhạy cảm, và submittable, nghĩa là chứng từ có vòng đời từ nháp đến duyệt, hủy và sửa đổi. Dòng transaction global cho biết submit và cancel chạy trong giao dịch Seata.",
+  "s03-derive": "Từ file đó, kernel sinh ra mọi thứ, không thêm dòng code nào. Có API và form trên Desk. Giá trị Select sai bị lỗi bốn trăm hai mươi hai. Link phải trỏ tới bản ghi có thật trong cùng tenant. Trường read-only client không được ghi, và trường projected được tạo index.",
+  "s04-desk": "Trên Desk, trang metadata của CustomerOrder là một bảng trường đọc từ metadata API. Desk không biết trước CustomerOrder là gì. Bảng được dựng từ định nghĩa mà API trả về, đã áp overlay của tenant.",
+  "s05-render": "Đây là desk chấm js, không có dòng nào nhắc tới CustomerOrder. Mỗi kiểu trường thành một control, nút Submit hiện theo quyền người dùng. Thêm một trường vào YAML hoặc overlay, thì form, list, API và tool MCP cùng cập nhật.",
+  "s06-proj": "Mục Projections. Trường nào đánh dấu projected sẽ có index tạo online, bằng create index concurrently, chạy lúc kernel khởi động, không khoá ghi và không alter table. Nói đúng: pg index chỉ lưu định nghĩa index, nên bảng này không hiện chữ concurrently.",
+  "s07-table": "Cuối cùng là PostgreSQL. Mọi DocType chung một bảng JSONB. Cột doctype phân biệt loại chứng từ, cột data chứa các trường nghiệp vụ, có index GIN và mười index từ trường projected. Row level security được ép buộc theo tenant, và publication astra cdc phục vụ đồng bộ.",
+  "s08-recap": "Tóm lại: khai báo một lần trong YAML, Desk dựng form từ API, trường projected có index mà không alter table, và mọi DocType chung một bảng JSONB.",
+  "s09-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

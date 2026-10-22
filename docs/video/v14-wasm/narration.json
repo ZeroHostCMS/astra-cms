@@ -1,0 +1,12 @@
+{
+  "s01-title": "Video mười bốn: WebAssembly. Công thức của tenant, chạy trong sandbox.",
+  "s02-rust": "Công thức là một hàm thuần bằng Rust: nhận cân nặng, vùng, dịch vụ và COD, trả về phí. Biên dịch ra bốn trăm hai mươi mốt byte, không thư viện chuẩn, không I O, chỉ tính toán. Tenant tải file lên như một chứng từ bình thường.",
+  "s03-rule": "Trong Pricing Rule, lưu là chạy thử trong sandbox. Hook tính thử một đơn mẫu; module không chạy được thì không bao giờ được lưu.",
+  "s04-onoff": "Cùng một đơn B2B, rule tắt thì phí là bảy mươi ba nghìn. Bật rule, không deploy, không restart, phí còn năm mươi mốt nghìn. Tính lại bằng tay theo mã nguồn: bốn mươi lăm nghìn, giảm hai mươi phần trăm, thêm ba mươi phần trăm cho Express, cộng phí COD, làm tròn lên thành năm mươi mốt nghìn.",
+  "s05-order": "Trên Desk, đơn ghi rõ ai định giá: năm mươi mốt nghìn đồng, bởi rule một, Wasm. Phí và nơi định giá do hook điền, người dùng không sửa được.",
+  "s06-runaway": "Còn một script độc thì sao? Đây là vòng lặp vô hạn. Khi lưu, nó bị từ chối sau năm mươi mili giây, và không bao giờ được bật. Đơn kế tiếp vẫn được định giá bình thường.",
+  "s07-limits": "Sandbox là Chicory, WebAssembly thuần Java. Bộ nhớ tối đa một MiB, không host import nên không I O, không mạng, mỗi lần gọi một instance mới. Deadline do rule đặt, trần là hai trăm mili giây.",
+  "s08-honest": "Nói cho đúng, Chicory chưa có đếm lệnh, nên CPU bị chặn bằng deadline thời gian. Tier một còn trên roadmap.",
+  "s99-recap": "Tóm lại: tenant tự viết công thức bằng Rust, kiểm tra khi lưu, bật tắt không cần deploy, vòng lặp vô hạn dừng ở năm mươi mili giây. Video sau: MCP.",
+  "s10-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}

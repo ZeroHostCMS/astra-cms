@@ -1,0 +1,13 @@
+{
+  "s01-title": "Video năm: vận hành. Máy trạng thái bưu kiện, mỗi lần quét là một mốc.",
+  "s02-filter": "Đăng nhập bằng tài khoản quang của bộ phận vận hành, lọc vận đơn theo trạng thái At Hub. Trường này là projected, nên có index riêng và không phải quét JSONB. Kết quả: một vận đơn ở hub Tân Bình.",
+  "s03-timeline": "Mở vận đơn số một. Mọi lần quét đều để lại dấu vết: sáu mốc từ Created đến Delivered, mỗi mốc có giờ và hub. Người dùng không ghi được scan log, chỉ WaybillScanHook nối thêm mốc.",
+  "s04-diagram": "Máy trạng thái là một bảng dữ liệu. Từ mỗi trạng thái chỉ đi được tới một vài trạng thái kế tiếp, và Delivered, Cancelled, Returned là điểm kết thúc. Trước mỗi lần lưu, hook tra bảng này. Chuyển không có trong bảng thì trả lỗi bốn trăm hai mươi hai và không ghi gì.",
+  "s05-skip": "Một vận đơn mới đang ở Created. Thử chọn thẳng Delivered, kernel từ chối. Từ Created chỉ được sang Picked Up hoặc Cancelled. Scan log vẫn chỉ có một mốc.",
+  "s06-hub": "Chọn Picked Up thì thành công. Chọn At Hub mà để trống hub thì bị lỗi, vì hub bắt buộc khi trạng thái là At Hub. Nhập hub Hải Châu rồi lưu thì thành công, và timeline thêm một mốc. Bản sao chăm sóc khách hàng cũng lên ba mốc.",
+  "s07-cancel": "Giờ đăng nhập bằng mai, thử hủy một đơn đã giao. Hook chỉ cho hủy khi vận đơn còn ở Created hoặc Picked Up, nên đơn bị từ chối. Tải lại trang, đơn vẫn Submitted và vận đơn vẫn Delivered. Không có gì thay đổi nửa vời, vì cả hai đi chung một transaction.",
+  "s08-api": "Cùng luật, qua REST. Chuyển đúng thứ tự thì trả về hai trăm. Nhảy từ At Hub sang Delivered, hay hủy đơn khi vận đơn đã ở At Hub, đều bị lỗi bốn trăm hai mươi hai, và đơn vẫn Submitted. Desk và API gặp cùng một hook.",
+  "s09-code": "Code cho developer: một bảng và một veto. Bảng NEXT liệt kê các bước chuyển hợp lệ, và beforeSave ném lỗi khi bước chuyển không có trong bảng. Ở phía đơn hàng, onCancel chỉ cho hủy khi vận đơn còn Created hoặc Picked Up, và cập nhật vận đơn cùng transaction với đơn.",
+  "s10-recap": "Tóm lại: lọc theo trường projected, scan log chỉ hook được ghi, không nhảy cóc, At Hub cần hub, và hủy đơn đã giao thì bị từ chối.",
+  "s11-outro": "Astra. Một nền tảng, mọi nghiệp vụ. Mã nguồn mở, giấy phép MIT."
+}
