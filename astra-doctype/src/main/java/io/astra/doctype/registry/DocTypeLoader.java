@@ -85,7 +85,8 @@ final class DocTypeLoader {
                 root.path("kind").asText(null),
                 root.path("submittable").asBoolean(false),
                 naming.isMissingNode() ? DocTypeDefinition.Naming.AUTO
-                        : new DocTypeDefinition.Naming(naming.path("field").asText(null), naming.path("series").asText(null)),
+                        : new DocTypeDefinition.Naming(naming.path("field").asText(null), naming.path("series").asText(null),
+                                naming.path("gapless").asBoolean(true)),
                 fields,
                 permissions,
                 root.path("segregation-of-duties").asBoolean(false),

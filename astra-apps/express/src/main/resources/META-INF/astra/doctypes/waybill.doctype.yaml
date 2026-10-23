@@ -1,7 +1,7 @@
 name: Waybill
 module: ops
 kind: transaction
-naming: { series: "WB-.YYMM.-.######" }
+naming: { series: "WB-.YYMM.-.########", gapless: false }    # 8 digits: 60 million waybills a month at 2 million orders a day
 
 fields:
   - { name: order,         type: Link,   options: CustomerOrder, required: true, in-list: true }

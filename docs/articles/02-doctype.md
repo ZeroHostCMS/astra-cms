@@ -340,6 +340,12 @@ and expand "Raw JSON from GET /api/doctype/CustomerOrder" to see the exact defin
 
 ## To be accurate
 
+- **The projection expression has changed since the video.** Under row-level security PostgreSQL never used
+  an index on `(data->>'field')`, because `->>` is not a LEAKPROOF function, so list filters scanned the whole
+  tenant. The kernel now filters and indexes on `astra_ext.astra_field(data, 'field')`, a LEAKPROOF alias of
+  the same function created by the bootstrap superuser, and the indexes are `astra_doc_pf_<field>` with
+  `modified_at DESC` appended and `WHERE ... IS NOT NULL`. The code and catalog output quoted in this article
+  show the version recorded in the video. Measurements and reasons: [why_doctype_jsonb.md](../why_doctype_jsonb.md).
 - **`CONCURRENTLY` is not visible in the catalog.** `pg_index` stores only the index definition, so the
   definition column never shows the word `CONCURRENTLY`; the narration says this on screen.
 - **The index count is install-specific.** The video showed ten projection indexes. The current image

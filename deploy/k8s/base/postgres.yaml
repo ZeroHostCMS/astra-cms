@@ -24,6 +24,12 @@ data:
     CREATE ROLE astra_app LOGIN PASSWORD 'astra_app' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE NOINHERIT;
     GRANT CONNECT ON DATABASE astra TO astra_app;
     GRANT USAGE, CREATE ON SCHEMA public TO astra_app;
+    -- Leakproof accessor for projected fields (deploy/db/05-astra-field.sql); needs a superuser.
+    CREATE SCHEMA astra_ext;
+    GRANT USAGE ON SCHEMA astra_ext TO astra_app;
+    CREATE FUNCTION astra_ext.astra_field(jsonb, text) RETURNS text
+        LANGUAGE internal IMMUTABLE STRICT PARALLEL SAFE LEAKPROOF AS 'jsonb_object_field_text';
+    GRANT EXECUTE ON FUNCTION astra_ext.astra_field(jsonb, text) TO astra_app;
   03-bms.sql: |
     CREATE ROLE astra_bms LOGIN PASSWORD 'astra_bms' NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE;
     GRANT CONNECT ON DATABASE astra TO astra_bms;

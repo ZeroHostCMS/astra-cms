@@ -60,8 +60,33 @@ public class RowLevelSecurityGuard {
             } else {
                 LOG.infof("Tenant isolation guard: role '%s' is subject to row-level security", role);
             }
+            requireLeakproofAccessor(st);
         } catch (SQLException e) {
             throw new IllegalStateException("cannot verify row-level security role attributes", e);
+        }
+    }
+
+    /**
+     * Under row-level security the planner uses an index for a predicate only when every function in it is
+     * LEAKPROOF; {@code ->>} is not, so without {@code astra_field} every list filter scans the whole tenant
+     * (measured: 470 ms instead of 0.13 ms on 5 million orders, docs/why_doctype_jsonb.md). Only a superuser
+     * can declare it, so it comes from the bootstrap scripts, and the kernel refuses to start without it.
+     */
+    private static void requireLeakproofAccessor(Statement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery(
+                "SELECT p.proleakproof FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace "
+                        + "WHERE n.nspname = '" + ProjectionIndexer.ACCESSOR_SCHEMA + "' AND p.proname = '"
+                        + ProjectionIndexer.ACCESSOR_NAME + "' AND p.pronargs = 2")) {
+            if (!rs.next()) {
+                throw new IllegalStateException("Function " + ProjectionIndexer.ACCESSOR + "(jsonb, text) is missing: "
+                        + "projected-field filters would scan the whole tenant under row-level security. "
+                        + "Run deploy/db/05-astra-field.sql as the database superuser (scripts/db-setup.sh).");
+            }
+            if (!rs.getBoolean(1)) {
+                throw new IllegalStateException("Function " + ProjectionIndexer.ACCESSOR + "(jsonb, text) is not LEAKPROOF: "
+                        + "the planner would not use projection indexes under row-level security. "
+                        + "Run deploy/db/05-astra-field.sql as the database superuser.");
+            }
         }
     }
 }

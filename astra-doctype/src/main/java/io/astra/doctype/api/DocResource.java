@@ -43,18 +43,27 @@ public class DocResource {
     @Inject TenantRequest tenant;
     @Inject DocPermissions permissions;
 
-    /** Lists documents; every query parameter other than {@code limit}/{@code offset} is an equality filter on a field or {@code docstatus}. */
+    /**
+     * Lists documents, newest first; every query parameter other than {@code limit}, {@code offset} and
+     * {@code after} is an equality filter on a field or {@code docstatus}. When more documents follow, the
+     * {@code X-Next-Cursor} response header carries the value to pass as {@code after} for the next page,
+     * which stays fast at any depth (prefer it to {@code offset} beyond the first pages).
+     */
     @GET
-    public List<Map<String, Object>> list(@PathParam("doctype") String doctype,
-                                          @QueryParam("limit") @DefaultValue("20") int limit,
-                                          @QueryParam("offset") @DefaultValue("0") int offset,
-                                          @Context UriInfo uri) {
+    public Response list(@PathParam("doctype") String doctype,
+                         @QueryParam("limit") @DefaultValue("20") int limit,
+                         @QueryParam("offset") @DefaultValue("0") int offset,
+                         @QueryParam("after") String after,
+                         @Context UriInfo uri) {
         permissions.require(doctype, tenant.roles(), Action.READ);
         Map<String, String> filters = new LinkedHashMap<>();
         uri.getQueryParameters().forEach((k, v) -> {
-            if (!k.equals("limit") && !k.equals("offset") && !v.isEmpty()) filters.put(k, v.getFirst());
+            if (!k.equals("limit") && !k.equals("offset") && !k.equals("after") && !v.isEmpty()) filters.put(k, v.getFirst());
         });
-        return scoped(() -> store.list(doctype, filters, Math.min(limit, 200), offset).stream().map(DocResource::toJson).toList());
+        DocumentStore.Page page = scoped(() -> store.page(doctype, filters, Math.clamp(limit, 1, 200), Math.max(offset, 0), after));
+        Response.ResponseBuilder ok = Response.ok(page.docs().stream().map(DocResource::toJson).toList());
+        if (page.next() != null) ok.header("X-Next-Cursor", page.next());
+        return ok.build();
     }
 
     @GET
@@ -76,12 +85,11 @@ public class DocResource {
     @Path("/{name}")
     public Map<String, Object> update(@PathParam("doctype") String doctype, @PathParam("name") String name,
                                       Map<String, Object> patch) {
-        return scoped(() -> {
-            Document existing = store.get(doctype, name).orElseThrow(() -> new NotFoundException(doctype + "/" + name));
-            permissions.requireWrite(doctype, tenant.roles(), tenant.userId(), existing);
-            return store.update(doctype, name, patch).map(DocResource::toJson)
-                    .orElseThrow(() -> new NotFoundException(doctype + "/" + name));
-        });
+        // The permission check (if-owner rules need the stored document) runs inside the update's transaction.
+        return scoped(() -> store.update(doctype, name, patch,
+                        existing -> permissions.requireWrite(doctype, tenant.roles(), tenant.userId(), existing))
+                .map(DocResource::toJson)
+                .orElseThrow(() -> new NotFoundException(doctype + "/" + name)));
     }
 
     @POST

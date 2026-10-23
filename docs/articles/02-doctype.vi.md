@@ -341,6 +341,12 @@ mở rộng mục "Raw JSON from GET /api/doctype/CustomerOrder" để xem đún
 
 ## Nói đúng
 
+- **Biểu thức projection đã đổi sau khi quay video.** Dưới row-level security, PostgreSQL không bao giờ dùng
+  index trên `(data->>'field')`, vì `->>` không phải hàm LEAKPROOF, nên mọi bộ lọc danh sách quét toàn tenant.
+  Kernel nay lọc và đánh index bằng `astra_ext.astra_field(data, 'field')`, một alias LEAKPROOF của cùng hàm do
+  superuser bootstrap tạo, và index có tên `astra_doc_pf_<field>`, thêm `modified_at DESC` và `WHERE ... IS NOT
+  NULL`. Mã và output catalog trích trong bài là phiên bản lúc quay video. Số đo và lý do:
+  [why_doctype_jsonb.md](../why_doctype_jsonb.md).
 - **`CONCURRENTLY` không hiện trong catalog.** `pg_index` chỉ lưu định nghĩa index, nên cột định nghĩa
   không bao giờ có chữ `CONCURRENTLY`; lời thuyết minh nói rõ điều này trên màn hình.
 - **Số index tuỳ từng bản cài.** Video cho thấy mười projection index. Image hiện tại còn đóng gói HRM và
