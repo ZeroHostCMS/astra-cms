@@ -4,8 +4,9 @@
 # Each query is executed 4 times; the first run is reported as "cold-ish" (whatever the cache holds), the best
 # of the remaining three as "warm". EXPLAIN (ANALYZE, BUFFERS) output goes to $OUT/<id>-<shape>.txt.
 set -euo pipefail
+: "${BENCH_HOST:=127.0.0.1}" "${BENCH_PORT:=5433}" "${BENCH_DB:=bench}"   # where the database under test is
 export PGPASSWORD=astra_app
-PSQL=(psql -h 127.0.0.1 -p 5433 -U astra_app -d bench -X -q -v ON_ERROR_STOP=1)
+PSQL=(psql -h "$BENCH_HOST" -p "$BENCH_PORT" -U astra_app -d "$BENCH_DB" -X -q -v ON_ERROR_STOP=1)
 OUT=${OUT:-./results}
 mkdir -p "$OUT"
 TENANT=${TENANT:-hanoi-express}

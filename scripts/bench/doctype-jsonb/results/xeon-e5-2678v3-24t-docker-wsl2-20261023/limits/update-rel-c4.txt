@@ -1,0 +1,13 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+transaction type: ./workloads/rel-update.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 4
+number of threads: 4
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 36334
+number of failed transactions: 0 (0.000%)
+latency average = 3.302 ms
+initial connection time = 8.783 ms
+tps = 1211.386715 (without initial connection time)

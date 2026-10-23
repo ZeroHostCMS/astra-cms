@@ -1,0 +1,16 @@
+label: m1pro-10c-16g-docker-20261022
+note: first run, reconstructed from docs/why_doctype_jsonb.md; PostgreSQL in Docker Desktop (16 GB, 10 CPU), pgbench 18.3 on the macOS host; stopped when the disk filled during the bigint rewrite
+date_utc: 2026-10-22
+kernel: Darwin
+os: macOS
+vendor: Apple
+product: MacBook Pro
+cpu_model: Apple M1 Pro
+cpus: 10
+ram_mb: 16384
+postgres: 16.15 (pgvector/pgvector:pg16 in Docker)
+server: docker container on the same laptop
+rows: 5000000
+profile: fixed16
+data_device: Docker Desktop VM disk on the internal SSD
+pg_settings: shared_buffers=4GB work_mem=64MB maintenance_work_mem=2GB effective_cache_size=12GB max_wal_size=8GB random_page_cost=1.1 max_parallel_workers_per_gather=4 track_io_timing=on

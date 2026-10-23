@@ -1,0 +1,58 @@
+hanoi-express
+Limit  (cost=0.43..289.50 rows=20 width=291) (actual time=0.726..451.970 rows=20 loops=1)
+  Buffers: shared hit=1231 read=2095
+  I/O Timings: shared read=431.329
+  ->  Index Scan using orders_rel_list_idx on orders_rel  (cost=0.43..287979.26 rows=19925 width=291) (actual time=0.724..451.946 rows=20 loops=1)
+        Index Cond: (tenant_id = current_setting('astra.tenant'::text, true))
+        Filter: (ops_status = 'Cancelled'::text)
+        Rows Removed by Filter: 3290
+        Buffers: shared hit=1231 read=2095
+        I/O Timings: shared read=431.329
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=266
+Planning Time: 1.932 ms
+Execution Time: 452.099 ms
+----- run 1: 452.099 ms
+hanoi-express
+Limit  (cost=0.43..289.50 rows=20 width=291) (actual time=0.382..5.853 rows=20 loops=1)
+  Buffers: shared hit=3326
+  ->  Index Scan using orders_rel_list_idx on orders_rel  (cost=0.43..287979.26 rows=19925 width=291) (actual time=0.381..5.844 rows=20 loops=1)
+        Index Cond: (tenant_id = current_setting('astra.tenant'::text, true))
+        Filter: (ops_status = 'Cancelled'::text)
+        Rows Removed by Filter: 3290
+        Buffers: shared hit=3326
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=266
+Planning Time: 1.016 ms
+Execution Time: 5.920 ms
+----- run 2: 5.920 ms
+hanoi-express
+Limit  (cost=0.43..289.50 rows=20 width=291) (actual time=0.558..7.184 rows=20 loops=1)
+  Buffers: shared hit=3326
+  ->  Index Scan using orders_rel_list_idx on orders_rel  (cost=0.43..287979.26 rows=19925 width=291) (actual time=0.557..7.175 rows=20 loops=1)
+        Index Cond: (tenant_id = current_setting('astra.tenant'::text, true))
+        Filter: (ops_status = 'Cancelled'::text)
+        Rows Removed by Filter: 3290
+        Buffers: shared hit=3326
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=266
+Planning Time: 1.217 ms
+Execution Time: 7.253 ms
+----- run 3: 7.253 ms
+hanoi-express
+Limit  (cost=0.43..289.50 rows=20 width=291) (actual time=0.766..10.126 rows=20 loops=1)
+  Buffers: shared hit=3326
+  ->  Index Scan using orders_rel_list_idx on orders_rel  (cost=0.43..287979.26 rows=19925 width=291) (actual time=0.764..10.112 rows=20 loops=1)
+        Index Cond: (tenant_id = current_setting('astra.tenant'::text, true))
+        Filter: (ops_status = 'Cancelled'::text)
+        Rows Removed by Filter: 3290
+        Buffers: shared hit=3326
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=266
+Planning Time: 2.158 ms
+Execution Time: 10.296 ms
+----- run 4: 10.296 ms

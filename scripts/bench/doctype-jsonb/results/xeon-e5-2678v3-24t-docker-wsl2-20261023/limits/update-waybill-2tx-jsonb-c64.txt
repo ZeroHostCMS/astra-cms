@@ -1,0 +1,13 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+transaction type: ./workloads/jsonb-update-waybill-2tx.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 194874
+number of failed transactions: 0 (0.000%)
+latency average = 9.857 ms
+initial connection time = 47.585 ms
+tps = 6493.040241 (without initial connection time)

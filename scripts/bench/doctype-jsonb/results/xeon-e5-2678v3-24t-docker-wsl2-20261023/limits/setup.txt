@@ -1,0 +1,99 @@
+Timing is on.
+DROP TABLE
+Time: 74.510 ms
+psql:10-limits-setup.sql:14: NOTICE:  drop cascades to function gen_doc(gen)
+DROP TABLE
+Time: 9.253 ms
+SET
+Time: 0.224 ms
+DROP INDEX
+Time: 10.111 ms
+DROP INDEX
+Time: 5.547 ms
+DROP INDEX
+Time: 5.319 ms
+DROP INDEX
+Time: 5.487 ms
+DROP INDEX
+Time: 12.369 ms
+ALTER INDEX
+Time: 1.468 ms
+CREATE INDEX
+Time: 27381.970 ms (00:27.382)
+CREATE INDEX
+Time: 20124.828 ms (00:20.125)
+psql:10-limits-setup.sql:25: NOTICE:  relation "astra_doc_pf_ops_status" already exists, skipping
+CREATE INDEX
+Time: 0.560 ms
+CREATE INDEX
+Time: 0.347 ms
+psql:10-limits-setup.sql:26: NOTICE:  relation "astra_doc_created_idx" already exists, skipping
+DROP INDEX
+Time: 29.630 ms
+DROP INDEX
+Time: 6.800 ms
+DROP INDEX
+Time: 5.381 ms
+CREATE INDEX
+Time: 20614.907 ms (00:20.615)
+CREATE INDEX
+Time: 14828.728 ms (00:14.829)
+CREATE INDEX
+Time: 16164.655 ms (00:16.165)
+CREATE INDEX
+Time: 0.774 ms
+psql:10-limits-setup.sql:34: NOTICE:  relation "orders_rel_created_idx" already exists, skipping
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 0.569 ms
+INSERT 0 3800890
+Time: 539402.226 ms (08:59.402)
+RESET
+Time: 1.293 ms
+psql:10-limits-setup.sql:52: NOTICE:  table "bench_orders" does not exist, skipping
+DROP TABLE
+Time: 14.085 ms
+SELECT 3800890
+Time: 39315.746 ms (00:39.316)
+ALTER TABLE
+Time: 7418.581 ms (00:07.419)
+GRANT
+Time: 25.472 ms
+ hanoi_orders_with_waybill 
+---------------------------
+                   3800890
+(1 row)
+
+Time: 142.565 ms
+SET
+Time: 0.501 ms
+CREATE TABLE
+Time: 1513.359 ms (00:01.513)
+ALTER TABLE
+Time: 282.897 ms
+ALTER TABLE
+Time: 733.104 ms
+DROP POLICY
+Time: 0.709 ms
+psql:10-limits-setup.sql:70: NOTICE:  policy "astra_series_tenant_isolation" for relation "astra_series" does not exist, skipping
+CREATE POLICY
+Time: 115.459 ms
+RESET
+Time: 0.284 ms
+psql:10-limits-setup.sql:77: NOTICE:  sequence "bench_order_seq" does not exist, skipping
+DROP SEQUENCE
+Time: 0.546 ms
+CREATE SEQUENCE
+Time: 30.477 ms
+ALTER SEQUENCE
+Time: 29.453 ms
+VACUUM
+Time: 2864.887 ms (00:02.865)
+VACUUM
+Time: 3020.311 ms (00:03.020)
+VACUUM
+Time: 429.850 ms
+rc=0

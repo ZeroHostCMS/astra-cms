@@ -1,0 +1,86 @@
+== read-jsonb clients=16 secs=30 Thu Oct 22 03:38:43 PM UTC 2026
+progress: 10.0 s, 17.0 tps, lat 902.834 ms stddev 1767.253, 0 failed
+progress: 20.0 s, 14.0 tps, lat 1117.952 ms stddev 1925.792, 0 failed
+progress: 30.0 s, 14.3 tps, lat 1051.709 ms stddev 1821.907, 0 failed
+latency average = 1112.744 ms
+latency stddev = 1885.295 ms
+tps = 14.101052 (without initial connection time)
+ - 326 transactions (69.5% of total, tps = 9.801584)
+ - latency average = 3.046 ms
+ - latency stddev = 4.306 ms
+ - 143 transactions (30.5% of total, tps = 4.299468)
+ - latency average = 3642.543 ms
+ - latency stddev = 1565.246 ms
+== read-rel clients=16 secs=30 Thu Oct 22 03:39:17 PM UTC 2026
+progress: 10.0 s, 7878.1 tps, lat 1.870 ms stddev 0.600, 0 failed
+progress: 20.0 s, 8296.1 tps, lat 1.769 ms stddev 0.522, 0 failed
+progress: 30.0 s, 8229.8 tps, lat 1.783 ms stddev 0.528, 0 failed
+latency average = 1.806 ms
+latency stddev = 0.552 ms
+tps = 8141.507694 (without initial connection time)
+ - 170725 transactions (70.0% of total, tps = 5695.479136)
+ - latency average = 1.797 ms
+ - latency stddev = 0.548 ms
+ - 73306 transactions (30.0% of total, tps = 2445.528151)
+ - latency average = 1.828 ms
+ - latency stddev = 0.561 ms
+astra_doc|6000000|0|0|0.0|0
+orders_rel|5000000|0|0|0.0|0
+== insert-jsonb clients=16 secs=30 Thu Oct 22 03:39:47 PM UTC 2026
+ progress: 10.0 s, 5263.8 tps, lat 2.950 ms stddev 17.537, 0 failed
+progress: 20.0 s, 5856.9 tps, lat 2.645 ms stddev 17.321, 0 failed
+progress: 30.0 s, 5582.1 tps, lat 2.788 ms stddev 19.971, 0 failed
+latency average = 2.810 ms
+latency stddev = 20.154 ms
+tps = 5131.849464 (without initial connection time)
+== insert-rel clients=16 secs=30 Thu Oct 22 03:40:20 PM UTC 2026
+progress: 10.0 s, 5862.4 tps, lat 2.643 ms stddev 1.905, 0 failed
+pgbench: progress: 20.0 s, 6499.5 tps, lat 2.381 ms stddev 0.593, 0 failedpgbench: client 7 receiving
+progress: 30.0 s, 6518.9 tps, lat 2.375 ms stddev 0.558, 0 failed
+latency average = 2.460 ms
+latency stddev = 1.171 ms
+tps = 6298.770999 (without initial connection time)
+astra_doc|6167038|0|0|0.0|0
+orders_rel|5188818|0|0|0.0|0
+== update-jsonb clients=16 secs=30 Thu Oct 22 03:40:50 PM UTC 2026
+progress: 10.0 s, 5378.9 tps, lat 2.759 ms stddev 1.291, 0 failed
+progress: 20.0 s, 5603.3 tps, lat 2.813 ms stddev 50.158, 0 failed
+progress: 30.0 s, 5649.4 tps, lat 2.803 ms stddev 53.615, 0 failed
+latency average = 2.813 ms
+latency stddev = 43.546 ms
+tps = 5400.726805 (without initial connection time)
+== update-rel clients=16 secs=30 Thu Oct 22 03:41:21 PM UTC 2026
+progress: 10.0 s, 5674.8 tps, lat 2.730 ms stddev 2.192, 0 failed
+pgbench: progress: 20.0 s, 6108.4 tps, lat 2.534 ms stddev 1.137, 0 failed
+progress: 30.0 s, 6038.5 tps, lat 2.559 ms stddev 1.559, 0 failed
+latency average = 2.605 ms
+latency stddev = 1.674 ms
+tps = 5945.047026 (without initial connection time)
+astra_doc|6167038|133085|0|0.0|133085
+orders_rel|5188818|142690|0|0.0|142690
+== read-jsonb-lp clients=16 secs=30 Fri Oct 23 11:47:51 AM UTC 2026
+progress: 10.0 s, 5850.6 tps, lat 2.619 ms stddev 1.630, 0 failed
+pgbench: progress: 20.0 s, 7428.4 tps, lat 1.999 ms stddev 1.542, 0 failed
+progress: 30.0 s, 5600.3 tps, lat 2.678 ms stddev 2.250, 0 failedpgbench: client 9 receiving
+latency average = 2.393 ms
+latency stddev = 1.834 ms
+tps = 6294.433301 (without initial connection time)
+ - 131840 transactions (69.8% of total, tps = 4395.178705)
+ - latency average = 2.301 ms
+ - latency stddev = 1.655 ms
+ - 56961 transactions (30.2% of total, tps = 1898.921224)
+ - latency average = 2.607 ms
+ - latency stddev = 2.177 ms
+== read-rel-again clients=16 secs=30 Fri Oct 23 11:48:21 AM UTC 2026
+pgbench: progress: 10.0 s, 5472.4 tps, lat 2.717 ms stddev 1.370, 0 failed
+pgbench:progress: 20.0 s, 6695.2 tps, lat 2.194 ms stddev 0.692, 0 failedpgbench:
+progress: 30.0 s, 7232.8 tps, lat 2.032 ms stddev 0.601, 0 failed
+latency average = 2.281 ms
+latency stddev = 0.953 ms
+tps = 6470.237322 (without initial connection time)
+ - 136293 transactions (70.2% of total, tps = 4545.280523)
+ - latency average = 2.268 ms
+ - latency stddev = 0.951 ms
+ - 57705 transactions (29.7% of total, tps = 1924.423210)
+ - latency average = 2.313 ms
+ - latency stddev = 0.958 ms

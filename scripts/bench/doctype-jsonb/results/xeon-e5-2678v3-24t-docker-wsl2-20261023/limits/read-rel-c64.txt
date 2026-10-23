@@ -1,0 +1,31 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 1034577
+number of failed transactions: 0 (0.000%)
+latency average = 1.857 ms
+initial connection time = 46.743 ms
+tps = 34467.373787 (without initial connection time)
+SQL script 1: ./workloads/rel-get.sql
+ - weight: 7 (targets 70.0% of total)
+ - 722069 transactions (69.8% of total, tps = 24056.036547)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.663 ms
+ - latency stddev = 1.445 ms
+SQL script 2: ./workloads/rel-list-customer.sql
+ - weight: 2 (targets 20.0% of total)
+ - 206640 transactions (20.0% of total, tps = 6884.299689)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.691 ms
+ - latency stddev = 1.405 ms
+SQL script 3: ./workloads/rel-list-status.sql
+ - weight: 1 (targets 10.0% of total)
+ - 103281 transactions (10.0% of total, tps = 3440.850543)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.807 ms
+ - latency stddev = 1.398 ms

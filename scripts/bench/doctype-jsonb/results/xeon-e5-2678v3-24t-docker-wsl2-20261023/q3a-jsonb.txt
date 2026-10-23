@@ -1,0 +1,58 @@
+hanoi-express
+Limit  (cost=0.56..29.11 rows=20 width=491) (actual time=2.386..4.978 rows=20 loops=1)
+  Buffers: shared hit=173 read=5
+  I/O Timings: shared read=2.585
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..491161.01 rows=344020 width=491) (actual time=2.384..4.966 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: ((data ->> 'zone'::text) = 'Remote'::text)
+        Rows Removed by Filter: 153
+        Buffers: shared hit=173 read=5
+        I/O Timings: shared read=2.585
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 2.100 ms
+Execution Time: 5.093 ms
+----- run 1: 5.093 ms
+hanoi-express
+Limit  (cost=0.56..29.11 rows=20 width=491) (actual time=0.177..2.129 rows=20 loops=1)
+  Buffers: shared hit=178
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..491161.01 rows=344020 width=491) (actual time=0.176..2.118 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: ((data ->> 'zone'::text) = 'Remote'::text)
+        Rows Removed by Filter: 153
+        Buffers: shared hit=178
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 2.139 ms
+Execution Time: 2.254 ms
+----- run 2: 2.254 ms
+hanoi-express
+Limit  (cost=0.56..29.11 rows=20 width=491) (actual time=0.180..2.395 rows=20 loops=1)
+  Buffers: shared hit=178
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..491161.01 rows=344020 width=491) (actual time=0.178..2.384 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: ((data ->> 'zone'::text) = 'Remote'::text)
+        Rows Removed by Filter: 153
+        Buffers: shared hit=178
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 2.158 ms
+Execution Time: 2.524 ms
+----- run 3: 2.524 ms
+hanoi-express
+Limit  (cost=0.56..29.11 rows=20 width=491) (actual time=0.182..2.215 rows=20 loops=1)
+  Buffers: shared hit=178
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..491161.01 rows=344020 width=491) (actual time=0.181..2.203 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: ((data ->> 'zone'::text) = 'Remote'::text)
+        Rows Removed by Filter: 153
+        Buffers: shared hit=178
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 1.934 ms
+Execution Time: 2.338 ms
+----- run 4: 2.338 ms

@@ -1,0 +1,31 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 128
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 866820
+number of failed transactions: 0 (0.000%)
+latency average = 4.440 ms
+initial connection time = 94.112 ms
+tps = 28827.761491 (without initial connection time)
+SQL script 1: ./workloads/jsonb-get.sql
+ - weight: 7 (targets 70.0% of total)
+ - 605078 transactions (69.8% of total, tps = 20123.029311)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 3.800 ms
+ - latency stddev = 2.555 ms
+SQL script 2: ./workloads/jsonb-list-customer.sql
+ - weight: 2 (targets 20.0% of total)
+ - 172884 transactions (19.9% of total, tps = 5749.588978)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 3.908 ms
+ - latency stddev = 2.599 ms
+SQL script 3: ./workloads/jsonb-list-status.sql
+ - weight: 1 (targets 10.0% of total)
+ - 86721 transactions (10.0% of total, tps = 2884.073169)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 4.049 ms
+ - latency stddev = 2.582 ms

@@ -19,7 +19,7 @@ SELECT 'astra_doc_part (all partitions)',
        pg_size_pretty(sum(pg_total_relation_size(p.inhrelid))),
        sum(c.reltuples)::bigint
 FROM pg_inherits p JOIN pg_class c ON c.oid = p.inhrelid
-WHERE p.inhparent = 'astra_doc_part'::regclass
+WHERE p.inhparent = to_regclass('astra_doc_part') HAVING count(*) > 0
 ORDER BY 1;
 
 SELECT indexrelname, pg_size_pretty(pg_relation_size(indexrelid)) AS size

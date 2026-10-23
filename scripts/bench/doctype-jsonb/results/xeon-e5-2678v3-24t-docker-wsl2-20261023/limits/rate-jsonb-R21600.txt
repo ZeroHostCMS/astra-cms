@@ -1,0 +1,45 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 60 s
+number of transactions actually processed: 262718
+number of failed transactions: 0 (0.000%)
+latency average = 22533.318 ms
+latency stddev = 14583.122 ms
+rate limit schedule lag: avg 22518.715 (max 48578.769) ms
+initial connection time = 48.131 ms
+tps = 4367.441256 (without initial connection time)
+SQL script 1: ./workloads/jsonb-insert-series.sql
+ - weight: 1 (targets 3.2% of total)
+ - 8484 transactions (3.2% of total, tps = 141.038572)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 22740.376 ms
+ - latency stddev = 14527.816 ms
+SQL script 2: ./workloads/jsonb-update-waybill.sql
+ - weight: 8 (targets 25.8% of total)
+ - 67625 transactions (25.7% of total, tps = 1124.202433)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 22558.614 ms
+ - latency stddev = 14590.948 ms
+SQL script 3: ./workloads/jsonb-get.sql
+ - weight: 14 (targets 45.2% of total)
+ - 118744 transactions (45.2% of total, tps = 1974.008041)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 22563.347 ms
+ - latency stddev = 14576.540 ms
+SQL script 4: ./workloads/jsonb-list-customer.sql
+ - weight: 6 (targets 19.4% of total)
+ - 50633 transactions (19.3% of total, tps = 841.726311)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 22435.577 ms
+ - latency stddev = 14572.282 ms
+SQL script 5: ./workloads/jsonb-list-status.sql
+ - weight: 2 (targets 6.5% of total)
+ - 16998 transactions (6.5% of total, tps = 282.575866)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 22500.184 ms
+ - latency stddev = 14635.638 ms

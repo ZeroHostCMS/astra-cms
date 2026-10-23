@@ -1,0 +1,56 @@
+DROP TABLE
+psql:09-range-leakproof-check.sql:6: NOTICE:  table "lp_amount" does not exist, skipping
+  proname   | proleakproof 
+------------+--------------
+ int8gt     | t
+ numeric_gt | f
+
+SET
+CREATE TABLE
+INSERT 0 1000000
+ALTER TABLE
+ALTER TABLE
+CREATE POLICY
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+  set_config   
+---------------
+ hanoi-express
+
+--- numeric column, under RLS
+                                                          QUERY PLAN                                                           
+-------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate (actual rows=1 loops=1)
+   ->  Gather (actual rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Partial Aggregate (actual rows=1 loops=3)
+               ->  Parallel Seq Scan on lp_amount (actual rows=343 loops=3)
+                     Filter: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (amount_num > '4995000'::numeric))
+                     Rows Removed by Filter: 332990
+ Planning Time: 0.183 ms
+ Execution Time: 190.288 ms
+
+--- bigint column, under RLS
+                                                QUERY PLAN                                                 
+-----------------------------------------------------------------------------------------------------------
+ Aggregate (actual rows=1 loops=1)
+   ->  Index Only Scan using lp_amount_i8 on lp_amount (actual rows=1030 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (amount_i8 > 4995000))
+         Heap Fetches: 1030
+ Planning Time: 0.218 ms
+ Execution Time: 2.441 ms
+
+RESET
+--- numeric column, superuser (no RLS)
+                                           QUERY PLAN                                            
+-------------------------------------------------------------------------------------------------
+ Aggregate (actual rows=1 loops=1)
+   ->  Index Only Scan using lp_amount_num on lp_amount (actual rows=1030 loops=1)
+         Index Cond: ((tenant_id = 'hanoi-express'::text) AND (amount_num > '4995000'::numeric))
+         Heap Fetches: 1030
+ Planning Time: 0.161 ms
+ Execution Time: 2.033 ms
+
+DROP TABLE

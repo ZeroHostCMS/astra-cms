@@ -6,12 +6,14 @@
 \set ON_ERROR_STOP on
 \pset footer off
 
+DROP TABLE IF EXISTS lp_test;
+DROP FUNCTION IF EXISTS lp_sql(jsonb, text);
 CREATE FUNCTION lp_sql(jsonb, text) RETURNS text
     LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE LEAKPROOF AS 'select $1->>$2';
 GRANT EXECUTE ON FUNCTION lp_sql(jsonb, text) TO astra_app;
 
-SELECT proname, prolang::regprog AS language, proleakproof
-FROM pg_proc WHERE proname IN ('lp_sql', 'astra_field', 'jsonb_object_field_text') ORDER BY 1;
+SELECT p.proname, l.lanname AS language, p.proleakproof
+FROM pg_proc p JOIN pg_language l ON l.oid = p.prolang WHERE p.proname IN ('lp_sql', 'astra_field', 'jsonb_object_field_text') ORDER BY 1;
 
 SET ROLE astra_app;
 CREATE TABLE lp_test (tenant_id text NOT NULL, data jsonb NOT NULL);

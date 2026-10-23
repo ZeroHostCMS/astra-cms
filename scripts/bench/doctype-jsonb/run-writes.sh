@@ -2,8 +2,9 @@
 # DocType JSONB benchmark: write and concurrent read throughput with pgbench, as the application role with
 # the tenant bound per transaction (what TenantTransactions does). Prepared statements, like pgjdbc.
 set -euo pipefail
+: "${BENCH_HOST:=127.0.0.1}" "${BENCH_PORT:=5433}" "${BENCH_DB:=bench}"   # where the database under test is
 export PGPASSWORD=astra_app
-CONN=(-h 127.0.0.1 -p 5433 -U astra_app -d bench)
+CONN=(-h "$BENCH_HOST" -p "$BENCH_PORT" -U astra_app)   # pgbench: -d is --debug, the database is the last argument
 OUT=${OUT:-./results}; mkdir -p "$OUT"
 CLIENTS=${CLIENTS:-16}; SECS=${SECS:-30}
 D=$(mktemp -d)
@@ -85,9 +86,9 @@ EOF
 bench() { # label files...
   local label=$1; shift
   echo "== $label clients=$CLIENTS secs=$SECS $(date)" | tee -a "$OUT/writes-summary.txt"
-  pgbench "${CONN[@]}" -n -M prepared -c "$CLIENTS" -j 4 -T "$SECS" -P 10 "$@" 2>&1 | tee "$OUT/pgbench-$label.txt" | grep -E "tps|latency average|latency stddev" | tee -a "$OUT/writes-summary.txt"
+  pgbench "${CONN[@]}" -n -M prepared -c "$CLIENTS" -j 4 -T "$SECS" -P 10 "$BENCH_DB" "$@" 2>&1 | tee "$OUT/pgbench-$label.txt" | grep -E "tps|latency average|latency stddev" | tee -a "$OUT/writes-summary.txt"
 }
-stats() { psql "${CONN[@]}" -X -Atc "SELECT relname, n_tup_ins, n_tup_upd, n_tup_hot_upd, round(100.0*n_tup_hot_upd/greatest(n_tup_upd,1),1) AS hot_pct, n_dead_tup FROM pg_stat_user_tables WHERE relname IN ('astra_doc','orders_rel') ORDER BY 1" | tee -a "$OUT/writes-summary.txt"; }
+stats() { psql "${CONN[@]}" -d "$BENCH_DB" -X -Atc "SELECT relname, n_tup_ins, n_tup_upd, n_tup_hot_upd, round(100.0*n_tup_hot_upd/greatest(n_tup_upd,1),1) AS hot_pct, n_dead_tup FROM pg_stat_user_tables WHERE relname IN ('astra_doc','orders_rel') ORDER BY 1" | tee -a "$OUT/writes-summary.txt"; }
 
 MODE=${1:-all}
 if [ "$MODE" = reads ] || [ "$MODE" = all ]; then

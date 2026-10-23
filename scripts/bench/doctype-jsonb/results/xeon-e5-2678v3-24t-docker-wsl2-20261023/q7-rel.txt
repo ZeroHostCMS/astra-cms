@@ -1,0 +1,172 @@
+hanoi-express
+Finalize GroupAggregate  (cost=221306.86..221308.45 rows=3 width=49) (actual time=984.645..1003.011 rows=3 loops=1)
+  Group Key: zone
+  Buffers: shared hit=86677 read=105699
+  I/O Timings: shared read=1948.019
+  ->  Gather Merge  (cost=221306.86..221308.29 rows=12 width=49) (actual time=984.614..1002.973 rows=15 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=86677 read=105699
+        I/O Timings: shared read=1948.019
+        ->  Sort  (cost=220306.80..220306.81 rows=3 width=49) (actual time=955.936..955.938 rows=3 loops=5)
+              Sort Key: zone
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=86677 read=105699
+              I/O Timings: shared read=1948.019
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              Worker 2:  Sort Method: quicksort  Memory: 25kB
+              Worker 3:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=220306.74..220306.77 rows=3 width=49) (actual time=955.880..955.883 rows=3 loops=5)
+                    Group Key: zone
+                    Batches: 1  Memory Usage: 24kB
+                    Buffers: shared hit=86645 read=105699
+                    I/O Timings: shared read=1948.019
+                    Worker 0:  Batches: 1  Memory Usage: 24kB
+                    Worker 1:  Batches: 1  Memory Usage: 24kB
+                    Worker 2:  Batches: 1  Memory Usage: 24kB
+                    Worker 3:  Batches: 1  Memory Usage: 24kB
+                    ->  Parallel Seq Scan on orders_rel  (cost=0.00..217341.64 rows=395347 width=14) (actual time=183.359..791.846 rows=319950 loops=5)
+                          Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+                          Rows Removed by Filter: 680050
+                          Buffers: shared hit=86645 read=105699
+                          I/O Timings: shared read=1948.019
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=222
+Planning Time: 1.794 ms
+JIT:
+  Functions: 43
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 6.429 ms, Inlining 0.000 ms, Optimization 3.761 ms, Emission 78.472 ms, Total 88.663 ms
+Execution Time: 1030.533 ms
+----- run 1: 1030.533 ms
+hanoi-express
+Finalize GroupAggregate  (cost=221306.86..221308.45 rows=3 width=49) (actual time=615.932..633.981 rows=3 loops=1)
+  Group Key: zone
+  Buffers: shared hit=86837 read=105539
+  I/O Timings: shared read=261.964
+  ->  Gather Merge  (cost=221306.86..221308.29 rows=12 width=49) (actual time=615.880..633.924 rows=15 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=86837 read=105539
+        I/O Timings: shared read=261.964
+        ->  Sort  (cost=220306.80..220306.81 rows=3 width=49) (actual time=589.838..589.839 rows=3 loops=5)
+              Sort Key: zone
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=86837 read=105539
+              I/O Timings: shared read=261.964
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              Worker 2:  Sort Method: quicksort  Memory: 25kB
+              Worker 3:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=220306.74..220306.77 rows=3 width=49) (actual time=589.782..589.784 rows=3 loops=5)
+                    Group Key: zone
+                    Batches: 1  Memory Usage: 24kB
+                    Buffers: shared hit=86805 read=105539
+                    I/O Timings: shared read=261.964
+                    Worker 0:  Batches: 1  Memory Usage: 24kB
+                    Worker 1:  Batches: 1  Memory Usage: 24kB
+                    Worker 2:  Batches: 1  Memory Usage: 24kB
+                    Worker 3:  Batches: 1  Memory Usage: 24kB
+                    ->  Parallel Seq Scan on orders_rel  (cost=0.00..217341.64 rows=395347 width=14) (actual time=104.719..424.464 rows=319950 loops=5)
+                          Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+                          Rows Removed by Filter: 680050
+                          Buffers: shared hit=86805 read=105539
+                          I/O Timings: shared read=261.964
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=222
+Planning Time: 0.835 ms
+JIT:
+  Functions: 43
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 5.708 ms, Inlining 0.000 ms, Optimization 3.553 ms, Emission 65.154 ms, Total 74.415 ms
+Execution Time: 655.925 ms
+----- run 2: 655.925 ms
+hanoi-express
+Finalize GroupAggregate  (cost=221306.86..221308.45 rows=3 width=49) (actual time=657.050..675.849 rows=3 loops=1)
+  Group Key: zone
+  Buffers: shared hit=86997 read=105379
+  I/O Timings: shared read=265.957
+  ->  Gather Merge  (cost=221306.86..221308.29 rows=12 width=49) (actual time=657.016..675.805 rows=15 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=86997 read=105379
+        I/O Timings: shared read=265.957
+        ->  Sort  (cost=220306.80..220306.81 rows=3 width=49) (actual time=632.214..632.216 rows=3 loops=5)
+              Sort Key: zone
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=86997 read=105379
+              I/O Timings: shared read=265.957
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              Worker 2:  Sort Method: quicksort  Memory: 25kB
+              Worker 3:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=220306.74..220306.77 rows=3 width=49) (actual time=632.170..632.173 rows=3 loops=5)
+                    Group Key: zone
+                    Batches: 1  Memory Usage: 24kB
+                    Buffers: shared hit=86965 read=105379
+                    I/O Timings: shared read=265.957
+                    Worker 0:  Batches: 1  Memory Usage: 24kB
+                    Worker 1:  Batches: 1  Memory Usage: 24kB
+                    Worker 2:  Batches: 1  Memory Usage: 24kB
+                    Worker 3:  Batches: 1  Memory Usage: 24kB
+                    ->  Parallel Seq Scan on orders_rel  (cost=0.00..217341.64 rows=395347 width=14) (actual time=95.556..447.850 rows=319950 loops=5)
+                          Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+                          Rows Removed by Filter: 680050
+                          Buffers: shared hit=86965 read=105379
+                          I/O Timings: shared read=265.957
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=222
+Planning Time: 0.919 ms
+JIT:
+  Functions: 43
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 5.346 ms, Inlining 0.000 ms, Optimization 2.988 ms, Emission 56.013 ms, Total 64.347 ms
+Execution Time: 700.700 ms
+----- run 3: 700.700 ms
+hanoi-express
+Finalize GroupAggregate  (cost=221306.86..221308.45 rows=3 width=49) (actual time=639.622..656.522 rows=3 loops=1)
+  Group Key: zone
+  Buffers: shared hit=87157 read=105219
+  I/O Timings: shared read=255.608
+  ->  Gather Merge  (cost=221306.86..221308.29 rows=12 width=49) (actual time=639.575..656.458 rows=15 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=87157 read=105219
+        I/O Timings: shared read=255.608
+        ->  Sort  (cost=220306.80..220306.81 rows=3 width=49) (actual time=615.210..615.211 rows=3 loops=5)
+              Sort Key: zone
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=87157 read=105219
+              I/O Timings: shared read=255.608
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              Worker 2:  Sort Method: quicksort  Memory: 25kB
+              Worker 3:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=220306.74..220306.77 rows=3 width=49) (actual time=615.159..615.161 rows=3 loops=5)
+                    Group Key: zone
+                    Batches: 1  Memory Usage: 24kB
+                    Buffers: shared hit=87125 read=105219
+                    I/O Timings: shared read=255.608
+                    Worker 0:  Batches: 1  Memory Usage: 24kB
+                    Worker 1:  Batches: 1  Memory Usage: 24kB
+                    Worker 2:  Batches: 1  Memory Usage: 24kB
+                    Worker 3:  Batches: 1  Memory Usage: 24kB
+                    ->  Parallel Seq Scan on orders_rel  (cost=0.00..217341.64 rows=395347 width=14) (actual time=88.704..433.300 rows=319950 loops=5)
+                          Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+                          Rows Removed by Filter: 680050
+                          Buffers: shared hit=87125 read=105219
+                          I/O Timings: shared read=255.608
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=222
+Planning Time: 0.799 ms
+JIT:
+  Functions: 43
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 4.687 ms, Inlining 0.000 ms, Optimization 2.829 ms, Emission 53.291 ms, Total 60.808 ms
+Execution Time: 678.194 ms
+----- run 4: 678.194 ms

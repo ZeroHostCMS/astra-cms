@@ -1,0 +1,154 @@
+hanoi-express
+Finalize GroupAggregate  (cost=190380.43..190382.02 rows=3 width=49) (actual time=466.381..483.268 rows=3 loops=1)
+  Group Key: zone
+  Buffers: shared hit=87856 read=72538 written=15739
+  I/O Timings: shared read=324.285 write=115.712
+  ->  Gather Merge  (cost=190380.43..190381.86 rows=12 width=49) (actual time=466.273..483.208 rows=15 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=87856 read=72538 written=15739
+        I/O Timings: shared read=324.285 write=115.712
+        ->  Sort  (cost=189380.37..189380.38 rows=3 width=49) (actual time=439.037..439.038 rows=3 loops=5)
+              Sort Key: zone
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=87856 read=72538 written=15739
+              I/O Timings: shared read=324.285 write=115.712
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              Worker 2:  Sort Method: quicksort  Memory: 25kB
+              Worker 3:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=189380.31..189380.35 rows=3 width=49) (actual time=438.981..438.983 rows=3 loops=5)
+                    Group Key: zone
+                    Batches: 1  Memory Usage: 24kB
+                    Buffers: shared hit=87824 read=72538 written=15739
+                    I/O Timings: shared read=324.285 write=115.712
+                    Worker 0:  Batches: 1  Memory Usage: 24kB
+                    Worker 1:  Batches: 1  Memory Usage: 24kB
+                    Worker 2:  Batches: 1  Memory Usage: 24kB
+                    Worker 3:  Batches: 1  Memory Usage: 24kB
+                    ->  Parallel Index Scan using orders_rel_created_idx on orders_rel  (cost=0.56..186380.43 rows=399984 width=14) (actual time=12.959..276.874 rows=319950 loops=5)
+                          Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+                          Buffers: shared hit=87824 read=72538 written=15739
+                          I/O Timings: shared read=324.285 write=115.712
+Planning:
+  Buffers: shared hit=267
+Planning Time: 1.005 ms
+JIT:
+  Functions: 48
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 7.327 ms, Inlining 0.000 ms, Optimization 3.714 ms, Emission 59.954 ms, Total 70.995 ms
+Execution Time: 506.176 ms
+----- run 1: 506.176 ms
+hanoi-express
+Finalize GroupAggregate  (cost=190380.43..190382.02 rows=3 width=49) (actual time=410.020..429.846 rows=3 loops=1)
+  Group Key: zone
+  Buffers: shared hit=160324 read=1
+  I/O Timings: shared read=0.011
+  ->  Gather Merge  (cost=190380.43..190381.86 rows=12 width=49) (actual time=409.983..429.804 rows=15 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=160324 read=1
+        I/O Timings: shared read=0.011
+        ->  Sort  (cost=189380.37..189380.38 rows=3 width=49) (actual time=374.477..374.478 rows=3 loops=5)
+              Sort Key: zone
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=160324 read=1
+              I/O Timings: shared read=0.011
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              Worker 2:  Sort Method: quicksort  Memory: 25kB
+              Worker 3:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=189380.31..189380.35 rows=3 width=49) (actual time=374.406..374.409 rows=3 loops=5)
+                    Group Key: zone
+                    Batches: 1  Memory Usage: 24kB
+                    Buffers: shared hit=160292 read=1
+                    I/O Timings: shared read=0.011
+                    Worker 0:  Batches: 1  Memory Usage: 24kB
+                    Worker 1:  Batches: 1  Memory Usage: 24kB
+                    Worker 2:  Batches: 1  Memory Usage: 24kB
+                    Worker 3:  Batches: 1  Memory Usage: 24kB
+                    ->  Parallel Index Scan using orders_rel_created_idx on orders_rel  (cost=0.56..186380.43 rows=399984 width=14) (actual time=18.533..187.320 rows=319950 loops=5)
+                          Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+                          Buffers: shared hit=160292 read=1
+                          I/O Timings: shared read=0.011
+Planning:
+  Buffers: shared hit=267
+Planning Time: 0.980 ms
+JIT:
+  Functions: 48
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 8.769 ms, Inlining 0.000 ms, Optimization 4.392 ms, Emission 87.799 ms, Total 100.960 ms
+Execution Time: 452.347 ms
+----- run 2: 452.347 ms
+hanoi-express
+Finalize GroupAggregate  (cost=190380.43..190382.02 rows=3 width=49) (actual time=434.825..455.546 rows=3 loops=1)
+  Group Key: zone
+  Buffers: shared hit=160298
+  ->  Gather Merge  (cost=190380.43..190381.86 rows=12 width=49) (actual time=434.775..455.488 rows=15 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=160298
+        ->  Sort  (cost=189380.37..189380.38 rows=3 width=49) (actual time=401.965..401.966 rows=3 loops=5)
+              Sort Key: zone
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=160298
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              Worker 2:  Sort Method: quicksort  Memory: 25kB
+              Worker 3:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=189380.31..189380.35 rows=3 width=49) (actual time=401.906..401.909 rows=3 loops=5)
+                    Group Key: zone
+                    Batches: 1  Memory Usage: 24kB
+                    Buffers: shared hit=160266
+                    Worker 0:  Batches: 1  Memory Usage: 24kB
+                    Worker 1:  Batches: 1  Memory Usage: 24kB
+                    Worker 2:  Batches: 1  Memory Usage: 24kB
+                    Worker 3:  Batches: 1  Memory Usage: 24kB
+                    ->  Parallel Index Scan using orders_rel_created_idx on orders_rel  (cost=0.56..186380.43 rows=399984 width=14) (actual time=14.373..196.584 rows=319950 loops=5)
+                          Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+                          Buffers: shared hit=160266
+Planning:
+  Buffers: shared hit=267
+Planning Time: 2.245 ms
+JIT:
+  Functions: 48
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 6.203 ms, Inlining 0.000 ms, Optimization 3.768 ms, Emission 67.761 ms, Total 77.732 ms
+Execution Time: 500.358 ms
+----- run 3: 500.358 ms
+hanoi-express
+Finalize GroupAggregate  (cost=190380.43..190382.02 rows=3 width=49) (actual time=366.242..382.671 rows=3 loops=1)
+  Group Key: zone
+  Buffers: shared hit=160333
+  ->  Gather Merge  (cost=190380.43..190381.86 rows=12 width=49) (actual time=366.212..382.634 rows=15 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=160333
+        ->  Sort  (cost=189380.37..189380.38 rows=3 width=49) (actual time=338.892..338.894 rows=3 loops=5)
+              Sort Key: zone
+              Sort Method: quicksort  Memory: 25kB
+              Buffers: shared hit=160333
+              Worker 0:  Sort Method: quicksort  Memory: 25kB
+              Worker 1:  Sort Method: quicksort  Memory: 25kB
+              Worker 2:  Sort Method: quicksort  Memory: 25kB
+              Worker 3:  Sort Method: quicksort  Memory: 25kB
+              ->  Partial HashAggregate  (cost=189380.31..189380.35 rows=3 width=49) (actual time=338.834..338.837 rows=3 loops=5)
+                    Group Key: zone
+                    Batches: 1  Memory Usage: 24kB
+                    Buffers: shared hit=160301
+                    Worker 0:  Batches: 1  Memory Usage: 24kB
+                    Worker 1:  Batches: 1  Memory Usage: 24kB
+                    Worker 2:  Batches: 1  Memory Usage: 24kB
+                    Worker 3:  Batches: 1  Memory Usage: 24kB
+                    ->  Parallel Index Scan using orders_rel_created_idx on orders_rel  (cost=0.56..186380.43 rows=399984 width=14) (actual time=12.149..167.150 rows=319950 loops=5)
+                          Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+                          Buffers: shared hit=160301
+Planning:
+  Buffers: shared hit=267
+Planning Time: 1.075 ms
+JIT:
+  Functions: 48
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 5.422 ms, Inlining 0.000 ms, Optimization 2.970 ms, Emission 57.310 ms, Total 65.702 ms
+Execution Time: 404.965 ms
+----- run 4: 404.965 ms

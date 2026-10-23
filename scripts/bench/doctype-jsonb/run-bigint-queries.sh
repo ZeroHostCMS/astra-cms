@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # DocType JSONB benchmark: Q5 and Q7 after 05-bigint-amounts.sql (amount columns as bigint, tables repacked).
 set -euo pipefail
+: "${BENCH_HOST:=127.0.0.1}" "${BENCH_PORT:=5433}" "${BENCH_DB:=bench}"   # where the database under test is
 export PGPASSWORD=astra_app
-PSQL=(psql -h 127.0.0.1 -p 5433 -U astra_app -d bench -X -q -v ON_ERROR_STOP=1)
+PSQL=(psql -h "$BENCH_HOST" -p "$BENCH_PORT" -U astra_app -d "$BENCH_DB" -X -q -v ON_ERROR_STOP=1)
 OUT=${OUT:-./results}; mkdir -p "$OUT"
 TENANT=${TENANT:-hanoi-express}
 run() {

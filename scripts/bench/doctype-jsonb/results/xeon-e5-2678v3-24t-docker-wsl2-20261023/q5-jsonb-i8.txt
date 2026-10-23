@@ -1,0 +1,77 @@
+hanoi-express
+Limit  (cost=1000.62..36532.03 rows=20 width=501) (actual time=251.122..281.862 rows=20 loops=1)
+  Buffers: shared hit=27895 read=25197
+  I/O Timings: shared read=488.418
+  ->  Gather Merge  (cost=1000.62..526865.57 rows=296 width=501) (actual time=251.120..281.854 rows=20 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=27895 read=25197
+        I/O Timings: shared read=488.418
+        ->  Parallel Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..525830.26 rows=74 width=501) (actual time=11.116..171.798 rows=16 loops=5)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((m_cod_amount > 4900000) AND (astra_field(data, 'zone'::text) = 'Remote'::text))
+              Rows Removed by Filter: 10526
+              Buffers: shared hit=27895 read=25197
+              I/O Timings: shared read=488.418
+Planning:
+  Buffers: shared hit=383
+Planning Time: 1.665 ms
+Execution Time: 282.010 ms
+----- run 1: 282.010 ms
+hanoi-express
+Limit  (cost=1000.62..36532.03 rows=20 width=501) (actual time=116.796..124.091 rows=20 loops=1)
+  Buffers: shared hit=52878 read=6
+  I/O Timings: shared read=0.106
+  ->  Gather Merge  (cost=1000.62..526865.57 rows=296 width=501) (actual time=116.794..124.084 rows=20 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=52878 read=6
+        I/O Timings: shared read=0.106
+        ->  Parallel Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..525830.26 rows=74 width=501) (actual time=1.890..60.972 rows=16 loops=5)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((m_cod_amount > 4900000) AND (astra_field(data, 'zone'::text) = 'Remote'::text))
+              Rows Removed by Filter: 10485
+              Buffers: shared hit=52878 read=6
+              I/O Timings: shared read=0.106
+Planning:
+  Buffers: shared hit=373
+Planning Time: 2.055 ms
+Execution Time: 124.252 ms
+----- run 2: 124.252 ms
+hanoi-express
+Limit  (cost=1000.62..36532.03 rows=20 width=501) (actual time=95.660..103.447 rows=20 loops=1)
+  Buffers: shared hit=53088 read=144
+  I/O Timings: shared read=1.480
+  ->  Gather Merge  (cost=1000.62..526865.57 rows=296 width=501) (actual time=95.658..103.440 rows=20 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=53088 read=144
+        I/O Timings: shared read=1.480
+        ->  Parallel Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..525830.26 rows=74 width=501) (actual time=3.479..59.192 rows=16 loops=5)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((m_cod_amount > 4900000) AND (astra_field(data, 'zone'::text) = 'Remote'::text))
+              Rows Removed by Filter: 10554
+              Buffers: shared hit=53088 read=144
+              I/O Timings: shared read=1.480
+Planning:
+  Buffers: shared hit=373
+Planning Time: 2.071 ms
+Execution Time: 103.609 ms
+----- run 3: 103.609 ms
+hanoi-express
+Limit  (cost=1000.62..36532.03 rows=20 width=501) (actual time=86.243..103.510 rows=20 loops=1)
+  Buffers: shared hit=53366
+  ->  Gather Merge  (cost=1000.62..526865.57 rows=296 width=501) (actual time=86.240..103.503 rows=20 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=53366
+        ->  Parallel Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..525830.26 rows=74 width=501) (actual time=1.623..48.782 rows=16 loops=5)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((m_cod_amount > 4900000) AND (astra_field(data, 'zone'::text) = 'Remote'::text))
+              Rows Removed by Filter: 10580
+              Buffers: shared hit=53366
+Planning:
+  Buffers: shared hit=373
+Planning Time: 1.640 ms
+Execution Time: 103.649 ms
+----- run 4: 103.649 ms

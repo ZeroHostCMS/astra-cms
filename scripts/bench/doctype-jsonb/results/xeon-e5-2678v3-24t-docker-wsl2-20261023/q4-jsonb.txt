@@ -1,0 +1,104 @@
+hanoi-express
+Limit  (cost=419971.67..419971.67 rows=3 width=491) (actual time=860.147..918.148 rows=4 loops=1)
+  Buffers: shared hit=792149
+  ->  Sort  (cost=419971.67..419971.67 rows=3 width=491) (actual time=853.347..911.346 rows=4 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 29kB
+        Buffers: shared hit=792149
+        ->  Gather  (cost=1000.43..419971.64 rows=3 width=491) (actual time=631.912..911.244 rows=4 loops=1)
+              Workers Planned: 4
+              Workers Launched: 4
+              Buffers: shared hit=792146
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..418971.34 rows=1 width=491) (actual time=651.113..823.001 rows=1 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((docstatus = 1) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    Rows Removed by Filter: 800168
+                    Buffers: shared hit=792146
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 1.078 ms
+JIT:
+  Functions: 27
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 2.589 ms, Inlining 0.000 ms, Optimization 2.000 ms, Emission 32.568 ms, Total 37.157 ms
+Execution Time: 943.103 ms
+----- run 1: 943.103 ms
+hanoi-express
+Limit  (cost=419971.67..419971.67 rows=3 width=491) (actual time=789.682..851.641 rows=4 loops=1)
+  Buffers: shared hit=792145
+  ->  Sort  (cost=419971.67..419971.67 rows=3 width=491) (actual time=782.192..844.150 rows=4 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 29kB
+        Buffers: shared hit=792145
+        ->  Gather  (cost=1000.43..419971.64 rows=3 width=491) (actual time=488.076..844.088 rows=4 loops=1)
+              Workers Planned: 4
+              Workers Launched: 4
+              Buffers: shared hit=792142
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..418971.34 rows=1 width=491) (actual time=579.986..751.928 rows=1 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((docstatus = 1) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    Rows Removed by Filter: 800168
+                    Buffers: shared hit=792142
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 1.011 ms
+JIT:
+  Functions: 27
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 3.210 ms, Inlining 0.000 ms, Optimization 2.609 ms, Emission 43.008 ms, Total 48.827 ms
+Execution Time: 873.959 ms
+----- run 2: 873.959 ms
+hanoi-express
+Limit  (cost=419971.67..419971.67 rows=3 width=491) (actual time=782.813..842.603 rows=4 loops=1)
+  Buffers: shared hit=792148
+  ->  Sort  (cost=419971.67..419971.67 rows=3 width=491) (actual time=777.017..836.805 rows=4 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 29kB
+        Buffers: shared hit=792148
+        ->  Gather  (cost=1000.43..419971.64 rows=3 width=491) (actual time=428.024..836.755 rows=4 loops=1)
+              Workers Planned: 4
+              Workers Launched: 4
+              Buffers: shared hit=792145
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..418971.34 rows=1 width=491) (actual time=546.857..745.942 rows=1 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((docstatus = 1) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    Rows Removed by Filter: 800168
+                    Buffers: shared hit=792145
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 0.986 ms
+JIT:
+  Functions: 27
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 2.567 ms, Inlining 0.000 ms, Optimization 1.849 ms, Emission 30.562 ms, Total 34.977 ms
+Execution Time: 864.391 ms
+----- run 3: 864.391 ms
+hanoi-express
+Limit  (cost=419971.67..419971.67 rows=3 width=491) (actual time=797.515..858.367 rows=4 loops=1)
+  Buffers: shared hit=792148
+  ->  Sort  (cost=419971.67..419971.67 rows=3 width=491) (actual time=791.645..852.495 rows=4 loops=1)
+        Sort Key: modified_at DESC
+        Sort Method: quicksort  Memory: 29kB
+        Buffers: shared hit=792148
+        ->  Gather  (cost=1000.43..419971.64 rows=3 width=491) (actual time=791.600..852.451 rows=4 loops=1)
+              Workers Planned: 4
+              Workers Launched: 4
+              Buffers: shared hit=792145
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..418971.34 rows=1 width=491) (actual time=618.380..760.885 rows=1 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((docstatus = 1) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+                    Rows Removed by Filter: 800168
+                    Buffers: shared hit=792145
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 0.948 ms
+JIT:
+  Functions: 27
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 2.188 ms, Inlining 0.000 ms, Optimization 1.665 ms, Emission 27.207 ms, Total 31.060 ms
+Execution Time: 880.172 ms
+----- run 4: 880.172 ms

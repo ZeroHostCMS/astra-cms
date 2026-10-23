@@ -1,0 +1,37 @@
+Timing is on.
+CREATE FUNCTION
+Time: 19.077 ms
+GRANT
+Time: 7.165 ms
+SET
+Time: 0.256 ms
+CREATE INDEX
+Time: 32409.635 ms (00:32.410)
+CREATE INDEX
+Time: 24445.876 ms (00:24.446)
+CREATE INDEX
+Time: 16978.322 ms (00:16.978)
+CREATE INDEX
+Time: 10636.743 ms (00:10.637)
+ALTER TABLE
+Time: 3.320 ms
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 0.437 ms
+DO
+Time: 1192144.748 ms (19:52.145)
+UPDATE 167038
+Time: 104565.940 ms (01:44.566)
+CREATE INDEX
+Time: 18812.276 ms (00:18.812)
+CREATE INDEX
+Time: 12961.986 ms (00:12.962)
+VACUUM
+Time: 92571.294 ms (01:32.571)
+VACUUM
+Time: 43359.305 ms (00:43.359)
+RESET
+Time: 1.623 ms

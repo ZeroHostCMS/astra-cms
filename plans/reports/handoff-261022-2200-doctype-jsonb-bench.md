@@ -1,5 +1,7 @@
 # Bàn giao: benchmark DocType JSONB, tiếp tục trên máy mạnh hơn
 
+> **Trạng thái 2026-10-23: đã xong.** Ba phép đo còn thiếu đã chạy trên máy thứ hai (toàn bộ chuỗi, cùng một máy), cộng một giai đoạn đo giới hạn mới. Kết quả và kết luận: [docs/why_doctype_jsonb.md](../../docs/why_doctype_jsonb.md). Kết quả thô mỗi lần chạy: `scripts/bench/doctype-jsonb/results/<label>/`. Bộ đo chạy lại trên mọi server Linux: `scripts/bench/doctype-jsonb/bench.sh` (xem README cạnh nó). Các việc kỹ thuật ở mục 4 dưới đây đã làm, trừ materialised projection cho Currency; thêm một việc mục này chưa thấy: bộ đếm series gapless là trần của việc tạo đơn, nay có `gapless: false`. Phần dưới giữ nguyên như lúc bàn giao.
+
 Ngày 2026-10-22. Tài liệu kết quả: [docs/why_doctype_jsonb.md](../../docs/why_doctype_jsonb.md). Script: `scripts/bench/doctype-jsonb/`. Kết quả thô lần chạy này: `scripts/bench/doctype-jsonb/results/` (mọi plan `EXPLAIN (ANALYZE, BUFFERS)`, pgbench, kích thước).
 
 ## 1. Đã xong và đã kết luận

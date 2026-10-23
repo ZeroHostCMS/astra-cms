@@ -1,0 +1,75 @@
+hanoi-express
+Limit  (cost=62476.60..62476.73 rows=50 width=291) (actual time=7067.527..7067.542 rows=50 loops=1)
+  Buffers: shared hit=3143 read=80962 written=57339
+  I/O Timings: shared read=6112.561 write=372.772
+  ->  Sort  (cost=62476.60..62595.60 rows=47600 width=291) (actual time=7067.525..7067.533 rows=50 loops=1)
+        Sort Key: created_at DESC
+        Sort Method: top-N heapsort  Memory: 76kB
+        Buffers: shared hit=3143 read=80962 written=57339
+        I/O Timings: shared read=6112.561 write=372.772
+        ->  Index Scan using orders_rel_ops_status on orders_rel  (cost=0.43..60895.37 rows=47600 width=291) (actual time=2979.896..7026.101 rows=47913 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (ops_status = 'Failed Delivery'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 71644
+              Buffers: shared hit=3140 read=80962 written=57339
+              I/O Timings: shared read=6112.561 write=372.772
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=274
+Planning Time: 2.080 ms
+Execution Time: 7067.679 ms
+----- run 1: 7067.679 ms
+hanoi-express
+Limit  (cost=62476.60..62476.73 rows=50 width=291) (actual time=238.673..238.687 rows=50 loops=1)
+  Buffers: shared hit=84105
+  ->  Sort  (cost=62476.60..62595.60 rows=47600 width=291) (actual time=238.670..238.677 rows=50 loops=1)
+        Sort Key: created_at DESC
+        Sort Method: top-N heapsort  Memory: 76kB
+        Buffers: shared hit=84105
+        ->  Index Scan using orders_rel_ops_status on orders_rel  (cost=0.43..60895.37 rows=47600 width=291) (actual time=53.903..218.303 rows=47913 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (ops_status = 'Failed Delivery'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 71644
+              Buffers: shared hit=84102
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=274
+Planning Time: 2.024 ms
+Execution Time: 238.821 ms
+----- run 2: 238.821 ms
+hanoi-express
+Limit  (cost=62476.60..62476.73 rows=50 width=291) (actual time=229.683..229.697 rows=50 loops=1)
+  Buffers: shared hit=84105
+  ->  Sort  (cost=62476.60..62595.60 rows=47600 width=291) (actual time=229.682..229.688 rows=50 loops=1)
+        Sort Key: created_at DESC
+        Sort Method: top-N heapsort  Memory: 76kB
+        Buffers: shared hit=84105
+        ->  Index Scan using orders_rel_ops_status on orders_rel  (cost=0.43..60895.37 rows=47600 width=291) (actual time=48.429..209.706 rows=47913 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (ops_status = 'Failed Delivery'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 71644
+              Buffers: shared hit=84102
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=274
+Planning Time: 1.203 ms
+Execution Time: 229.774 ms
+----- run 3: 229.774 ms
+hanoi-express
+Limit  (cost=62476.60..62476.73 rows=50 width=291) (actual time=240.536..240.550 rows=50 loops=1)
+  Buffers: shared hit=84105
+  ->  Sort  (cost=62476.60..62595.60 rows=47600 width=291) (actual time=240.535..240.541 rows=50 loops=1)
+        Sort Key: created_at DESC
+        Sort Method: top-N heapsort  Memory: 76kB
+        Buffers: shared hit=84105
+        ->  Index Scan using orders_rel_ops_status on orders_rel  (cost=0.43..60895.37 rows=47600 width=291) (actual time=51.516..220.035 rows=47913 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (ops_status = 'Failed Delivery'::text))
+              Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+              Rows Removed by Filter: 71644
+              Buffers: shared hit=84102
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=274
+Planning Time: 1.067 ms
+Execution Time: 240.628 ms
+----- run 4: 240.628 ms

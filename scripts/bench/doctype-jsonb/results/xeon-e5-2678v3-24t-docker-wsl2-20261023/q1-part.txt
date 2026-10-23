@@ -1,0 +1,110 @@
+hanoi-express
+Append  (cost=0.00..10.89 rows=7 width=409) (actual time=1.394..1.398 rows=0 loops=1)
+  Buffers: shared hit=12 read=2
+  I/O Timings: shared read=0.889
+  ->  Seq Scan on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.00..0.00 rows=1 width=230) (actual time=0.008..0.008 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+  ->  Index Scan using astra_doc_part_2026_10_19_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.43..2.65 rows=1 width=544) (actual time=1.020..1.020 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=1 read=2
+        I/O Timings: shared read=0.889
+  ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.56..2.78 rows=1 width=544) (actual time=0.113..0.113 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=4
+  ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.56..2.78 rows=1 width=544) (actual time=0.161..0.162 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=4
+  ->  Index Scan using astra_doc_part_2026_10_22_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.42..2.65 rows=1 width=544) (actual time=0.072..0.072 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=3
+  ->  Seq Scan on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.00..0.00 rows=1 width=230) (actual time=0.009..0.009 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+  ->  Seq Scan on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.00..0.00 rows=1 width=230) (actual time=0.006..0.006 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1417
+Planning Time: 10.017 ms
+Execution Time: 1.642 ms
+----- run 1: 1.642 ms
+hanoi-express
+Append  (cost=0.00..10.89 rows=7 width=409) (actual time=0.377..0.380 rows=0 loops=1)
+  Buffers: shared hit=14
+  ->  Seq Scan on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.00..0.00 rows=1 width=230) (actual time=0.009..0.009 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+  ->  Index Scan using astra_doc_part_2026_10_19_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.43..2.65 rows=1 width=544) (actual time=0.092..0.092 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=3
+  ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.56..2.78 rows=1 width=544) (actual time=0.098..0.098 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=4
+  ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.56..2.78 rows=1 width=544) (actual time=0.098..0.098 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=4
+  ->  Index Scan using astra_doc_part_2026_10_22_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.42..2.65 rows=1 width=544) (actual time=0.066..0.066 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=3
+  ->  Seq Scan on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.00..0.00 rows=1 width=230) (actual time=0.005..0.005 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+  ->  Seq Scan on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.00..0.00 rows=1 width=230) (actual time=0.006..0.006 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1353
+Planning Time: 11.227 ms
+Execution Time: 0.620 ms
+----- run 2: 0.620 ms
+hanoi-express
+Append  (cost=0.00..10.89 rows=7 width=409) (actual time=0.419..0.422 rows=0 loops=1)
+  Buffers: shared hit=14
+  ->  Seq Scan on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.00..0.00 rows=1 width=230) (actual time=0.007..0.007 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+  ->  Index Scan using astra_doc_part_2026_10_19_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.43..2.65 rows=1 width=544) (actual time=0.086..0.086 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=3
+  ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.56..2.78 rows=1 width=544) (actual time=0.097..0.097 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=4
+  ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.56..2.78 rows=1 width=544) (actual time=0.141..0.141 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=4
+  ->  Index Scan using astra_doc_part_2026_10_22_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.42..2.65 rows=1 width=544) (actual time=0.072..0.072 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=3
+  ->  Seq Scan on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.00..0.00 rows=1 width=230) (actual time=0.006..0.006 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+  ->  Seq Scan on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.00..0.00 rows=1 width=230) (actual time=0.006..0.006 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1353
+Planning Time: 9.323 ms
+Execution Time: 0.613 ms
+----- run 3: 0.613 ms
+hanoi-express
+Append  (cost=0.00..10.89 rows=7 width=409) (actual time=0.367..0.370 rows=0 loops=1)
+  Buffers: shared hit=14
+  ->  Seq Scan on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.00..0.00 rows=1 width=230) (actual time=0.007..0.008 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+  ->  Index Scan using astra_doc_part_2026_10_19_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.43..2.65 rows=1 width=544) (actual time=0.087..0.087 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=3
+  ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.56..2.78 rows=1 width=544) (actual time=0.097..0.098 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=4
+  ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.56..2.78 rows=1 width=544) (actual time=0.096..0.096 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=4
+  ->  Index Scan using astra_doc_part_2026_10_22_tenant_id_doctype_name_created_at_key on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.42..2.65 rows=1 width=544) (actual time=0.065..0.065 rows=0 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+        Buffers: shared hit=3
+  ->  Seq Scan on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.00..0.00 rows=1 width=230) (actual time=0.005..0.005 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+  ->  Seq Scan on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.00..0.00 rows=1 width=230) (actual time=0.006..0.006 rows=0 loops=1)
+        Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1353
+Planning Time: 9.392 ms
+Execution Time: 0.644 ms
+----- run 4: 0.644 ms
