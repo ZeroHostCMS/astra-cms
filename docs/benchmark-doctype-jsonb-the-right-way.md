@@ -1,4 +1,4 @@
-# Vì sao DocType Engine lưu JSONB, và đo thật thì nó chạy ra sao
+# Benchmark DocType JSONB: giới hạn, cách làm đúng và đánh đổi
 
 > Tài liệu kỹ thuật kèm số đo thực tế trên PostgreSQL 16, 5 triệu đơn hàng (2,5 ngày ở mức 2 triệu đơn/ngày), chạy đúng schema của kernel Astra với row-level security bật. Mọi số ở đây là số đo, không phải mục tiêu thiết kế. Bộ đo tái lập được trên máy chủ Linux bất kỳ: [scripts/bench/doctype-jsonb/](../scripts/bench/doctype-jsonb/README.md).
 
