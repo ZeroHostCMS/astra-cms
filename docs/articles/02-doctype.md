@@ -296,10 +296,12 @@ tenant needed the field, a tenant overlay would add it at run time without a new
   The kernel is the only intended writer, and row-level security still applies to every statement.
 - **Index semantics are text equality.** The expression is `data->>'field'`, so the index serves equality
   filters on text. Range queries on numbers or dates, sorting by a business field, or aggregation are not
-  served by these indexes today.
+  served by these indexes. Since the video, `projected: materialised` adds a typed column for range filters
+  (`field__gt`, `__lt`, ...).
 - **Hot fields.** PostgreSQL rewrites the whole row on `UPDATE`. A DocType whose few fields change many
-  times a day (stock, balances, counters) bloats a JSONB row. The design answer is materialised projection
-  columns and ledgers ([explain.en.md](../explain.en.md)); materialised projections are not built yet.
+  times a day (stock, balances, counters) bloats a JSONB row. The design answer is small documents and ledgers
+  ([explain.en.md](../explain.en.md)). The materialised columns added since the video are a typed copy for
+  range filters and do not make an update cheaper.
   Measure update rate per DocType before putting high-churn data in `astra_doc`.
 - **Index lifecycle.** The indexer only creates. Removing `projected: true` does not drop the index;
   that is a manual `DROP INDEX CONCURRENTLY` today.
@@ -353,7 +355,7 @@ and expand "Raw JSON from GET /api/doctype/CustomerOrder" to see the exact defin
 - **Projection indexes are built at kernel startup.** A field added by an app needs a new image; there is
   no projection builder triggered by a metadata change at run time.
 - **`pii` masks only the MCP path.** Desk and REST show PII to users whose role can read the DocType.
-- **Not built:** materialised projections, typed expression indexes, projection quotas and dropping
+- **Not built:** typed expression indexes, projection quotas and dropping
   unused indexes. These appear in the README as target architecture. Child tables are declared in the
   SPI's `FieldType` enum (`TABLE`), but neither the kernel validator nor Desk handles them yet.
 - **Any declared field can be filtered**, projected or not. Only projected fields have an index behind

@@ -1,8 +1,8 @@
 # DocType JSONB benchmark
 
-Bộ đo hiệu năng lưu trữ DocType (bảng JSONB `astra_doc` của kernel) so với bảng cột truyền thống, dưới row-level security như production. Mục tiêu là biết **giới hạn**, **các phương án tối ưu** và **đánh đổi** của từng phương án, đo lặp lại được trên nhiều máy chủ Linux và cloud. Kết quả và phân tích: [docs/benchmark-doctype-jsonb-the-right-way.md](../../../docs/benchmark-doctype-jsonb-the-right-way.md).
+Bộ đo này so sánh cách kernel lưu DocType (bảng JSONB `astra_doc`) với một bảng quan hệ chứa cùng dữ liệu, dưới row-level security như production. Nó dùng để tìm giới hạn của một máy, so sánh các phương án tối ưu cùng cái giá của từng phương án, và cho kết quả lặp lại được trên nhiều máy chủ Linux và cloud. Kết quả và phân tích: [docs/benchmark-doctype-jsonb-the-right-way.md](../../../docs/benchmark-doctype-jsonb-the-right-way.md).
 
-PostgreSQL chạy trong Docker từ **một image cố định** (mặc định `pgvector/pgvector:pg16`, image của dự án; digest được ghi lại), nên mọi máy và mọi cloud chạy cùng một bản build. Container dùng mạng của host (`--network host`, không NAT) và có thể đặt dữ liệu lên đúng đĩa cần đo (`DATA_DIR`). `pgbench` và `psql` cũng chạy từ image đó.
+PostgreSQL chạy trong Docker từ một image cố định (mặc định `pgvector/pgvector:pg16`, image của dự án; digest được ghi lại), nên mọi máy và mọi cloud chạy cùng một bản build. Container dùng mạng của host (`--network host`, không NAT) và có thể đặt dữ liệu lên đúng đĩa cần đo (`DATA_DIR`). `pgbench` và `psql` cũng chạy từ image đó.
 
 ## Chạy
 
@@ -18,7 +18,7 @@ DATA_DIR=/mnt/nvme/astra-bench BENCH_NOTE="aws m7i.2xlarge, gp3 16k IOPS, ap-sou
 | `./bench.sh load baseline` | Bất kỳ tập con nào, theo thứ tự trên | |
 | `./summarize.sh results/<label>` | Tạo lại `metrics.csv` và `report.md` từ dữ liệu thô | vài giây |
 
-Yêu cầu: Linux, Docker, bash, awk, **ít nhất 60 GB trống** cho dữ liệu với 5 triệu đơn (bộ đầy đủ gồm ba bảng, GIN, WAL 16 GB, bản rewrite khi đổi kiểu cột). Cuối lần chạy, container và dữ liệu bị xoá; `KEEP=1` để giữ lại.
+Yêu cầu: Linux, Docker, bash, awk và ít nhất 60 GB trống cho dữ liệu với 5 triệu đơn (bộ đầy đủ gồm ba bảng, GIN, WAL 16 GB, bản rewrite khi đổi kiểu cột). Cuối lần chạy, container và dữ liệu bị xoá; `KEEP=1` để giữ lại.
 
 ## Biến môi trường chính
 
@@ -35,7 +35,7 @@ Yêu cầu: Linux, Docker, bash, awk, **ít nhất 60 GB trống** cho dữ li�
 | `WARMUP` | `10` | Số giây đầu mỗi lần chạy không tính vào p50/p95/p99 (đợt ghi full-page ngay sau checkpoint) |
 | `RATES` | `7200 10800 14400` | Các mức tải cố định (giao dịch/giây) cho phép đo độ trễ: mức đỉnh mục tiêu, gấp 1,5 và gấp 2 |
 | `LIMIT_MODES` | `reads writes mixed rate locality partition sync-off gin` | Các nhóm đo trong giai đoạn limits; `partition` dựng thêm bảng 18 partition tháng (`12-partition-setup.sql`) và in plan (`13-partition-plans.sql`) |
-| `RATE_SECS`, `WARMUP` | `60`, `10` | Thời lượng mỗi lần chạy tải cố định; số giây đầu không tính vào phân vị |
+| `RATE_SECS` | `60` | Thời lượng mỗi lần chạy tải cố định |
 | `BENCH_PORT` | `5433` | Cổng PostgreSQL trên mạng host |
 | `KEEP`, `REUSE` | `0` | Giữ container và dữ liệu sau khi chạy; chạy tiếp trên container đã có |
 
@@ -59,8 +59,8 @@ Mỗi lần chạy ghi vào `results/<label>/`:
 
 ## Để so sánh khách quan
 
-- **Chạy mỗi cấu hình ít nhất 3 lần** (cùng máy, khác `BENCH_LABEL`) và so trung vị; độ lệch giữa các lần chạy là sai số của phép đo.
-- **So phần cứng thì dùng `PROFILE=fixed16`** trên mọi máy; **tìm giới hạn của một máy thì dùng `PROFILE=auto`**. Giữ cùng `PG_IMAGE` (tốt nhất ghim theo digest trong `machine.txt`).
+- Chạy mỗi cấu hình ít nhất 3 lần (cùng máy, khác `BENCH_LABEL`) và so trung vị; độ lệch giữa các lần chạy là sai số của phép đo.
+- Để so phần cứng, dùng `PROFILE=fixed16` trên mọi máy; để tìm giới hạn của một máy, dùng `PROFILE=auto`. Giữ cùng `PG_IMAGE` (tốt nhất ghim theo digest trong `machine.txt`).
 - Không chạy việc khác trên máy trong lúc đo; ghi `BENCH_NOTE` đủ để người khác dựng lại máy.
 - CPU governor nên là `performance`. Trên cloud, tránh instance burstable (t3, t4g, B-series): hết credit CPU giữa chừng làm số sai lệch.
 - Đĩa: dữ liệu và WAL cùng nằm dưới `DATA_DIR`. Volume mạng (EBS gp3, Persistent Disk) có độ trễ fsync cao hơn NVMe cục bộ nhiều lần; `pg_test_fsync.txt` cho thấy điều đó, và thông lượng ghi ít client tỉ lệ nghịch với nó.
@@ -82,13 +82,13 @@ Mỗi tệp tái hiện đúng các câu lệnh kernel gửi cho một thao tác
 | `jsonb-get.sql`, `rel-get.sql` | `DocumentStore.get` một đơn theo `name` |
 | `jsonb-list-customer.sql`, `rel-list-customer.sql` | 20 đơn mới nhất của một khách, qua accessor leakproof |
 | `jsonb-list-status.sql`, `rel-list-status.sql` | 20 đơn mới nhất của một trạng thái |
-| `jsonb-insert-series.sql`, `rel-insert-series.sql` | Tạo đơn: kiểm tra Link, bộ đếm series gapless (khoá dòng tới commit), `INSERT ... RETURNING *` |
+| `jsonb-insert-series.sql`, `rel-insert-series.sql` | Tạo đơn: kiểm tra Link, bộ đếm không hở số (khoá dòng tới commit), `INSERT ... RETURNING *` |
 | `jsonb-insert-seq.sql`, `rel-insert-seq.sql` | Như trên nhưng số không lấy từ dòng bị khoá (tương đương `gapless: false`) |
-| `jsonb-update-order.sql` | Đổi trạng thái trên doc đơn hàng rộng |
+| `jsonb-update-order.sql` | Đổi trạng thái trên tài liệu đơn hàng (dòng rộng) |
 | `jsonb-update-waybill.sql` | Một lần quét: đọc, kiểm tra Link, ghi Waybill hẹp và nối `scan_log`, một transaction |
-| `jsonb-update-waybill-2tx.sql` | Lần quét qua REST trước khi sửa: hai transaction, đọc doc hai lần |
+| `jsonb-update-waybill-2tx.sql` | Lần quét qua REST trước khi sửa: hai transaction, đọc tài liệu hai lần |
 | `jsonb-get-hot.sql`, `jsonb-update-waybill-hot.sql` | Chỉ trên 10 % đơn mới nhất: mẫu truy cập của hệ thống thật |
-| `rel-update.sql` | Đổi trạng thái trên bảng cột |
+| `rel-update.sql` | Đổi trạng thái trên bảng quan hệ |
 | `txn-*.sql` | Cùng các thao tác trên `astra_doc_txn` (partition theo tháng, 18 partition); `txn-*-pruned.sql` thêm cận dưới `created_at` như kernel làm với tên series có ngày |
 | `range-cod-col.sql`, `txn-range-cod-col.sql`, `txn-range-cod-json.sql` | Lọc khoảng COD trên cột materialised so với cùng phép lọc tính từ JSON; chạy cả với plan dùng chung (`-M prepared`) và plan theo giá trị (`-M extended`) |
 
@@ -96,4 +96,4 @@ Tải hỗn hợp giờ cao điểm (`mixed`, `rate`) theo tỷ lệ mỗi đơn
 
 ## PostgreSQL managed (RDS, Cloud SQL, Azure)
 
-Các dịch vụ này không cấp superuser thật, nên **không tạo được hàm `LEAKPROOF`** (`astra_field`). Không có nó, mọi bộ lọc theo field dưới RLS là quét toàn tenant, và kernel từ chối khởi động. Bộ đo cũng cần superuser. Để đo trên cloud, dùng VM chạy bộ đo này (hoặc operator Kubernetes cấp superuser như CloudNativePG).
+Các dịch vụ này không cấp superuser thật, nên không tạo được hàm `LEAKPROOF` (`astra_field`). Không có nó, mọi bộ lọc theo field dưới RLS là quét toàn tenant, và kernel từ chối khởi động. Bộ đo cũng cần superuser. Để đo trên cloud, dùng VM chạy bộ đo này (hoặc operator Kubernetes cấp superuser như CloudNativePG).

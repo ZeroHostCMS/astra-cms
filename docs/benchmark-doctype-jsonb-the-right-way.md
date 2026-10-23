@@ -1,36 +1,25 @@
 # Benchmark DocType JSONB: giới hạn, cách làm đúng và đánh đổi
 
-| | |
-| --- | --- |
-| Đối tượng | Kỹ sư, kiến trúc sư và trưởng nhóm kỹ thuật đánh giá hoặc vận hành Astra |
-| Phạm vi | Lưu trữ DocType bằng JSONB trong PostgreSQL 16, dưới row-level security; toàn hệ thống qua HTTP |
-| Dữ liệu | 5 triệu đơn hàng (2,5 ngày ở mức 2 triệu đơn/ngày), 1 triệu khách hàng, 3 tenant |
-| Thời gian đo | 22–23/10/2026, hai máy (mục 2) |
-| Tái lập | [scripts/bench/doctype-jsonb](../scripts/bench/doctype-jsonb/README.md), [scripts/bench/http](../scripts/bench/http/README.md) |
+Tài liệu này dành cho kỹ sư và trưởng nhóm kỹ thuật đang đánh giá hoặc vận hành Astra. Nó đo cách DocType Engine lưu dữ liệu trong một cột JSONB của PostgreSQL 16, với row-level security (RLS) bật như môi trường production, và so sánh với một bảng quan hệ chứa cùng dữ liệu. Dữ liệu gồm 5 triệu đơn hàng (2,5 ngày ở mức 2 triệu đơn/ngày), 1 triệu khách hàng và 3 tenant. Các phép đo chạy ngày 22 và 23/10/2026 trên hai máy mô tả ở mục 2.
 
-Mọi con số trong tài liệu là số đo thực tế, không phải mục tiêu thiết kế. Kết quả thô của từng lần chạy nằm trong thư mục `results/` của hai bộ đo.
+Mọi con số trong tài liệu là kết quả đo. Kết quả thô của từng lần chạy nằm trong thư mục `results/` của [bộ đo cơ sở dữ liệu](../scripts/bench/doctype-jsonb/README.md) và [bộ đo HTTP](../scripts/bench/http/README.md); cả hai chạy lại được trên mọi máy chủ Linux có Docker.
 
 ## Tóm tắt
 
-**Câu hỏi.** DocType Engine lưu mọi field nghiệp vụ trong một cột JSONB để thay đổi form mà không cần DDL. Tài liệu này kiểm chứng ba điều: cách lưu trữ đó tốn bao nhiêu so với một bảng quan hệ truyền thống, PostgreSQL có còn dùng được index và partition như với bảng thường không khi row-level security (RLS) bật, và toàn hệ thống có đáp ứng được 2 triệu đơn hàng mỗi ngày với 10 triệu người dùng không.
+DocType Engine lưu mọi field nghiệp vụ trong một cột JSONB để form thay đổi được mà không cần DDL. Benchmark trả lời ba câu hỏi: cách lưu này tốn bao nhiêu so với bảng quan hệ, PostgreSQL có còn dùng được index và partition khi RLS bật, và hệ thống có đáp ứng được 2 triệu đơn mỗi ngày cho 10 triệu người dùng hay không.
 
-**Kết quả chính.**
+Phát hiện quan trọng nhất là PostgreSQL không dùng index trên biểu thức JSONB khi RLS bật. Toán tử `->>` không được đánh dấu `LEAKPROOF`, nên mọi bộ lọc theo field quét toàn bộ dữ liệu của tenant, và truy vấn "20 đơn mới nhất của một khách" mất 470–867 ms. Kernel nay dùng một accessor leakproof thay cho `->>`, và cùng truy vấn còn 0,13–0,29 ms. Sau thay đổi này, đọc trên JSONB chậm hơn bảng quan hệ dưới 0,1 ms mỗi truy vấn và 4–8 % thông lượng.
 
-1. **Dưới RLS, PostgreSQL không dùng index trên biểu thức JSONB.** Toán tử `->>` không được đánh dấu `LEAKPROOF`, nên mọi bộ lọc theo field quét toàn bộ dữ liệu của tenant: truy vấn "20 đơn mới nhất của một khách" mất 470–867 ms. Kernel nay dùng một accessor leakproof; cùng truy vấn còn 0,13–0,29 ms, ngang bảng quan hệ.
-2. **Sau khi khắc phục, đọc trên JSONB tương đương bảng quan hệ**: chênh lệch dưới 0,1 ms mỗi truy vấn và 4–8 % thông lượng.
-3. **Điểm nghẽn ghi nằm ở bộ đếm đánh số chứng từ, không ở JSONB.** Bộ đếm không hở số khoá một dòng đến khi giao dịch tạo đơn commit, giới hạn việc tạo đơn ở khoảng 300 đơn/giây mỗi tenant ở mọi mức đồng thời. Chế độ cấp số theo khối nâng con số này lên 8.868 đơn/giây và tăng gấp đôi thông lượng tải hỗn hợp.
-4. **Toàn hệ thống qua HTTP** (kernel, xác thực Keycloak, PostgreSQL trên cùng một máy chủ) xử lý **400 đơn/giây** (4.360 request/giây, p99 dưới 47 ms), khoảng gấp đôi tải giờ cao điểm mục tiêu.
-5. **JSONB có ba chi phí cố định**: dung lượng lớn hơn khoảng 70 %, truy vấn tổng hợp chậm hơn khoảng 2 lần, tạo đơn chậm hơn tới 17 % so với bảng quan hệ.
-6. **Partition theo tháng giảm khoảng một nửa thông lượng giao dịch** (18 partition), vì tra cứu theo tên hay theo khách không chứa khoá partition. Tính năng có trong kernel nhưng là tuỳ chọn và không bật cho các DocType giao dịch chính.
+Giới hạn của việc ghi nằm ở bộ đếm đánh số chứng từ. Ở chế độ không hở số, dòng đếm bị khoá đến khi giao dịch tạo đơn commit, nên mỗi tenant chỉ tạo được khoảng 300 đơn/giây dù tăng số kết nối. Chế độ cấp số theo khối nâng con số này lên 8.868 đơn/giây và tăng gấp đôi thông lượng tải hỗn hợp. Qua HTTP, với kernel, Keycloak và PostgreSQL trên cùng một máy chủ, hệ thống xử lý 400 đơn/giây (4.360 request/giây, p99 dưới 47 ms), khoảng gấp đôi tải giờ cao điểm mục tiêu.
 
-**Kết luận.** Mục tiêu 2 triệu đơn/ngày và 10 triệu người dùng khả thi trên một primary PostgreSQL cỡ vừa cộng các bản sao đọc, với các thay đổi kernel trong mục 11 và khuyến nghị vận hành trong mục 10.
+JSONB vẫn có chi phí so với bảng quan hệ: dung lượng lớn hơn khoảng 70 %, truy vấn tổng hợp chậm khoảng 2 lần và tạo đơn chậm hơn tới 17 %. Partition theo tháng giảm khoảng một nửa thông lượng giao dịch với 18 partition, vì tra cứu theo tên hay theo khách không chứa khoá partition. Kernel có tính năng này nhưng không bật cho các DocType giao dịch chính.
 
-**Khuyến nghị.**
+Với các thay đổi kernel ở mục 11 và cách vận hành ở mục 10, mục tiêu 2 triệu đơn/ngày và 10 triệu người dùng đạt được trên một primary PostgreSQL cỡ vừa cộng các bản sao đọc. Người triển khai cần lưu ý bốn điểm:
 
-- Triển khai PostgreSQL tự quản (VM hoặc operator Kubernetes): accessor leakproof cần quyền superuser, mà các dịch vụ managed như RDS hay Cloud SQL không cấp.
-- Dùng chế độ đánh số theo khối (`gapless: false`) cho chứng từ khối lượng lớn; giữ chế độ không hở số cho chứng từ kế toán.
-- Chạy báo cáo và tổng hợp trên bảng replica hoặc sổ cái, không trên bảng tài liệu JSONB.
-- Đo lại trên máy chủ Linux đích bằng bộ đo kèm theo trước khi chọn cấu hình phần cứng.
+- PostgreSQL phải tự quản, trên máy ảo hoặc qua operator Kubernetes, vì accessor leakproof cần quyền superuser mà các dịch vụ managed như RDS hay Cloud SQL không cấp.
+- Chứng từ khối lượng lớn nên dùng chế độ cấp số theo khối (`gapless: false`); chứng từ kế toán giữ chế độ không hở số.
+- Báo cáo và tổng hợp nên chạy trên bảng replica hoặc sổ cái thay vì bảng tài liệu JSONB.
+- Trước khi chọn phần cứng, hãy chạy lại bộ đo kèm theo trên máy chủ Linux đích.
 
 ## 1. Mô hình lưu trữ DocType
 
@@ -44,9 +33,9 @@ Mọi DocType có `storage: jsonb` (mặc định) lưu trong một bảng chung
 
 Ba cơ chế quyết định hiệu năng:
 
-- **Cách ly tenant bằng row-level security.** Mỗi thao tác chạy trong một giao dịch gán tenant qua `set_config('astra.tenant', ?, true)`; policy `tenant_id = current_setting('astra.tenant')` được PostgreSQL áp vào mọi câu lệnh. Kernel kết nối bằng một role không phải superuser và từ chối khởi động nếu điều kiện này không đúng.
-- **Projection.** Field khai báo `projected: true` được đánh index theo biểu thức, tạo online lúc khởi động mà không cần `ALTER TABLE`. Truy vấn danh sách dùng đúng biểu thức đó.
-- **Lưu trữ ngoài JSONB.** `storage: ledger` là bảng quan hệ cố định, chỉ ghi thêm, partition theo tháng ([V3__ledger.sql](../astra-doctype/src/main/resources/db/migration/V3__ledger.sql)). Worker CDC đồng bộ `astra_doc` sang các bảng đọc có cột thật như `replica_order` ([V5__cdc_replicas.sql](../astra-doctype/src/main/resources/db/migration/V5__cdc_replicas.sql)).
+- Tenant được cách ly bằng row-level security. Mỗi thao tác chạy trong một giao dịch gán tenant qua `set_config('astra.tenant', ?, true)`; policy `tenant_id = current_setting('astra.tenant')` được PostgreSQL áp vào mọi câu lệnh. Kernel kết nối bằng một role không phải superuser và từ chối khởi động nếu điều kiện này không đúng.
+- Field khai báo `projected: true` được đánh index theo biểu thức, tạo online lúc khởi động mà không cần `ALTER TABLE`. Truy vấn danh sách dùng đúng biểu thức đó.
+- Một số dữ liệu nằm ngoài JSONB. `storage: ledger` là bảng quan hệ cố định, chỉ ghi thêm, partition theo tháng ([V3__ledger.sql](../astra-doctype/src/main/resources/db/migration/V3__ledger.sql)). Worker CDC đồng bộ `astra_doc` sang các bảng đọc có cột thật như `replica_order` ([V5__cdc_replicas.sql](../astra-doctype/src/main/resources/db/migration/V5__cdc_replicas.sql)).
 
 So với bảng khai báo cố định, mô hình này đổi việc phải chạy DDL khi thay đổi form lấy một tầng gián tiếp khi đọc field. Câu hỏi của benchmark là tầng gián tiếp đó tốn bao nhiêu.
 
@@ -73,9 +62,9 @@ Mọi truy vấn chạy bằng role ứng dụng, tenant gán trong giao dịch,
 
 ### 2.3 Cách đo
 
-- **Truy vấn đơn lẻ:** `EXPLAIN (ANALYZE, BUFFERS)` 4 lần; báo cáo lần đầu và giá trị tốt nhất trong 3 lần sau (gọi là "ấm").
-- **Thông lượng:** mỗi kịch bản tái hiện đúng chuỗi câu lệnh kernel gửi cho một thao tác (gán tenant, kiểm tra Link, cấp số chứng từ, ghi kèm `RETURNING *`), chạy bằng `pgbench -M prepared` 30 giây mỗi mức đồng thời, có `CHECKPOINT` trước mỗi lần. Ghi nhận giao dịch/giây (TPS), độ trễ p50/p95/p99 theo từng loại giao dịch, byte WAL mỗi giao dịch, mức dùng CPU và tỷ lệ trúng cache.
-- **Toàn hệ thống:** k6 gửi vòng đời đơn hàng qua REST với token Keycloak thật, ở nhịp đơn/giây cố định (mục 6).
+- Truy vấn đơn lẻ chạy `EXPLAIN (ANALYZE, BUFFERS)` 4 lần; báo cáo lần đầu và giá trị tốt nhất trong 3 lần sau (gọi là "ấm").
+- Khi đo thông lượng, mỗi kịch bản tái hiện đúng chuỗi câu lệnh kernel gửi cho một thao tác (gán tenant, kiểm tra Link, cấp số chứng từ, ghi kèm `RETURNING *`), chạy bằng `pgbench -M prepared` 30 giây mỗi mức đồng thời, có `CHECKPOINT` trước mỗi lần. Ghi nhận giao dịch/giây (TPS), độ trễ p50/p95/p99 theo từng loại giao dịch, byte WAL mỗi giao dịch, mức dùng CPU và tỷ lệ trúng cache.
+- Khi đo toàn hệ thống, k6 gửi vòng đời đơn hàng qua REST với token Keycloak thật, ở nhịp đơn/giây cố định (mục 6).
 
 ### 2.4 Giới hạn của phép đo
 
@@ -125,8 +114,8 @@ textlike, texticlike    | f      (LIKE, ILIKE)
 
 Cùng nguyên nhân dẫn tới hai hệ quả khác:
 
-- **Index GIN không bao giờ được dùng dưới RLS.** Q8a quét 4 triệu dòng rồi lọc `@>` (7,4 giây); bằng superuser, cùng loại truy vấn dùng GIN và mất 36 ms.
-- **Cột `numeric` không phục vụ được truy vấn khoảng dưới RLS**, kể cả trên bảng quan hệ. Kiểm tra trên 1 triệu dòng với khoảng chọn 0,1 % ([09-range-leakproof-check.sql](../scripts/bench/doctype-jsonb/09-range-leakproof-check.sql)):
+- Index GIN không bao giờ được dùng dưới RLS. Q8a quét 4 triệu dòng rồi lọc `@>` (7,4 giây); bằng superuser, cùng loại truy vấn dùng GIN và mất 36 ms.
+- Cột `numeric` không phục vụ được truy vấn khoảng dưới RLS, kể cả trên bảng quan hệ. Kiểm tra trên 1 triệu dòng với khoảng chọn 0,1 % ([09-range-leakproof-check.sql](../scripts/bench/doctype-jsonb/09-range-leakproof-check.sql)):
 
 | Cùng dữ liệu, cùng index | Plan | Thời gian |
 | --- | --- | --- |
@@ -134,7 +123,7 @@ Cùng nguyên nhân dẫn tới hai hệ quả khác:
 | Cột `bigint`, RLS bật | Index Only Scan | 2,4 ms |
 | Cột `numeric`, superuser | Index Only Scan | 2,0 ms |
 
-Vấn đề không nằm ở JSONB mà ở tương tác giữa RLS và mọi hàm không leakproof. Bảng quan hệ tránh được ở phần lớn truy vấn vì các phép so sánh trên text, số nguyên và thời gian đều leakproof.
+Nguyên nhân là tương tác giữa RLS và các hàm không leakproof, nên bảng quan hệ cũng bị ảnh hưởng. Bảng quan hệ ít gặp vấn đề hơn vì các phép so sánh trên text, số nguyên và thời gian đều leakproof.
 
 ### 3.3 Khắc phục: accessor leakproof
 
@@ -160,7 +149,7 @@ Chênh lệch 0,05–0,1 ms còn lại đến từ dòng JSONB rộng hơn (497 
 
 Một hàm `LANGUAGE sql` bọc `->>` không thay thế được cách làm này. Đã kiểm chứng ([07-leakproof-inline-check.sql](../scripts/bench/doctype-jsonb/07-leakproof-inline-check.sql)): PostgreSQL inline hàm SQL lúc lập plan, sau đó thấy lại `->>` không leakproof, và dưới RLS chọn Seq Scan dù index trên đúng hàm đó tồn tại. Alias `LANGUAGE internal` không bị inline và được dùng làm điều kiện index.
 
-**Giới hạn.** Chỉ superuser mới khai báo được `LEAKPROOF`. Các dịch vụ PostgreSQL managed (RDS, Cloud SQL, Azure) không cấp quyền superuser thực sự, nên kernel cần PostgreSQL tự quản: trên máy ảo, hoặc qua operator Kubernetes như CloudNativePG.
+Cách làm này có một giới hạn: chỉ superuser mới khai báo được `LEAKPROOF`. Các dịch vụ PostgreSQL managed (RDS, Cloud SQL, Azure) không cấp quyền superuser thực sự, nên kernel cần PostgreSQL tự quản: trên máy ảo, hoặc qua operator Kubernetes như CloudNativePG.
 
 ## 4. Hiệu năng từng loại truy vấn sau tối ưu
 
@@ -172,18 +161,26 @@ Một hàm `LANGUAGE sql` bọc `->>` không thay thế được cách làm này
 | Phân trang sâu (Q10) | 200–250 ms (`OFFSET 200000`) | 0,24–0,31 ms | 0,15–0,22 ms | Phân trang theo con trỏ |
 | Tổng hợp một ngày (Q7) | 863–1.182 ms | Không đổi | 353–656 ms | Chuyển sang replica |
 
-**Lọc theo trạng thái, mới nhất trước (Q3).** Với giá trị phổ biến, cả hai cách lưu đi theo index `modified_at` và chỉ đọc vài trăm dòng (dưới 3 ms). Với giá trị hiếm (0,5 % số đơn), chiến lược đó phải lọc 3.290 dòng. Index đúng cho truy vấn "trạng thái X, mới nhất" là index tổ hợp có cột sắp xếp. Kernel nay tạo dạng này cho mọi projection, kèm điều kiện `IS NOT NULL` để bỏ qua các DocType không có field đó:
+### 4.1 Lọc theo trạng thái, mới nhất trước (Q3)
+
+Với giá trị phổ biến, cả hai cách lưu đi theo index `modified_at` và chỉ đọc vài trăm dòng (dưới 3 ms). Với giá trị hiếm (0,5 % số đơn), chiến lược đó phải lọc 3.290 dòng. Index đúng cho truy vấn "trạng thái X, mới nhất" là index tổ hợp có cột sắp xếp. Kernel nay tạo dạng này cho mọi projection, kèm điều kiện `IS NOT NULL` để bỏ qua các DocType không có field đó:
 
 ```sql
 CREATE INDEX astra_doc_pf_ops_status ON astra_doc (tenant_id, doctype, astra_field(data, 'ops_status'), modified_at DESC)
     WHERE astra_field(data, 'ops_status') IS NOT NULL;
 ```
 
-**Lọc theo ngày (Q6).** `created_at` là cột quan hệ nên JSONB không chịu bất lợi; chỉ cần index `(tenant_id, doctype, created_at DESC)`, nay được kernel tạo mặc định.
+### 4.2 Lọc theo ngày (Q6)
 
-**Phân trang (Q10).** Chi phí của `OFFSET` lớn không liên quan đến JSONB. Phân trang theo con trỏ (`WHERE (modified_at, name) < (?, ?)`) giữ chi phí không đổi ở mọi độ sâu. API trả con trỏ trang sau trong header `X-Next-Cursor` và nhận qua tham số `after`.
+`created_at` là cột quan hệ nên JSONB không chịu bất lợi; chỉ cần index `(tenant_id, doctype, created_at DESC)`, nay được kernel tạo mặc định.
 
-**Tổng hợp (Q7).** Đây là điểm JSONB chậm hơn rõ rệt: tính SUM và COUNT trên 2 triệu dòng phải giải mã JSONB từng dòng, chậm hơn bảng quan hệ 1,8–2,4 lần. Cột materialised không khắc phục được, vì bảng JSONB vẫn phải đọc heap rộng gần gấp đôi. Truy vấn tổng hợp, báo cáo và đối soát vì vậy nên chạy trên bảng replica qua CDC hoặc trên sổ cái, không trên `astra_doc`.
+### 4.3 Phân trang (Q10)
+
+Chi phí của `OFFSET` lớn không liên quan đến JSONB. Phân trang theo con trỏ (`WHERE (modified_at, name) < (?, ?)`) giữ chi phí không đổi ở mọi độ sâu. API trả con trỏ trang sau trong header `X-Next-Cursor` và nhận qua tham số `after`.
+
+### 4.4 Tổng hợp (Q7)
+
+Đây là chỗ JSONB chậm hơn rõ rệt: tính SUM và COUNT trên 2 triệu dòng phải giải mã JSONB từng dòng, chậm hơn bảng quan hệ 1,8–2,4 lần. Cột materialised không khắc phục được, vì bảng JSONB vẫn phải đọc heap rộng gần gấp đôi. Truy vấn tổng hợp, báo cáo và đối soát vì vậy nên chạy trên bảng replica qua CDC hoặc trên sổ cái, không trên `astra_doc`.
 
 ## 5. Thông lượng cơ sở dữ liệu
 
@@ -221,11 +218,11 @@ Tạo đơn gồm gán tenant, kiểm tra Link khách hàng, cấp số chứng 
 | Đổi trạng thái trên tài liệu đơn hàng JSONB | 1.288 | 3.741 | 8.246 | 28 ms |
 | Đổi trạng thái trên bảng quan hệ | 1.211 | 4.206 | 7.655 | 45 ms |
 
-- **Bộ đếm không hở số là giới hạn cứng của việc tạo đơn**, với cả hai cách lưu. Dòng đếm của mỗi tenant mỗi ngày bị khoá từ lúc cấp số đến lúc giao dịch commit, nên các lần tạo đơn chạy tuần tự; thêm kết nối chỉ làm hàng đợi dài hơn (p50 tăng từ 7 ms lên 101 ms). Chế độ cấp số theo khối (`gapless: false`) loại bỏ khoá này và tăng thông lượng 15–20 lần.
-- **Khi không còn bị khoá che khuất, JSONB tạo đơn chậm hơn bảng quan hệ tới 17 %** (8.868 so với 10.628 ở 64 kết nối), do dòng rộng hơn và nhiều index hơn. Đổi trạng thái có hiệu năng tương đương.
-- **Gộp đọc, kiểm quyền và ghi vào một giao dịch** (thay đổi số 6 ở mục 11) nhanh hơn 4–9 %.
-- **Ghi bị giới hạn bởi độ trễ commit, không phải CPU**: ở 16 kết nối, CPU chỉ dùng 27–30 %. Đĩa có fsync nhanh hơn sẽ cho thông lượng cao hơn ở mức đồng thời thấp.
-- **Index projection có điều kiện `IS NOT NULL`** không thay đổi thông lượng ghi ở mức đo được; lợi ích của nó là dung lượng (mục 9).
+- Với cả hai cách lưu, bộ đếm không hở số là giới hạn cứng của việc tạo đơn. Dòng đếm của mỗi tenant mỗi ngày bị khoá từ lúc cấp số đến lúc giao dịch commit, nên các lần tạo đơn chạy tuần tự; thêm kết nối chỉ làm hàng đợi dài hơn (p50 tăng từ 7 ms lên 101 ms). Chế độ cấp số theo khối (`gapless: false`) loại bỏ khoá này và tăng thông lượng 15–20 lần.
+- Khi không còn bị khoá che khuất, JSONB tạo đơn chậm hơn bảng quan hệ tới 17 % (8.868 so với 10.628 ở 64 kết nối), do dòng rộng hơn và nhiều index hơn. Đổi trạng thái có hiệu năng tương đương.
+- Gộp đọc, kiểm quyền và ghi vào một giao dịch (thay đổi số 6 ở mục 11) nhanh hơn 4–9 %.
+- Ở 16 kết nối, CPU chỉ dùng 27–30 %, nên ghi bị giới hạn bởi độ trễ commit. Đĩa có fsync nhanh hơn sẽ cho thông lượng cao hơn ở mức đồng thời thấp.
+- Index projection có điều kiện `IS NOT NULL` không thay đổi thông lượng ghi ở mức đo được; lợi ích của nó là dung lượng (mục 9).
 
 ### 5.3 Tải hỗn hợp giờ cao điểm
 
@@ -258,9 +255,9 @@ Trước tối ưu, hệ thống dừng ở khoảng 230 đơn/giây, đúng m�
 | 14.400 | JSONB, đánh số theo khối | 11.543 | 1,3 s | 10 s | Không theo kịp |
 | 14.400 | Bảng quan hệ, đánh số theo khối | 14.397 | 4,1 ms | 2,8 s | Theo kịp |
 
-Ở trạng thái ổn định, độ trễ trung bình là 1,6–5 ms ở nhịp đỉnh. Mỗi lần chạy có một đến hai khoảng toàn hệ thống tạm dừng 0,5–6 giây, xảy ra ở cả hai cách lưu và trùng với các lệnh fsync kéo dài trong log checkpoint. Đây là đặc điểm của đĩa ảo Docker Desktop, không phải giới hạn của PostgreSQL; vì vậy p95 và p99 ở bảng này cần được đo lại trên máy chủ Linux.
+Ở trạng thái ổn định, độ trễ trung bình là 1,6–5 ms ở nhịp đỉnh. Mỗi lần chạy có một đến hai khoảng toàn hệ thống tạm dừng 0,5–6 giây, xảy ra ở cả hai cách lưu và trùng với các lệnh fsync kéo dài trong log checkpoint. Hiện tượng này đến từ đĩa ảo của Docker Desktop; vì vậy p95 và p99 ở bảng này cần được đo lại trên máy chủ Linux.
 
-Kết luận chắc chắn rút ra: trước tối ưu, hệ thống không theo kịp từ 1,5 lần nhịp đỉnh; sau tối ưu, hệ thống giữ được nhịp đỉnh với p50 3 ms và bắt đầu tụt lại ở 1,5 lần; bảng quan hệ giữ được 2 lần. Với tải nặng về ghi, JSONB có ít hơn khoảng 25–30 % dư địa so với bảng quan hệ.
+Dù có nhiễu từ môi trường, các lần chạy cho thấy rõ: trước tối ưu, hệ thống không theo kịp từ 1,5 lần nhịp đỉnh; sau tối ưu, hệ thống giữ được nhịp đỉnh với p50 3 ms và bắt đầu tụt lại ở 1,5 lần; bảng quan hệ giữ được 2 lần. Với tải nặng về ghi, JSONB có ít hơn khoảng 25–30 % dư địa so với bảng quan hệ.
 
 ## 6. Hiệu năng toàn hệ thống qua HTTP
 
@@ -275,13 +272,13 @@ Bộ đo [scripts/bench/http](../scripts/bench/http/README.md) chạy kernel bui
 
 Khi một máy chủ gánh cả kernel, cơ sở dữ liệu, Keycloak và bộ tạo tải, trần nằm trong khoảng 400–450 đơn/giây, gần gấp đôi mức đỉnh mục tiêu. Ở 500 đơn/giây máy hết CPU; các request chờ kết nối từ pool cho đến khi hết thời gian chờ 5 giây, nên thông lượng giảm đột ngột thay vì giảm dần. Mỗi request tốn khoảng 1,8 ms CPU ở kernel (xác thực token, xử lý JSON, hook, kiểm quyền) và 2,1 ms CPU ở PostgreSQL. Kernel không giữ trạng thái nên mở rộng được bằng cách thêm instance; cơ sở dữ liệu là một primary.
 
-**Lỗi phát hiện và đã khắc phục.** Header `X-Tx-LSN` (vị trí WAL trả về sau mỗi lần ghi, phục vụ đọc nhất quán qua replica) trước đây được đọc bằng một kết nối thứ hai lấy từ pool, sau khi giao dịch đã trả kết nối của nó. Mỗi request ghi vì thế cần hai lần lấy kết nối, và khi pool chịu tải, các request ghi chờ lẫn nhau. Trước khi khắc phục, hệ thống chỉ đạt 147 đơn/giây ở nhịp 400 đơn/giây với 9.248 lỗi hết thời gian chờ kết nối. Sau khi vị trí WAL được đọc trên chính kết nối vừa commit, cùng nhịp đó chạy không lỗi như bảng trên.
+Phép đo HTTP cũng phát hiện một lỗi, nay đã sửa. Header `X-Tx-LSN` (vị trí WAL trả về sau mỗi lần ghi, phục vụ đọc nhất quán qua replica) trước đây được đọc bằng một kết nối thứ hai lấy từ pool, sau khi giao dịch đã trả kết nối của nó. Mỗi request ghi vì thế cần hai lần lấy kết nối, và khi pool chịu tải, các request ghi chờ lẫn nhau. Trước khi khắc phục, hệ thống chỉ đạt 147 đơn/giây ở nhịp 400 đơn/giây với 9.248 lỗi hết thời gian chờ kết nối. Sau khi vị trí WAL được đọc trên chính kết nối vừa commit, cùng nhịp đó chạy không lỗi như bảng trên.
 
 ## 7. Lọc khoảng và cột materialised
 
 Biểu thức `(data->>'cod_amount')::numeric > ?` không thể dùng index dưới RLS, vì cả phép ép kiểu lẫn so sánh `numeric` đều không leakproof (mục 3.2). Field cần lọc khoảng phải được sao sang một cột có kiểu thật.
 
-**Quy trình thủ công trên 5 triệu dòng** (thêm cột, backfill theo lô, đánh index):
+Làm thủ công trên 5 triệu dòng (thêm cột, backfill theo lô, đánh index) cho kết quả sau:
 
 | Bước | Lần đo 1 | Lần đo 2 | Ghi chú |
 | --- | --- | --- | --- |
@@ -290,11 +287,11 @@ Biểu thức `(data->>'cod_amount')::numeric > ?` không thể dùng index dư�
 | `VACUUM ANALYZE` | 84 giây | 93 giây | |
 | Heap sau backfill | 5.314 MB, 44 % trống | 5.405 MB, 44 % trống | Bảng phình gần gấp đôi, cần `pg_repack` hoặc ghi lại bảng |
 
-**Triển khai trong kernel.** Khai báo `projected: materialised` (cho Currency, Int, Float, Date, Datetime, Check) tạo cột `m_<field>` với kiểu tương ứng; Currency lưu dạng `bigint` theo đơn vị phần trăm (4.900.000,50 thành 490000050), vì so sánh `bigint` là leakproof còn `numeric` thì không. Cột được tính bởi trigger từ `data` ở mọi lần ghi, nên mọi đường ghi, kể cả instance phiên bản cũ trong lúc nâng cấp, đều cho giá trị đúng. Dữ liệu có sẵn được backfill ở nền theo từng tenant và từng lô; trong thời gian đó, bộ lọc đọc giá trị trực tiếp từ JSON để kết quả không bao giờ thiếu dòng. API hỗ trợ `field__gt`, `__gte`, `__lt`, `__lte`, cũng như trên `created_at` và `modified_at`; lọc khoảng trên field không materialised bị từ chối (HTTP 422) vì sẽ phải quét toàn bộ tenant. `CustomerOrder.cod_amount` dùng cơ chế này.
+Kernel tự động hoá quy trình này. Khai báo `projected: materialised` (cho Currency, Int, Float, Date, Datetime, Check) tạo cột `m_<field>` với kiểu tương ứng; Currency lưu dạng `bigint` theo đơn vị phần trăm (4.900.000,50 thành 490000050), vì so sánh `bigint` là leakproof còn `numeric` thì không. Cột được tính bởi trigger từ `data` ở mọi lần ghi, nên mọi đường ghi, kể cả instance phiên bản cũ trong lúc nâng cấp, đều cho giá trị đúng. Dữ liệu có sẵn được backfill ở nền theo từng tenant và từng lô; trong thời gian đó, bộ lọc đọc giá trị trực tiếp từ JSON để kết quả không bao giờ thiếu dòng. API hỗ trợ `field__gt`, `__gte`, `__lt`, `__lte`, cũng như trên `created_at` và `modified_at`; lọc khoảng trên field không materialised bị từ chối (HTTP 422) vì sẽ phải quét toàn bộ tenant. `CustomerOrder.cod_amount` dùng cơ chế này.
 
 Kernel dùng trigger thay vì cột `GENERATED ALWAYS ... STORED` vì thêm cột generated buộc PostgreSQL ghi lại toàn bộ bảng dưới khoá độc quyền; với bảng hàng trăm triệu dòng, điều đó tương đương dừng ghi.
 
-**Kết quả** trên 4 triệu đơn, truy vấn "đơn có COD trên ngưỡng cao, 20 đơn mới nhất", 16 kết nối:
+Kết quả trên 4 triệu đơn, truy vấn "đơn có COD trên ngưỡng cao, 20 đơn mới nhất", 16 kết nối:
 
 | Cách lọc | TPS | p50 | p99 |
 | --- | --- | --- | --- |
@@ -321,7 +318,7 @@ Kernel hỗ trợ `partition: month` cho DocType loại giao dịch. Tài liệu
 
 Truy vấn theo tên hoặc theo khách không chứa `created_at`, nên PostgreSQL phải dò index của từng partition: tra cứu một đơn trên 18 partition mất 21 ms trong plan, so với 1,3 ms trên một bảng. Với tên lấy từ chuỗi đánh số có ngày (ví dụ `ORD-20261023-…`), kernel thêm điều kiện `created_at >= <ngày trong tên> - 1 ngày`: tài liệu không bao giờ được tạo trước ngày ghi trong tên, nên các tháng cũ hơn bị loại khi thực thi (0,6 ms trong plan). Trong phép đo, tên được chọn ngẫu nhiên trên cả 18 tháng nên trung bình vẫn phải dò một nửa số partition; hệ thống thực tế chủ yếu tra cứu đơn đang xử lý nên chỉ chạm một đến hai partition. Danh sách theo khách hay trạng thái không có thông tin ngày nên không thu hẹp được. Chỉ việc tạo đơn nhanh hơn, nhờ index của tháng hiện tại nhỏ.
 
-**Quyết định.** Partition theo tháng là công cụ quản lý vòng đời dữ liệu, không phải công cụ tăng tốc: nó cho phép vacuum từng tháng và tách, lưu trữ tháng cũ bằng một lệnh thay vì xoá hàng trăm triệu dòng. Tính năng có trong kernel nhưng không bật cho `CustomerOrder` và `Waybill`. Nên bật khi kích thước bảng (vài trăm GB) khiến vacuum và lưu trữ trở thành vấn đề vận hành, và giữ số partition đang gắn ở mức thấp.
+Vì vậy partition theo tháng chỉ có ích cho việc quản lý vòng đời dữ liệu: nó cho phép vacuum từng tháng và tách, lưu trữ tháng cũ bằng một lệnh thay vì xoá hàng trăm triệu dòng. Tính năng có trong kernel nhưng không bật cho `CustomerOrder` và `Waybill`. Nên bật khi kích thước bảng (vài trăm GB) khiến vacuum và lưu trữ trở thành vấn đề vận hành, và giữ số partition đang gắn ở mức thấp.
 
 Partition theo ngày, đo trong chuỗi đo gốc, cho kết quả tương tự và được ghi ở phụ lục B.
 
@@ -343,9 +340,9 @@ Thời gian nạp 5 triệu dòng (lần đo 2): bảng quan hệ 82 giây, JSON
 
 ## 10. Đánh giá năng lực cho 2 triệu đơn/ngày và 10 triệu người dùng
 
-**Tải quy đổi.** 2 triệu đơn/ngày tương ứng 23 đơn/giây trung bình và 231 đơn/giây ở giờ cao điểm (gấp 10 lần). Mỗi đơn có khoảng 8 lần cập nhật trạng thái, tức khoảng 1.850 lần ghi/giây ở giờ cao điểm. Với 10 triệu người dùng, giả định 5 % hoạt động mỗi ngày và 20 request mỗi phiên, phía khách hàng tạo khoảng 1.200 lần đọc/giây ở giờ cao điểm; cộng nhân viên vận hành và bưu tá, mô hình tải ở mục 5.3 tính khoảng 5.000 lần đọc/giây. Tổng cộng khoảng 7.200 giao dịch cơ sở dữ liệu mỗi giây ở giờ cao điểm.
+Mục tiêu 2 triệu đơn/ngày tương ứng 23 đơn/giây trung bình và 231 đơn/giây ở giờ cao điểm (gấp 10 lần). Mỗi đơn có khoảng 8 lần cập nhật trạng thái, tức khoảng 1.850 lần ghi/giây ở giờ cao điểm. Với 10 triệu người dùng, giả định 5 % hoạt động mỗi ngày và 20 request mỗi phiên, phía khách hàng tạo khoảng 1.200 lần đọc/giây ở giờ cao điểm; cộng nhân viên vận hành và bưu tá, mô hình tải ở mục 5.3 tính khoảng 5.000 lần đọc/giây. Tổng cộng khoảng 7.200 giao dịch cơ sở dữ liệu mỗi giây ở giờ cao điểm.
 
-**Năng lực đo được trên một primary** (lần đo 2):
+Năng lực đo được trên một primary ở lần đo 2:
 
 | | Trước tối ưu | Sau tối ưu | Mục tiêu giờ cao điểm |
 | --- | --- | --- | --- |
@@ -355,7 +352,7 @@ Thời gian nạp 5 triệu dòng (lần đo 2): bảng quan hệ 82 giây, JSON
 | Đọc tối đa | 14 TPS (lọc theo field) | 32.700 TPS | khoảng 5.000 TPS |
 | Toàn hệ thống qua HTTP, một máy | Không đạt ở 400 đơn/giây | 400 đơn/giây; giới hạn CPU ở 500 | 231 đơn/giây |
 
-**Đánh giá.** Mục tiêu khả thi trên một primary PostgreSQL cỡ vừa cộng các bản sao đọc, với các thay đổi ở mục 11 và các khuyến nghị sau:
+Mục tiêu khả thi trên một primary PostgreSQL cỡ vừa cộng các bản sao đọc, với các thay đổi ở mục 11 và các khuyến nghị sau:
 
 1. Dùng máy chủ Linux với NVMe cục bộ cho cơ sở dữ liệu, và đo bằng bộ đo kèm theo trước khi chốt cấu hình (`PROFILE=auto` để tìm trần, `PROFILE=fixed16` để so sánh phần cứng).
 2. Mở rộng đọc bằng streaming replication; 10 triệu người dùng chủ yếu tạo tải đọc.
@@ -364,7 +361,7 @@ Thời gian nạp 5 triệu dòng (lần đo 2): bảng quan hệ 82 giây, JSON
 5. Giữ tổng số kết nối từ mọi instance kernel ở khoảng 2–3 lần số luồng CPU của cơ sở dữ liệu. PgBouncer ở chế độ transaction dùng được vì kernel luôn gán tenant trong một giao dịch tường minh.
 6. Định cỡ tầng kernel theo khoảng 1,8 ms CPU mỗi request: 2.540 request/giây ở giờ cao điểm cần khoảng 5 nhân, phân bổ trên 2–3 instance để có dự phòng. Cơ sở dữ liệu cần khoảng 2,1 ms CPU mỗi request, tức khoảng 6 nhân ở giờ cao điểm cộng phần dự phòng.
 
-**Bảng quan hệ riêng cho DocType khối lượng lớn nhất?** Sau tối ưu, chênh lệch đọc dưới 0,1 ms và dưới 8 % thông lượng; tạo đơn chậm hơn tới 17 %; tổng hợp chậm khoảng 2 lần (đã chuyển sang replica); dung lượng lớn hơn khoảng 1,7 lần. Chuyển một hoặc hai DocType khối lượng lớn nhất sang bảng quan hệ cố định (overlay chỉ ghi vào một cột `jsonb` phụ) đáng cân nhắc vì lý do dung lượng, không vì tốc độ. Đây là quyết định sản phẩm.
+Câu hỏi còn lại là có nên dùng bảng quan hệ riêng cho DocType khối lượng lớn nhất. Sau tối ưu, chênh lệch đọc dưới 0,1 ms và dưới 8 % thông lượng; tạo đơn chậm hơn tới 17 %; tổng hợp chậm khoảng 2 lần (đã chuyển sang replica); dung lượng lớn hơn khoảng 1,7 lần. Chuyển một hoặc hai DocType khối lượng lớn nhất sang bảng quan hệ cố định (overlay chỉ ghi vào một cột `jsonb` phụ) đáng cân nhắc vì lý do dung lượng, không vì tốc độ. Đây là quyết định sản phẩm.
 
 ## 11. Thay đổi trong kernel
 
@@ -400,15 +397,15 @@ Kiểm thử bổ sung: `DocListTest` (phân trang con trỏ trả mỗi tài li
 
 ## 13. Hạn chế còn lại và việc tiếp theo
 
-- **Dung lượng:** khoảng 400 GB heap mỗi năm cho 730 triệu đơn, so với khoảng 220 GB với bảng quan hệ.
-- **Truy vấn danh sách trả toàn bộ `data`:** 20 đơn tương ứng khoảng 8 KB JSON phải giải mã ở kernel. Ở hàng chục nghìn request/giây, nên chỉ trả các field hiển thị trong danh sách.
-- **Cập nhật ghi lại toàn bộ tài liệu:** tài liệu lớn (child table, `scan_log`) làm mỗi lần cập nhật tốn kém hơn. Nên giữ tài liệu dưới 2 KB để tránh TOAST, hoặc chuyển nhật ký quét sang bảng chỉ ghi thêm.
-- **Kiểu dữ liệu:** mọi field cần lọc khoảng phải được materialise; index biểu thức chỉ phục vụ so sánh bằng trên text.
-- **Ràng buộc dữ liệu:** kiểu, NOT NULL và khoá ngoại của field được kiểm tra ở kernel, không ở cơ sở dữ liệu.
-- **Tìm kiếm chuỗi con:** `LIKE` và `ILIKE` không leakproof; tìm kiếm cần đi qua chỉ mục tìm kiếm riêng.
-- **PostgreSQL managed:** không hỗ trợ, do accessor leakproof cần quyền superuser.
-- **Lưu trữ tháng cũ** của bảng partition hiện thực hiện thủ công; cần một tác vụ trong kernel.
-- **CPU của kernel** (khoảng 1,8 ms mỗi request) chưa được profile; nên xem trước bộ nhớ đệm khoá công khai JWT và việc sao chép dữ liệu giữa các lớp.
+- Heap tăng khoảng 400 GB mỗi năm cho 730 triệu đơn, so với khoảng 220 GB với bảng quan hệ.
+- Truy vấn danh sách trả toàn bộ `data`, nên 20 đơn tương ứng khoảng 8 KB JSON phải giải mã ở kernel. Ở hàng chục nghìn request/giây, nên chỉ trả các field hiển thị trong danh sách.
+- Mỗi lần cập nhật ghi lại toàn bộ tài liệu, nên tài liệu lớn (child table, `scan_log`) làm mỗi lần cập nhật tốn kém hơn. Nên giữ tài liệu dưới 2 KB để tránh TOAST, hoặc chuyển nhật ký quét sang bảng chỉ ghi thêm.
+- Mọi field cần lọc khoảng phải được materialise; index biểu thức chỉ phục vụ so sánh bằng trên text.
+- Kiểu, NOT NULL và khoá ngoại của field được kiểm tra ở kernel, không ở cơ sở dữ liệu.
+- `LIKE` và `ILIKE` không leakproof, nên tìm kiếm chuỗi con cần đi qua chỉ mục tìm kiếm riêng.
+- PostgreSQL managed không được hỗ trợ, do accessor leakproof cần quyền superuser.
+- Lưu trữ tháng cũ của bảng partition hiện thực hiện thủ công; cần một tác vụ trong kernel.
+- CPU của kernel (khoảng 1,8 ms mỗi request) chưa được profile; nên xem trước bộ nhớ đệm khoá công khai JWT và việc sao chép dữ liệu giữa các lớp.
 
 ## 14. Tái lập kết quả
 
