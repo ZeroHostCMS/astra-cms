@@ -45,6 +45,7 @@ public class TenantTransactions {
                 }
                 T result = ScopedValue.where(TX, conn).call(() -> work.run(conn));
                 conn.commit();
+                recordCommitLsn(conn);
                 return result;
             } catch (Exception e) {
                 conn.rollback();
@@ -53,6 +54,24 @@ public class TenantTransactions {
             }
         } catch (SQLException e) {
             throw new IllegalStateException("database error", e);
+        }
+    }
+
+    /**
+     * For a write request that reports {@code X-Tx-LSN}: the WAL position read on this connection right after the
+     * commit, so it covers the commit without taking a second connection from the pool.
+     */
+    private static void recordCommitLsn(Connection conn) {
+        io.astra.doctype.sync.CommitLsn holder = io.astra.doctype.sync.CommitLsn.ifWanted();
+        if (holder == null) return;
+        try {
+            conn.setAutoCommit(true);
+            try (PreparedStatement ps = conn.prepareStatement("SELECT pg_current_wal_lsn()::text");
+                 java.sql.ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) holder.record(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            // The work is committed; without a recorded position the response filter reads it the old way.
         }
     }
 

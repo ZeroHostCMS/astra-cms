@@ -56,6 +56,7 @@ public class DocumentStore implements DocumentService {
     @Inject HookRegistry hooks;
     @Inject SeriesService series;
     @Inject DocPermissions permissions;
+    @Inject MaterialisedProjections materialised;
 
     /**
      * Lists documents, newest first. {@code filters} match declared fields by equality (the generated
@@ -76,19 +77,14 @@ public class DocumentStore implements DocumentService {
      */
     public Page page(String doctype, Map<String, String> filters, int limit, int offset, String after) {
         DocTypeDefinition def = overlays.effective(doctype);
-        StringBuilder sql = new StringBuilder("SELECT * FROM astra_doc WHERE doctype = ?");
+        String table = DocTables.of(def);
+        StringBuilder sql = new StringBuilder("SELECT * FROM " + table + " WHERE doctype = ?");
         List<Object> params = new ArrayList<>(List.of(doctype));
+        boolean range = false;
         for (Map.Entry<String, String> f : filters.entrySet()) {
-            if (f.getKey().equals("docstatus")) {
-                sql.append(" AND docstatus = ?");
-                params.add(parseDocstatus(f.getValue()));
-            } else {
-                FieldDefinition field = def.field(f.getKey())
-                        .orElseThrow(() -> new DocValidationException("unknown filter '" + f.getKey() + "' for DocType " + doctype));
-                sql.append(" AND ").append(ProjectionIndexer.expression(field)).append(" = ?");
-                params.add(f.getValue());
-            }
+            range |= appendFilter(def, table, f.getKey(), f.getValue(), sql, params);
         }
+        boolean customPlan = range;
         if (after != null && !after.isBlank()) {
             ListCursor cursor = ListCursor.parse(after);
             sql.append(" AND (modified_at, name) < (?, ?)");
@@ -101,6 +97,11 @@ public class DocumentStore implements DocumentService {
         return inTenantTx(conn -> {
             List<Document> out = new ArrayList<>();
             try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+                // A range's selectivity depends on its value: plan each execution with the value. A generic plan
+                // of a server-prepared statement walks the newest-first index and filters (hundreds of ms).
+                if (customPlan && ps.isWrapperFor(org.postgresql.PGStatement.class)) {
+                    ps.unwrap(org.postgresql.PGStatement.class).setPrepareThreshold(0);
+                }
                 for (int i = 0; i < params.size(); i++) ps.setObject(i + 1, params.get(i));
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) out.add(read(rs));
@@ -113,6 +114,65 @@ public class DocumentStore implements DocumentService {
         });
     }
 
+    private static final Map<String, String> RANGE = Map.of("gt", ">", "gte", ">=", "lt", "<", "lte", "<=");
+
+    /**
+     * One filter: {@code field=value} (equality) or {@code field__gt|__gte|__lt|__lte=value} (range).
+     * <ul>
+     *   <li>{@code docstatus}: equality on the core column.</li>
+     *   <li>{@code created_at}, {@code modified_at}: any comparison on the core columns (ISO date or date-time).</li>
+     *   <li>A materialised field ({@code projected: materialised}): any comparison on its typed column, which an
+     *       index serves under row-level security; until existing rows are backfilled, the same comparison on the
+     *       value computed from {@code data}, so results are complete either way.</li>
+     *   <li>Any other declared field: equality on {@code astra_field(data, f)}, the projected expression.
+     *       Range filters on them are refused: they could not use an index and would scan the tenant.</li>
+     * </ul>
+     */
+    private boolean appendFilter(DocTypeDefinition def, String table, String key, String value, StringBuilder sql, List<Object> params) {
+        String name = key;
+        String op = "=";
+        int split = key.lastIndexOf("__");
+        if (split > 0 && RANGE.containsKey(key.substring(split + 2))) {
+            name = key.substring(0, split);
+            op = RANGE.get(key.substring(split + 2));
+        }
+        switch (name) {
+            case "docstatus" -> {
+                if (!op.equals("=")) throw new DocValidationException("filter 'docstatus' supports equality only");
+                sql.append(" AND docstatus = ?");
+                params.add(parseDocstatus(value));
+            }
+            case "created_at", "modified_at" -> {
+                sql.append(" AND ").append(name).append(' ').append(op).append(" ?");
+                try {
+                    params.add(MaterialisedProjections.parseInstant(value.trim()));
+                } catch (RuntimeException e) {
+                    throw new DocValidationException("filter on '" + name + "' must be an ISO date or date-time, not '" + value + "'");
+                }
+            }
+            default -> {
+                String fieldName = name;
+                FieldDefinition field = def.field(fieldName)
+                        .orElseThrow(() -> new DocValidationException("unknown filter '" + key + "' for DocType " + def.name()));
+                Optional<MaterialisedProjections.Column> column = field.materialised()
+                        ? materialised.column(table, fieldName) : Optional.empty();
+                if (column.isPresent()) {
+                    MaterialisedProjections.Column c = column.get();
+                    sql.append(" AND ").append(materialised.ready(c) ? c.name() : "(" + c.expression("data") + ")")
+                            .append(' ').append(op).append(" ?");
+                    params.add(c.parse(value));
+                } else if (op.equals("=")) {
+                    sql.append(" AND ").append(ProjectionIndexer.expression(field)).append(" = ?");
+                    params.add(value);
+                } else {
+                    throw new DocValidationException("range filter on '" + fieldName + "' needs the field to be declared "
+                            + "projected: materialised (Currency, Int, Float, Date, Datetime, Check)");
+                }
+            }
+        }
+        return !op.equals("=");
+    }
+
     @Override
     public List<Document> find(String doctype, Map<String, String> filters, int limit) {
         return list(doctype, filters, limit, 0);
@@ -120,12 +180,15 @@ public class DocumentStore implements DocumentService {
 
     @Override
     public Optional<Document> get(String doctype, String name) {
-        overlays.effective(doctype);
+        DocTypeDefinition def = overlays.effective(doctype);
+        String table = DocTables.of(def);
+        Optional<java.time.OffsetDateTime> notBefore = createdNotBefore(def, name);
         return inTenantTx(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT * FROM astra_doc WHERE doctype = ? AND name = ?")) {
+                    "SELECT * FROM " + table + " WHERE doctype = ? AND name = ?" + (notBefore.isPresent() ? " AND created_at >= ?" : ""))) {
                 ps.setString(1, doctype);
                 ps.setString(2, name);
+                if (notBefore.isPresent()) ps.setObject(3, notBefore.get());
                 try (ResultSet rs = ps.executeQuery()) {
                     return rs.next() ? Optional.of(read(rs)) : Optional.empty();
                 }
@@ -229,7 +292,7 @@ public class DocumentStore implements DocumentService {
             Document cancelled = existing.get();
             if (cancelled.docstatus() != 2) throw new DocValidationException("only cancelled documents can be amended");
             try (PreparedStatement ps = conn.prepareStatement(
-                    "SELECT name FROM astra_doc WHERE doctype = ? AND amended_from = ?")) {
+                    "SELECT name FROM " + DocTables.of(def) + " WHERE doctype = ? AND amended_from = ?")) {
                 ps.setString(1, doctype);
                 ps.setString(2, name);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -249,9 +312,12 @@ public class DocumentStore implements DocumentService {
         DocumentValidator.applyDefaultsAndValidate(def, doc);
         hooks.beforeSave(doc);
         validateLinks(conn, def, doc);
+        String table = DocTables.of(def);
+        boolean chosenName = doc.name() != null || def.naming().byField();   // not from a series or random
         if (doc.name() == null) doc.name(assignName(conn, def, doc));
+        if (chosenName && def.partitionedByMonth()) requireUniqueAcrossMonths(conn, table, doc);
         try (PreparedStatement ps = conn.prepareStatement(
-                "INSERT INTO astra_doc (id, tenant_id, doctype, name, owner, data, amended_from) "
+                "INSERT INTO " + table + " (id, tenant_id, doctype, name, owner, data, amended_from) "
                         + "VALUES (?, ?, ?, ?, ?, ?::jsonb, ?) RETURNING *")) {
             ps.setObject(1, UUID.randomUUID());
             ps.setString(2, TenantContext.require());
@@ -274,16 +340,54 @@ public class DocumentStore implements DocumentService {
         }
     }
 
+    /**
+     * For a month-partitioned DocType named by a dated series, the earliest {@code created_at} its document can have:
+     * a name is issued when the document is created (amendments later still), so nothing named on day D was created
+     * before D. Given to PostgreSQL as {@code created_at >= ?}, it skips every older month's partition, so a lookup
+     * by name reads one or two partitions instead of all. One day of margin covers the JVM's time zone.
+     */
+    static Optional<java.time.OffsetDateTime> createdNotBefore(DocTypeDefinition def, String name) {
+        if (!def.partitionedByMonth() || !def.naming().bySeries()) return Optional.empty();
+        return SeriesService.dateOf(def.naming().series(), name)
+                .map(d -> d.minusDays(1).atStartOfDay().atOffset(java.time.ZoneOffset.UTC));
+    }
+
+    /**
+     * In a month-partitioned table the unique key also holds {@code created_at}, so PostgreSQL only rejects a
+     * duplicate name within one month. A name chosen by the caller (field naming, amendment) is checked across
+     * months here, under a transaction-scoped advisory lock on the name so two concurrent creations cannot both
+     * pass. Series and random names are unique by construction and skip this.
+     */
+    private static void requireUniqueAcrossMonths(Connection conn, String table, Document doc) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(
+                "SELECT pg_advisory_xact_lock(hashtextextended(? || '/' || ? || '/' || ?, 0)), "
+                        + "EXISTS (SELECT 1 FROM " + table + " WHERE doctype = ? AND name = ?)")) {
+            ps.setString(1, TenantContext.require());
+            ps.setString(2, doc.doctype());
+            ps.setString(3, doc.name());
+            ps.setString(4, doc.doctype());
+            ps.setString(5, doc.name());
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                if (rs.getBoolean(2)) throw new DocValidationException(doc.doctype() + " '" + doc.name() + "' already exists");
+            }
+        }
+    }
+
     /** Writes data and docstatus with an optimistic version check. */
     private Document write(Connection conn, Document doc, int docstatus) throws SQLException {
+        DocTypeDefinition def = overlays.effective(doc.doctype());
+        String table = DocTables.of(def);
+        Optional<java.time.OffsetDateTime> notBefore = createdNotBefore(def, doc.name());
         try (PreparedStatement ps = conn.prepareStatement(
-                "UPDATE astra_doc SET data = ?::jsonb, docstatus = ?, modified_at = now(), version = version + 1 "
-                        + "WHERE doctype = ? AND name = ? AND version = ? RETURNING *")) {
+                "UPDATE " + table + " SET data = ?::jsonb, docstatus = ?, modified_at = now(), version = version + 1 "
+                        + "WHERE doctype = ? AND name = ? AND version = ?" + (notBefore.isPresent() ? " AND created_at >= ?" : "") + " RETURNING *")) {
             ps.setString(1, toJson(doc.data()));
             ps.setInt(2, docstatus);
             ps.setString(3, doc.doctype());
             ps.setString(4, doc.name());
             ps.setInt(5, doc.version());
+            if (notBefore.isPresent()) ps.setObject(6, notBefore.get());
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) throw new DocValidationException("concurrent modification of " + doc.doctype() + "/" + doc.name());
                 return read(rs);
@@ -321,14 +425,48 @@ public class DocumentStore implements DocumentService {
             targets.add(target);
         }
         if (links.isEmpty()) return;
-        StringBuilder sql = new StringBuilder("SELECT doctype, name FROM astra_doc WHERE ");
-        for (int i = 0; i < links.size(); i++) sql.append(i == 0 ? "" : " OR ").append("(doctype = ? AND name = ?)");
+        // Targets may live in different tables (a Waybill in astra_doc_txn links an order there and a hub in
+        // astra_doc): one SELECT per table, joined with UNION ALL, still one round trip.
+        Map<String, List<Integer>> byTable = new LinkedHashMap<>();
+        for (int i = 0; i < links.size(); i++) {
+            String target = links.get(i).options().getFirst();
+            String table;
+            try {
+                table = DocTables.of(overlays.effective(target));
+            } catch (RuntimeException unknownDocType) {
+                table = DocTables.SHARED;   // an unknown target DocType has no documents: reported as not found
+            }
+            byTable.computeIfAbsent(table, k -> new ArrayList<>()).add(i);
+        }
+        List<Optional<java.time.OffsetDateTime>> notBefore = new ArrayList<>();
+        for (int i = 0; i < links.size(); i++) {
+            Optional<java.time.OffsetDateTime> nb = Optional.empty();
+            try {
+                nb = createdNotBefore(overlays.effective(links.get(i).options().getFirst()), targets.get(i));
+            } catch (RuntimeException unknownDocType) {
+                // reported as not found below
+            }
+            notBefore.add(nb);
+        }
+        StringBuilder sql = new StringBuilder();
+        for (Map.Entry<String, List<Integer>> e : byTable.entrySet()) {
+            if (!sql.isEmpty()) sql.append(" UNION ALL ");
+            sql.append("SELECT doctype, name FROM ").append(e.getKey()).append(" WHERE ");
+            int k = 0;
+            for (int i : e.getValue()) {
+                sql.append(k++ == 0 ? "" : " OR ").append("(doctype = ? AND name = ?")
+                        .append(notBefore.get(i).isPresent() ? " AND created_at >= ?)" : ")");
+            }
+        }
         Set<String> found = new java.util.HashSet<>();
         try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             int p = 1;
-            for (int i = 0; i < links.size(); i++) {
-                ps.setString(p++, links.get(i).options().getFirst());
-                ps.setString(p++, targets.get(i));
+            for (List<Integer> idx : byTable.values()) {
+                for (int i : idx) {
+                    ps.setString(p++, links.get(i).options().getFirst());
+                    ps.setString(p++, targets.get(i));
+                    if (notBefore.get(i).isPresent()) ps.setObject(p++, notBefore.get(i).get());
+                }
             }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) found.add(rs.getString(1) + '\u0000' + rs.getString(2));

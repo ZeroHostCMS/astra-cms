@@ -1,0 +1,16 @@
+# Test-only: a high-volume transaction DocType stored month-partitioned (astra_doc_txn), named by a dated series,
+# with a materialised Currency field. The Express DocTypes stay in astra_doc: measured, month partitioning halves
+# OLTP throughput (docs/why_doctype_jsonb.md), so it is opt-in.
+name: TestParcel
+module: test
+kind: transaction
+partition: month
+naming: { series: "PCL-.YYYYMMDD.-.#######", gapless: false }
+
+fields:
+  - { name: customer, type: Link,     options: Customer, required: true, projected: true }
+  - { name: amount,   type: Currency, default: 0, projected: materialised }
+  - { name: parcel,   type: Link,     options: TestParcel }
+
+permissions:
+  - { role: admin, read: true, create: true, write: true }

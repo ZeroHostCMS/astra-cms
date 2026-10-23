@@ -56,7 +56,8 @@ public final class Overlays {
                     f.projected(),
                     m.has("options") ? DocTypeLoader.options(m) : f.options(),
                     m.has("default") ? DocTypeLoader.value(m.get("default")) : f.defaultValue(),
-                    f.pii()));
+                    f.pii(),
+                    f.materialised()));
         }
         for (JsonNode a : root.path("fields").path("add")) {
             FieldDefinition f;
@@ -72,7 +73,7 @@ public final class Overlays {
             fields.add(f);
         }
         return new DocTypeDefinition(base.name(), base.module(), base.kind(), base.submittable(), base.naming(),
-                fields, base.permissions(), base.segregationOfDuties(), base.globalTransaction());
+                fields, base.permissions(), base.segregationOfDuties(), base.globalTransaction(), base.partitionedByMonth());
     }
 
     /** Names of the fields an overlay adds and modifies, for clients that mark them. */

@@ -13,7 +13,7 @@ fields:
   - { name: zone,             type: Select,   options: [Same city, Domestic, Remote], default: Domestic, in-list: true, projected: true }
   - { name: service,          type: Select,   options: [Standard, Express], default: Standard, in-list: true }
   - { name: weight_kg,        type: Float,    required: true, label: Weight (kg) }
-  - { name: cod_amount,       type: Currency, default: 0, label: COD amount }
+  - { name: cod_amount,       type: Currency, default: 0, label: COD amount, projected: materialised }   # bigint column: range filters (cod_amount__gt=...) use an index
   - { name: shipping_fee,     type: Currency, read-only: true, in-list: true }   # computed by ShippingFeeHook
   - { name: priced_by,        type: Data,     read-only: true, in-list: true }   # standard tariff or the tenant's Wasm rule
   - { name: waybill,          type: Link,     options: Waybill, read-only: true, in-list: true }   # created on submit

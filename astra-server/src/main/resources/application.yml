@@ -75,6 +75,10 @@ astra:
     tx-group: astra_tx_group
   cdc:
     replicas: replica_waybill:Waybill,replica_order:CustomerOrder   # replica table : source DocType (astra-cdc-rust/cdc-routes.yaml)
+  storage:
+    # Month boundaries of astra_doc_txn (DocTypes with partition: month) follow the business day, not UTC.
+    partition-time-zone: ${ASTRA_PARTITION_TZ:Asia/Ho_Chi_Minh}
+    months-ahead: 2                       # partitions created ahead of time; rows outside them go to the default partition
   tenancy:
     mode: ${ASTRA_TENANCY_MODE:multi}      # single | multi
     default-tenant: default

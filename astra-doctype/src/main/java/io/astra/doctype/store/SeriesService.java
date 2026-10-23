@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -155,6 +156,60 @@ public class SeriesService {
         synchronized void add(long from, long to) {
             ranges.addLast(new long[] {from, to});
         }
+    }
+
+    private static final Map<String, Optional<Pattern>> NAME_DATE = new ConcurrentHashMap<>();
+
+    /**
+     * The date a series name was issued on, read back from the name: {@code ORD-20261023-0000001} for
+     * {@code ORD-.YYYYMMDD.-.#######} is 2026-10-23, {@code WB-2610-00000001} for {@code WB-.YYMM.-.########} is
+     * 2026-10-01. Empty when the pattern has no year or the name does not follow it. Amended names
+     * ({@code <name>-1}) keep the date of the original.
+     */
+    static Optional<LocalDate> dateOf(String pattern, String name) {
+        Optional<Pattern> regex = NAME_DATE.computeIfAbsent(pattern, SeriesService::nameRegex);
+        if (regex.isEmpty() || name == null) return Optional.empty();
+        java.util.regex.Matcher m = regex.get().matcher(name);
+        if (!m.lookingAt()) return Optional.empty();
+        try {
+            int year = group(m, "Y4") != null ? Integer.parseInt(group(m, "Y4")) : 2000 + Integer.parseInt(group(m, "Y2"));
+            int month = group(m, "M") != null ? Integer.parseInt(group(m, "M")) : 1;
+            int day = group(m, "D") != null ? Integer.parseInt(group(m, "D")) : 1;
+            return Optional.of(LocalDate.of(year, month, day));
+        } catch (RuntimeException e) {
+            return Optional.empty();
+        }
+    }
+
+    private static String group(java.util.regex.Matcher m, String name) {
+        try {
+            return m.group(name);
+        } catch (IllegalArgumentException noSuchGroup) {
+            return null;
+        }
+    }
+
+    private static Optional<Pattern> nameRegex(String pattern) {
+        int hashAt = pattern.indexOf('#');
+        String head = hashAt < 0 ? pattern : pattern.substring(0, hashAt);
+        if (!head.contains("YY")) return Optional.empty();
+        StringBuilder re = new StringBuilder();
+        for (String part : head.split("\\.", -1)) {
+            if (DATE_PART.matcher(part).matches()) {
+                java.util.regex.Matcher t = DATE_TOKEN.matcher(part);
+                while (t.find()) {
+                    re.append(switch (t.group()) {
+                        case "YYYY" -> "(?<Y4>\\d{4})";
+                        case "YY" -> "(?<Y2>\\d{2})";
+                        case "MM" -> "(?<M>\\d{2})";
+                        default -> "(?<D>\\d{2})";
+                    });
+                }
+            } else {
+                re.append(Pattern.quote(part));
+            }
+        }
+        return Optional.of(Pattern.compile(re.toString()));
     }
 
     /** Resolves a dot-separated part only when it consists entirely of date tokens, so literals like {@code ADD-} stay intact. */

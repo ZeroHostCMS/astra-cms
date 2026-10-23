@@ -18,7 +18,8 @@ public record DocTypeDefinition(
         List<FieldDefinition> fields,
         List<PermissionRule> permissions,
         boolean segregationOfDuties,
-        boolean globalTransaction) {
+        boolean globalTransaction,
+        boolean partitionedByMonth) {
 
     public DocTypeDefinition {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("doctype name is required");
@@ -26,6 +27,21 @@ public record DocTypeDefinition(
         naming = naming == null ? Naming.AUTO : naming;
         fields = fields == null ? List.of() : List.copyOf(fields);
         permissions = permissions == null ? List.of() : List.copyOf(permissions);
+        if (partitionedByMonth && !"transaction".equals(kind)) {
+            throw new IllegalArgumentException("DocType " + name + ": partition: month is for kind: transaction "
+                    + "(master data stays in one table so a lookup by name reads one index)");
+        }
+    }
+
+    /**
+     * Without month partitioning ({@code partition: month}): the document lives in the shared {@code astra_doc}.
+     * With it: in {@code astra_doc_txn}, partitioned by the month of {@code created_at}, so old months can be
+     * vacuumed, detached and archived on their own. For high-volume transaction DocTypes (orders, waybills).
+     */
+    public DocTypeDefinition(String name, String module, String kind, boolean submittable, Naming naming,
+                             List<FieldDefinition> fields, List<PermissionRule> permissions,
+                             boolean segregationOfDuties, boolean globalTransaction) {
+        this(name, module, kind, submittable, naming, fields, permissions, segregationOfDuties, globalTransaction, false);
     }
 
     public Optional<FieldDefinition> field(String fieldName) {

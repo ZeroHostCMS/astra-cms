@@ -26,6 +26,7 @@ public class SyncAwareLsnFilter implements ContainerRequestFilter, ContainerResp
     private static final Set<String> WRITES = Set.of("POST", "PUT", "DELETE", "PATCH");
 
     @Inject SyncWatermark watermark;
+    @Inject CommitLsn commitLsn;
 
     /** Request path without the leading slash, e.g. {@code api/doc/Article}. */
     private static String path(ContainerRequestContext req) {
@@ -35,6 +36,7 @@ public class SyncAwareLsnFilter implements ContainerRequestFilter, ContainerResp
 
     @Override
     public void filter(ContainerRequestContext req) {
+        if (WRITES.contains(req.getMethod()) && path(req).startsWith("api/doc/")) commitLsn.want();
         String required = req.getHeaderString(REQUIRED_LSN);
         if (required == null || required.isBlank() || !path(req).startsWith("api/replica")) return;
         if (!required.matches("[0-9A-Fa-f]{1,8}/[0-9A-Fa-f]{1,8}")) {
@@ -55,7 +57,8 @@ public class SyncAwareLsnFilter implements ContainerRequestFilter, ContainerResp
     public void filter(ContainerRequestContext req, ContainerResponseContext res) {
         String path = path(req);
         if (WRITES.contains(req.getMethod()) && res.getStatus() / 100 == 2 && path.startsWith("api/doc/")) {
-            res.getHeaders().putSingle(TX_LSN, watermark.currentLsn());
+            String lsn = commitLsn.lsn();   // recorded on the committing connection; a query only if nothing committed
+            res.getHeaders().putSingle(TX_LSN, lsn != null ? lsn : watermark.currentLsn());
         }
     }
 }

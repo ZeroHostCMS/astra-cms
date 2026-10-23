@@ -36,17 +36,27 @@ final class DocTypeLoader {
         if (!fieldName.matches("[a-z][a-z0-9_]{0,50}")) {
             throw new IllegalStateException(where + ": field name '" + fieldName + "' must be snake_case");
         }
-        return new FieldDefinition(
-                fieldName,
-                FieldType.valueOf(f.path("type").asText("Data").toUpperCase(Locale.ROOT)),
-                f.path("label").asText(null),
-                f.path("required").asBoolean(false),
-                f.path("read-only").asBoolean(false),
-                f.path("in-list").asBoolean(false),
-                f.path("projected").asBoolean(false),
-                options(f),
-                f.hasNonNull("default") ? YAML.convertValue(f.get("default"), Object.class) : null,
-                f.path("pii").asBoolean(false));
+        JsonNode projected = f.path("projected");
+        boolean materialised = projected.isTextual() && "materialised".equals(projected.asText());
+        if (projected.isTextual() && !materialised) {
+            throw new IllegalStateException(where + ": field '" + fieldName + "': projected must be true, false or materialised");
+        }
+        try {
+            return new FieldDefinition(
+                    fieldName,
+                    FieldType.valueOf(f.path("type").asText("Data").toUpperCase(Locale.ROOT)),
+                    f.path("label").asText(null),
+                    f.path("required").asBoolean(false),
+                    f.path("read-only").asBoolean(false),
+                    f.path("in-list").asBoolean(false),
+                    materialised || projected.asBoolean(false),
+                    options(f),
+                    f.hasNonNull("default") ? YAML.convertValue(f.get("default"), Object.class) : null,
+                    f.path("pii").asBoolean(false),
+                    materialised);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(where + ": " + e.getMessage());
+        }
     }
 
     static List<String> options(JsonNode f) {
@@ -79,17 +89,26 @@ final class DocTypeLoader {
                     p.path("cancel").asBoolean(false)));
         }
         JsonNode naming = root.path("naming");
-        return new DocTypeDefinition(
-                root.path("name").asText(null),
-                root.path("module").asText("core"),
-                root.path("kind").asText(null),
-                root.path("submittable").asBoolean(false),
-                naming.isMissingNode() ? DocTypeDefinition.Naming.AUTO
-                        : new DocTypeDefinition.Naming(naming.path("field").asText(null), naming.path("series").asText(null),
-                                naming.path("gapless").asBoolean(true)),
-                fields,
-                permissions,
-                root.path("segregation-of-duties").asBoolean(false),
-                "global".equals(root.path("transaction").asText("local")));
+        String partition = root.path("partition").asText("none");
+        if (!partition.equals("none") && !partition.equals("month")) {
+            throw new IllegalStateException("DocType " + resource + ": partition must be month or none, not " + partition);
+        }
+        try {
+            return new DocTypeDefinition(
+                    root.path("name").asText(null),
+                    root.path("module").asText("core"),
+                    root.path("kind").asText(null),
+                    root.path("submittable").asBoolean(false),
+                    naming.isMissingNode() ? DocTypeDefinition.Naming.AUTO
+                            : new DocTypeDefinition.Naming(naming.path("field").asText(null), naming.path("series").asText(null),
+                                    naming.path("gapless").asBoolean(true)),
+                    fields,
+                    permissions,
+                    root.path("segregation-of-duties").asBoolean(false),
+                    "global".equals(root.path("transaction").asText("local")),
+                    partition.equals("month"));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(resource + ": " + e.getMessage());
+        }
     }
 }
