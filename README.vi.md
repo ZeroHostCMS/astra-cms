@@ -353,9 +353,11 @@ Frappe tạo một bảng cho mỗi DocType và chạy DDL khi bạn thêm Custo
 
 | `storage` | Dùng cho | Cách hoạt động | DDL trong production |
 | --- | --- | --- | --- |
-| `jsonb` (mặc định) | Master, chứng từ giao dịch, cấu hình, nội dung | Metadata lõi (`id`, `tenant_id`, `doctype`, `docstatus`, `owner`, timestamp, `version`) nằm ở các cột quan hệ có index; field nằm trong `JSONB` với GIN `jsonb_path_ops`. Field đánh dấu `projected: true` được tạo **expression index** (`CREATE INDEX CONCURRENTLY ... ((data->>'field')::type)`), thực sự online; truy vấn sinh ra dùng đúng biểu thức đó nên planner chọn được index. Với workload sort/aggregate nặng, field có thể đặt `projected: materialised`: một cột nullable được thêm dưới dạng thay đổi chỉ metadata, được job backfill theo batch, được kernel đồng bộ khi ghi, rồi index `CONCURRENTLY`. **Không** dùng stored generated column trên bảng đã có dữ liệu vì PostgreSQL phải rewrite cả bảng để thêm chúng. | Không bao giờ cho field. Expression index online, additive và đảo ngược được (`DROP INDEX CONCURRENTLY`); materialised projection online nhưng cần thời gian backfill |
+| `jsonb` (mặc định) | Master, chứng từ giao dịch, cấu hình, nội dung | Metadata lõi (`id`, `tenant_id`, `doctype`, `docstatus`, `owner`, timestamp, `version`) nằm ở các cột quan hệ có index; field nằm trong `JSONB`. Field đánh dấu `projected: true` được tạo **expression index** partial trên `astra_ext.astra_field(data, 'field')`, một accessor LEAKPROOF (dưới row-level security, PostgreSQL không bao giờ dùng index trên `data->>'field'`), kết thúc bằng `modified_at DESC`, tạo `CONCURRENTLY`; truy vấn sinh ra dùng đúng biểu thức đó nên planner chọn được index. Để lọc khoảng (`field__gt`, `__lt`, ...), field có thể đặt `projected: materialised`: một cột kiểu thật (Currency thành bigint phần trăm) thêm dưới dạng thay đổi chỉ metadata, giữ đồng bộ bằng trigger, backfill theo lô ở nền, rồi index `CONCURRENTLY`. DocType giao dịch khối lượng lớn có thể bật `partition: month`. **Không** dùng stored generated column trên bảng đã có dữ liệu vì PostgreSQL phải rewrite cả bảng để thêm chúng. | Không bao giờ cho field. Expression index online, additive và đảo ngược được (`DROP INDEX CONCURRENTLY`); materialised projection online nhưng cần thời gian backfill |
 | `ledger` | Bút toán sổ cái, bút toán sổ kho, bút toán lương, audit trail | Bảng quan hệ append-only, phân vùng, cột cố định. Dòng không bao giờ bị update; sửa sai bằng bút toán đảo. Chỉ app sở hữu được ghi, và chỉ bên trong `@AstraGlobalTransactional`. Phân vùng theo kỳ để khóa sổ và lưu trữ. | Schema do app sở hữu, tiến hóa bằng expand/contract |
 | `virtual` | Hệ thống bên ngoài | Một `DocTypeAdapter` ánh xạ DocType lên ERP, CRM hoặc database legacy. Cùng API, quyền và tool. | n/a |
+
+**Đo thật, không giả định.** [docs/benchmark-doctype-jsonb-the-right-way.md](docs/benchmark-doctype-jsonb-the-right-way.md) đo cách lưu trữ này trên 5 triệu đơn dưới row-level security, so với bảng cột truyền thống: vì sao index trên `->>` và GIN không dùng được dưới RLS và accessor leakproof sửa thế nào (danh sách theo khách từ 867 ms xuống 0,29 ms), bộ đếm series gapless từng chặn việc tạo đơn ở khoảng 300 đơn/giây mỗi tenant, partition theo tháng tốn gì (một nửa thông lượng OLTP), lọc khoảng trên cột materialised, và cả kernel qua HTTP với token thật (400 đơn/giây sạch trên một máy, khoảng 2 lần mức đỉnh của 2 triệu đơn/ngày). Bộ đo chạy lại được trên mọi server Linux: [scripts/bench/doctype-jsonb](scripts/bench/doctype-jsonb/README.md) cho PostgreSQL, [scripts/bench/http](scripts/bench/http/README.md) cho cả hệ thống.
 
 **Ngân sách projection.** Linh hoạt không được phép trả giá bằng hiệu năng. Mỗi DocType có quota projection và index (mặc định 8 projection, 12 index), mỗi tenant có quota projection qua overlay, và materialised projection trên DocType vượt ngưỡng số dòng cần qua bước phê duyệt. Yêu cầu vượt quota bị từ chối ngay ở bước kiểm tra metadata, trước khi chạm tới database production.
 
@@ -367,7 +369,7 @@ Frappe tạo một bảng cho mỗi DocType và chạy DDL khi bạn thêm Custo
 * **Track changes** lưu diff cho mỗi lần save; **phiên bản** truy vấn được.
 * **Link** được kiểm tra khi ghi và bảo vệ toàn vẹn tham chiếu trên cả JSONB lẫn ledger storage; `fetch-from` sao chép giá trị denormalised tại thời điểm ghi, đúng như chứng từ ERP cần.
 * **Child table** là các sub-document có thứ tự, lưu inline (JSONB) hoặc dạng projection (ledger) theo chiến lược của bản ghi cha.
-* **Naming series** an toàn trên cụm (bộ đếm dựa trên Redis, có chế độ không hở số cho chứng từ tài chính).
+* **Naming series** an toàn trên cụm: mặc định không hở số (dòng đếm bị khoá tới khi chứng từ commit, như chứng từ tài chính cần), hoặc `gapless: false` cho chứng từ khối lượng lớn, mỗi instance lấy số từ một khối đã dự trữ, nhanh hơn khoảng 20 lần khi nhiều người ghi đồng thời.
 
 ### 4. Tùy biến dạng overlay, sống qua nâng cấp
 
@@ -735,7 +737,7 @@ Những tính năng nền tảng mà ERP cần và kernel đã có sẵn:
 * Seata transaction coordinator là thành phần tập trung. Nó được giữ ngoài đường nóng nhờ smart bypass (phần lớn request không bao giờ chạm tới nó) và được **shard theo transaction service group** (theo app hoặc theo shard tenant, mỗi nhóm là một cụm Raft), nên throughput của coordinator tăng theo số nhóm chứ không theo số pod kernel.
 * Bộ nhớ của plugin host được cấp ngân sách ở những chỗ JVM cho phép: Metaspace theo từng ClassLoader được theo dõi và giới hạn bởi `keep-previous`; bộ nhớ tuyến tính Wasm là giới hạn cứng cho mỗi instance; **heap JVM theo từng app Tier 1 quan sát được (metric cấp phát theo plugin) nhưng không cưỡng chế được**, thêm một lý do để code không tin cậy thuộc về Tier 2.
 
-Mọi mục tiêu đều được nêu kèm điều kiện đo.
+Mọi mục tiêu đều được nêu kèm điều kiện đo. Kết quả đo đến nay, kèm bộ đo để chạy lại: [docs/benchmark-doctype-jsonb-the-right-way.md](docs/benchmark-doctype-jsonb-the-right-way.md).
 
 | Chỉ số | Điều kiện | Mục tiêu (sẽ kiểm chứng bằng benchmark công khai) |
 | --- | --- | --- |

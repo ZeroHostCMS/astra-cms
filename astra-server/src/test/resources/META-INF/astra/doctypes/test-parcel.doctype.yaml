@@ -1,6 +1,6 @@
 # Test-only: a high-volume transaction DocType stored month-partitioned (astra_doc_txn), named by a dated series,
 # with a materialised Currency field. The Express DocTypes stay in astra_doc: measured, month partitioning halves
-# OLTP throughput (docs/why_doctype_jsonb.md), so it is opt-in.
+# OLTP throughput (docs/benchmark-doctype-jsonb-the-right-way.md), so it is opt-in.
 name: TestParcel
 module: test
 kind: transaction

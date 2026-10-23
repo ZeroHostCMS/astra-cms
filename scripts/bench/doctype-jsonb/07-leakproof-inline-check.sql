@@ -1,5 +1,5 @@
 -- DocType JSONB benchmark: does a plain SQL wrapper declared LEAKPROOF survive inlining?
--- Hypothesis (docs/why_doctype_jsonb.md 4.2): the planner inlines a simple SQL function, then sees the
+-- Hypothesis (docs/benchmark-doctype-jsonb-the-right-way.md 4.2): the planner inlines a simple SQL function, then sees the
 -- non-leakproof ->> again and refuses to use the index under row-level security; a LANGUAGE internal alias
 -- is not inlined, so its LEAKPROOF label holds. Run as the bootstrap superuser after astra_field exists
 -- (04-fixes.sql or 06-lean-reload.sql).

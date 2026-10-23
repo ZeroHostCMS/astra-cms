@@ -69,7 +69,7 @@ public class RowLevelSecurityGuard {
     /**
      * Under row-level security the planner uses an index for a predicate only when every function in it is
      * LEAKPROOF; {@code ->>} is not, so without {@code astra_field} every list filter scans the whole tenant
-     * (measured: 470 ms instead of 0.13 ms on 5 million orders, docs/why_doctype_jsonb.md). Only a superuser
+     * (measured: 470 ms instead of 0.13 ms on 5 million orders, docs/benchmark-doctype-jsonb-the-right-way.md). Only a superuser
      * can declare it, so it comes from the bootstrap scripts, and the kernel refuses to start without it.
      */
     private static void requireLeakproofAccessor(Statement st) throws SQLException {

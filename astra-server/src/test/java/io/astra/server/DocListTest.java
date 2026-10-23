@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Lists as the performance work left them: keyset pages through {@code X-Next-Cursor}, and projected-field
  * filters that the planner can serve from their index while row-level security is on
- * (docs/why_doctype_jsonb.md, the leakproof accessor).
+ * (docs/benchmark-doctype-jsonb-the-right-way.md, the leakproof accessor).
  */
 @QuarkusTest
 class DocListTest {

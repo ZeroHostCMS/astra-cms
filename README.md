@@ -344,9 +344,11 @@ Frappe creates one table per DocType and runs DDL when you add a Custom Field. A
 
 | `storage` | Used for | How it works | DDL in production |
 | --- | --- | --- | --- |
-| `jsonb` (default) | Masters, transactions, settings, content | Core metadata (`id`, `tenant_id`, `doctype`, `docstatus`, `owner`, timestamps, `version`) in indexed relational columns; fields in `JSONB` with GIN `jsonb_path_ops`. Fields marked `projected: true` get an **expression index** (`CREATE INDEX CONCURRENTLY ... ((data->>'field')::type)`), which is genuinely online; generated queries use the same expression so the planner picks it up. For heavy sort/aggregate workloads a field can be `projected: materialised`: a nullable column added as a metadata-only change, backfilled in batches by a job, kept in sync by the kernel on write, then indexed `CONCURRENTLY`. Stored generated columns are **not** used on existing tables because PostgreSQL rewrites the table to add them. | Never for fields. Expression indexes are online, additive, and reversible (`DROP INDEX CONCURRENTLY`); materialised projections are online but take time to backfill |
+| `jsonb` (default) | Masters, transactions, settings, content | Core metadata (`id`, `tenant_id`, `doctype`, `docstatus`, `owner`, timestamps, `version`) in indexed relational columns; fields in `JSONB`. Fields marked `projected: true` get a partial **expression index** on `astra_ext.astra_field(data, 'field')`, a LEAKPROOF accessor (under row-level security PostgreSQL never uses an index on `data->>'field'`), ending in `modified_at DESC` and built `CONCURRENTLY`; generated queries use the same expression so the planner picks it up. For range filters (`field__gt`, `__lt`, ...) a field can be `projected: materialised`: a typed column (Currency as bigint hundredths) added as a metadata-only change, kept in sync by a trigger, backfilled in batches in the background, then indexed `CONCURRENTLY`. High-volume transaction DocTypes can opt into `partition: month`. Stored generated columns are **not** used on existing tables because PostgreSQL rewrites the table to add them. | Never for fields. Expression indexes are online, additive, and reversible (`DROP INDEX CONCURRENTLY`); materialised projections are online but take time to backfill |
 | `ledger` | General Ledger entries, Stock Ledger entries, payroll postings, audit trails | Append-only, partitioned relational tables with fixed columns. Rows are never updated; corrections are reversing entries. Written only inside `@AstraGlobalTransactional` by the owning app. Partition by period for closing and archival. | Schema owned by the app, evolved with expand/contract |
 | `virtual` | External systems | A `DocTypeAdapter` maps the DocType onto an ERP, CRM, or legacy database. Same API, permissions, and tools. | n/a |
+
+**Measured, not assumed.** [docs/benchmark-doctype-jsonb-the-right-way.md](docs/benchmark-doctype-jsonb-the-right-way.md) benchmarks this storage on 5 million orders under row-level security against a traditional column table: why `->>` and GIN indexes are unusable under RLS and how the leakproof accessor fixes it (list by customer 867 ms to 0.29 ms), the gap-free naming series that capped order creation at about 300 per second per tenant, what month partitioning costs (half the OLTP throughput), materialised range filters, and the whole kernel over HTTP with real tokens (400 orders per second clean on one machine, about twice the peak of 2 million orders a day). The harnesses re-run it on any Linux server: [scripts/bench/doctype-jsonb](scripts/bench/doctype-jsonb/README.md) for PostgreSQL, [scripts/bench/http](scripts/bench/http/README.md) for the full stack.
 
 **Projection budgets.** Flexibility must not cost performance. Each DocType has a projection and index quota (default 8 projections, 12 indexes), each tenant has an overlay projection quota, and materialised projections on DocTypes above a row threshold require an approval step. Over-quota requests fail during metadata validation, before they reach a production database.
 
@@ -358,7 +360,7 @@ Frappe creates one table per DocType and runs DDL when you add a Custom Field. A
 * **Track changes** stores a diff per save; **versions** are queryable.
 * **Links** are validated on write and protect referential integrity across JSONB and ledger storage; `fetch-from` copies denormalised values at write time, the way ERP documents expect.
 * **Child tables** are ordered sub-documents stored inline (JSONB) or projected (ledger) by the parent's strategy.
-* **Naming series** are cluster-safe (Redis-backed counters with gap-free mode for fiscal documents).
+* **Naming series** are cluster-safe: gap-free by default (the counter row is locked until the document commits, as fiscal documents need), or `gapless: false` for high-volume documents, where each instance takes numbers from a block it reserved, about 20 times faster under concurrency.
 
 ### 4. Customisation as overlays that survive upgrades
 
@@ -726,7 +728,7 @@ Platform features that ERP needs and the kernel already provides:
 * The Seata transaction coordinator is a central component. It is kept off the hot path by smart bypass (most requests never touch it) and is **sharded by transaction service group** (per app or per tenant shard, each a Raft cluster) so coordinator throughput scales with the number of groups, not the number of kernel pods.
 * Plugin host memory is budgeted where the JVM allows it: Metaspace per ClassLoader is tracked and capped by `keep-previous`; Wasm linear memory is a hard cap per instance; **JVM heap per Tier 1 app is observable (per-plugin allocation metrics) but not enforceable**, which is one more reason untrusted code belongs in Tier 2.
 
-Every target is stated with the conditions under which it is measured.
+Every target is stated with the conditions under which it is measured. Measured results so far, with the harnesses to reproduce them: [docs/benchmark-doctype-jsonb-the-right-way.md](docs/benchmark-doctype-jsonb-the-right-way.md).
 
 | Metric | Condition | Target (to be validated by public benchmarks) |
 | --- | --- | --- |

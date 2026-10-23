@@ -2,7 +2,7 @@
 
 | Machine | |
 | --- | --- |
-| note | first run; reconstructed from docs/why_doctype_jsonb.md; PostgreSQL in Docker Desktop (16 GB; 10 CPU); pgbench 18.3 on the macOS host; stopped when the disk filled during the bigint rewrite |
+| note | first run; reconstructed from docs/benchmark-doctype-jsonb-the-right-way.md; PostgreSQL in Docker Desktop (16 GB; 10 CPU); pgbench 18.3 on the macOS host; stopped when the disk filled during the bigint rewrite |
 | product | MacBook Pro |
 | cpu_model | Apple M1 Pro |
 | cpus | 10 |

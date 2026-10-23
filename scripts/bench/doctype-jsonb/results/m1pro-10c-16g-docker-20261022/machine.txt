@@ -1,5 +1,5 @@
 label: m1pro-10c-16g-docker-20261022
-note: first run, reconstructed from docs/why_doctype_jsonb.md; PostgreSQL in Docker Desktop (16 GB, 10 CPU), pgbench 18.3 on the macOS host; stopped when the disk filled during the bigint rewrite
+note: first run, reconstructed from docs/benchmark-doctype-jsonb-the-right-way.md; PostgreSQL in Docker Desktop (16 GB, 10 CPU), pgbench 18.3 on the macOS host; stopped when the disk filled during the bigint rewrite
 date_utc: 2026-10-22
 kernel: Darwin
 os: macOS

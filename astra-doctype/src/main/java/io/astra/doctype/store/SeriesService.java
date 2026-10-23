@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * <p>Gapless series (the default): the upsert's row lock makes the sequence gap-free within the caller's
  * transaction and safe across pods, and it is held until that transaction commits, so creations of one
  * series in one tenant are serialised (measured: about 300 orders per second per tenant, p95 200 ms, with
- * 16 concurrent writers; docs/why_doctype_jsonb.md).
+ * 16 concurrent writers; docs/benchmark-doctype-jsonb-the-right-way.md).
  *
  * <p>Series with {@code gapless: false}: each instance hands out numbers from blocks it reserved in their
  * own committed transactions ({@code current = current + block}), refilled in the background before they

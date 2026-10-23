@@ -1,6 +1,6 @@
 # DocType JSONB benchmark
 
-Bộ đo hiệu năng lưu trữ DocType (bảng JSONB `astra_doc` của kernel) so với bảng cột truyền thống, dưới row-level security như production. Mục tiêu là biết **giới hạn**, **các phương án tối ưu** và **đánh đổi** của từng phương án, đo lặp lại được trên nhiều máy chủ Linux và cloud. Kết quả và phân tích: [docs/why_doctype_jsonb.md](../../../docs/why_doctype_jsonb.md).
+Bộ đo hiệu năng lưu trữ DocType (bảng JSONB `astra_doc` của kernel) so với bảng cột truyền thống, dưới row-level security như production. Mục tiêu là biết **giới hạn**, **các phương án tối ưu** và **đánh đổi** của từng phương án, đo lặp lại được trên nhiều máy chủ Linux và cloud. Kết quả và phân tích: [docs/benchmark-doctype-jsonb-the-right-way.md](../../../docs/benchmark-doctype-jsonb-the-right-way.md).
 
 PostgreSQL chạy trong Docker từ **một image cố định** (mặc định `pgvector/pgvector:pg16`, image của dự án; digest được ghi lại), nên mọi máy và mọi cloud chạy cùng một bản build. Container dùng mạng của host (`--network host`, không NAT) và có thể đặt dữ liệu lên đúng đĩa cần đo (`DATA_DIR`). `pgbench` và `psql` cũng chạy từ image đó.
 

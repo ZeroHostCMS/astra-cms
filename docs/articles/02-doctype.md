@@ -345,7 +345,7 @@ and expand "Raw JSON from GET /api/doctype/CustomerOrder" to see the exact defin
   tenant. The kernel now filters and indexes on `astra_ext.astra_field(data, 'field')`, a LEAKPROOF alias of
   the same function created by the bootstrap superuser, and the indexes are `astra_doc_pf_<field>` with
   `modified_at DESC` appended and `WHERE ... IS NOT NULL`. The code and catalog output quoted in this article
-  show the version recorded in the video. Measurements and reasons: [why_doctype_jsonb.md](../why_doctype_jsonb.md).
+  show the version recorded in the video. Measurements and reasons: [benchmark-doctype-jsonb-the-right-way.md](../benchmark-doctype-jsonb-the-right-way.md).
 - **`CONCURRENTLY` is not visible in the catalog.** `pg_index` stores only the index definition, so the
   definition column never shows the word `CONCURRENTLY`; the narration says this on screen.
 - **The index count is install-specific.** The video showed ten projection indexes. The current image

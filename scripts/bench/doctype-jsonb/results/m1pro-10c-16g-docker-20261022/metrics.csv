@@ -1,6 +1,6 @@
 key,value
 machine.label,m1pro-10c-16g-docker-20261022
-machine.note,first run; reconstructed from docs/why_doctype_jsonb.md; PostgreSQL in Docker Desktop (16 GB; 10 CPU); pgbench 18.3 on the macOS host; stopped when the disk filled during the bigint rewrite
+machine.note,first run; reconstructed from docs/benchmark-doctype-jsonb-the-right-way.md; PostgreSQL in Docker Desktop (16 GB; 10 CPU); pgbench 18.3 on the macOS host; stopped when the disk filled during the bigint rewrite
 machine.product,MacBook Pro
 machine.cpu_model,Apple M1 Pro
 machine.cpus,10

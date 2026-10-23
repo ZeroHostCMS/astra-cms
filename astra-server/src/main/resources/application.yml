@@ -29,7 +29,7 @@ quarkus:
     password: ${ASTRA_DB_PASSWORD:astra_app}
     jdbc:
       # Per kernel instance. Size the total over all instances to about 2-3x the database's CPU threads:
-      # throughput peaked at 64 connections on 24 threads and fell beyond (docs/why_doctype_jsonb.md).
+      # throughput peaked at 64 connections on 24 threads and fell beyond (docs/benchmark-doctype-jsonb-the-right-way.md).
       min-size: ${ASTRA_DB_POOL_MIN:2}
       max-size: ${ASTRA_DB_POOL_MAX:20}
   flyway:

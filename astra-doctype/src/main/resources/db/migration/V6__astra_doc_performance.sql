@@ -1,4 +1,4 @@
--- Storage tuning from the DocType JSONB benchmark (docs/why_doctype_jsonb.md).
+-- Storage tuning from the DocType JSONB benchmark (docs/benchmark-doctype-jsonb-the-right-way.md).
 --
 -- 1. The GIN index on data is never used: jsonb @> is not LEAKPROOF, so under row-level security the planner
 --    cannot use it, while every insert and update pays for it (about 15 entries per document, 1 GB per

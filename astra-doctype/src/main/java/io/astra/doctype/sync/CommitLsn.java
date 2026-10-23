@@ -7,7 +7,7 @@ import jakarta.enterprise.context.RequestScoped;
  * The WAL position after the last commit of the current request, for {@code X-Tx-LSN}. The transaction reads it on
  * its own connection right after committing, so the position covers the commit and a write request holds one pooled
  * connection, not two (reading it from a second connection after the response was built doubled connection use per
- * write and, under load, made writes queue behind each other for the pool: measured in docs/why_doctype_jsonb.md).
+ * write and, under load, made writes queue behind each other for the pool: measured in docs/benchmark-doctype-jsonb-the-right-way.md).
  */
 @RequestScoped
 public class CommitLsn {
