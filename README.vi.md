@@ -357,7 +357,13 @@ Frappe tạo một bảng cho mỗi DocType và chạy DDL khi bạn thêm Custo
 | `ledger` | Bút toán sổ cái, bút toán sổ kho, bút toán lương, audit trail | Bảng quan hệ append-only, phân vùng, cột cố định. Dòng không bao giờ bị update; sửa sai bằng bút toán đảo. Chỉ app sở hữu được ghi, và chỉ bên trong `@AstraGlobalTransactional`. Phân vùng theo kỳ để khóa sổ và lưu trữ. | Schema do app sở hữu, tiến hóa bằng expand/contract |
 | `virtual` | Hệ thống bên ngoài | Một `DocTypeAdapter` ánh xạ DocType lên ERP, CRM hoặc database legacy. Cùng API, quyền và tool. | n/a |
 
-**Đo thật, không giả định.** [docs/benchmark-doctype-jsonb-the-right-way.md](docs/benchmark-doctype-jsonb-the-right-way.md) đo cách lưu trữ này trên 5 triệu đơn dưới row-level security, so với bảng cột truyền thống: vì sao index trên `->>` và GIN không dùng được dưới RLS và accessor leakproof sửa thế nào (danh sách theo khách từ 867 ms xuống 0,29 ms), bộ đếm series gapless từng chặn việc tạo đơn ở khoảng 300 đơn/giây mỗi tenant, partition theo tháng tốn gì (một nửa thông lượng OLTP), lọc khoảng trên cột materialised, và cả kernel qua HTTP với token thật (400 đơn/giây sạch trên một máy, khoảng 2 lần mức đỉnh của 2 triệu đơn/ngày). Bộ đo chạy lại được trên mọi server Linux: [scripts/bench/doctype-jsonb](scripts/bench/doctype-jsonb/README.md) cho PostgreSQL, [scripts/bench/http](scripts/bench/http/README.md) cho cả hệ thống.
+**Hiệu năng đã được đo, không ước đoán.** Cách lưu trữ trên được kiểm chứng bằng benchmark với 5 triệu đơn hàng, chạy dưới row-level security như môi trường production và so sánh với một bảng quan hệ truyền thống chứa cùng dữ liệu. Kết quả chính:
+
+* Sau khi tối ưu, truy vấn đọc trên JSONB nhanh ngang bảng quan hệ: chênh lệch dưới 0,1 ms mỗi truy vấn và dưới 8 % thông lượng.
+* Toàn bộ hệ thống (kernel, xác thực, cơ sở dữ liệu) xử lý 400 đơn hàng mỗi giây trên một máy chủ, khoảng gấp đôi tải giờ cao điểm của 2 triệu đơn mỗi ngày.
+* Các đánh đổi được nêu rõ: JSONB cần thêm khoảng 70 % dung lượng lưu trữ, báo cáo tổng hợp nên chạy trên bản sao đọc, và partition theo tháng chỉ nên bật khi cần quản lý vòng đời dữ liệu vì nó làm giảm thông lượng giao dịch.
+
+Phương pháp, số liệu chi tiết và bộ công cụ để chạy lại trên hạ tầng của bạn: [Benchmark DocType JSONB](docs/benchmark-doctype-jsonb-the-right-way.md).
 
 **Ngân sách projection.** Linh hoạt không được phép trả giá bằng hiệu năng. Mỗi DocType có quota projection và index (mặc định 8 projection, 12 index), mỗi tenant có quota projection qua overlay, và materialised projection trên DocType vượt ngưỡng số dòng cần qua bước phê duyệt. Yêu cầu vượt quota bị từ chối ngay ở bước kiểm tra metadata, trước khi chạm tới database production.
 

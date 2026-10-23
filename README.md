@@ -348,7 +348,13 @@ Frappe creates one table per DocType and runs DDL when you add a Custom Field. A
 | `ledger` | General Ledger entries, Stock Ledger entries, payroll postings, audit trails | Append-only, partitioned relational tables with fixed columns. Rows are never updated; corrections are reversing entries. Written only inside `@AstraGlobalTransactional` by the owning app. Partition by period for closing and archival. | Schema owned by the app, evolved with expand/contract |
 | `virtual` | External systems | A `DocTypeAdapter` maps the DocType onto an ERP, CRM, or legacy database. Same API, permissions, and tools. | n/a |
 
-**Measured, not assumed.** [docs/benchmark-doctype-jsonb-the-right-way.md](docs/benchmark-doctype-jsonb-the-right-way.md) benchmarks this storage on 5 million orders under row-level security against a traditional column table: why `->>` and GIN indexes are unusable under RLS and how the leakproof accessor fixes it (list by customer 867 ms to 0.29 ms), the gap-free naming series that capped order creation at about 300 per second per tenant, what month partitioning costs (half the OLTP throughput), materialised range filters, and the whole kernel over HTTP with real tokens (400 orders per second clean on one machine, about twice the peak of 2 million orders a day). The harnesses re-run it on any Linux server: [scripts/bench/doctype-jsonb](scripts/bench/doctype-jsonb/README.md) for PostgreSQL, [scripts/bench/http](scripts/bench/http/README.md) for the full stack.
+**Performance is measured, not assumed.** This storage design is validated by a benchmark on 5 million orders, run under row-level security as in production and compared with a traditional relational table holding the same data. Key results:
+
+* After optimisation, reads on JSONB match the relational table: within 0.1 ms per query and within 8 % of its throughput.
+* The full system (kernel, authentication, database) handles 400 orders per second on a single server, about twice the peak-hour load of 2 million orders a day.
+* The trade-offs are stated plainly: JSONB needs about 70 % more storage, aggregate reporting belongs on read replicas, and monthly partitioning should be enabled only for data lifecycle management, because it lowers transaction throughput.
+
+Methodology, detailed figures and the tooling to reproduce the results on your own infrastructure: [DocType JSONB benchmark](docs/benchmark-doctype-jsonb-the-right-way.md).
 
 **Projection budgets.** Flexibility must not cost performance. Each DocType has a projection and index quota (default 8 projections, 12 indexes), each tenant has an overlay projection quota, and materialised projections on DocTypes above a row threshold require an approval step. Over-quota requests fail during metadata validation, before they reach a production database.
 
