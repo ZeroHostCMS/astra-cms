@@ -47,6 +47,10 @@ The video is 2:20.
    instance per call. Each rule sets a deadline, at most 200 ms.
 7. **To be accurate.** Chicory cannot count instructions yet, so CPU is capped by time. Tier 1 is on the roadmap.
 
+![Figure 3: A runaway script is stopped and never goes live](./figures/video-14-figure-3.png)
+*A runaway script is stopped and never goes live: verification test runs terminate infinite loops before saving the rule.*
+
+
 ## How it works
 
 ```mermaid
@@ -59,6 +63,10 @@ flowchart LR
     O["CustomerOrder save"] -->|"ShippingFeeHook: active rule for segment?"| S
     S -->|"fee(weight_g, zone, express, cod)"| F["shipping_fee + priced_by"]
 ```
+
+![Figure 1: From Rust source to a priced order](./figures/video-14-figure-1.png)
+*From Rust source to a priced order: compiled WebAssembly rules evaluate custom shipping formulas within the order write path.*
+
 
 ### The tenant's code: one exported function, no imports
 
@@ -216,6 +224,10 @@ Why each control:
 
 Why a time deadline rather than an instruction budget: Chicory has no instruction counting ("fuel") yet, so wall-clock
 time is the only CPU control available. That is the limit stated in the video.
+
+![Figure 2: What the sandbox walls off](./figures/video-14-figure-2.png)
+*What the sandbox walls off: linear memory limits, zero host imports, and execution deadlines protect the host JVM.*
+
 
 ### Saving a rule is a test run
 
@@ -393,34 +405,11 @@ longer be 73,000.
   Wasm scripts attached to overlays, as sketched in [overlay-wasm.md](../overlay-wasm.md), are not built.
 - Tier 1 (isolated JVM apps with hot-swap) is on the roadmap, not built.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · From Rust source to a priced order
-
-*Where it goes:* How it works, top diagram
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right: a sheet "lib.rs  fn fee(weight_g, zone, express, cod) -> i64", arrow labelled "build-wasm.sh" to a tiny cube "tet-promo.wasm 421 bytes", arrow labelled "POST /api/doc/PricingRule" to a document card "PricingRule PRL-001  active: true", arrow to a sealed box drawn in blue "WasmSandbox (Chicory)", arrow to an order card "CustomerOrder  shipping_fee 51,000  priced_by PRL-001 (Wasm)". Above the order card, a small crossed-out "73,000". Highlight the blue sandbox box and the final arrow.
-```
-
-### Figure 2 · What the sandbox walls off
-
-*Where it goes:* How it works, "The sandbox"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Center: a thick-walled box drawn in blue labelled "fresh Instance per call", containing a small block "linear memory ≤ 1 MiB (16 pages)" and a stopwatch "deadline ≤ 200 ms". One arrow in from the left labelled "4 × i64", one arrow out to the right labelled "1 × i64". Outside the box, four crossed-out arrows pointing at the wall labelled "network", "files", "clock", "host imports". Below the box, a JVM rectangle labelled "kernel keeps running" with other tenants as small icons. Highlight the blue box walls.
-```
-
-### Figure 3 · A runaway script is stopped and never goes live
-
-*Where it goes:* What the video shows, scene 5
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a card "runaway.wasm  loop { i += 1 }" with a circular arrow. Arrow to a box "PricingRuleHook self-test". Inside, a stopwatch at "50 ms" and a hand pulling a plug labelled "cancel(true)". Arrow down to a black ink stamp "422 module rejected (timeout)" and a note "never active". On the right, a separate blue path: a new order card "next order" going to "Standard tariff / priced normally". Highlight the blue path for the next order.
-```
+- [Figure 1 · From Rust source to a priced order](#how-it-works)
+- [Figure 2 · What the sandbox walls off](#the-sandbox-fresh-instance-capped-memory-no-imports-a-deadline)
+- [Figure 3 · A runaway script is stopped and never goes live](#what-the-video-shows)
 
 ## Related
 

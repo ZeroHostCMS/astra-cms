@@ -29,6 +29,9 @@ Câu trả lời của Astra là hai lớp mà mọi kênh đều phải đi qua
 
 Cả hai chạy trong kernel, bên dưới Desk, REST và MCP, nên không client nào bỏ qua được.
 
+![Hình 1: Ba kênh, một quy tắc](./figures/video-03-figure-1.png)
+*Ba kênh, một quy tắc.*
+
 ## Video cho thấy gì
 
 | Cảnh | Bạn thấy gì | Điều đó chứng minh |
@@ -123,6 +126,9 @@ Cước của đơn demo, từng bước theo `fee(...)`:
 | Express × 1,5 | 67.500 |
 | COD: `max(5,000; 1% × 500,000)` | + 5.000 = 72.500 |
 | Làm tròn lên hàng nghìn | **73.000 ₫** |
+
+![Hình 2: Cước phí, từng bước](./figures/video-03-figure-2.png)
+*Cước phí, từng bước.*
 
 ### Tự phát hiện: không cần đăng ký
 
@@ -233,6 +239,9 @@ Những lựa chọn thiết kế đáng chú ý:
   giá đang hiệu lực của tenant qua `DocumentService`. `TenantTransactions` mang connection đang mở trong một
   `ScopedValue`, nên các lần đọc đó tham gia vào transaction của lần ghi và thấy cùng tenant.
 
+![Hình 3: Đường ghi và nơi mỗi lần từ chối xảy ra](./figures/video-03-figure-3.png)
+*Đường ghi và nơi mỗi lần từ chối xảy ra.*
+
 ## Ví dụ thực tế
 
 Một công ty giao hàng chặng cuối ở Việt Nam (giả định, các con số lấy từ bảng cước chuẩn thật trong
@@ -319,30 +328,11 @@ một PostgreSQL thật; `make test` chạy toàn bộ bộ test.
   của bảng cước thì đủ chính xác; một quy tắc tính tiền trên production nên dùng `BigDecimal` hoặc đơn vị
   tiền nhỏ nhất dạng số nguyên.
 
-## Minh hoạ: prompt vẽ hình
+## Hình minh hoạ
 
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
-
-### Hình 1 · Ba kênh, một quy tắc
-*Đặt ở:* Vấn đề
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Three small client doodles stacked on the left: a browser labelled "Desk", a terminal labelled "curl / REST", a robot head labelled "MCP agent". Three arrows converge to the right into a single funnel-shaped box labelled "DocumentStore". Inside the funnel, two stacked layers: top "DocType rules (YAML)", bottom "ShippingFeeHook (Java)" in blue (the highlight). From the funnel, one arrow right to a cylinder labelled "astra_doc". Next to the cylinder a small tag "shipping_fee = 73,000". A crossed-out dashed arrow from "curl / REST" going around the funnel directly to the cylinder, labelled "no bypass".
-```
-
-### Hình 2 · Cước phí, từng bước
-*Đặt ở:* Cách hoạt động, sau bảng tính cước
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A parcel doodle on the left with a tag "Domestic · Express · 2.2 kg · COD 500,000". Five boxes left to right connected by arrows: "first kg 30,000", "+ 3 x 5,000 = 45,000", "x 1.5 Express = 67,500", "+ COD max(5,000; 1%) = 72,500", "round up to 1,000". The final box on the far right is larger, outlined in blue: "73,000 ₫". Under the chain, a small note "ShippingFeeHook.fee(zone, service, weight, cod)".
-```
-
-### Hình 3 · Đường ghi và nơi mỗi lần từ chối xảy ra
-*Đặt ở:* Cách hoạt động, sau sơ đồ tuần tự
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A horizontal pipeline of six gates left to right, each a small box: "rejectReadOnly", "defaults + Select + unknown", "ShippingFeeHook.beforeSave", "validateLinks (RLS)", "series ORD-...-0000n", "INSERT astra_doc". The main arrow through all gates is blue. Below the first four gates, a short black arrow drops down to a shared tray labelled "422 errors[]", with small example tags: under gate 1 "shipping_fee is read-only", under gate 2 "zone must be one of [...]", under gate 3 "phone + weight", under gate 4 "Customer 'C999' not found". A bracket over gates 2 to 6 labelled "one transaction, rolled back on any 422". A note under gate 5: "number taken only after all checks pass".
-```
+- [Hình 1 · Ba kênh, một quy tắc](#vấn-đề)
+- [Hình 2 · Cước phí, từng bước](#hook)
+- [Hình 3 · Đường ghi và nơi mỗi lần từ chối xảy ra](#đường-ghi-theo-thứ-tự)
 
 ## Liên quan
 

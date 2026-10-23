@@ -133,6 +133,9 @@ Comment của lớp tóm tắt điều này: overlay "may not remove or retype f
 valid and the app's own code keeps working" (không được xoá hay đổi kiểu trường, để chứng từ ghi trước overlay vẫn hợp lệ
 và code của chính app vẫn chạy).
 
+![Hình 1: DocType gốc cộng overlay bằng DocType hiệu lực của tenant](./figures/video-13-figure-1.png)
+*DocType gốc cộng overlay bằng DocType hiệu lực của tenant.*
+
 ### Lưu trữ: dữ liệu tenant dưới row-level security
 
 *`astra-doctype/src/main/resources/db/migration/V4__overlays.sql`*
@@ -222,6 +225,9 @@ sequenceDiagram
     Note over P2: entry cache hết hạn trong 2 s,<br/>request kế tiếp đọc lại và áp dụng lại
 ```
 
+![Hình 3: Lưu overlay khi có hai pod](./figures/video-13-figure-3.png)
+*Lưu overlay khi có hai pod.*
+
 ### Ai được đổi overlay
 
 *`astra-doctype/src/main/java/io/astra/doctype/api/OverlayResource.java`*
@@ -272,6 +278,9 @@ MCP), vì cả ba đều validate theo định nghĩa hiệu lực.
 Một việc riêng overlay không làm được: tính cước khác cho hàng ra đảo. Biểu giá chuẩn trong `ShippingFeeHook` không có
 mục `Island` và rơi về giá Domestic (`TARIFF.getOrDefault(zone, TARIFF.get("Domestic"))`). Tenant cần giá riêng cho đảo
 dùng một pricing rule Tier 2, mà ABI của nó đã ánh xạ `Island` thành zone 3; xem [Video 14](./14-wasm.vi.md).
+
+![Hình 2: Cùng một request, hai tenant, hai câu trả lời](./figures/video-13-figure-2.png)
+*Cùng một request, hai tenant, hai câu trả lời.*
 
 ## Dành cho tech lead
 
@@ -328,36 +337,11 @@ Chạy riêng test overlay (cần Docker) bằng bộ lọc test chuẩn của M
 - [overlay-wasm.md](../overlay-wasm.md) mô tả một thiết kế mục tiêu rộng hơn (`add-permissions`, `scripts` Wasm gắn vào
   overlay, kiểm tra tương thích khi nâng cấp). Các phần đó chưa được xây.
 
-## Minh hoạ: prompt vẽ hình
+## Hình minh hoạ
 
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
-
-### Hình 1 · DocType gốc cộng overlay bằng DocType hiệu lực của tenant
-
-*Đặt ở:* Cách hoạt động, "Quy tắc trộn"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a sheet labelled "CustomerOrder (Express app)" listing "zone: Same city, Domestic, Remote" and "note (optional)". Middle: a transparent sheet drawn slightly offset on top, outlined in blue, labelled "hanoi-express overlay", listing "+ vat_invoice", "+ tax_code", "+ invoice_email", "zone + Island", "note required". Right: a merged sheet labelled "effective DocType (hanoi-express)" with all items. Below the merged sheet, three small arrows to "Desk form", "REST", "validation". At the bottom, a separate untouched sheet labelled "saigon-express sees base only". Highlight the blue overlay sheet.
-```
-
-### Hình 2 · Cùng một request, hai tenant, hai câu trả lời
-
-*Đặt ở:* Ví dụ thực tế
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top center: one envelope labelled "POST /api/doc/CustomerOrder  zone: Island, tax_code". Two arrows split down-left and down-right. Left branch labelled "X-Astra-Tenant: hanoi-express" goes to a box "effective DocType has tax_code, Island" and ends in a blue check mark "201". Right branch labelled "X-Astra-Tenant: saigon-express" goes to a box "base DocType" and ends in a cross "422 unknown field 'tax_code'". Highlight the left branch in blue.
-```
-
-### Hình 3 · Lưu overlay khi có hai pod
-
-*Đặt ở:* Cách hoạt động, "DocType hiệu lực, cache trong hai giây"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a person icon "mai (admin)" sending an arrow "PUT /api/overlay/CustomerOrder" to a box "pod A". Inside pod A three steps stacked: "Overlays.apply → 422 if unsafe", "write astra_overlay (RLS)", "evict cache". From pod A a blue arrow down to a database cylinder "astra_overlay  version + 1". On the right, a box "pod B" with a small clock labelled "cache TTL 2 s" and a dashed arrow from the cylinder to pod B labelled "re-read on expiry". A small gate icon before pod A labelled "admin only, else 403". Highlight the blue write path.
-```
+- [Hình 1 · DocType gốc cộng overlay bằng DocType hiệu lực của tenant](#quy-tắc-trộn-overlay-được-và-không-được-làm-gì)
+- [Hình 2 · Cùng một request, hai tenant, hai câu trả lời](#ví-dụ-thực-tế)
+- [Hình 3 · Lưu overlay khi có hai pod](#doctype-hiệu-lực-cache-trong-hai-giây)
 
 ## Liên quan
 

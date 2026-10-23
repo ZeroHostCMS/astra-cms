@@ -58,6 +58,10 @@ HTTP 400
 { "error": "tenant could not be resolved; send X-Astra-Tenant or use a tenant subdomain" }
 ```
 
+![Figure 1: One URL, two companies](./figures/video-07-figure-1.png)
+*One URL, two companies: same hostname, but Keycloak groups and X-Astra-Tenant keep data strictly partitioned.*
+
+
 ## How it works
 
 The path from HTTP request to SQL row has four steps. Each one is a place where the tenant is either
@@ -121,6 +125,10 @@ Why this shape:
 - **Subdomain resolution exists but is off by default.** `fromHost` only runs when
   `astra.tenancy.base-domain` is set; in `astra-server/src/main/resources/application.yml` it is
   commented out.
+
+![Figure 2: Who decides the tenant](./figures/video-07-figure-2.png)
+*Resolving the tenant: the OIDC token establishes group membership, and the request header selects which tenant is active.*
+
 
 ### Step 2: carry the tenant in a `ScopedValue`, not in arguments
 
@@ -232,6 +240,10 @@ try (PreparedStatement ps = conn.prepareStatement(
 `C003` exists, but only under `saigon-express`. Inside Hanoi's transaction, RLS hides it, so it is
 "not found". The SQL author did not have to remember anything.
 
+![Figure 3: Zero rows without a tenant](./figures/video-07-figure-3.png)
+*Row-level security enforces isolation at the database level: a query without a tenant context returns zero rows.*
+
+
 ### The safety net
 
 All of the above assumes the database role is actually subject to RLS. PostgreSQL superusers and roles
@@ -340,34 +352,11 @@ rules without the demo stack: `make test`.
   `note`, not because of the Link. `scripts/demo-express.sh` now sends a `note`, so the error shown is the
   Link error.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · One URL, two companies
-
-*Where it goes:* What the video shows
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a stick-figure user labelled "demo". From it, two arrows go right to one box labelled "GET /api/doc/Customer/C001". The upper arrow carries a tag "X-Astra-Tenant: saigon-express", the lower arrow a tag "X-Astra-Tenant: hanoi-express". From the box, two arrows continue right into a single cylinder labelled "astra_doc". Inside the cylinder draw two separated row groups: top group "saigon-express · C001 · Shop Hoa Mai", bottom group "hanoi-express · C001 · Nhà sách Tràng Tiền". Highlight in blue only the upper path from the saigon tag to the saigon row group. Small caption under the cylinder: "UNIQUE (tenant_id, doctype, name)".
-```
-
-### Figure 2 · Who decides the tenant
-
-*Where it goes:* How it works, step 1
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A left-to-right decision flow. Start box "request + Bearer JWT". Then three stacked diamond checks in order, top to bottom: "X-Astra-Tenant header?", "tenant subdomain?", "only one membership?". Each "yes" arrow goes right to a box "tenant = t". A final "no" arrow from the last diamond goes down to a plain box "400 tenant could not be resolved". From "tenant = t" an arrow goes to a diamond "member of t? (groups /tenants/t/role)". "no" goes down to box "403 not a member". "yes" goes right to box "TenantContext (ScopedValue)". Highlight in blue the path from "tenant = t" through "member of t?" to "TenantContext".
-```
-
-### Figure 3 · Zero rows without a tenant
-
-*Where it goes:* How it works, step 4
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Two side-by-side panels. Left panel titled "no tenant bound": a box "astra_app" with an arrow to a cylinder "astra_doc", a filter funnel between them labelled "tenant_id = current_setting('astra.tenant', true)" and under the funnel "NULL → 0 rows". Right panel titled "BEGIN; set_config('astra.tenant','saigon-express',true)": the same box, funnel and cylinder, and under the funnel a short list "Customer 3, CustomerOrder 7, Waybill 5". Highlight in blue the right panel's funnel and arrow. Bottom caption across both panels: "FORCE ROW LEVEL SECURITY: owner too".
-```
+- [Figure 1 · One URL, two companies](#what-the-video-shows)
+- [Figure 2 · Who decides the tenant](#step-1-resolve-the-tenant-once-from-trusted-inputs)
+- [Figure 3 · Zero rows without a tenant](#step-4-let-postgresql-enforce-it)
 
 ## Related
 

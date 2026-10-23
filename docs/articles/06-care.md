@@ -146,6 +146,10 @@ Design notes, read directly from the code:
   app uses. No REST call between modules, no shared DAO, and the read happens inside the ticket's transaction
   under the same tenant.
 
+![Figure 1: One save, three filled fields](./figures/video-06-figure-1.png)
+*One save fills three fields: TicketTriageHook escalates priority to High, computes the SLA deadline, and takes a snapshot of the linked waybill status.*
+
+
 ### Where the kernel calls it
 
 *`astra-doctype/src/main/java/io/astra/doctype/store/DocumentStore.java`*
@@ -215,6 +219,10 @@ flowchart LR
     H["Desk replica card"] -->|"GET /api/replica/replica_waybill<br/>X-Required-LSN"| G
 ```
 
+![Figure 2: Two ways care sees a parcel](./figures/video-06-figure-2.png)
+*Two ways care sees a parcel: a point-in-time snapshot on the ticket via DocumentService, and a near-real-time CDC replica for the read-heavy care card.*
+
+
 Why a replica for the care view: care screens are read-heavy, open all day and tolerant of milliseconds of lag;
 operational tables take the scan writes. Splitting the reads is the pattern described for CARE in
 [use-case-01.md](../use-case-01.md). The hook still does one point read on the Waybill at save time, which is cheap
@@ -230,6 +238,10 @@ Monday morning; all values below follow from the hook's rules.
 | 09:00, Hotline, "Hàng bị vỡ, khách yêu cầu đền bù", waybill Delivered | Normal → High | `auto-escalated: mentions 'vỡ'` | Tue 09:00 (+24 h) | Delivered |
 | 09:05, Zalo, "Hỏi giờ giao hàng", priority Low, waybill Out for Delivery | Low → Low | empty | Sat 09:05 (+5 days) | Out for Delivery |
 | 09:10, Email, "Parcel lost, no update for 3 days", priority Urgent, waybill At Hub | Urgent → Urgent | empty (already above Normal) | Mon 13:10 (+4 h) | At Hub |
+
+![Figure 3: The triage queue](./figures/video-06-figure-3.png)
+*Incoming complaints pass through the triage rules; damage claims escalate to High, while routine inquiries follow their standard SLAs.*
+
 
 What the team lead gets without anyone typing it: a High queue
 (`GET /api/doc/SupportTicket?priority=High&status=Open`) sorted with the damage claim on top, a deadline on
@@ -310,37 +322,11 @@ Ticket numbers depend on how many tickets exist when you run the scene.
 - **Claims and compensation** (a `ClaimCase` that posts to the ledger on approval) are target scope, not built.
 - **The 47 ms worker lag** is the value shown in one recording; it varies with load.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · One save, three filled fields
-
-*Where it goes:* How it works
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a ticket card labelled "SupportTicket (before)" with lines "subject: Hàng bị vỡ…", "waybill: WB-2610-000001", "priority: Normal", and three empty lines "waybill_status: —", "sla_due: —", "triage_note: —". Middle: a box "TicketTriageHook.beforeSave" with three small rules written inside: "keyword 'vỡ' → High", "High → +24h", "read Waybill.ops_status". A thin arrow from the middle box down to a small document "Waybill · Delivered". Right: the same ticket card labelled "SupportTicket (saved)" with "priority: High", "triage_note: auto-escalated: mentions 'vỡ'", "sla_due: +24h", "waybill_status: Delivered".
-Highlight in blue: the three fields that changed on the right card.
-```
-
-### Figure 2 · Two ways care sees a parcel
-
-*Where it goes:* How it works
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top to bottom on the left: a cylinder "astra_doc" containing a small card "Waybill". From it, a solid black arrow up-right to a ticket field "waybill_status (snapshot at save)" labelled "hook: docs.get". From the same cylinder, a dotted arrow to the right labelled "WAL · pgoutput" into a gear box "astra-cdc-rust", then a solid blue arrow into a second cylinder "replica_waybill". From "replica_waybill" a blue arrow up to a card "CARE replica (CDC) · in sync · lag 47 ms" with a small header tag "X-Required-LSN".
-Highlight in blue: the CDC path from the WAL to the replica card.
-```
-
-### Figure 3 · The triage queue
-
-*Where it goes:* Real-world example
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: three incoming envelopes labelled "Hotline: Hàng bị vỡ", "Zalo: Hỏi giờ giao hàng (Low)", "Email: Parcel lost (Urgent)". They pass through a funnel labelled "keywords: mất, thất lạc, hỏng, vỡ, lost, damaged, broken · only Low/Normal → High". Right: three stacked queue lanes "Urgent · 4h", "High · 24h", "Low · 5 days", with each envelope landing in its lane: the Hotline envelope in High, the Email envelope in Urgent, the Zalo envelope in Low.
-Highlight in blue: the Hotline envelope's path from Normal into the High lane.
-```
+- [Figure 1 · One save, three filled fields](#the-triage-hook)
+- [Figure 2 · Two ways care sees a parcel](#the-replica-card)
+- [Figure 3 · The triage queue](#real-world-example)
 
 ## Related
 

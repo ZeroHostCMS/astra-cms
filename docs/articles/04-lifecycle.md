@@ -25,6 +25,9 @@ model, because accountants and operators already understand it, and adds two thi
 can enforce: the lifecycle step and everything its hooks write share one transaction, and the ledger
 table refuses `UPDATE` and `DELETE` at the database level.
 
+![Figure 1: Three states, one direction](./figures/video-04-figure-1.png)
+*The three document states and legal transitions. Amend creates a new draft; submitted documents can only be cancelled, never edited.*
+
 ## What the video shows
 
 The video follows one new order for customer C001 in tenant `saigon-express`, signed in as `mai` (admin).
@@ -226,6 +229,9 @@ sequenceDiagram
     DS-->>Desk: 200, data.waybill = WB-…
 ```
 
+![Figure 2: Submit in one transaction](./figures/video-04-figure-2.png)
+*Submit joins the DocumentStore status update, waybill creation, and accounting ledger posting into a single atomic database transaction.*
+
 ### Cancel appends, the database enforces it
 
 `LedgerStore.reverse` reads the voucher's original lines and inserts their mirror image with
@@ -257,6 +263,9 @@ CREATE TRIGGER astra_ledger_no_update_delete
 
 The reversal is dated the day of the cancel, not the original posting date. That matches how a closed month
 is normally corrected: the old period stays as reported, the correction appears in the current one.
+
+![Figure 3: Cancel appends, never edits](./figures/video-04-figure-3.png)
+*Cancelling an order posts a mirror reversal entry to astra_ledger. A database trigger blocks UPDATE and DELETE, preserving audit history.*
 
 ### Amend: exactly one successor
 
@@ -381,37 +390,11 @@ runs the whole suite with Quarkus Dev Services starting PostgreSQL in Docker.
 - **Reversals are dated the cancel day.** There is no option today to back-date a reversal into the original
   period.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · Three states, one direction
-
-*Where it goes:* The problem
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right: three rounded boxes labelled "Draft (0)", "Submitted (1)", "Cancelled (2)". Arrow from Draft to Submitted labelled "Submit", arrow from Submitted to Cancelled labelled "Cancel". Under Draft a small pencil icon and the note "editable". Under Submitted and Cancelled a small padlock icon and the note "immutable". From Cancelled, a curved blue arrow going down and back to the left into a new box "Draft (0) ORD-…-1" labelled "Amend (once)". A second dashed arrow from Cancelled labelled "Amend again" ending in a black X with the note "422 already amended". No arrow goes backwards from Submitted to Draft; add a crossed-out arrow there with the note "no edit".
-Highlight in blue: the Amend arrow and the new Draft box.
-```
-
-### Figure 2 · Submit in one transaction
-
-*Where it goes:* How it works
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A large blue rounded rectangle spanning the drawing, labelled at the top "one connection · inTenantTx (ScopedValue)". Inside, top to bottom: a box "DocumentStore.submit", then two side-by-side boxes "OrderWaybillHook.onSubmit" and "OrderPostingHook.onSubmit", then a cylinder labelled "PostgreSQL". Arrows from the hooks to the cylinder labelled "INSERT astra_doc: Waybill" and "INSERT astra_ledger: Dr 131 / Cr 511". A third arrow from DocumentStore.submit to the cylinder labelled "UPDATE docstatus = 1". At the bottom edge of the rectangle two exits: "COMMIT" (blue check) and "ROLLBACK on any error" (black).
-Highlight in blue: the enclosing transaction rectangle.
-```
-
-### Figure 3 · Cancel appends, never edits
-
-*Where it goes:* How it works
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A ledger table drawn as a ruled sheet titled "astra_ledger". Columns: "account", "debit", "credit", "is_reversal". Two rows in black ink: "131 | 73,000 | 0 | false" and "511 | 0 | 73,000 | false". Below them, two new rows written in blue: "511 | 73,000 | 0 | true" and "131 | 0 | 73,000 | true", with a blue bracket labelled "Cancel → reverse()". To the right, a pencil eraser with a big X over it and the note "UPDATE / DELETE blocked by trigger". Small caption at bottom: "old rows stay as they were".
-Highlight in blue: the two appended reversal rows.
-```
+- [Figure 1 · Three states, one direction](#the-problem)
+- [Figure 2 · Submit in one transaction](#the-hooks-that-ride-along)
+- [Figure 3 · Cancel appends, never edits](#cancel-appends-the-database-enforces-it)
 
 ## Related
 

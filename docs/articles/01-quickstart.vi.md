@@ -39,6 +39,9 @@ ngày đầu.
 | Cảnh 1 của `demo-express` | `/api/app` và `/api/doctype` | Tại thời điểm quay: một server, hai app, tám DocType thuộc OMS, OPS, CARE, BMS và CMS |
 | Desk | Đăng nhập bằng `mai`, Installed apps, menu bên trái | Menu sinh ra từ các DocType mà app đóng góp |
 
+![Hình 2: Năm lệnh từ laptop đến Desk](./figures/video-01-figure-2.png)
+*Năm lệnh từ laptop đến Desk.*
+
 ## Cách hoạt động
 
 ### Một server, app được biên dịch kèm
@@ -112,6 +115,9 @@ Vì sao liệt kê resource tường minh thay vì quét classpath: javadoc nói
 có thể đoán trước, bên trong file jar và native image. Chỉ cần đọc một method là bạn biết app mang theo
 những DocType nào.
 
+![Hình 3: Một app là metadata cộng code, biên dịch kèm](./figures/video-01-figure-3.png)
+*Một app là metadata cộng code, biên dịch kèm.*
+
 ### `make k3d-up` thực sự làm gì
 
 Target trong Makefile gọi [`scripts/k3d-up.sh`](../../scripts/k3d-up.sh). Script tạo mới hoặc dùng lại
@@ -158,6 +164,9 @@ lưu trong PostgreSQL theo từng tenant (`astra_series`), nhờ vậy số đơ
 | `keycloak` | Đăng nhập OIDC, role theo tenant dưới dạng group (Video 11) |
 | `seata-server` | Bộ điều phối giao dịch toàn cục (Video 17) |
 | `astra-cdc` | Worker Rust giải mã `pgoutput` vào các bảng replica (Video 16) |
+
+![Hình 1: Bảy pod và ai nói chuyện với ai](./figures/video-01-figure-1.png)
+*Bảy pod và ai nói chuyện với ai.*
 
 ### Nạp dữ liệu qua cửa chính
 
@@ -300,30 +309,11 @@ bootstrap cục bộ, nên tuyệt đối không trỏ nó vào dữ liệu th�
 - **k3d là cụm cục bộ.** Các manifest trong `deploy/k8s/base` không phải bản triển khai production: không
   có database được quản lý, không có backup, không có high availability cho PostgreSQL hay Keycloak.
 
-## Minh hoạ: prompt vẽ hình
+## Hình minh hoạ
 
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
-
-### Hình 1 · Bảy pod và ai nói chuyện với ai
-*Đặt ở:* Cách hoạt động, sau "Bảy pod"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A large rounded rectangle labelled "k3d cluster astra · namespace astra". Inside, on the left, a stick-figure laptop user labelled "Desk / curl" with an arrow into a small box "Service :8080". From that box, two parallel blue arrows into two identical boxes stacked vertically, each labelled "astra-server" (the blue path is the highlight). To the right of the two kernel boxes, a column of five boxes top to bottom: "postgres-0 (astra_doc, wal_level=logical)", "redis", "keycloak", "seata-server", "astra-cdc (Rust)". Thin black arrows from both astra-server boxes to postgres-0, redis, keycloak and seata-server. A dashed arrow from postgres-0 to astra-cdc labelled "WAL pgoutput". A small handwritten note under the kernel boxes: "replicas: 2 from day one".
-```
-
-### Hình 2 · Năm lệnh từ laptop đến Desk
-*Đặt ở:* Video cho thấy gì
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Five numbered boxes left to right connected by blue arrows: "1 make k3d-up", "2 kubectl -n astra get pods", "3 make demo-seed", "4 make demo-express SCENES=1", "5 /desk/ login mai". Under each box a tiny result doodle with a short label: under 1 a cluster icon "7 pods"; under 2 a checklist "Running"; under 3 two small buildings "saigon-express" and "hanoi-express" with a note "via REST API, no SQL"; under 4 a JSON brace "/api/app"; under 5 a browser window with a left menu listing "OMS OPS CARE BMS". Highlight the arrow from box 3 to box 4 in thicker blue.
-```
-
-### Hình 3 · Một app là metadata cộng code, biên dịch kèm
-*Đặt ở:* Cách hoạt động, "Một server, app được biên dịch kèm"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. On the left, a folder labelled "astra-apps/express" containing two small file icons: "ExpressApp.java (AstraApp)" and "customer-order.doctype.yaml". A thin line from the folder to a narrow box labelled "astra-spi" (the only dependency). In the center, a large box "astra-server image" with four small app boxes inside: "express", "cms", "hrm", "stms", and a label on the box edge "Tier 0: shared, build-time". On the right, a JSON card labelled "GET /api/app" with the line "tier: 0 (shared, build-time)". A blue arrow from the folder into the server box, and from the server box to the JSON card.
-```
+- [Hình 1 · Bảy pod và ai nói chuyện với ai](#bảy-pod-và-vì-sao-hai-trong-số-đó-là-kernel)
+- [Hình 2 · Năm lệnh từ laptop đến Desk](#video-cho-thấy-gì)
+- [Hình 3 · Một app là metadata cộng code, biên dịch kèm](#một-server-app-được-biên-dịch-kèm)
 
 ## Liên quan
 

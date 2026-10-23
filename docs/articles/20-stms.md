@@ -149,6 +149,9 @@ The weights are applied per plan through Timefold's `ConstraintWeightOverrides`,
                 RoutingConstraints.BALANCE, HardSoftScore.ofSoft(w.balance())));
 ```
 
+![Figure 2: Hard versus soft constraints](./figures/video-20-figure-2.png)
+*Timefold solver constraints: hard constraints prevent capacity violations; soft constraints minimize total route travel time.*
+
 ### Distances without a map
 
 There is no road network. Distance is the great-circle (haversine) distance multiplied by a road factor of 1.3, and
@@ -218,6 +221,9 @@ score. Every live event goes through `Replanner`, which patches the plan, re-sol
 `draftPlan` is what makes a dispatched plan frozen for tools; the kernel's lifecycle makes it immutable for REST
 (see [Video 4](./04-lifecycle.md)).
 
+![Figure 3: A replan starts from the current routes](./figures/video-20-figure-3.png)
+*Warm-start route replanning: unexpected incidents or vehicle breakdowns adjust routes dynamically from current vehicle locations.*
+
 ### Permissions through the tools' declared reads
 
 Each replanning tool declares the DocTypes it reads. DispatchEvent is readable only by admin and dispatcher, so
@@ -231,6 +237,9 @@ including it in the list is what keeps ops and care from replanning, without a s
      */
     public static final List<String> REPLAN_READS = List.of("DispatchPlan", "DispatchEvent", "Vehicle", "DeliveryStop", "Hub");
 ```
+
+![Figure 4: Who may replan](./figures/video-20-figure-4.png)
+*Copilot permission boundaries: dispatchers and ops staff invoke route planning based on fine-grained DocType permissions.*
 
 ### The copilot, and why its LLM is simulated
 
@@ -288,6 +297,9 @@ The copilot may call only the seven STMS tools in its `TOOLS` set; it cannot cal
 design is what would let a real model be added later without changing the trust boundary: a model would only choose
 tool calls, and the tools would still enforce permissions and the solver would still produce the numbers. That is the
 intended design; it has not been tested with a real model.
+
+![Figure 1: What is real and what is simulated](./figures/video-20-figure-1.png)
+*Separating real optimization from simulation: Timefold route optimization runs live, while demo LLM intent extraction is scripted.*
 
 ## Real-world example
 
@@ -388,31 +400,12 @@ From the script's "To be accurate" section for Video 20:
 - **Ownership:** DispatchEvents and urgent orders created by tools have owner `stms-mcp` / `stms-copilot`; the real caller
   is recorded in the MCP server log.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · What is real and what is simulated
-*Where it goes:* The callout at the top, or How it works, "The copilot, and why its LLM is simulated"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Left to right: a speech bubble "Xe 51C-12345 hỏng ở Thủ Đức…" from a stick-figure dispatcher labelled "linh". Arrow into a box drawn with a dashed outline and a big stamp "SIMULATED – no LLM", labelled "MockLlmClient (regex + place list)". Arrow out labelled "tool calls" into a solid-outline group of three boxes: "stms_vehicle_unavailable", "Replanner", "Timefold RoutePlanner". Arrow back to a box "explanation from real results" with the tag "[LLM giả lập – kịch bản demo]". Draw the solid boxes and their arrows in blue; keep the dashed simulated box in black only.
-```
-
-### Figure 2 · Hard versus soft constraints
-*Where it goes:* How it works, "The solver: hard and soft constraints"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Two columns. Left column titled "HARD (must be 0)": a small truck with a weight "kg over capacity" and a clock "minutes late". Right column titled "SOFT (× weight)": a road "metres", a star "VIP minutes waiting", two balanced boxes on a scale "load²". Under the soft column, handwritten weights "1 / 20 / 0 default" crossed through and "1 / 500 / 10 copilot" below. At the bottom, the score written large "0hard / -106703soft" with an arrow "feasible". Highlight the "0hard" in blue.
-```
-
-### Figure 3 · A replan starts from the current routes
-*Where it goes:* How it works, "Solving is a save, replanning is a save with a warm start"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Left: three route lines from a square hub "HCM-TB", labelled "51C-12345", "51C-67890", "51D-24680", drawn as straight segments between dots (no map). A large black X on the "51C-12345" line with label "breakdown". Arrow labelled "warm start" to the right panel: the same hub, two route lines only, with ten dots re-attached to "51C-67890" and "51D-24680". Between panels a small box "DispatchPlanHook: solve: true". Under the right panel a ledger-like card "DispatchEvent: score before → after, moved 10, solve_ms 1019". Highlight the moved dots in blue.
-```
-
-### Figure 4 · Who may replan
-*Where it goes:* How it works, "Permissions through the tools' declared reads"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Center: a gate labelled "MCP read check: DispatchPlan, DispatchEvent, Vehicle, DeliveryStop, Hub". Four stick figures approach from the left: "linh dispatcher" passes through (blue arrow) to a box "Replanner"; "quang ops" blocked with note "not permitted: read DispatchEvent"; "ha care" blocked with note "not permitted: read DispatchPlan"; a figure tagged "hanoi-express" gets a note "plan not found". Highlight only linh's path in blue.
-```
+- [Figure 1 · What is real and what is simulated](#the-copilot-and-why-its-llm-is-simulated)
+- [Figure 2 · Hard versus soft constraints](#the-solver-hard-and-soft-constraints)
+- [Figure 3 · A replan starts from the current routes](#solving-is-a-save-replanning-is-a-save-with-a-warm-start)
+- [Figure 4 · Who may replan](#permissions-through-the-tools-declared-reads)
 
 ## Related
 

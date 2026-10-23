@@ -44,6 +44,10 @@ Keycloak, and the application only reads a signed token.
 The video ends with its "To be accurate" note: row-level conditions are still on the roadmap, and SAML and SCIM
 now run, in [Video 21](./21-sso.md).
 
+![Figure 2: Same order, four roles](./figures/video-11-figure-2.png)
+*Same order, four roles: permissions declared on the DocType govern whether sales, ops, care, or admin can read, write, or submit.*
+
+
 ## How it works
 
 ### The path of one request
@@ -142,6 +146,10 @@ public record Memberships(Map<String, Set<String>> byTenant, boolean platformAdm
 Why groups and not client roles: a Keycloak group path carries two facts at once (tenant and role), it is what
 SCIM later manipulates as "Groups" ([Video 21](./21-sso.md)), and an administrator can see a tenant's whole staff
 by opening one group in the Keycloak console.
+
+![Figure 1: One identity, roles per tenant](./figures/video-11-figure-1.png)
+*One identity, roles per tenant: Keycloak group paths map a single user identity to distinct roles across different tenants.*
+
 
 ### 3. The tenant header selects; it does not grant
 
@@ -260,6 +268,10 @@ The comparison uses the token's subject (`principal-claim: sub`) against the doc
 user in Keycloak does not let them approve their own old drafts. The effective-permission map does not model SoD,
 so Desk still shows Submit to Khoa; the kernel answers 403, which is what the video shows.
 
+![Figure 3: Maker is not checker](./figures/video-11-figure-3.png)
+*Segregation of duties: if-owner permissions ensure that the creator of a payment order cannot approve or submit their own voucher.*
+
+
 ## Real-world example
 
 *Illustrative scenario: the company, people and values are made up; the mechanism and the rules it applies are the real ones shown above.*
@@ -340,31 +352,11 @@ local environments only.
   kernel then refuses with 403.
 - Role changes reach Astra with the next token; an access token already issued keeps its roles until it expires.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · One identity, roles per tenant
-*Where it goes:* How it works, section 2
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a stick figure labelled "Lan". Center-left: a box labelled "Keycloak" containing a small folder tree: "/tenants" with two branches "hanoi-express → accountant" and "saigon-express → care". An arrow from Keycloak to the right labelled "access token: groups[]". Center-right: a box labelled "Memberships.of()" producing a two-row table "hanoi-express: {accountant}" and "saigon-express: {care}". Right: a box "TenantResolverFilter" with an input arrow labelled "X-Astra-Tenant: hanoi-express" and an output arrow labelled "roles = {accountant}". Highlight in blue the path from the hanoi-express group to "roles = {accountant}". A small crossed-out note near the header arrow: "header picks, never grants".
-```
-
-### Figure 2 · Same order, four roles
-*Where it goes:* What the video shows
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Center: one document card labelled "CustomerOrder ORD-…" with a smaller linked card "Waybill". Around it, four stick figures with role tags: top-left "tuan · sales", top-right "quang · ops", bottom-left "ha · care", bottom-right "khoa · accountant". Arrows from each figure to the card, each with a short label and a tick or cross: tuan "submit ✓ / cancel ✗", quang "edit waybill ✓ / create order ✗", ha "open SupportTicket ✓", khoa "cancel ✓". Under the card, a small scroll labelled "customer-order.doctype.yaml · permissions". Highlight in blue the arrow from khoa labelled "cancel ✓".
-```
-
-### Figure 3 · Maker is not checker
-*Where it goes:* How it works, section 6
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right. A stick figure "khoa" creating a voucher card "CODRemittance 350,000 VND, owner = khoa". From khoa, an arrow labelled "Submit" hits a wall labelled "requireSubmit: segregation-of-duties" and bounces back with "403". Below, a second stick figure "thu" sends an arrow "Submit" through the same wall, which lets it pass because "thu ≠ owner". The passing arrow continues into a ledger book labelled "astra_ledger: Dr 3388 / Cr 112". Highlight in blue the path from thu through the wall to the ledger book.
-```
+- [Figure 1 · One identity, roles per tenant](#2-the-server-is-a-resource-server-that-reads-group-paths)
+- [Figure 2 · Same order, four roles](#what-the-video-shows)
+- [Figure 3 · Maker is not checker](#6-segregation-of-duties-is-one-flag)
 
 ## Related
 

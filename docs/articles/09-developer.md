@@ -118,6 +118,10 @@ Why: if the app cannot import kernel classes, the kernel can change its internal
 without breaking apps. The SPI packages in this repository are `app`, `doc`, `doctype`, `hook`, `ledger`, `script`,
 `tenant`, `tx`, `kv` and `ai` under `astra-spi/src/main/java/io/astra/spi/`.
 
+![Figure 1: What an Astra app contains and what it may depend on](./figures/video-09-figure-1.png)
+*An Astra app consists of DocType YAML definitions and plain CDI beans implementing lifecycle hooks, depending strictly on astra-spi.*
+
+
 ### A hook is one interface with four defaults
 
 *`astra-spi/src/main/java/io/astra/spi/hook/DocLifecycleHook.java`*
@@ -259,6 +263,10 @@ reconciliation job between order, waybill and ledger, because they are rows in o
 side effect crosses databases (BMS credit in another schema, a pickup slot in Redis), `transaction: global` on the
 DocType wraps the same call in a Seata global transaction; that is Video 17.
 
+![Figure 2: One submit, one transaction](./figures/video-09-figure-2.png)
+*Hooks join the ambient tenant transaction: waybill creation and general ledger postings commit or rollback atomically with the document.*
+
+
 ### A field is one YAML line, stored in JSONB
 
 Every DocType shares the `astra_doc` table, and business fields live in its `data jsonb` column, so adding a field is
@@ -297,6 +305,10 @@ Desk has no code that names a DocType; it renders whatever `GET /api/doctype` re
 (`astra-server/src/main/resources/META-INF/resources/desk/desk.js`, see
 [S12](../demo-code-snippets.md#s12-desk-generated-from-metadata)). That is why the column appears without a frontend
 change.
+
+![Figure 3: Adding a field without a migration](./figures/video-09-figure-3.png)
+*Adding a field requires only one line of YAML; the value is stored in JSONB with zero ALTER TABLE migrations.*
+
 
 ### Why removing a field is harder than adding one
 
@@ -407,34 +419,11 @@ gained tests since then (HRM, STMS, SCIM), so the count you see will be higher. 
 - Tier 1 (isolated JVM apps, hot-swapped at runtime) is described in [explain.en.md](../explain.en.md) but is not
   built. Every app in this repository is Tier 0, compiled into the server image.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · What an Astra app contains and what it may depend on
-
-*Where it goes:* How it works, "An app is a list of DocTypes plus CDI beans"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a tall folder box labelled "astra-apps/express" containing four small stacked cards: "ExpressApp.java", "7 × *.doctype.yaml", "hooks (OrderWaybillHook, OrderPostingHook…)", "wasm/ (tet-promo, runaway)". Center: a narrow vertical slab labelled "astra-spi" with tiny tabs "hook", "doc", "ledger", "script", "tx", "ai". Right: a large box labelled "kernel" containing "DocumentStore", "HookRegistry", "astra_doc (JSONB)", "REST + Desk". One thick blue arrow from the app folder to the "astra-spi" slab labelled "only dependency". A thin grey arrow from the kernel to the slab labelled "implements". A crossed-out dashed arrow from the app folder directly to the kernel labelled "not allowed". Highlight the blue arrow.
-```
-
-### Figure 2 · One submit, one transaction
-
-*Where it goes:* How it works, "Side effects join the source document's transaction"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A large rounded rectangle drawn in blue across the middle, labelled "one PostgreSQL transaction". Left of it, a person icon labelled "tuan (sales)" with an arrow into the rectangle labelled "POST …/submit". Inside the rectangle, left to right, three boxes connected by arrows: "OrderWaybillHook → INSERT Waybill", "OrderPostingHook → Dr 131 / Cr 511", "docstatus = 1". Under the rectangle, two outcomes branching down: left "COMMIT: order + waybill + ledger", right "any throw → ROLLBACK: nothing written". Highlight the blue rectangle boundary.
-```
-
-### Figure 3 · Adding a field without a migration
-
-*Where it goes:* How it works, "A field is one YAML line, stored in JSONB"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top left: a sheet labelled "customer.doctype.yaml" with one new line written in blue: "- { name: zalo_id, type: Data, in-list: true }". Arrow right to a small stopwatch labelled "dev restart 0.73 s". From the stopwatch, three arrows fanning right to three boxes: "Desk list: zalo_id column", "GET /api/doctype/Customer", "validator". Bottom: a database cylinder labelled "astra_doc" with a column strip "data jsonb" and a note "no ALTER TABLE". A crossed-out box near the cylinder labelled "migration". Highlight the blue YAML line.
-```
+- [Figure 1 · What an Astra app contains and what it may depend on](#an-app-is-a-list-of-doctypes-plus-cdi-beans)
+- [Figure 2 · One submit, one transaction](#side-effects-join-the-source-documents-transaction)
+- [Figure 3 · Adding a field without a migration](#a-field-is-one-yaml-line-stored-in-jsonb)
 
 ## Related
 

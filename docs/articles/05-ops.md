@@ -41,6 +41,10 @@ Tenant `saigon-express`. Operations user `quang` (role `ops`), then admin `mai`.
 | API | `make demo-express SCENES=5`: valid transitions 200; `At Hub → Delivered` 422; cancelling the order while At Hub 422 and the order stays `docstatus 1` | Desk and REST go through the same hook. |
 | Code | The `NEXT` table, `beforeSave`, and `OrderWaybillHook.onCancel` | One table, one veto. |
 
+![Figure 2: A skipped state is rejected, nothing is written](./figures/video-05-figure-2.png)
+*A skipped state transition is rejected by beforeSave; the document and scan log remain untouched.*
+
+
 ## How it works
 
 ### The waybill is an ordinary DocType
@@ -115,6 +119,10 @@ stateDiagram-v2
     Returned --> [*]
     Cancelled --> [*]
 ```
+
+![Figure 1: The parcel state machine](./figures/video-05-figure-1.png)
+*The parcel state machine declared in WaybillScanHook.NEXT. The main happy path goes from Created to Delivered.*
+
 
 `At Hub → At Hub` is allowed on purpose: a parcel moving from HCM-Tân Bình to DN-Hải Châu stays "At Hub" but
 changes hub, and that transfer is a milestone worth recording. `Failed Delivery → Out for Delivery` models a
@@ -224,6 +232,10 @@ sequenceDiagram
     end
 ```
 
+![Figure 3: Order cancel veto across two documents](./figures/video-05-figure-3.png)
+*Cancelling an order is vetoed if the waybill is already in the network; both documents share one transaction and roll back together.*
+
+
 ### Why a hook and not a workflow engine
 
 - The rule fits in nine lines of data; a BPMN engine would add a runtime, a deployment artifact and a second
@@ -316,37 +328,11 @@ is Delivered.
 - **The replica milestone count** in the Hub scene comes from the Rust CDC worker (`scans` column computed as the
   length of `scan_log`, see `astra-cdc-rust/cdc-routes.yaml`); how it stays current is Video 16.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · The parcel state machine
-
-*Where it goes:* How it works
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right main row of rounded boxes: "Created" → "Picked Up" → "At Hub" → "Out for Delivery" → "Delivered". A small self-loop arrow on "At Hub" labelled "hub transfer". Below "Out for Delivery" a box "Failed Delivery" with an arrow down from Out for Delivery and an arrow back up labelled "retry". Below "At Hub" a box "Returned", with arrows from "At Hub" and from "Failed Delivery". Above "Created" and "Picked Up" a box "Cancelled" with arrows from both. "Delivered", "Returned" and "Cancelled" drawn with double borders and the note "final". A tag on "At Hub" reading "current_hub required". Title in the corner: "WaybillScanHook.NEXT".
-Highlight in blue: the main happy path from Created to Delivered.
-```
-
-### Figure 2 · A skipped state is rejected, nothing is written
-
-*Where it goes:* What the video shows
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a hand-drawn phone labelled "PUT ops_status = Delivered". Middle: a gate drawn as a turnstile labelled "beforeSave: NEXT['At Hub']" with a small list beside it "At Hub, Out for Delivery, Returned". The arrow from the phone hits the gate and bounces back with the label "422 cannot go from 'At Hub' to 'Delivered'". Right: a document card "WB-…" with a scan log of three lines "Created", "Picked Up", "At Hub · DN-Hải Châu", untouched, with the note "no change".
-Highlight in blue: the gate.
-```
-
-### Figure 3 · Order cancel veto across two documents
-
-*Where it goes:* How it works
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Two document cards side by side inside one large blue dashed rectangle labelled "one transaction". Left card "CustomerOrder · Submitted", right card "Waybill · At Hub". An arrow from a person icon "mai" to the left card labelled "Cancel". From the left card, an arrow to the right card labelled "onCancel: CANCELLABLE = Created, Picked Up?" ending in a question mark, then a "no" branch returning to the person with "422" and a small note "rollback, both unchanged".
-Highlight in blue: the shared transaction rectangle.
-```
+- [Figure 1 · The parcel state machine](#the-transition-table)
+- [Figure 2 · A skipped state is rejected, nothing is written](#what-the-video-shows)
+- [Figure 3 · Order cancel veto across two documents](#the-order-side-veto)
 
 ## Related
 

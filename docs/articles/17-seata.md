@@ -32,6 +32,9 @@ Astra uses a transaction coordinator. The app says *what* it wants (use credit, 
 branch and drives commit or rollback for all of them. Database writes get automatic undo (AT mode); non-database
 resources implement try/confirm/cancel (TCC mode).
 
+![Figure 1: One submit, three resources](./figures/video-17-figure-1.png)
+*One submit, three resources: the document lifecycle coordinates PostgreSQL, Redis pickup capacity, and BMS credit limits.*
+
 ## What the video shows
 
 | Scene | What you see | What it proves |
@@ -42,6 +45,9 @@ resources implement try/confirm/cancel (TCC mode).
 | Late refusal | The day is set to fully booked (200 of 200); submit `ORD-20261021-00008` | AT has already taken the credit, then TCC refuses: `no pickup slot left for 2026-10-21 (capacity 200)`. Seata restores C001's credit from the undo log (still 196,000), `undo_rows` is 0, reserved slots stay at 0 |
 | Server log | The real log of Seata Server 2.6.0 (JDK 25) | Begin, two branch registrations, both rolled back: about 75 ms on its clock |
 | Code | `OrderCreditHook`, `PickupCapacity` | The app calls an SPI and sees no Seata type. AT is plain JDBC on a proxied datasource; TCC is an app participant that throws when slots run out |
+
+![Figure 2: Rollback after a branch committed](./figures/video-17-figure-2.png)
+*Two-phase commit in action: if a branch rejects, Seata coordinates global rollback across AT undo logs and TCC cancel handlers.*
 
 ## How it works
 
@@ -149,6 +155,9 @@ Catching `Throwable` rather than `Exception` is deliberate: once an AT branch ha
 credit row, and only a rollback releases it. Seata is disabled unless `astra.seata.enabled` is true; without it,
 `global(...)` runs the work locally and the hook below skips its checks.
 
+![Figure 3: TCC participant states](./figures/video-17-figure-3.png)
+*TCC participant lifecycle: Try reserves resources, while Confirm commits and Cancel releases reserved capacity.*
+
 ### 3. The app hook sees an SPI, not Seata
 
 *`astra-apps/express/src/main/java/io/astra/apps/express/OrderCreditHook.java`*
@@ -245,6 +254,9 @@ runs on a Seata thread with no HTTP request, so the dispatcher re-binds the tena
         });
     }
 ```
+
+![Figure 4: Who sees Seata](./figures/video-17-figure-4.png)
+*Apps interact strictly with transactional SPI interfaces; the Seata client runtime remains completely decoupled from app logic.*
 
 ### 4. What the coordinator saw
 
@@ -356,43 +368,12 @@ The integration test `astra-server/src/test/java/io/astra/server/SeataTest.java`
   smart bypass of the coordinator and an `@AstraGlobalTransactional` annotation) that is not built. In the running
   code, the YAML flag `transaction: global` is the switch.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · One submit, three resources
-
-*Where it goes:* The problem
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top center: a button labelled "Submit ORD-…-00007". Below it a large dashed frame labelled "global transaction (Seata Server 2.6.0)". Inside, three boxes left to right: "AT · bms.customer_credit · used +73,000", "TCC · Redis · pickup slot +1", "Kernel tx · astra_doc · waybill + ledger (commits last)". Blue arrows from the button into all three boxes. Below the frame, two outcomes: "all commit" with a check mark, "any fails → all roll back" with a curved arrow. Highlight the dashed frame.
-```
-
-### Figure 2 · Rollback after a branch committed
-
-*Where it goes:* What the video shows (late refusal)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A timeline left to right with four steps: "1 begin", "2 AT: used + fee, committed locally (undo_log saved)", "3 TCC try: 1 + 200 > 200 → refuse", "4 global rollback". From step 4, a blue arrow loops back to step 2 labelled "restore before image → used 196,000". A small table at the bottom right labelled "undo_rows: 0" and "reserved: 0". Highlight the blue restore arrow.
-```
-
-### Figure 3 · TCC participant states
-
-*Where it goes:* How it works (TCC)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Three circles left to right: "prepare (try)", "commit (confirm)", "rollback (cancel)". From prepare, a blue arrow to commit labelled "reserved -1, booked +1" and a second arrow to rollback labelled "reserved -1". Under each circle a small sticky note: under prepare "tcc-try:<branchId>", under commit "markOnce tcc-done", under rollback "only if tcc-try > 0 (empty rollback)". A separate note at the bottom: "late try after cancel → refused". Highlight the markOnce notes as the idempotency guard.
-```
-
-### Figure 4 · Who sees Seata
-
-*Where it goes:* How it works (SPI)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Three horizontal layers top to bottom. Top layer "Express app": boxes "OrderCreditHook", "CreditLimits (JDBC)", "PickupCapacity". Middle layer "astra-spi": boxes "GlobalTransactions", "TccParticipant". Bottom layer "astra-tx-seata": boxes "SeataTransactions", "DataSourceProxy (AT)", "AstraTccDispatcher (astra-tcc)". Blue arrows go only from the top layer to the middle layer, and from the middle layer to the bottom layer. A crossed-out arrow from the top layer directly to the bottom layer labelled "no Seata types in apps". Highlight the middle layer.
-```
+- [Figure 1 · One submit, three resources](#the-problem)
+- [Figure 2 · Rollback after a branch committed](#what-the-video-shows)
+- [Figure 3 · TCC participant states](#2-the-coordinator-begin-run-commit-or-roll-back)
+- [Figure 4 · Who sees Seata](#3-the-app-hook-sees-an-spi-not-seata)
 
 ## Related
 

@@ -110,6 +110,9 @@ snake_case identifier. That check is not cosmetic: field names are later spliced
 | `pii: true` | Masked when data leaves through MCP to an AI model (Video 15) | `PiiMasking` |
 | `permissions` | Per-role read/create/write/submit/cancel; `if-owner` limits writes to the owner (Video 11) | `DocPermissions` |
 
+![Figure 1: One YAML file, many outputs](./figures/video-02-figure-1.png)
+*Figure 1: One YAML file, many outputs.*
+
 ```mermaid
 flowchart LR
     Y["customer-order.doctype.yaml"] --> L["DocTypeLoader<br/>(snake_case check)"]
@@ -204,6 +207,9 @@ state (`docstatus`), owner, timestamps and an optimistic-lock `version`. Everyth
 goes into `data`. Adding a DocType or a field is therefore a metadata change, never a schema change.
 (A later migration adds `amended_from` for Video 4's amend chain.)
 
+![Figure 2: The shared JSONB table](./figures/video-02-figure-2.png)
+*Figure 2: The shared JSONB table.*
+
 ### Projections: indexes without `ALTER TABLE`
 
 *`astra-doctype/src/main/java/io/astra/doctype/store/ProjectionIndexer.java`*
@@ -258,6 +264,9 @@ Desk shows is what the database actually has:
 SELECT i.indisvalid, pg_get_indexdef(i.indexrelid) FROM pg_index i
 JOIN pg_class c ON c.oid = i.indexrelid WHERE c.relname = ?
 ```
+
+![Figure 3: Online projection index at startup](./figures/video-02-figure-3.png)
+*Figure 3: Online projection index at startup.*
 
 ## Real-world example
 
@@ -355,28 +364,11 @@ and expand "Raw JSON from GET /api/doctype/CustomerOrder" to see the exact defin
 - **Desk has one DocType reference.** The form, list and menu code never name a DocType, but `desk.js`
   maps `CustomerOrder` and `Waybill` to their CDC replica tables for the replica card (Video 16).
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · One YAML file, many outputs
-*Where it goes:* How it works, after "What each key turns into"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. On the left, a tall paper sheet labelled "customer-order.doctype.yaml" with five visible lines: "type: Select", "type: Link", "read-only: true", "projected: true", "pii: true". From each line, an arrow fans out to the right to one small box: "Select" to "422 must be one of [...]", "Link" to "Customer exists in tenant?", "read-only" to "client write → 422", "projected" to "astra_doc_p_zone index" (this arrow and box in blue, the highlight), "pii" to "masked in MCP". Above the fan, a separate arrow from the whole sheet to a browser window labelled "Desk form + list", and to a JSON brace labelled "/api/doc/CustomerOrder".
-```
-
-### Figure 2 · The shared JSONB table
-*Where it goes:* How it works, "One table for every DocType"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A wide table drawing labelled "astra_doc" with column headers left to right: "tenant_id", "doctype", "name", "docstatus", "version", "data (jsonb)". Three rows: "saigon-express | CustomerOrder | ORD-...-00001 | 0 | 1 | {zone: Domestic, ...}", "saigon-express | Waybill | WB-... | 0 | 3 | {ops_status: ...}", "hanoi-express | Customer | C001 | 0 | 1 | {segment: B2B}". The "data (jsonb)" column is shaded blue. Under the table, three small index tags hanging from the data column: "GIN jsonb_path_ops", "astra_doc_p_zone", "astra_doc_p_customer". To the right, a padlock doodle labelled "FORCE ROW LEVEL SECURITY: tenant_id = astra.tenant". A crossed-out speech bubble at top right: "ALTER TABLE".
-```
-
-### Figure 3 · Online projection index at startup
-*Where it goes:* How it works, "Projections"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Top to bottom timeline. Top: a box "kernel pod starts (StartupEvent)". Arrow down to "ProjectionIndexer: fields with projected: true". Arrow down (blue) to a box "CREATE INDEX CONCURRENTLY IF NOT EXISTS astra_doc_p_zone ON astra_doc (tenant_id, doctype, (data->>'zone'))". To the right of this box, a steady stream of small arrows labelled "INSERT / UPDATE keep flowing" passing by unblocked. Arrow down to "pg_index: indisvalid = true". Arrow down to "GET /api/doctype/CustomerOrder/projections → valid". A small side note next to a second pod icon: "other pod collides → warn, retry next start".
-```
+- [Figure 1 · One YAML file, many outputs](#what-each-key-turns-into)
+- [Figure 2 · The shared JSONB table](#one-table-for-every-doctype)
+- [Figure 3 · Online projection index at startup](#projections-indexes-without-alter-table)
 
 ## Related
 

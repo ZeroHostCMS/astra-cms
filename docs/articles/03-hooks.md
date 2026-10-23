@@ -28,6 +28,9 @@ Astra's answer is two layers that every channel passes through:
 
 Both run in the kernel, below Desk, REST and MCP, so no client can skip them.
 
+![Figure 1: Three channels, one rule](./figures/video-03-figure-1.png)
+*Figure 1: Three channels, one rule.*
+
 ## What the video shows
 
 | Scene | What you see | What it proves |
@@ -123,6 +126,9 @@ The fee for the demo order, step by step against `fee(...)`:
 | COD: `max(5,000; 1% × 500,000)` | + 5,000 = 72,500 |
 | Round up to the thousand | **73,000 ₫** |
 
+![Figure 2: The fee, step by step](./figures/video-03-figure-2.png)
+*Figure 2: The fee, step by step.*
+
 ### Discovery: no registration
 
 The app class lists only DocTypes. Hooks are found because they are CDI beans implementing the SPI. At
@@ -201,6 +207,9 @@ sequenceDiagram
     S->>PG: COMMIT
     API-->>U: 201 + document
 ```
+
+![Figure 3: The write path and where each rejection happens](./figures/video-03-figure-3.png)
+*Figure 3: The write path and where each rejection happens.*
 
 Design choices worth noticing:
 
@@ -316,28 +325,11 @@ PostgreSQL; `make test` runs the whole suite.
 - **Fee rounding uses floating point** (`double`) before rounding up to the thousand. For the tariff's
   values this is exact enough; a production billing rule would use `BigDecimal` or integer minor units.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · Three channels, one rule
-*Where it goes:* The problem
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Three small client doodles stacked on the left: a browser labelled "Desk", a terminal labelled "curl / REST", a robot head labelled "MCP agent". Three arrows converge to the right into a single funnel-shaped box labelled "DocumentStore". Inside the funnel, two stacked layers: top "DocType rules (YAML)", bottom "ShippingFeeHook (Java)" in blue (the highlight). From the funnel, one arrow right to a cylinder labelled "astra_doc". Next to the cylinder a small tag "shipping_fee = 73,000". A crossed-out dashed arrow from "curl / REST" going around the funnel directly to the cylinder, labelled "no bypass".
-```
-
-### Figure 2 · The fee, step by step
-*Where it goes:* How it works, after the fee table
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A parcel doodle on the left with a tag "Domestic · Express · 2.2 kg · COD 500,000". Five boxes left to right connected by arrows: "first kg 30,000", "+ 3 x 5,000 = 45,000", "x 1.5 Express = 67,500", "+ COD max(5,000; 1%) = 72,500", "round up to 1,000". The final box on the far right is larger, outlined in blue: "73,000 ₫". Under the chain, a small note "ShippingFeeHook.fee(zone, service, weight, cod)".
-```
-
-### Figure 3 · The write path and where each rejection happens
-*Where it goes:* How it works, after the sequence diagram
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A horizontal pipeline of six gates left to right, each a small box: "rejectReadOnly", "defaults + Select + unknown", "ShippingFeeHook.beforeSave", "validateLinks (RLS)", "series ORD-...-0000n", "INSERT astra_doc". The main arrow through all gates is blue. Below the first four gates, a short black arrow drops down to a shared tray labelled "422 errors[]", with small example tags: under gate 1 "shipping_fee is read-only", under gate 2 "zone must be one of [...]", under gate 3 "phone + weight", under gate 4 "Customer 'C999' not found". A bracket over gates 2 to 6 labelled "one transaction, rolled back on any 422". A note under gate 5: "number taken only after all checks pass".
-```
+- [Figure 1 · Three channels, one rule](#the-problem)
+- [Figure 2 · The fee, step by step](#the-hook)
+- [Figure 3 · The write path and where each rejection happens](#the-write-path-in-order)
 
 ## Related
 

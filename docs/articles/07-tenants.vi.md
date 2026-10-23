@@ -58,6 +58,9 @@ HTTP 400
 { "error": "tenant could not be resolved; send X-Astra-Tenant or use a tenant subdomain" }
 ```
 
+![Hình 1: Một URL, hai công ty](./figures/video-07-figure-1.png)
+*Một URL, hai công ty.*
+
 ## Cách hoạt động
 
 Đường đi từ HTTP request đến dòng SQL gồm bốn bước. Mỗi bước là nơi tenant được xác lập hoặc được thực thi,
@@ -121,6 +124,9 @@ Vì sao có hình dạng này:
 - **Nhận diện theo subdomain có sẵn nhưng mặc định tắt.** `fromHost` chỉ chạy khi
   `astra.tenancy.base-domain` được đặt; trong `astra-server/src/main/resources/application.yml` dòng này đang
   bị comment.
+
+![Hình 2: Ai quyết định tenant](./figures/video-07-figure-2.png)
+*Ai quyết định tenant.*
 
 ### Bước 2: mang tenant trong một `ScopedValue`, không phải trong tham số
 
@@ -233,6 +239,9 @@ try (PreparedStatement ps = conn.prepareStatement(
 `C003` có tồn tại, nhưng chỉ dưới `saigon-express`. Bên trong transaction của Hà Nội, RLS ẩn nó đi, nên kết quả
 là "not found". Người viết SQL không phải nhớ gì cả.
 
+![Hình 3: Không dòng nào khi thiếu tenant](./figures/video-07-figure-3.png)
+*Không dòng nào khi thiếu tenant.*
+
 ### Lưới an toàn
 
 Tất cả những điều trên đều giả định role database thực sự chịu RLS. Superuser của PostgreSQL và các role có
@@ -338,36 +347,11 @@ tắc này mà không cần stack demo: `make test`.
 - Trong kế hoạch quay ban đầu, đơn hàng `C003` của Hà Nội thất bại vì overlay của Hà Nội bắt buộc trường
   `note`, chứ không phải vì Link. `scripts/demo-express.sh` giờ gửi kèm `note`, nên lỗi hiển thị là lỗi Link.
 
-## Minh hoạ: prompt vẽ hình
+## Hình minh hoạ
 
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
-
-### Hình 1 · Một URL, hai công ty
-
-*Đặt ở:* Video cho thấy gì
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a stick-figure user labelled "demo". From it, two arrows go right to one box labelled "GET /api/doc/Customer/C001". The upper arrow carries a tag "X-Astra-Tenant: saigon-express", the lower arrow a tag "X-Astra-Tenant: hanoi-express". From the box, two arrows continue right into a single cylinder labelled "astra_doc". Inside the cylinder draw two separated row groups: top group "saigon-express · C001 · Shop Hoa Mai", bottom group "hanoi-express · C001 · Nhà sách Tràng Tiền". Highlight in blue only the upper path from the saigon tag to the saigon row group. Small caption under the cylinder: "UNIQUE (tenant_id, doctype, name)".
-```
-
-### Hình 2 · Ai quyết định tenant
-
-*Đặt ở:* Cách hoạt động, bước 1
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A left-to-right decision flow. Start box "request + Bearer JWT". Then three stacked diamond checks in order, top to bottom: "X-Astra-Tenant header?", "tenant subdomain?", "only one membership?". Each "yes" arrow goes right to a box "tenant = t". A final "no" arrow from the last diamond goes down to a plain box "400 tenant could not be resolved". From "tenant = t" an arrow goes to a diamond "member of t? (groups /tenants/t/role)". "no" goes down to box "403 not a member". "yes" goes right to box "TenantContext (ScopedValue)". Highlight in blue the path from "tenant = t" through "member of t?" to "TenantContext".
-```
-
-### Hình 3 · Không dòng nào khi thiếu tenant
-
-*Đặt ở:* Cách hoạt động, bước 4
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Two side-by-side panels. Left panel titled "no tenant bound": a box "astra_app" with an arrow to a cylinder "astra_doc", a filter funnel between them labelled "tenant_id = current_setting('astra.tenant', true)" and under the funnel "NULL → 0 rows". Right panel titled "BEGIN; set_config('astra.tenant','saigon-express',true)": the same box, funnel and cylinder, and under the funnel a short list "Customer 3, CustomerOrder 7, Waybill 5". Highlight in blue the right panel's funnel and arrow. Bottom caption across both panels: "FORCE ROW LEVEL SECURITY: owner too".
-```
+- [Hình 1 · Một URL, hai công ty](#video-cho-thấy-gì)
+- [Hình 2 · Ai quyết định tenant](#bước-1-nhận-diện-tenant-một-lần-từ-đầu-vào-đáng-tin)
+- [Hình 3 · Không dòng nào khi thiếu tenant](#bước-4-để-postgresql-thực-thi)
 
 ## Liên quan
 

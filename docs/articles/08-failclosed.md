@@ -26,6 +26,10 @@ site, so there is no shared table to leak from; the equivalent mistake there is 
 wrong database. Astra's shared-table design needs a stronger answer than a checklist: the kernel checks the
 role itself and treats an unsafe role as a fatal error.
 
+![Figure 1: Two connection strings, two outcomes](./figures/video-08-figure-1.png)
+*Two connection strings, two outcomes: a superuser connection fails closed before any schema runs; the application role succeeds under RLS.*
+
+
 ## What the video shows
 
 | Scene | What you see | What it proves |
@@ -147,6 +151,10 @@ created the V3 to V5 tables before the guard stopped it. Hooking into Flyway's c
 that window. The second call at `StartupEvent` covers deployments that migrate separately and run the
 kernel with migrations off.
 
+![Figure 2: The guard stands before Flyway](./figures/video-08-figure-2.png)
+*The startup guard runs before Flyway: it inspects role attributes from pg_roles and halts immediately if bypass privileges are detected.*
+
+
 ### The role the kernel is supposed to use
 
 *`deploy/docker/init/01-app-role.sql`*
@@ -184,6 +192,10 @@ alone would leave the kernel exempt from its own policies. `FORCE` removes that 
 | The connected role is a superuser or has `BYPASSRLS` | `RowLevelSecurityGuard` (refuses to start) |
 | The connected role owns the table | `FORCE ROW LEVEL SECURITY` in every tenant-scoped migration |
 | No tenant is bound in the transaction | The policy compares against `current_setting('astra.tenant', true)`, which is NULL, so zero rows ([Video 7](./07-tenants.md)) |
+
+![Figure 3: Two layers, three holes](./figures/video-08-figure-3.png)
+*Two layers of defense: kernel-level tenant context and PostgreSQL row-level security. Superusers bypass both; the locked-down role is stopped by both.*
+
 
 ## Real-world example
 
@@ -292,34 +304,11 @@ Expected: `Tenant isolation guard: role 'astra_app' is subject to row-level secu
 - No automated test in the repository exercises the guard; the evidence is the scene 8 run and the captured
   logs in `docs/video/v08-failclosed/assets/`.
 
-## Visualize it: sketch prompts
+## Figures
 
-### Figure 1 · Two connection strings, two outcomes
-
-*Where it goes:* The problem
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a box "kernel". Two arrows go right to one cylinder "PostgreSQL · astra_doc". The upper arrow is labelled "ASTRA_DB_USER=astra_app" and ends at a small funnel labelled "RLS policy" before the cylinder, with a note "Saigon sees Saigon". The lower arrow is labelled "ASTRA_DB_USER=astra (SUPERUSER)" and goes around the funnel straight into the cylinder, with a note "Saigon sees Hanoi too · no error". Highlight in blue the upper arrow and the funnel. Draw a small crossed-out eye next to the lower note.
-```
-
-### Figure 2 · The guard stands before Flyway
-
-*Where it goes:* How it works
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A left-to-right timeline of a kernel start with five boxes: "process start", "Flyway config", "Flyway migrate", "StartupEvent", "serve HTTP". Between "Flyway config" and "Flyway migrate" draw a gate labelled "RowLevelSecurityGuard.check()" with a small table above it: "rolsuper? rolbypassrls?". From the gate, a downward arrow labelled "yes" goes to a box "IllegalStateException · exit 1 · nothing migrated". The forward arrow through the gate is labelled "no (astra_app)". A second smaller gate at "StartupEvent" labelled "check() again". Highlight in blue the "no" path through both gates to "serve HTTP".
-```
-
-### Figure 3 · Two layers, three holes
-
-*Where it goes:* How it works, two layers
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Three stacked rows, each with a hole on the left and a plug on the right. Row 1: hole "SUPERUSER / BYPASSRLS role", plug "RowLevelSecurityGuard: refuse to start". Row 2: hole "role owns the table", plug "FORCE ROW LEVEL SECURITY". Row 3: hole "no tenant bound", plug "current_setting('astra.tenant', true) = NULL → 0 rows". Arrows from each hole to its plug. Highlight row 1 in blue. Small footnote at the bottom: "dev only: astra.tenancy.allow-rls-bypass=true → WARN".
-```
+- [Figure 1 · Two connection strings, two outcomes](#the-problem)
+- [Figure 2 · The guard stands before Flyway](#why-it-runs-before-flyway)
+- [Figure 3 · Two layers, three holes](#two-layers-not-one)
 
 ## Related
 

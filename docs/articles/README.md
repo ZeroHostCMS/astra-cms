@@ -2,22 +2,22 @@
 
 One article per demo video, written for developers and technical leaders. Each article explains the problem, what the
 video proves, how the mechanism works with code quoted from this repository, a real-world example, the trade-offs a
-technical leader should weigh, how to run it yourself, what is not built yet, and prompts to generate hand-drawn
-figures that explain the idea.
+technical leader should weigh, how to run it yourself, what is not built yet, and diagrams that explain the idea.
 
 The videos are listed in the [README](../../README.md#demo-videos); the scene-by-scene scripts are in
 [demo-video-series.en.md](../demo-video-series.en.md). Bản tiếng Việt: [README.vi.md](./README.vi.md).
 
-## Figure prompts
+## Figures
 
-Every article ends with *Visualize it: sketch prompts*. They work with any image model (Midjourney, DALL·E, Imagen,
-Nano Banana). All share one style line so the figures look like one set:
+Every article embeds its figures next to the section they explain, and links them from a *Figures* list at the end.
+They share one style: clean vector line art on off-white paper (`#fbfbfa`), one accent color (`#6b8cff`) for the key
+path, simple boxes and arrows, short labels in English, 16:9 at 960×540.
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-```
+The files live in [`figures/`](./figures) as `video-NN-figure-M.png`, where `NN` is the video number; the generated
+catalogue with titles and placement is in [`FIGURES_MANIFEST.md`](./FIGURES_MANIFEST.md). English and Vietnamese
+articles embed the same image set, so labels are in English.
 
-Check every generated figure against the article before publishing: image models misspell labels and invent arrows.
+Check every figure against the article before publishing: generated diagrams misspell labels, clip text or invent arrows.
 
 ## Start here
 

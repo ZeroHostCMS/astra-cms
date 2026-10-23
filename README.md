@@ -58,7 +58,7 @@ First apps: Astra CMS, then Astra ERP.
 
 ## Demo videos
 
-Recorded from the running demo: real Desk screens and terminal output. Videos 8 to 17 and 19 to 21 each end with a "To be accurate" note on what is not built yet. Script: [docs/demo-video-series.en.md](docs/demo-video-series.en.md). Each video has a deep-dive article for developers and technical leaders, with code, a real-world example and figure prompts: [all articles](docs/articles/README.md).
+Recorded from the running demo: real Desk screens and terminal output. Videos 8 to 17 and 19 to 21 each end with a "To be accurate" note on what is not built yet. Script: [docs/demo-video-series.en.md](docs/demo-video-series.en.md). Each video has a deep-dive article for developers and technical leaders, with code, a real-world example and diagrams: [all articles](docs/articles/README.md).
 
 <table>
 <tr><th colspan="2" align="left">Teaser: One platform, every business process <sub>(1:30)</sub></th></tr>

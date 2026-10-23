@@ -146,6 +146,9 @@ Trọng số được áp theo từng plan qua `ConstraintWeightOverrides` của
                 RoutingConstraints.BALANCE, HardSoftScore.ofSoft(w.balance())));
 ```
 
+![Hình 2: Ràng buộc cứng và ràng buộc mềm](./figures/video-20-figure-2.png)
+*Ràng buộc cứng và ràng buộc mềm.*
+
 ### Khoảng cách không cần bản đồ
 
 Không có mạng lưới đường. Khoảng cách là khoảng cách đường tròn lớn (haversine) nhân với hệ số đường 1,3, và thời gian
@@ -215,6 +218,9 @@ cải thiện điểm số. Mọi sự kiện trực tiếp đều đi qua `Repl
 `draftPlan` là thứ khiến một plan đã điều phối bị đóng băng với các tool; vòng đời của kernel khiến nó bất biến với REST
 (xem [Video 4](./04-lifecycle.vi.md)).
 
+![Hình 3: Lập lại kế hoạch bắt đầu từ các tuyến hiện tại](./figures/video-20-figure-3.png)
+*Lập lại kế hoạch bắt đầu từ các tuyến hiện tại.*
+
 ### Phân quyền qua danh sách đọc mà tool khai báo
 
 Mỗi tool lập lại kế hoạch khai báo các DocType nó đọc. DispatchEvent chỉ admin và dispatcher đọc được, nên đưa nó vào
@@ -228,6 +234,9 @@ danh sách chính là cách ngăn ops và care lập lại kế hoạch, không 
      */
     public static final List<String> REPLAN_READS = List.of("DispatchPlan", "DispatchEvent", "Vehicle", "DeliveryStop", "Hub");
 ```
+
+![Hình 4: Ai được lập lại kế hoạch](./figures/video-20-figure-4.png)
+*Ai được lập lại kế hoạch.*
 
 ### Copilot, và vì sao LLM của nó là giả lập
 
@@ -285,6 +294,9 @@ Copilot chỉ được gọi bảy tool STMS trong tập `TOOLS` của nó; nó 
 Thiết kế này là thứ sẽ cho phép thêm một mô hình thật về sau mà không đổi ranh giới tin cậy: mô hình chỉ chọn tool call,
 các tool vẫn thực thi phân quyền và solver vẫn tạo ra các con số. Đó là thiết kế dự định; nó chưa được thử với một mô
 hình thật.
+
+![Hình 1: Phần nào thật, phần nào giả lập](./figures/video-20-figure-1.png)
+*Phần nào thật, phần nào giả lập.*
 
 ## Ví dụ thực tế
 
@@ -384,33 +396,12 @@ Theo mục "Nói đúng" của kịch bản Video 20:
 - **Quyền sở hữu:** DispatchEvent và đơn gấp do tool tạo có chủ sở hữu `stms-mcp` / `stms-copilot`; người gọi thật được
   ghi trong log của MCP server.
 
-## Minh hoạ: prompt vẽ hình
+## Hình minh hoạ
 
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
-
-### Hình 1 · Phần nào thật, phần nào giả lập
-*Đặt ở:* Khung lưu ý ở đầu bài, hoặc Cách hoạt động, mục "Copilot, và vì sao LLM của nó là giả lập"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Left to right: a speech bubble "Xe 51C-12345 hỏng ở Thủ Đức…" from a stick-figure dispatcher labelled "linh". Arrow into a box drawn with a dashed outline and a big stamp "SIMULATED – no LLM", labelled "MockLlmClient (regex + place list)". Arrow out labelled "tool calls" into a solid-outline group of three boxes: "stms_vehicle_unavailable", "Replanner", "Timefold RoutePlanner". Arrow back to a box "explanation from real results" with the tag "[LLM giả lập – kịch bản demo]". Draw the solid boxes and their arrows in blue; keep the dashed simulated box in black only.
-```
-
-### Hình 2 · Ràng buộc cứng và ràng buộc mềm
-*Đặt ở:* Cách hoạt động, mục "Solver: ràng buộc cứng và mềm"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Two columns. Left column titled "HARD (must be 0)": a small truck with a weight "kg over capacity" and a clock "minutes late". Right column titled "SOFT (× weight)": a road "metres", a star "VIP minutes waiting", two balanced boxes on a scale "load²". Under the soft column, handwritten weights "1 / 20 / 0 default" crossed through and "1 / 500 / 10 copilot" below. At the bottom, the score written large "0hard / -106703soft" with an arrow "feasible". Highlight the "0hard" in blue.
-```
-
-### Hình 3 · Lập lại kế hoạch bắt đầu từ các tuyến hiện tại
-*Đặt ở:* Cách hoạt động, mục "Giải là một lần lưu, lập lại kế hoạch là một lần lưu có warm start"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Left: three route lines from a square hub "HCM-TB", labelled "51C-12345", "51C-67890", "51D-24680", drawn as straight segments between dots (no map). A large black X on the "51C-12345" line with label "breakdown". Arrow labelled "warm start" to the right panel: the same hub, two route lines only, with ten dots re-attached to "51C-67890" and "51D-24680". Between panels a small box "DispatchPlanHook: solve: true". Under the right panel a ledger-like card "DispatchEvent: score before → after, moved 10, solve_ms 1019". Highlight the moved dots in blue.
-```
-
-### Hình 4 · Ai được lập lại kế hoạch
-*Đặt ở:* Cách hoạt động, mục "Phân quyền qua danh sách đọc mà tool khai báo"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Center: a gate labelled "MCP read check: DispatchPlan, DispatchEvent, Vehicle, DeliveryStop, Hub". Four stick figures approach from the left: "linh dispatcher" passes through (blue arrow) to a box "Replanner"; "quang ops" blocked with note "not permitted: read DispatchEvent"; "ha care" blocked with note "not permitted: read DispatchPlan"; a figure tagged "hanoi-express" gets a note "plan not found". Highlight only linh's path in blue.
-```
+- [Hình 1 · Phần nào thật, phần nào giả lập](#copilot-và-vì-sao-llm-của-nó-là-giả-lập)
+- [Hình 2 · Ràng buộc cứng và ràng buộc mềm](#solver-ràng-buộc-cứng-và-mềm)
+- [Hình 3 · Lập lại kế hoạch bắt đầu từ các tuyến hiện tại](#giải-là-một-lần-lưu-lập-lại-kế-hoạch-là-một-lần-lưu-có-warm-start)
+- [Hình 4 · Ai được lập lại kế hoạch](#phân-quyền-qua-danh-sách-đọc-mà-tool-khai-báo)
 
 ## Liên quan
 

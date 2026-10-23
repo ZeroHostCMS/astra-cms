@@ -2,22 +2,22 @@
 
 Mỗi video demo có một bài viết dành cho developer và tech lead. Mỗi bài giải thích vấn đề, video chứng minh điều gì,
 cơ chế hoạt động kèm code trích từ chính repository này, một ví dụ thực tế, các đánh đổi mà tech lead cần cân nhắc,
-cách tự chạy thử, phần nào chưa làm, và prompt để tạo hình vẽ tay minh hoạ ý tưởng.
+cách tự chạy thử, phần nào chưa làm, và hình minh hoạ ý tưởng.
 
 Danh sách video nằm trong [README](../../README.vi.md#video-demo); kịch bản từng cảnh nằm trong
 [demo-video-series.md](../demo-video-series.md). English version: [README.md](./README.md).
 
-## Prompt vẽ hình
+## Hình minh hoạ
 
-Mỗi bài kết thúc bằng mục *Minh hoạ: prompt vẽ hình*. Prompt dùng được với mọi mô hình tạo ảnh (Midjourney, DALL·E,
-Imagen, Nano Banana) và được giữ nguyên tiếng Anh để mô hình hiểu chính xác. Tất cả dùng chung một dòng phong cách để các
-hình trông như cùng một bộ:
+Mỗi bài nhúng hình ngay cạnh phần mà hình giải thích, và liệt kê lại ở mục *Hình* cuối bài. Tất cả dùng chung một
+phong cách: nét vector gọn trên nền giấy trắng ngà (`#fbfbfa`), một màu nhấn (`#6b8cff`) cho đường chính, hộp và mũi
+tên đơn giản, nhãn ngắn bằng tiếng Anh, tỉ lệ 16:9 ở 960×540.
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-```
+File nằm trong [`figures/`](./figures) với tên `video-NN-figure-M.png`, trong đó `NN` là số video; danh mục sinh tự động
+kèm tiêu đề và vị trí đặt hình ở [`FIGURES_MANIFEST.md`](./FIGURES_MANIFEST.md). Bài tiếng Anh và tiếng Việt dùng chung
+một bộ hình, nên nhãn trên hình là tiếng Anh.
 
-Hãy đối chiếu từng hình tạo ra với bài viết trước khi đăng: mô hình tạo ảnh hay viết sai nhãn và tự thêm mũi tên.
+Hãy đối chiếu từng hình với bài viết trước khi đăng: hình sinh tự động hay viết sai nhãn, cắt chữ hoặc tự thêm mũi tên.
 
 ## Bắt đầu
 

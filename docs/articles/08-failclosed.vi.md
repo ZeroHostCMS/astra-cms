@@ -26,6 +26,9 @@ database, nên không có bảng chung nào để rò rỉ; lỗi tương đươ
 kế bảng dùng chung của Astra cần một câu trả lời mạnh hơn checklist: kernel tự kiểm tra role và coi một role
 không an toàn là lỗi nghiêm trọng.
 
+![Hình 1: Hai chuỗi kết nối, hai kết cục](./figures/video-08-figure-1.png)
+*Hai chuỗi kết nối, hai kết cục.*
+
 ## Video cho thấy gì
 
 | Cảnh | Bạn thấy gì | Điều được chứng minh |
@@ -146,6 +149,9 @@ kernel chỉ từ chối khởi động *sau khi* đã để schema rơi vào ta
 Móc vào bước cấu hình của Flyway đóng cửa sổ đó. Lần gọi thứ hai ở `StartupEvent` phủ các bản triển khai chạy
 migration riêng và chạy kernel với migration tắt.
 
+![Hình 2: Cơ chế chặn đứng trước Flyway](./figures/video-08-figure-2.png)
+*Cơ chế chặn đứng trước Flyway.*
+
 ### Role mà kernel phải dùng
 
 *`deploy/docker/init/01-app-role.sql`*
@@ -183,6 +189,9 @@ lỗ hổng khác nhau:
 | Role đang kết nối là superuser hoặc có `BYPASSRLS` | `RowLevelSecurityGuard` (từ chối khởi động) |
 | Role đang kết nối sở hữu bảng | `FORCE ROW LEVEL SECURITY` trong mọi migration có scope theo tenant |
 | Không có tenant nào được bind trong transaction | Policy so sánh với `current_setting('astra.tenant', true)`, giá trị này là NULL, nên không dòng nào ([Video 7](./07-tenants.vi.md)) |
+
+![Hình 3: Hai lớp, ba lỗ hổng](./figures/video-08-figure-3.png)
+*Hai lớp, ba lỗ hổng.*
 
 ## Ví dụ thực tế
 
@@ -289,36 +298,11 @@ Kết quả mong đợi: `Tenant isolation guard: role 'astra_app' is subject to
 - Không có test tự động nào trong repository kiểm tra cơ chế chặn; bằng chứng là lần chạy cảnh 8 và các log được
   ghi lại trong `docs/video/v08-failclosed/assets/`.
 
-## Minh hoạ: prompt vẽ hình
+## Hình minh hoạ
 
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
-
-### Hình 1 · Hai chuỗi kết nối, hai kết cục
-
-*Đặt ở:* Vấn đề
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a box "kernel". Two arrows go right to one cylinder "PostgreSQL · astra_doc". The upper arrow is labelled "ASTRA_DB_USER=astra_app" and ends at a small funnel labelled "RLS policy" before the cylinder, with a note "Saigon sees Saigon". The lower arrow is labelled "ASTRA_DB_USER=astra (SUPERUSER)" and goes around the funnel straight into the cylinder, with a note "Saigon sees Hanoi too · no error". Highlight in blue the upper arrow and the funnel. Draw a small crossed-out eye next to the lower note.
-```
-
-### Hình 2 · Cơ chế chặn đứng trước Flyway
-
-*Đặt ở:* Cách hoạt động
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A left-to-right timeline of a kernel start with five boxes: "process start", "Flyway config", "Flyway migrate", "StartupEvent", "serve HTTP". Between "Flyway config" and "Flyway migrate" draw a gate labelled "RowLevelSecurityGuard.check()" with a small table above it: "rolsuper? rolbypassrls?". From the gate, a downward arrow labelled "yes" goes to a box "IllegalStateException · exit 1 · nothing migrated". The forward arrow through the gate is labelled "no (astra_app)". A second smaller gate at "StartupEvent" labelled "check() again". Highlight in blue the "no" path through both gates to "serve HTTP".
-```
-
-### Hình 3 · Hai lớp, ba lỗ hổng
-
-*Đặt ở:* Cách hoạt động, hai lớp
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Three stacked rows, each with a hole on the left and a plug on the right. Row 1: hole "SUPERUSER / BYPASSRLS role", plug "RowLevelSecurityGuard: refuse to start". Row 2: hole "role owns the table", plug "FORCE ROW LEVEL SECURITY". Row 3: hole "no tenant bound", plug "current_setting('astra.tenant', true) = NULL → 0 rows". Arrows from each hole to its plug. Highlight row 1 in blue. Small footnote at the bottom: "dev only: astra.tenancy.allow-rls-bypass=true → WARN".
-```
+- [Hình 1 · Hai chuỗi kết nối, hai kết cục](#vấn-đề)
+- [Hình 2 · Cơ chế chặn đứng trước Flyway](#vì-sao-nó-chạy-trước-flyway)
+- [Hình 3 · Hai lớp, ba lỗ hổng](#hai-lớp-không-phải-một)
 
 ## Liên quan
 

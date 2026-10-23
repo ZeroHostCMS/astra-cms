@@ -41,6 +41,9 @@ Tenant `saigon-express`. Người dùng vận hành `quang` (role `ops`), sau đ
 | API | `make demo-express SCENES=5`: các bước chuyển hợp lệ trả 200; `At Hub → Delivered` trả 422; hủy đơn khi đang At Hub trả 422 và đơn giữ `docstatus 1` | Desk và REST đi qua cùng một hook. |
 | Code | Bảng `NEXT`, `beforeSave` và `OrderWaybillHook.onCancel` | Một bảng, một quyền phủ quyết. |
 
+![Hình 2: Nhảy cóc trạng thái bị từ chối, không có gì được ghi](./figures/video-05-figure-2.png)
+*Nhảy cóc trạng thái bị từ chối, không có gì được ghi.*
+
 ## Cách hoạt động
 
 ### Vận đơn là một DocType bình thường
@@ -118,6 +121,9 @@ stateDiagram-v2
 
 `At Hub → At Hub` được cho phép có chủ đích: bưu kiện đi từ HCM-Tân Bình sang DN-Hải Châu vẫn ở "At Hub" nhưng đổi
 hub, và lần chuyển đó là một mốc đáng ghi lại. `Failed Delivery → Out for Delivery` mô hình hoá lần giao thứ hai.
+
+![Hình 1: Máy trạng thái bưu kiện](./figures/video-05-figure-1.png)
+*Máy trạng thái bưu kiện.*
 
 ### Kiểm tra và ghi log trong một method
 
@@ -223,6 +229,9 @@ sequenceDiagram
     end
 ```
 
+![Hình 3: Quyền phủ quyết hủy đơn trên hai chứng từ](./figures/video-05-figure-3.png)
+*Quyền phủ quyết hủy đơn trên hai chứng từ.*
+
 ### Vì sao dùng hook mà không dùng workflow engine
 
 - Quy tắc gói gọn trong chín dòng dữ liệu; một BPMN engine sẽ thêm một runtime, một artifact triển khai và một mô
@@ -316,39 +325,11 @@ thái Delivered.
 - **Số mốc trên replica** trong cảnh Hub đến từ worker Rust CDC (cột `scans` tính bằng độ dài của `scan_log`, xem
   `astra-cdc-rust/cdc-routes.yaml`); cách nó luôn cập nhật là chủ đề của Video 16.
 
-## Minh hoạ: prompt vẽ hình
+## Hình minh hoạ
 
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
-
-### Hình 1 · Máy trạng thái bưu kiện
-
-*Đặt ở:* Cách hoạt động
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right main row of rounded boxes: "Created" → "Picked Up" → "At Hub" → "Out for Delivery" → "Delivered". A small self-loop arrow on "At Hub" labelled "hub transfer". Below "Out for Delivery" a box "Failed Delivery" with an arrow down from Out for Delivery and an arrow back up labelled "retry". Below "At Hub" a box "Returned", with arrows from "At Hub" and from "Failed Delivery". Above "Created" and "Picked Up" a box "Cancelled" with arrows from both. "Delivered", "Returned" and "Cancelled" drawn with double borders and the note "final". A tag on "At Hub" reading "current_hub required". Title in the corner: "WaybillScanHook.NEXT".
-Highlight in blue: the main happy path from Created to Delivered.
-```
-
-### Hình 2 · Nhảy cóc trạng thái bị từ chối, không có gì được ghi
-
-*Đặt ở:* Video cho thấy gì
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a hand-drawn phone labelled "PUT ops_status = Delivered". Middle: a gate drawn as a turnstile labelled "beforeSave: NEXT['At Hub']" with a small list beside it "At Hub, Out for Delivery, Returned". The arrow from the phone hits the gate and bounces back with the label "422 cannot go from 'At Hub' to 'Delivered'". Right: a document card "WB-…" with a scan log of three lines "Created", "Picked Up", "At Hub · DN-Hải Châu", untouched, with the note "no change".
-Highlight in blue: the gate.
-```
-
-### Hình 3 · Quyền phủ quyết hủy đơn trên hai chứng từ
-
-*Đặt ở:* Cách hoạt động
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Two document cards side by side inside one large blue dashed rectangle labelled "one transaction". Left card "CustomerOrder · Submitted", right card "Waybill · At Hub". An arrow from a person icon "mai" to the left card labelled "Cancel". From the left card, an arrow to the right card labelled "onCancel: CANCELLABLE = Created, Picked Up?" ending in a question mark, then a "no" branch returning to the person with "422" and a small note "rollback, both unchanged".
-Highlight in blue: the shared transaction rectangle.
-```
+- [Hình 1 · Máy trạng thái bưu kiện](#bảng-chuyển-trạng-thái)
+- [Hình 2 · Nhảy cóc trạng thái bị từ chối, không có gì được ghi](#video-cho-thấy-gì)
+- [Hình 3 · Quyền phủ quyết hủy đơn trên hai chứng từ](#quyền-phủ-quyết-phía-đơn-hàng)
 
 ## Liên quan
 
