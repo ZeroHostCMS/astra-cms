@@ -1,0 +1,105 @@
+Timing is on.
+DROP TABLE
+Time: 2.507 ms
+psql:10-limits-setup.sql:13: NOTICE:  table "astra_doc_part" does not exist, skipping
+psql:10-limits-setup.sql:14: NOTICE:  table "gen" does not exist, skipping
+DROP TABLE
+Time: 1.511 ms
+SET
+Time: 0.455 ms
+DROP INDEX
+Time: 0.693 ms
+psql:10-limits-setup.sql:17: NOTICE:  index "astra_doc_data_gin" does not exist, skipping
+DROP INDEX
+Time: 0.506 ms
+psql:10-limits-setup.sql:18: NOTICE:  index "astra_doc_p_customer" does not exist, skipping
+psql:10-limits-setup.sql:19: NOTICE:  index "astra_doc_p_zone" does not exist, skipping
+DROP INDEX
+Time: 0.543 ms
+DROP INDEX
+Time: 0.439 ms
+psql:10-limits-setup.sql:20: NOTICE:  index "astra_doc_p_ops_status" does not exist, skipping
+DROP INDEX
+Time: 46.866 ms
+DROP INDEX
+Time: 13.206 ms
+ALTER INDEX
+Time: 1.604 ms
+CREATE INDEX
+Time: 25236.819 ms (00:25.237)
+CREATE INDEX
+Time: 16671.489 ms (00:16.671)
+psql:10-limits-setup.sql:26: NOTICE:  relation "astra_doc_pf_ops_status" already exists, skipping
+CREATE INDEX
+Time: 0.651 ms
+psql:10-limits-setup.sql:27: NOTICE:  relation "astra_doc_created_idx" already exists, skipping
+CREATE INDEX
+Time: 0.606 ms
+DROP INDEX
+Time: 27.623 ms
+DROP INDEX
+Time: 12.201 ms
+DROP INDEX
+Time: 49.076 ms
+CREATE INDEX
+Time: 20493.423 ms (00:20.493)
+CREATE INDEX
+Time: 11120.428 ms (00:11.120)
+CREATE INDEX
+Time: 12171.734 ms (00:12.172)
+CREATE INDEX
+Time: 0.612 ms
+psql:10-limits-setup.sql:35: NOTICE:  relation "orders_rel_created_idx" already exists, skipping
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 3.103 ms
+INSERT 0 3800707
+Time: 470932.761 ms (07:50.933)
+RESET
+Time: 2.296 ms
+psql:10-limits-setup.sql:53: NOTICE:  table "bench_orders" does not exist, skipping
+DROP TABLE
+Time: 2.039 ms
+SELECT 3800707
+Time: 35607.182 ms (00:35.607)
+ALTER TABLE
+Time: 11763.998 ms (00:11.764)
+GRANT
+Time: 4.093 ms
+ hanoi_orders_with_waybill 
+---------------------------
+                   3800707
+(1 row)
+
+Time: 151.897 ms
+SET
+Time: 0.263 ms
+CREATE TABLE
+Time: 13.022 ms
+ALTER TABLE
+Time: 1.575 ms
+ALTER TABLE
+Time: 1.615 ms
+DROP POLICY
+Time: 0.525 ms
+psql:10-limits-setup.sql:71: NOTICE:  policy "astra_series_tenant_isolation" for relation "astra_series" does not exist, skipping
+CREATE POLICY
+Time: 2.685 ms
+RESET
+Time: 0.158 ms
+psql:10-limits-setup.sql:78: NOTICE:  sequence "bench_order_seq" does not exist, skipping
+DROP SEQUENCE
+Time: 0.494 ms
+CREATE SEQUENCE
+Time: 2.127 ms
+ALTER SEQUENCE
+Time: 1.767 ms
+VACUUM
+Time: 2163.498 ms (00:02.163)
+VACUUM
+Time: 2827.890 ms (00:02.828)
+VACUUM
+Time: 386.439 ms

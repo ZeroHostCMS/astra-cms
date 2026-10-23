@@ -1,0 +1,55 @@
+== rate 100
+rate=100/s duration=60s
+iterations=6000 (94.8/s) dropped=0 http_reqs=67006 (1059/s) failed=0.00%
+create  med=5.2 p95=10.2 p99=27.4 max=119 ms
+submit  med=8.3 p95=18.3 p99=33.9 max=628 ms
+scan    med=5.7 p95=11.2 p99=18.3 max=118 ms
+get     med=1.7 p95=3.3 p99=6.1 max=114 ms
+list    med=1.8 p95=2.8 p99=6.6 max=80 ms
+astra-httpbench-kernel-1 cpu=306.15% mem=876.4MiB / 15.57GiB
+astra-httpbench-postgres-1 cpu=397.30% mem=275MiB / 15.57GiB
+astra-httpbench-keycloak-1 cpu=0.58% mem=958.5MiB / 15.57GiB
+== rate 300
+rate=300/s duration=60s
+iterations=18001 (295.5/s) dropped=0 http_reqs=199017 (3267/s) failed=0.00%
+create  med=7.5 p95=14.2 p99=25.0 max=116 ms
+submit  med=11.8 p95=20.0 p99=32.2 max=122 ms
+scan    med=7.4 p95=13.2 p99=22.9 max=120 ms
+get     med=2.2 p95=4.3 p99=7.8 max=109 ms
+list    med=2.8 p95=5.0 p99=8.4 max=109 ms
+astra-httpbench-kernel-1 cpu=761.72% mem=1.378GiB / 15.57GiB
+astra-httpbench-postgres-1 cpu=560.55% mem=355.3MiB / 15.57GiB
+astra-httpbench-keycloak-1 cpu=0.42% mem=958.9MiB / 15.57GiB
+== rate 400
+rate=400/s duration=60s
+iterations=24001 (394.8/s) dropped=0 http_reqs=265017 (4360/s) failed=0.00%
+create  med=11.6 p95=23.8 p99=34.3 max=112 ms
+submit  med=18.1 p95=34.8 p99=46.6 max=125 ms
+scan    med=11.2 p95=22.5 p99=32.8 max=114 ms
+get     med=3.5 p95=8.9 p99=14.3 max=107 ms
+list    med=4.3 p95=9.9 p99=15.5 max=107 ms
+astra-httpbench-kernel-1 cpu=804.29% mem=1.545GiB / 15.57GiB
+astra-httpbench-postgres-1 cpu=908.68% mem=511.7MiB / 15.57GiB
+astra-httpbench-keycloak-1 cpu=0.32% mem=958.7MiB / 15.57GiB
+== rate 500
+rate=500/s duration=60s
+iterations=13022 (179.3/s) dropped=16978 http_reqs=118391 (1630/s) failed=3.61%
+create  med=3426.6 p95=5001.9 p99=5204.4 max=8690 ms
+submit  med=6629.7 p95=9929.6 p99=10552.4 max=13938 ms
+scan    med=3134.0 p95=5001.5 p99=5006.4 max=9741 ms
+get     med=2662.4 p95=4967.1 p99=5001.8 max=8492 ms
+list    med=2119.3 p95=4853.5 p99=5001.6 max=6561 ms
+astra-httpbench-kernel-1 cpu=515.06% mem=1.784GiB / 15.57GiB
+astra-httpbench-postgres-1 cpu=406.47% mem=572.9MiB / 15.57GiB
+astra-httpbench-keycloak-1 cpu=0.29% mem=962.1MiB / 15.57GiB
+== rate 600
+rate=600/s duration=60s
+iterations=28817 (383.1/s) dropped=7184 http_reqs=85711 (1139/s) failed=33.77%
+create  med=5001.6 p95=5439.1 p99=5979.0 max=11250 ms
+submit  med=7189.9 p95=10105.8 p99=10364.7 max=15002 ms
+scan    med=4683.0 p95=5097.6 p99=5109.2 max=10007 ms
+get     med=336.3 p95=5105.4 p99=5106.0 max=10001 ms
+list    med=1002.1 p95=5003.6 p99=5106.2 max=10002 ms
+astra-httpbench-kernel-1 cpu=427.00% mem=2.784GiB / 15.57GiB
+astra-httpbench-postgres-1 cpu=345.88% mem=631.7MiB / 15.57GiB
+astra-httpbench-keycloak-1 cpu=0.30% mem=962MiB / 15.57GiB

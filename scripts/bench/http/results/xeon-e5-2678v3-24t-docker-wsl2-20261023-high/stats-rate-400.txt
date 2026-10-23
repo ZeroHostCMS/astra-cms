@@ -1,0 +1,12 @@
+astra-httpbench-k6-run-3765b6112467 cpu=74.75% mem=873.7MiB / 15.57GiB
+astra-httpbench-kernel-1 cpu=412.51% mem=996.3MiB / 15.57GiB
+astra-httpbench-redis-1 cpu=0.86% mem=8.297MiB / 15.57GiB
+astra-httpbench-postgres-1 cpu=963.22% mem=294.6MiB / 15.57GiB
+astra-httpbench-keycloak-1 cpu=0.21% mem=968.1MiB / 15.57GiB
+astra-http-harness cpu=2.10% mem=38.79MiB / 15.57GiB
+postiz-postiz-1 cpu=9.26% mem=266.4MiB / 15.57GiB
+postiz-temporal-1 cpu=3.06% mem=237.1MiB / 15.57GiB
+postiz-temporal-postgresql-1 cpu=10.56% mem=67.65MiB / 15.57GiB
+postiz-postiz-postgres-1 cpu=5.84% mem=25.45MiB / 15.57GiB
+postiz-postiz-redis-1 cpu=0.16% mem=13.08MiB / 15.57GiB
+postiz-temporal-elasticsearch-1 cpu=0.22% mem=312.6MiB / 15.57GiB

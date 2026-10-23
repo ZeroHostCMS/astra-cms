@@ -105,6 +105,20 @@ val() { awk -F, -v k="$1" '$1 == k { v = $2; found = 1 } END { print found ? v :
     echo "| $r | $(val limits.$r.tps) | $(val limits.$r.s0.p99_ms) | $(val limits.$r.s1.p99_ms) | $(val limits.$r.s2.p99_ms) | $(val limits.$r.cpu) |"
   done
   echo
+  echo "## Month partitioning (18 partitions) and materialised range filters, transactions/s"
+  echo
+  echo "| Operation | astra_doc | astra_doc_txn (partitioned) | p99 ms doc / txn |"
+  echo "| --- | --- | --- | --- |"
+  for op in get list-customer list-status insert update-waybill mix; do
+    echo "| $op | $(val limits.part-$op-doc-c64.tps) | $(val limits.part-$op-txn-c64.tps) | $(val limits.part-$op-doc-c64.s0.p99_ms) / $(val limits.part-$op-txn-c64.s0.p99_ms) |"
+  done
+  for op in get update-waybill mix; do
+    echo "| $op, name-date bound | – | $(val limits.part-$op-txnpruned-c64.tps) | – / $(val limits.part-$op-txnpruned-c64.s0.p99_ms) |"
+  done
+  echo "| COD range, column, generic plan, 16 clients | $(val limits.range-cod-col-doc-c16.tps) | $(val limits.range-cod-col-txn-c16.tps) | $(val limits.range-cod-col-doc-c16.s0.p99_ms) / $(val limits.range-cod-col-txn-c16.s0.p99_ms) |"
+  echo "| COD range, column, plan per value, 16 clients | $(val limits.range-cod-col-doc-custom-c16.tps) | $(val limits.range-cod-col-txn-custom-c16.tps) | $(val limits.range-cod-col-doc-custom-c16.s0.p99_ms) / $(val limits.range-cod-col-txn-custom-c16.s0.p99_ms) |"
+  echo "| COD range, from JSON, 16 clients | – | $(val limits.range-cod-json-txn-c16.tps) / $(val limits.range-cod-json-txn-custom-c16.tps) per value | – / $(val limits.range-cod-json-txn-c16.s0.p99_ms) |"
+  echo
   echo "## Trade-offs"
   echo
   echo "| Run | tps | p99 ms |"

@@ -1,0 +1,50 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 4926.0 tps, lat 12.807 ms stddev 20.431, 0 failed
+progress: 10.0 s, 6043.2 tps, lat 10.511 ms stddev 12.391, 0 failed
+progress: 15.0 s, 7183.7 tps, lat 8.838 ms stddev 6.314, 0 failed
+progress: 20.0 s, 5169.3 tps, lat 12.276 ms stddev 46.978, 0 failed
+progress: 25.0 s, 7268.7 tps, lat 8.701 ms stddev 8.463, 0 failed
+progress: 30.0 s, 7396.6 tps, lat 8.452 ms stddev 6.354, 0 failed
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 190276
+number of failed transactions: 0 (0.000%)
+latency average = 9.986 ms
+latency stddev = 20.258 ms
+initial connection time = 50.362 ms
+tps = 6336.964620 (without initial connection time)
+SQL script 1: ./workloads/txn-insert-seq.sql
+ - weight: 1 (targets 3.2% of total)
+ - 6185 transactions (3.3% of total, tps = 205.985653)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 11.364 ms
+ - latency stddev = 17.980 ms
+SQL script 2: ./workloads/txn-update-waybill.sql
+ - weight: 8 (targets 25.8% of total)
+ - 48985 transactions (25.7% of total, tps = 1631.399714)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 19.742 ms
+ - latency stddev = 34.770 ms
+SQL script 3: ./workloads/txn-get.sql
+ - weight: 14 (targets 45.2% of total)
+ - 85836 transactions (45.1% of total, tps = 2858.687880)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 5.095 ms
+ - latency stddev = 6.987 ms
+SQL script 4: ./workloads/txn-list-customer.sql
+ - weight: 6 (targets 19.4% of total)
+ - 36876 transactions (19.4% of total, tps = 1228.120768)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 9.525 ms
+ - latency stddev = 11.673 ms
+SQL script 5: ./workloads/txn-list-status.sql
+ - weight: 2 (targets 6.5% of total)
+ - 12304 transactions (6.5% of total, tps = 409.773238)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 5.970 ms
+ - latency stddev = 7.612 ms

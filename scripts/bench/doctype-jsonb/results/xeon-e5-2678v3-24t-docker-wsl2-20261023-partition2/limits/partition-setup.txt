@@ -1,0 +1,77 @@
+Timing is on.
+SET
+Time: 0.484 ms
+DROP TABLE
+Time: 1.484 ms
+psql:12-partition-setup.sql:10: NOTICE:  table "astra_doc_txn" does not exist, skipping
+CREATE TABLE
+Time: 15.024 ms
+CREATE TABLE
+Time: 20.103 ms
+DO
+Time: 264.570 ms
+ALTER TABLE
+Time: 1.575 ms
+ALTER TABLE
+Time: 1.263 ms
+CREATE POLICY
+Time: 1.899 ms
+CREATE FUNCTION
+Time: 4.006 ms
+CREATE TRIGGER
+Time: 7.301 ms
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 0.345 ms
+INSERT 0 3800707
+Time: 153729.635 ms (02:33.730)
+INSERT 0 3800707
+Time: 153440.801 ms (02:33.441)
+CREATE INDEX
+Time: 31507.783 ms (00:31.508)
+CREATE INDEX
+Time: 34426.246 ms (00:34.426)
+CREATE INDEX
+Time: 36054.121 ms (00:36.054)
+CREATE INDEX
+Time: 20713.027 ms (00:20.713)
+CREATE INDEX
+Time: 32518.203 ms (00:32.518)
+CREATE INDEX
+Time: 11182.165 ms (00:11.182)
+UPDATE 4000050
+Time: 779440.013 ms (12:59.440)
+CREATE INDEX
+Time: 28050.785 ms (00:28.051)
+RESET
+Time: 3.349 ms
+VACUUM
+Time: 63210.536 ms (01:03.211)
+VACUUM
+Time: 35077.844 ms (00:35.078)
+       partition       | count  
+-----------------------+--------
+ astra_doc_txn_2025_05 | 436416
+ astra_doc_txn_2025_06 | 422340
+ astra_doc_txn_2025_07 | 436418
+ astra_doc_txn_2025_08 | 436418
+ astra_doc_txn_2025_09 | 422340
+ astra_doc_txn_2025_10 | 436418
+ astra_doc_txn_2025_11 | 422288
+ astra_doc_txn_2025_12 | 436356
+ astra_doc_txn_2026_01 | 436356
+ astra_doc_txn_2026_02 | 394128
+ astra_doc_txn_2026_03 | 436356
+ astra_doc_txn_2026_04 | 422280
+ astra_doc_txn_2026_05 | 436356
+ astra_doc_txn_2026_06 | 422280
+ astra_doc_txn_2026_07 | 436356
+ astra_doc_txn_2026_08 | 436356
+ astra_doc_txn_2026_09 | 422280
+ astra_doc_txn_2026_10 | 309672
+(18 rows)
+
+Time: 28336.638 ms (00:28.337)

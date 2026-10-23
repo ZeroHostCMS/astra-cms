@@ -1,0 +1,8 @@
+rate=25/s duration=60s
+iterations=1500 (23.7/s) dropped=0 http_reqs=17506 (276/s) failed=0.00%
+create  med=7.4 p95=10.5 p99=14.2 max=122 ms
+submit  med=10.9 p95=15.5 p99=19.0 max=62 ms
+scan    med=6.7 p95=9.6 p99=11.5 max=92 ms
+get     med=2.3 p95=3.3 p99=3.9 max=15 ms
+list    med=2.5 p95=3.4 p99=3.9 max=33 ms
+time="2026-10-23T15:48:05Z" level=error msg="failed to handle the end-of-test summary" error="Could not save some summary information:\n\t- could not open '/out/k6-rate-25.json': open /out/k6-rate-25.json: permission denied"

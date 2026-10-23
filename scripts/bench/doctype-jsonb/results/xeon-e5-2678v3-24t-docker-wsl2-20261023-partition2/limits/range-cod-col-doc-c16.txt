@@ -1,0 +1,20 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 13.4 tps, lat 969.001 ms stddev 1736.935, 0 failed
+progress: 10.0 s, 47.4 tps, lat 386.596 ms stddev 578.905, 0 failed
+progress: 15.0 s, 53.0 tps, lat 306.251 ms stddev 30.233, 0 failed
+progress: 20.0 s, 51.6 tps, lat 305.572 ms stddev 31.805, 0 failed
+progress: 25.0 s, 53.6 tps, lat 301.800 ms stddev 28.925, 0 failed
+progress: 30.0 s, 53.2 tps, lat 300.156 ms stddev 27.952, 0 failed
+transaction type: ./workloads/range-cod-col.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 16
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 1377
+number of failed transactions: 0 (0.000%)
+latency average = 349.970 ms
+latency stddev = 475.130 ms
+initial connection time = 19.356 ms
+tps = 45.533844 (without initial connection time)

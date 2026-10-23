@@ -1,0 +1,106 @@
+# kernel log summary (full log was 77763965 bytes): first 60 lines, then counts of ERROR/WARN causes
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions.inTenantTx(TenantTransactions.java:56)
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions_ClientProxy.inTenantTx(Unknown Source)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore.inTenantTx(DocumentStore.java:547)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore.update(DocumentStore.java:219)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore_ClientProxy.update(Unknown Source)
+kernel-1  | 	at io.astra.doctype.api.DocResource.lambda$update$0(DocResource.java:89)
+kernel-1  | 	at java.base/jdk.internal.vm.ScopedValueContainer.callWithoutScope(Unknown Source)
+kernel-1  | 	at java.base/jdk.internal.vm.ScopedValueContainer.call(Unknown Source)
+kernel-1  | 	at java.base/java.lang.ScopedValue$Carrier.call(Unknown Source)
+kernel-1  | 	at io.astra.spi.tenant.TenantContext.call(TenantContext.java:18)
+kernel-1  | 	at io.astra.doctype.api.DocResource.scoped(DocResource.java:126)
+kernel-1  | 	at io.astra.doctype.api.DocResource.update(DocResource.java:89)
+kernel-1  | 	at io.astra.doctype.api.DocResource$quarkusrestinvoker$update_68f5f95cf7aa09026e398b21f2460340119fdb78.invoke(Unknown Source)
+kernel-1  | 	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+kernel-1  | 	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:195)
+kernel-1  | 	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:150)
+kernel-1  | 	at io.quarkus.virtual.threads.ContextPreservingExecutorService$ContextPreservingRunnable.run(ContextPreservingExecutorService.java:45)
+kernel-1  | 	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(Unknown Source)
+kernel-1  | 	at java.base/java.lang.VirtualThread.run(Unknown Source)
+kernel-1  | Caused by: java.sql.SQLException: Sorry, acquisition timeout!
+kernel-1  | 	at io.agroal.pool.ConnectionPool.handlerFromSharedCache(ConnectionPool.java:423)
+kernel-1  | 	at io.agroal.pool.ConnectionPool.internalGetConnection(ConnectionPool.java:319)
+kernel-1  | 	at io.agroal.pool.ConnectionPool.getConnection(ConnectionPool.java:292)
+kernel-1  | 	at io.agroal.pool.DataSource.getConnection(DataSource.java:86)
+kernel-1  | 	at io.agroal.api.AgroalDataSource_83v3mgZs1bc75ou7lAXNtJCAcLA_Synthetic_ClientProxy.getConnection(Unknown Source)
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions.inTenantTx(TenantTransactions.java:39)
+kernel-1  | 	... 18 more
+kernel-1  | 
+kernel-1  | 2026-10-23 16:18:40,599 ERROR [io.quarkus.vertx.http.runtime.QuarkusErrorHandler] (quarkus-virtual-thread-675461) HTTP Request to /api/doc/CustomerOrder failed, error id: 782f5a16-be09-4e34-b0be-233a0cd9258f-6295: java.lang.IllegalStateException: database error
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions.inTenantTx(TenantTransactions.java:56)
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions_ClientProxy.inTenantTx(Unknown Source)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore.inTenantTx(DocumentStore.java:547)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore.insert(DocumentStore.java:203)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore_ClientProxy.insert(Unknown Source)
+kernel-1  | 	at io.astra.doctype.api.DocResource.lambda$create$0(DocResource.java:80)
+kernel-1  | 	at java.base/jdk.internal.vm.ScopedValueContainer.callWithoutScope(Unknown Source)
+kernel-1  | 	at java.base/jdk.internal.vm.ScopedValueContainer.call(Unknown Source)
+kernel-1  | 	at java.base/java.lang.ScopedValue$Carrier.call(Unknown Source)
+kernel-1  | 	at io.astra.spi.tenant.TenantContext.call(TenantContext.java:18)
+kernel-1  | 	at io.astra.doctype.api.DocResource.scoped(DocResource.java:126)
+kernel-1  | 	at io.astra.doctype.api.DocResource.create(DocResource.java:80)
+kernel-1  | 	at io.astra.doctype.api.DocResource$quarkusrestinvoker$create_f9c7606459cae2958edc59264e2fedef22efc371.invoke(Unknown Source)
+kernel-1  | 	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+kernel-1  | 	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:195)
+kernel-1  | 	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:150)
+kernel-1  | 	at io.quarkus.virtual.threads.ContextPreservingExecutorService$ContextPreservingRunnable.run(ContextPreservingExecutorService.java:45)
+kernel-1  | 	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(Unknown Source)
+kernel-1  | 	at java.base/java.lang.VirtualThread.run(Unknown Source)
+kernel-1  | Caused by: java.sql.SQLException: Sorry, acquisition timeout!
+kernel-1  | 	at io.agroal.pool.ConnectionPool.handlerFromSharedCache(ConnectionPool.java:423)
+kernel-1  | 	at io.agroal.pool.ConnectionPool.internalGetConnection(ConnectionPool.java:319)
+kernel-1  | 	at io.agroal.pool.ConnectionPool.getConnection(ConnectionPool.java:292)
+kernel-1  | 	at io.agroal.pool.DataSource.getConnection(DataSource.java:86)
+kernel-1  | 	at io.agroal.api.AgroalDataSource_83v3mgZs1bc75ou7lAXNtJCAcLA_Synthetic_ClientProxy.getConnection(Unknown Source)
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions.inTenantTx(TenantTransactions.java:39)
+kernel-1  | 	... 18 more
+kernel-1  | 
+kernel-1  | 2026-10-23 16:18:40,600 ERROR [io.quarkus.vertx.http.runtime.QuarkusErrorHandler] (quarkus-virtual-thread-675462) HTTP Request to /api/doc/Waybill/WB-2610-00062697 failed, error id: 782f5a16-be09-4e34-b0be-233a0cd9258f-6296: java.lang.IllegalStateException: database error
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions.inTenantTx(TenantTransactions.java:56)
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions_ClientProxy.inTenantTx(Unknown Source)
+
+# ERROR lines: 26924
+  26925 Caused by: java.sql.SQLException: Sorry, acquisition timeout!
+
+# last 40 lines
+kernel-1  | 	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(Unknown Source)
+kernel-1  | 	at java.base/java.lang.VirtualThread.run(Unknown Source)
+kernel-1  | Caused by: java.sql.SQLException: Sorry, acquisition timeout!
+kernel-1  | 	at io.agroal.pool.ConnectionPool.handlerFromSharedCache(ConnectionPool.java:423)
+kernel-1  | 	at io.agroal.pool.ConnectionPool.internalGetConnection(ConnectionPool.java:319)
+kernel-1  | 	at io.agroal.pool.ConnectionPool.getConnection(ConnectionPool.java:292)
+kernel-1  | 	at io.agroal.pool.DataSource.getConnection(DataSource.java:86)
+kernel-1  | 	at io.agroal.api.AgroalDataSource_83v3mgZs1bc75ou7lAXNtJCAcLA_Synthetic_ClientProxy.getConnection(Unknown Source)
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions.inTenantTx(TenantTransactions.java:39)
+kernel-1  | 	... 20 more
+kernel-1  | 
+kernel-1  | 2026-10-23 16:19:27,893 ERROR [io.quarkus.vertx.http.runtime.QuarkusErrorHandler] (quarkus-virtual-thread-723845) HTTP Request to /api/doc/Waybill/WB-2610-00066312 failed, error id: 782f5a16-be09-4e34-b0be-233a0cd9258f-33218: java.lang.IllegalStateException: database error
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions.inTenantTx(TenantTransactions.java:56)
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions_ClientProxy.inTenantTx(Unknown Source)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore.inTenantTx(DocumentStore.java:547)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore.update(DocumentStore.java:219)
+kernel-1  | 	at io.astra.doctype.store.DocumentStore_ClientProxy.update(Unknown Source)
+kernel-1  | 	at io.astra.doctype.api.DocResource.lambda$update$0(DocResource.java:89)
+kernel-1  | 	at java.base/jdk.internal.vm.ScopedValueContainer.callWithoutScope(Unknown Source)
+kernel-1  | 	at java.base/jdk.internal.vm.ScopedValueContainer.call(Unknown Source)
+kernel-1  | 	at java.base/java.lang.ScopedValue$Carrier.call(Unknown Source)
+kernel-1  | 	at io.astra.spi.tenant.TenantContext.call(TenantContext.java:18)
+kernel-1  | 	at io.astra.doctype.api.DocResource.scoped(DocResource.java:126)
+kernel-1  | 	at io.astra.doctype.api.DocResource.update(DocResource.java:89)
+kernel-1  | 	at io.astra.doctype.api.DocResource$quarkusrestinvoker$update_68f5f95cf7aa09026e398b21f2460340119fdb78.invoke(Unknown Source)
+kernel-1  | 	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+kernel-1  | 	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:195)
+kernel-1  | 	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:150)
+kernel-1  | 	at io.quarkus.virtual.threads.ContextPreservingExecutorService$ContextPreservingRunnable.run(ContextPreservingExecutorService.java:45)
+kernel-1  | 	at java.base/java.util.concurrent.ThreadPerTaskExecutor$TaskRunner.run(Unknown Source)
+kernel-1  | 	at java.base/java.lang.VirtualThread.run(Unknown Source)
+kernel-1  | Caused by: java.sql.SQLException: Sorry, acquisition timeout!
+kernel-1  | 	at io.agroal.pool.ConnectionPool.handlerFromSharedCache(ConnectionPool.java:423)
+kernel-1  | 	at io.agroal.pool.ConnectionPool.internalGetConnection(ConnectionPool.java:319)
+kernel-1  | 	at io.agroal.pool.ConnectionPool.getConnection(ConnectionPool.java:292)
+kernel-1  | 	at io.agroal.pool.DataSource.getConnection(DataSource.java:86)
+kernel-1  | 	at io.agroal.api.AgroalDataSource_83v3mgZs1bc75ou7lAXNtJCAcLA_Synthetic_ClientProxy.getConnection(Unknown Source)
+kernel-1  | 	at io.astra.doctype.store.TenantTransactions.inTenantTx(TenantTransactions.java:39)
+kernel-1  | 	... 18 more
+kernel-1  | 

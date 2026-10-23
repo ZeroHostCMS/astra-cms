@@ -24,7 +24,7 @@
 #   SECS           seconds per pgbench run in the limits phase (default 30)
 #   RATES          fixed-rate steps in transactions/s for the latency test (default "7200 10800 14400")
 #   RATE_SECS      seconds per fixed-rate run (default 60); WARMUP seconds left out of percentiles (default 10)
-#   LIMIT_MODES    limits sub-phases (default "reads writes mixed rate locality sync-off gin")
+#   LIMIT_MODES    limits sub-phases (default "reads writes mixed rate locality partition sync-off gin")
 #   BENCH_PORT     PostgreSQL port on the host network (default 5433)
 #   CONTAINER      container (and volume) name (default astra-bench-pg)
 #   KEEP           1 keeps the container and its data afterwards (default: both removed at the end)
@@ -47,7 +47,7 @@ PROFILE=${PROFILE:-auto}
 PG_IMAGE=${PG_IMAGE:-pgvector/pgvector:pg16}
 CONTAINER=${CONTAINER:-astra-bench-pg}
 SECS=${SECS:-30}
-LIMIT_MODES=${LIMIT_MODES:-reads writes mixed rate locality sync-off gin}
+LIMIT_MODES=${LIMIT_MODES:-reads writes mixed rate locality partition sync-off gin}
 DISK_MIN_GB=${DISK_MIN_GB:-60}
 LISTEN=${LISTEN:-127.0.0.1}
 EXTERNAL=0; [ -n "${BENCH_HOST:-}" ] && EXTERNAL=1
@@ -237,6 +237,10 @@ phase_limits() {
   stage limits-setup    to "$OUT/limits/setup.txt" P -f 10-limits-setup.sql
   stage partial-indexes to "$OUT/limits/partial-indexes.txt" P -f 11-partial-projection-indexes.sql
   stage sizes-limits    to "$OUT/limits/sizes.txt" P -f 90-sizes.sql
+  if [[ " $LIMIT_MODES " == *" partition "* ]]; then
+    stage partition-setup to "$OUT/limits/partition-setup.txt" P -f 12-partition-setup.sql
+    stage partition-plans to "$OUT/limits/partition-plans.txt" P -f 13-partition-plans.sql
+  fi
   for m in $LIMIT_MODES; do stage "limits-$m" XL "$m"; done
 }
 phase_report() { stage report "$HERE/summarize.sh" "$OUT"; }

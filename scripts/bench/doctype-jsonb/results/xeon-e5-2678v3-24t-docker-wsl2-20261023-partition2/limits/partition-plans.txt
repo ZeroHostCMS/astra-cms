@@ -1,0 +1,319 @@
+SET
+=== get by name on 18 partitions, no bound: every partition probed
+                                                                               QUERY PLAN                                                                               
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Append (actual time=4.614..21.000 rows=1 loops=1)
+   Buffers: shared read=55
+   I/O Timings: shared read=19.841
+   ->  Index Scan using astra_doc_txn_2025_05_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_05 astra_doc_txn_1 (actual time=1.216..1.217 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.156
+   ->  Index Scan using astra_doc_txn_2025_06_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_06 astra_doc_txn_2 (actual time=0.948..0.948 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=0.887
+   ->  Index Scan using astra_doc_txn_2025_07_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_07 astra_doc_txn_3 (actual time=0.827..0.827 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=0.780
+   ->  Index Scan using astra_doc_txn_2025_08_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_08 astra_doc_txn_4 (actual time=1.619..1.621 rows=1 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=4
+         I/O Timings: shared read=1.537
+   ->  Index Scan using astra_doc_txn_2025_09_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_09 astra_doc_txn_5 (actual time=1.037..1.037 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=0.977
+   ->  Index Scan using astra_doc_txn_2025_10_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_10 astra_doc_txn_6 (actual time=1.069..1.069 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.005
+   ->  Index Scan using astra_doc_txn_2025_11_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_11 astra_doc_txn_7 (actual time=1.130..1.131 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.063
+   ->  Index Scan using astra_doc_txn_2025_12_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_12 astra_doc_txn_8 (actual time=1.057..1.057 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.009
+   ->  Index Scan using astra_doc_txn_2026_01_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_01 astra_doc_txn_9 (actual time=1.312..1.312 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.236
+   ->  Index Scan using astra_doc_txn_2026_02_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_02 astra_doc_txn_10 (actual time=0.891..0.891 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=0.843
+   ->  Index Scan using astra_doc_txn_2026_03_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_03 astra_doc_txn_11 (actual time=1.170..1.170 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.098
+   ->  Index Scan using astra_doc_txn_2026_04_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_04 astra_doc_txn_12 (actual time=1.192..1.192 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.139
+   ->  Index Scan using astra_doc_txn_2026_05_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_05 astra_doc_txn_13 (actual time=1.060..1.060 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.008
+   ->  Index Scan using astra_doc_txn_2026_06_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_06 astra_doc_txn_14 (actual time=1.351..1.351 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.285
+   ->  Index Scan using astra_doc_txn_2026_07_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_07 astra_doc_txn_15 (actual time=1.484..1.484 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.400
+   ->  Index Scan using astra_doc_txn_2026_08_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_08 astra_doc_txn_16 (actual time=1.483..1.483 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.413
+   ->  Index Scan using astra_doc_txn_2026_09_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_09 astra_doc_txn_17 (actual time=1.048..1.048 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=0.994
+   ->  Index Scan using astra_doc_txn_2026_10_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_10 astra_doc_txn_18 (actual time=1.062..1.062 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+         Buffers: shared read=3
+         I/O Timings: shared read=1.012
+   ->  Seq Scan on astra_doc_txn_2026_11 astra_doc_txn_19 (actual time=0.007..0.007 rows=0 loops=1)
+         Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+   ->  Seq Scan on astra_doc_txn_2026_12 astra_doc_txn_20 (actual time=0.006..0.006 rows=0 loops=1)
+         Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+   ->  Seq Scan on astra_doc_txn_default astra_doc_txn_21 (actual time=0.002..0.002 rows=0 loops=1)
+         Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+ Planning:
+   Buffers: shared hit=4830 read=191
+   I/O Timings: shared read=69.483
+ Planning Time: 92.273 ms
+ Execution Time: 21.306 ms
+
+=== get by name with the name-date lower bound: older months pruned
+                                                                                                                           QUERY PLAN                                                                                                                            
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Append (actual time=0.032..0.366 rows=1 loops=1)
+   Buffers: shared hit=46
+   Subplans Removed: 3
+   ->  Index Scan using astra_doc_txn_2025_08_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_08 astra_doc_txn_1 (actual time=0.032..0.033 rows=1 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=4
+   ->  Index Scan using astra_doc_txn_2025_09_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_09 astra_doc_txn_2 (actual time=0.027..0.027 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2025_10_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_10 astra_doc_txn_3 (actual time=0.025..0.025 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2025_11_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_11 astra_doc_txn_4 (actual time=0.022..0.022 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2025_12_tenant_id_doctype_name_created_at_key on astra_doc_txn_2025_12 astra_doc_txn_5 (actual time=0.023..0.023 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_01_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_01 astra_doc_txn_6 (actual time=0.024..0.024 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_02_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_02 astra_doc_txn_7 (actual time=0.030..0.030 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_03_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_03 astra_doc_txn_8 (actual time=0.023..0.024 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_04_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_04 astra_doc_txn_9 (actual time=0.023..0.023 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_05_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_05 astra_doc_txn_10 (actual time=0.023..0.024 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_06_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_06 astra_doc_txn_11 (actual time=0.022..0.022 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_07_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_07 astra_doc_txn_12 (actual time=0.018..0.018 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_08_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_08 astra_doc_txn_13 (actual time=0.021..0.021 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_09_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_09 astra_doc_txn_14 (actual time=0.018..0.018 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Index Scan using astra_doc_txn_2026_10_tenant_id_doctype_name_created_at_key on astra_doc_txn_2026_10 astra_doc_txn_15 (actual time=0.017..0.017 rows=0 loops=1)
+         Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)))
+         Buffers: shared hit=3
+   ->  Seq Scan on astra_doc_txn_2026_11 astra_doc_txn_16 (actual time=0.005..0.005 rows=0 loops=1)
+         Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+   ->  Seq Scan on astra_doc_txn_2026_12 astra_doc_txn_17 (actual time=0.003..0.003 rows=0 loops=1)
+         Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+   ->  Seq Scan on astra_doc_txn_default astra_doc_txn_18 (actual time=0.001..0.001 rows=0 loops=1)
+         Filter: ((doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text) AND (created_at >= ('2025-04-29 17:00:00+00'::timestamp with time zone + '93 days'::interval)) AND (tenant_id = current_setting('astra.tenant'::text, true)))
+ Planning:
+   Buffers: shared hit=32 read=3
+   I/O Timings: shared read=0.747
+ Planning Time: 3.178 ms
+ Execution Time: 0.605 ms
+
+=== get by name on the unpartitioned table
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using astra_doc_tenant_doctype_name_key on astra_doc (actual time=1.270..1.272 rows=1 loops=1)
+   Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261020-02500380'::text))
+   Buffers: shared read=5
+   I/O Timings: shared read=1.217
+ Planning:
+   Buffers: shared hit=195 read=9
+   I/O Timings: shared read=3.315
+ Planning Time: 4.324 ms
+ Execution Time: 1.290 ms
+
+=== 20 newest orders of a customer, 18 partitions
+                                                                                             QUERY PLAN                                                                                             
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=19.531..19.538 rows=4 loops=1)
+   Buffers: shared hit=13 read=57 written=23
+   I/O Timings: shared read=18.043 write=0.343
+   ->  Incremental Sort (actual time=19.530..19.536 rows=4 loops=1)
+         Sort Key: astra_doc_txn.modified_at DESC, astra_doc_txn.name DESC
+         Presorted Key: astra_doc_txn.modified_at
+         Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 29kB  Peak Memory: 29kB
+         Buffers: shared hit=13 read=57 written=23
+         I/O Timings: shared read=18.043 write=0.343
+         ->  Merge Append (actual time=19.496..19.504 rows=4 loops=1)
+               Sort Key: astra_doc_txn.modified_at DESC
+               Buffers: shared hit=7 read=57 written=23
+               I/O Timings: shared read=18.043 write=0.343
+               ->  Index Scan using astra_doc_txn_2025_05_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2025_05 astra_doc_txn_1 (actual time=1.040..1.041 rows=1 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=4
+                     I/O Timings: shared read=0.979
+               ->  Index Scan using astra_doc_txn_2025_06_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2025_06 astra_doc_txn_2 (actual time=0.809..0.809 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3
+                     I/O Timings: shared read=0.757
+               ->  Index Scan using astra_doc_txn_2025_07_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2025_07 astra_doc_txn_3 (actual time=0.985..0.985 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3
+                     I/O Timings: shared read=0.910
+               ->  Index Scan using astra_doc_txn_2025_08_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2025_08 astra_doc_txn_4 (actual time=1.064..1.064 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3
+                     I/O Timings: shared read=1.014
+               ->  Index Scan using astra_doc_txn_2025_09_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2025_09 astra_doc_txn_5 (actual time=0.865..0.866 rows=1 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared hit=1 read=3
+                     I/O Timings: shared read=0.804
+               ->  Index Scan using astra_doc_txn_2025_10_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2025_10 astra_doc_txn_6 (actual time=1.404..1.404 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3
+                     I/O Timings: shared read=1.354
+               ->  Index Scan using astra_doc_txn_2025_11_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2025_11 astra_doc_txn_7 (actual time=1.260..1.260 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3
+                     I/O Timings: shared read=1.208
+               ->  Index Scan using astra_doc_txn_2025_12_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2025_12 astra_doc_txn_8 (actual time=1.156..1.156 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=1
+                     I/O Timings: shared read=1.071 write=0.019
+               ->  Index Scan using astra_doc_txn_2026_01_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_01 astra_doc_txn_9 (actual time=1.190..1.190 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=2
+                     I/O Timings: shared read=1.098 write=0.040
+               ->  Index Scan using astra_doc_txn_2026_02_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_02 astra_doc_txn_10 (actual time=0.834..0.834 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=3
+                     I/O Timings: shared read=0.738 write=0.047
+               ->  Index Scan using astra_doc_txn_2026_03_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_03 astra_doc_txn_11 (actual time=0.818..0.819 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=1
+                     I/O Timings: shared read=0.767 write=0.011
+               ->  Index Scan using astra_doc_txn_2026_04_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_04 astra_doc_txn_12 (actual time=0.847..0.847 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=1
+                     I/O Timings: shared read=0.784 write=0.015
+               ->  Index Scan using astra_doc_txn_2026_05_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_05 astra_doc_txn_13 (actual time=1.091..1.092 rows=1 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=4 written=3
+                     I/O Timings: shared read=0.967 write=0.050
+               ->  Index Scan using astra_doc_txn_2026_06_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_06 astra_doc_txn_14 (actual time=1.091..1.091 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=2
+                     I/O Timings: shared read=0.990 write=0.024
+               ->  Index Scan using astra_doc_txn_2026_07_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_07 astra_doc_txn_15 (actual time=1.814..1.815 rows=1 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=4 written=3
+                     I/O Timings: shared read=1.705 write=0.040
+               ->  Index Scan using astra_doc_txn_2026_08_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_08 astra_doc_txn_16 (actual time=1.175..1.175 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=3
+                     I/O Timings: shared read=1.077 write=0.036
+               ->  Index Scan using astra_doc_txn_2026_09_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_09 astra_doc_txn_17 (actual time=1.061..1.061 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=3
+                     I/O Timings: shared read=0.954 write=0.045
+               ->  Index Scan using astra_doc_txn_2026_10_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_10 astra_doc_txn_18 (actual time=0.934..0.934 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared read=3 written=1
+                     I/O Timings: shared read=0.867 write=0.015
+               ->  Index Scan using astra_doc_txn_2026_11_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_11 astra_doc_txn_19 (actual time=0.022..0.022 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared hit=2
+               ->  Index Scan using astra_doc_txn_2026_12_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_2026_12 astra_doc_txn_20 (actual time=0.008..0.008 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared hit=2
+               ->  Index Scan using astra_doc_txn_default_tenant_id_doctype_astra_field_modifie_idx on astra_doc_txn_default astra_doc_txn_21 (actual time=0.010..0.010 rows=0 loops=1)
+                     Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+                     Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=50 read=1
+   I/O Timings: shared read=0.349
+ Planning Time: 2.943 ms
+ Execution Time: 20.728 ms
+
+PREPARE
+SET
+=== COD range, generic plan (server-prepared statement, value unknown when planned)
+                                                         QUERY PLAN                                                          
+-----------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=839.066..839.074 rows=21 loops=1)
+   Buffers: shared hit=24 read=3669 written=2030
+   I/O Timings: shared read=775.980 write=26.386
+   ->  Incremental Sort (actual time=839.065..839.069 rows=21 loops=1)
+         Sort Key: modified_at DESC, name DESC
+         Presorted Key: modified_at
+         Full-sort Groups: 1  Sort Method: quicksort  Average Memory: 45kB  Peak Memory: 45kB
+         Buffers: shared hit=24 read=3669 written=2030
+         I/O Timings: shared read=775.980 write=26.386
+         ->  Index Scan using astra_doc_list_idx on astra_doc (actual time=41.748..838.984 rows=22 loops=1)
+               Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+               Filter: (m_cod_amount > $1)
+               Rows Removed by Filter: 13378
+               Buffers: shared hit=24 read=3669 written=2030
+               I/O Timings: shared read=775.980 write=26.386
+ Planning:
+   Buffers: shared hit=12
+ Planning Time: 1.305 ms
+ Execution Time: 839.140 ms
+
+SET
+=== COD range, planned with the value (unnamed statement, the kernel sets prepareThreshold 0 for range lists)
+                                                                              QUERY PLAN                                                                              
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit (actual time=2214.471..2214.481 rows=21 loops=1)
+   Buffers: shared hit=509 read=7070 written=3714
+   I/O Timings: shared read=2076.539 write=52.521
+   ->  Sort (actual time=2214.469..2214.474 rows=21 loops=1)
+         Sort Key: modified_at DESC, name DESC
+         Sort Method: top-N heapsort  Memory: 45kB
+         Buffers: shared hit=509 read=7070 written=3714
+         I/O Timings: shared read=2076.539 write=52.521
+         ->  Index Scan using astra_doc_pm_cod_amount on astra_doc (actual time=0.096..2199.697 rows=7574 loops=1)
+               Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (m_cod_amount > '499000000'::bigint))
+               Buffers: shared hit=509 read=7070 written=3714
+               I/O Timings: shared read=2076.539 write=52.521
+ Planning:
+   Buffers: shared hit=5
+ Planning Time: 0.438 ms
+ Execution Time: 2214.536 ms
+
+RESET
+DEALLOCATE
+RESET

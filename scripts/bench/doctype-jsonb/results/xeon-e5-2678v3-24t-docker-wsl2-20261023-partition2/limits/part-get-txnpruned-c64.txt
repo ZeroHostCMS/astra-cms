@@ -1,0 +1,20 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 15605.6 tps, lat 3.927 ms stddev 10.272, 0 failed
+progress: 10.0 s, 17928.5 tps, lat 3.524 ms stddev 1.852, 0 failed
+progress: 15.0 s, 18443.8 tps, lat 3.422 ms stddev 1.695, 0 failed
+progress: 20.0 s, 18386.9 tps, lat 3.434 ms stddev 1.780, 0 failed
+progress: 25.0 s, 18389.7 tps, lat 3.431 ms stddev 1.715, 0 failed
+progress: 30.0 s, 17919.5 tps, lat 3.526 ms stddev 1.921, 0 failed
+transaction type: ./workloads/txn-get-pruned.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 533411
+number of failed transactions: 0 (0.000%)
+latency average = 3.535 ms
+latency stddev = 4.270 ms
+initial connection time = 46.480 ms
+tps = 17780.406376 (without initial connection time)

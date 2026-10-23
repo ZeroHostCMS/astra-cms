@@ -26,6 +26,7 @@ limits.insert-series-jsonb-c16.tps limits.insert-seq-jsonb-c16.tps limits.insert
 limits.update-waybill-jsonb-c16.tps limits.update-waybill-jsonb-c64.tps limits.update-waybill-2tx-jsonb-c64.tps limits.update-rel-c64.tps
 limits.mix-jsonb-c64.tps limits.mix-jsonb-seq-c64.tps limits.mix-rel-c64.tps limits.mix-jsonb-c64.s0.p99_ms limits.mix-jsonb-c64.s1.p99_ms
 limits.rate-jsonb-R7200.s1.p99_ms limits.rate-jsonb-seq-R7200.s1.p99_ms limits.rate-jsonb-seq-R10800.s1.p99_ms limits.rate-jsonb-seq-R14400.tps limits.rate-jsonb-seq-R14400.s1.p99_ms
+limits.part-get-txn-c64.tps limits.part-mix-doc-c64.tps limits.part-mix-txn-c64.tps limits.range-cod-col-txn-c16.tps limits.range-cod-json-txn-c16.tps
 limits.syncoff-mix-jsonb-seq-c64.tps limits.gin-insert-seq-jsonb-c64.tps limits.gin-mix-jsonb-seq-c64.tps limits.get-hot-jsonb-c64.tps limits.get-uniform-jsonb-c64.tps"}
 
 # Join: first column the metric, then one column per run, in argument order.

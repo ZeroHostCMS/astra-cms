@@ -8,7 +8,7 @@
 # per transaction (pg_stat_wal), buffer cache hit ratio, and CPU use of the machine pgbench runs on (/proc/stat:
 # the database host when pgbench runs in the database container, the client host otherwise).
 #
-#   ./run-limits.sh reads | writes | mixed | rate | rate-seq | locality | sync-off | gin | probe | all
+#   ./run-limits.sh reads | writes | mixed | rate | rate-seq | locality | partition | sync-off | gin | probe | all
 set -euo pipefail
 : "${BENCH_HOST:=127.0.0.1}" "${BENCH_PORT:=5433}" "${BENCH_DB:=bench}"   # where the database under test is
 export PGPASSWORD=astra_app
@@ -36,7 +36,7 @@ run() {
   sq "CHECKPOINT" >/dev/null
   wal0=$(sq "SELECT wal_bytes FROM pg_stat_wal"); c0=$(cpu_sample); b0=$(sq "$blks")
   local rateopt=(); [ "$rate" != "-" ] && rateopt=(-R "$rate")
-  pgbench "${CONN[@]}" -n -M prepared -P 5 -c "$clients" -j "$j" -T "$secs" -D norders="$NORDERS" -D hot_lo="$HOT_LO" "${rateopt[@]}" \
+  pgbench "${CONN[@]}" -n -M "${QMODE:-prepared}" -P 5 -c "$clients" -j "$j" -T "$secs" -D norders="$NORDERS" -D hot_lo="$HOT_LO" "${rateopt[@]}" \
       -l --log-prefix="$t/l" "$@" "$BENCH_DB" > "$OUT/$label.txt" 2>&1 || true
   wal1=$(sq "SELECT wal_bytes FROM pg_stat_wal"); c1=$(cpu_sample); b1=$(sq "$blks")
   local tps txs failed cpu walpt hit
@@ -71,6 +71,8 @@ MIX_JSONB=( -f "$W/jsonb-insert-series.sql@1" -f "$W/jsonb-update-waybill.sql@8"
 MIX_JSONB_SEQ=( -f "$W/jsonb-insert-seq.sql@1" -f "$W/jsonb-update-waybill.sql@8" -f "$W/jsonb-get.sql@14" -f "$W/jsonb-list-customer.sql@6" -f "$W/jsonb-list-status.sql@2" )
 MIX_JSONB_HOT=( -f "$W/jsonb-insert-seq.sql@1" -f "$W/jsonb-update-waybill-hot.sql@8" -f "$W/jsonb-get-hot.sql@14" -f "$W/jsonb-list-customer.sql@6" -f "$W/jsonb-list-status.sql@2" )
 MIX_REL=( -f "$W/rel-insert-series.sql@1" -f "$W/rel-update.sql@8" -f "$W/rel-get.sql@14" -f "$W/rel-list-customer.sql@6" -f "$W/rel-list-status.sql@2" )
+MIX_TXN=( -f "$W/txn-insert-seq.sql@1" -f "$W/txn-update-waybill.sql@8" -f "$W/txn-get.sql@14" -f "$W/txn-list-customer.sql@6" -f "$W/txn-list-status.sql@2" )
+MIX_TXN_PRUNED=( -f "$W/txn-insert-seq.sql@1" -f "$W/txn-update-waybill-pruned.sql@8" -f "$W/txn-get-pruned.sql@14" -f "$W/txn-list-customer.sql@6" -f "$W/txn-list-status.sql@2" )
 MIX_REL_SEQ=( -f "$W/rel-insert-seq.sql@1" -f "$W/rel-update.sql@8" -f "$W/rel-get.sql@14" -f "$W/rel-list-customer.sql@6" -f "$W/rel-list-status.sql@2" )
 
 MODE=${1:-all}
@@ -121,6 +123,32 @@ if [ "$MODE" = locality ] || [ "$MODE" = all ]; then
   run "get-uniform-jsonb-c64" 64 - "$SECS" -f "$W/jsonb-get.sql"
   run "get-hot-jsonb-c64"     64 - "$SECS" -f "$W/jsonb-get-hot.sql"
   run "mix-hot-jsonb-seq-c64" 64 - "$SECS" "${MIX_JSONB_HOT[@]}"
+fi
+if [ "$MODE" = partition ] || [ "$MODE" = all ]; then
+  # The same kernel operations on astra_doc (one table) and astra_doc_txn (18 monthly partitions, 12-partition-setup.sql),
+  # and range filters on the materialised COD column against the same filter computed from the JSON document.
+  run "part-get-doc-c64"            64 - "$SECS" -f "$W/jsonb-get.sql"
+  run "part-get-txn-c64"            64 - "$SECS" -f "$W/txn-get.sql"
+  run "part-get-txnpruned-c64"      64 - "$SECS" -f "$W/txn-get-pruned.sql"
+  run "part-list-customer-doc-c64"  64 - "$SECS" -f "$W/jsonb-list-customer.sql"
+  run "part-list-customer-txn-c64"  64 - "$SECS" -f "$W/txn-list-customer.sql"
+  run "part-list-status-doc-c64"    64 - "$SECS" -f "$W/jsonb-list-status.sql"
+  run "part-list-status-txn-c64"    64 - "$SECS" -f "$W/txn-list-status.sql"
+  run "part-insert-doc-c64"         64 - "$SECS" -f "$W/jsonb-insert-seq.sql"
+  run "part-insert-txn-c64"         64 - "$SECS" -f "$W/txn-insert-seq.sql"
+  run "part-update-waybill-doc-c64" 64 - "$SECS" -f "$W/jsonb-update-waybill.sql"
+  run "part-update-waybill-txn-c64" 64 - "$SECS" -f "$W/txn-update-waybill.sql"
+  run "part-update-waybill-txnpruned-c64" 64 - "$SECS" -f "$W/txn-update-waybill-pruned.sql"
+  run "part-mix-doc-c64"            64 - "$SECS" "${MIX_JSONB_SEQ[@]}"
+  run "part-mix-txn-c64"            64 - "$SECS" "${MIX_TXN[@]}"
+  run "part-mix-txnpruned-c64"      64 - "$SECS" "${MIX_TXN_PRUNED[@]}"
+  run "range-cod-col-doc-c16"       16 - "$SECS" -f "$W/range-cod-col.sql"
+  run "range-cod-col-txn-c16"       16 - "$SECS" -f "$W/txn-range-cod-col.sql"
+  run "range-cod-json-txn-c16"      16 - "$SECS" -f "$W/txn-range-cod-json.sql"
+  # The kernel plans range lists per execution (prepareThreshold 0): unnamed statements, like pgbench -M extended.
+  QMODE=extended run "range-cod-col-doc-custom-c16" 16 - "$SECS" -f "$W/range-cod-col.sql"
+  QMODE=extended run "range-cod-col-txn-custom-c16" 16 - "$SECS" -f "$W/txn-range-cod-col.sql"
+  QMODE=extended run "range-cod-json-txn-custom-c16" 16 - "$SECS" -f "$W/txn-range-cod-json.sql"
 fi
 if [ "$MODE" = probe ]; then
   # Short before/after probe around a schema change; TAG names the variant.

@@ -1,0 +1,50 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 9474.7 tps, lat 6.629 ms stddev 9.483, 0 failed
+progress: 10.0 s, 14147.6 tps, lat 4.410 ms stddev 5.244, 0 failed
+progress: 15.0 s, 9108.4 tps, lat 7.101 ms stddev 12.381, 0 failed
+progress: 20.0 s, 15537.2 tps, lat 4.071 ms stddev 4.760, 0 failed
+progress: 25.0 s, 13692.5 tps, lat 4.631 ms stddev 7.399, 0 failed
+progress: 30.0 s, 19042.1 tps, lat 3.313 ms stddev 2.688, 0 failed
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 405051
+number of failed transactions: 0 (0.000%)
+latency average = 4.687 ms
+latency stddev = 7.034 ms
+initial connection time = 53.712 ms
+tps = 13517.111760 (without initial connection time)
+SQL script 1: ./workloads/jsonb-insert-seq.sql
+ - weight: 1 (targets 3.2% of total)
+ - 12852 transactions (3.2% of total, tps = 428.889005)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 10.382 ms
+ - latency stddev = 10.110 ms
+SQL script 2: ./workloads/jsonb-update-waybill.sql
+ - weight: 8 (targets 25.8% of total)
+ - 104120 transactions (25.7% of total, tps = 3474.628322)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 10.872 ms
+ - latency stddev = 10.248 ms
+SQL script 3: ./workloads/jsonb-get.sql
+ - weight: 14 (targets 45.2% of total)
+ - 183189 transactions (45.2% of total, tps = 6113.270147)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.866 ms
+ - latency stddev = 1.806 ms
+SQL script 4: ./workloads/jsonb-list-customer.sql
+ - weight: 6 (targets 19.4% of total)
+ - 78041 transactions (19.3% of total, tps = 2604.336044)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 3.111 ms
+ - latency stddev = 3.259 ms
+SQL script 5: ./workloads/jsonb-list-status.sql
+ - weight: 2 (targets 6.5% of total)
+ - 26361 transactions (6.5% of total, tps = 879.703008)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 1.715 ms
+ - latency stddev = 0.949 ms

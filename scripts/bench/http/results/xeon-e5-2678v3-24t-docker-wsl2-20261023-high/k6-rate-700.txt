@@ -1,0 +1,7 @@
+rate=700/s duration=60s
+iterations=35193 (464.1/s) dropped=6808 http_reqs=64286 (848/s) failed=52.79%
+create  med=5922.3 p95=10387.4 p99=10978.7 max=16391 ms
+submit  med=7782.8 p95=15069.6 p99=15106.2 max=18612 ms
+scan    med=388.3 p95=10093.4 p99=10096.2 max=15089 ms
+get     med=132.7 p95=4994.2 p99=5091.6 max=5141 ms
+list    med=123.0 p95=5001.2 p99=5092.1 max=9985 ms

@@ -34,7 +34,8 @@ Yêu cầu: Linux, Docker, bash, awk, **ít nhất 60 GB trống** cho dữ li�
 | `SECS` | `30` | Thời gian mỗi lần chạy pgbench trong giai đoạn limits |
 | `WARMUP` | `10` | Số giây đầu mỗi lần chạy không tính vào p50/p95/p99 (đợt ghi full-page ngay sau checkpoint) |
 | `RATES` | `7200 10800 14400` | Các mức tải cố định (giao dịch/giây) cho phép đo độ trễ: mức đỉnh mục tiêu, gấp 1,5 và gấp 2 |
-| `LIMIT_MODES` | `reads writes mixed rate locality sync-off gin` | Các nhóm đo trong giai đoạn limits |
+| `LIMIT_MODES` | `reads writes mixed rate locality partition sync-off gin` | Các nhóm đo trong giai đoạn limits; `partition` dựng thêm bảng 18 partition tháng (`12-partition-setup.sql`) và in plan (`13-partition-plans.sql`) |
+| `RATE_SECS`, `WARMUP` | `60`, `10` | Thời lượng mỗi lần chạy tải cố định; số giây đầu không tính vào phân vị |
 | `BENCH_PORT` | `5433` | Cổng PostgreSQL trên mạng host |
 | `KEEP`, `REUSE` | `0` | Giữ container và dữ liệu sau khi chạy; chạy tiếp trên container đã có |
 
@@ -88,6 +89,8 @@ Mỗi tệp tái hiện đúng các câu lệnh kernel gửi cho một thao tác
 | `jsonb-update-waybill-2tx.sql` | Lần quét qua REST trước khi sửa: hai transaction, đọc doc hai lần |
 | `jsonb-get-hot.sql`, `jsonb-update-waybill-hot.sql` | Chỉ trên 10 % đơn mới nhất: mẫu truy cập của hệ thống thật |
 | `rel-update.sql` | Đổi trạng thái trên bảng cột |
+| `txn-*.sql` | Cùng các thao tác trên `astra_doc_txn` (partition theo tháng, 18 partition); `txn-*-pruned.sql` thêm cận dưới `created_at` như kernel làm với tên series có ngày |
+| `range-cod-col.sql`, `txn-range-cod-col.sql`, `txn-range-cod-json.sql` | Lọc khoảng COD trên cột materialised so với cùng phép lọc tính từ JSON; chạy cả với plan dùng chung (`-M prepared`) và plan theo giá trị (`-M extended`) |
 
 Tải hỗn hợp giờ cao điểm (`mixed`, `rate`) theo tỷ lệ mỗi đơn: 1 tạo, 8 lần quét, 14 lần xem, 6 danh sách theo khách, 2 danh sách theo trạng thái. 2 triệu đơn/ngày, đỉnh gấp 10 lần trung bình, là 231 đơn/giây và khoảng 7.200 giao dịch/giây.
 

@@ -1,0 +1,8 @@
+time="2026-10-23T15:56:13Z" level=warning msg="Insufficient VUs, reached 4800 active VUs and cannot initialize more" executor=constant-arrival-rate scenario=orders
+rate=400/s duration=60s
+iterations=11125 (146.9/s) dropped=12875 http_reqs=108725 (1436/s) failed=1.67%
+create  med=4510.0 p95=8438.3 p99=8683.0 max=11269 ms
+submit  med=7702.6 p95=11838.0 p99=12800.6 max=17043 ms
+scan    med=1994.8 p95=7613.4 p99=8515.3 max=11072 ms
+get     med=790.2 p95=2999.9 p99=4516.1 max=5774 ms
+list    med=789.2 p95=2786.2 p99=4220.1 max=5783 ms

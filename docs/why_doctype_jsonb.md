@@ -9,7 +9,10 @@
 3. **Giới hạn thật của hệ thống không nằm ở JSONB mà ở bộ đếm đặt tên.** Series gapless (`ORD-.YYYYMMDD.-.#####`) khoá một dòng đếm mỗi tenant mỗi ngày cho đến khi transaction tạo đơn commit, nên mọi lần tạo đơn trong một tenant chạy **nối tiếp**: 291–425 đơn/giây bất kể 4 hay 64 client, p99 tới 0,76 giây. Bảng cột với cùng bộ đếm bị y như vậy. Bỏ khoá (`gapless: false`, nay có trong kernel): **8.868 đơn/giây**, gấp 20 lần, và tải hỗn hợp giờ cao điểm từ 7.145 lên **14.522 giao dịch/giây**.
 4. **JSONB thua thật ở ba chỗ, đã có cách thiết kế vòng qua:** tổng hợp quét nhiều dòng (SUM theo ngày: 1,2 giây so với 0,4–0,7 giây, đưa sang replica/ledger); dung lượng (505 so với 310 byte/dòng); tạo đơn chậm hơn tới 17 %.
 5. **GIN `jsonb_path_ops` là gánh nặng thuần.** Không bao giờ được dùng dưới RLS (`@>` không leakproof), tốn 1 GB cho 6 triệu doc, và kéo tải hỗn hợp xuống 28 %. Kernel nay bỏ nó (migration V6).
-6. **Với 2 triệu đơn/ngày và 10 triệu user: khả thi trên một primary PostgreSQL cỡ vừa cộng replica đọc**, sau các thay đổi đã làm (mục 8). Trên một máy Xeon 2014 12 lõi trong Docker Desktop, kernel đã sửa đạt 14.500 giao dịch/giây khi chạy hết sức (gấp 2 lần giờ cao điểm mục tiêu, 20 lần mức trung bình) và giữ đúng nhịp giờ cao điểm với độ trễ trung vị 3 ms, nhưng tụt lại ở 1,5 lần nhịp đỉnh. Kernel trước khi sửa không theo kịp từ 1,5 lần nhịp đỉnh, và khi chạy hết sức chỉ đạt đúng mức đỉnh với p99 tạo đơn gần 2 giây. Dư địa thật cần đo lại trên server Linux (mục 2).
+6. **Cả hệ thống qua HTTP** (kernel, Keycloak, PostgreSQL trên cùng một máy, token thật): **400 đơn/giây sạch** (4.360 request/giây, p99 dưới 47 ms), gần 2 lần mức đỉnh mục tiêu. Bài đo này tìm ra một lỗi thật: `X-Tx-LSN` mượn kết nối thứ hai cho mỗi lần ghi, làm hệ thống sụp ngay ở 400 đơn/giây; đã sửa.
+7. **Partition theo tháng làm OLTP chậm đi một nửa** (18 partition: tải hỗn hợp 14.306 xuống 6.451, có thu hẹp theo ngày trong tên 8.294), vì tra cứu theo tên hay theo khách không có `created_at` nên phải dò mọi partition. Nó có trong kernel nhưng là tuỳ chọn, tắt cho các DocType của app Express; chỉ bật khi vòng đời dữ liệu (vacuum, archive) đáng hơn thông lượng.
+8. **Cột materialised cho tiền** (`projected: materialised`, bigint phần trăm) đã có trong kernel: lọc khoảng nhanh hơn đọc từ JSON 8 lần, và nhanh hơn thêm 3 lần khi kernel lập plan theo giá trị thay vì plan dùng chung.
+9. **Với 2 triệu đơn/ngày và 10 triệu user: khả thi trên một primary PostgreSQL cỡ vừa cộng replica đọc**, sau các thay đổi đã làm (mục 8). Trên một máy Xeon 2014 12 lõi trong Docker Desktop, kernel đã sửa đạt 14.500 giao dịch/giây khi chạy hết sức (gấp 2 lần giờ cao điểm mục tiêu, 20 lần mức trung bình) và giữ đúng nhịp giờ cao điểm với độ trễ trung vị 3 ms, nhưng tụt lại ở 1,5 lần nhịp đỉnh. Kernel trước khi sửa không theo kịp từ 1,5 lần nhịp đỉnh, và khi chạy hết sức chỉ đạt đúng mức đỉnh với p99 tạo đơn gần 2 giây. Dư địa thật cần đo lại trên server Linux (mục 2).
 
 ## 1. DocType Engine lưu trữ thế nào
 
@@ -188,7 +191,19 @@ Baseline cả hai bảng thiếu index `created_at`: JSONB 534–766 ms, bảng 
 
 Q5 cụ thể ("Remote, COD > 4,9 triệu, 20 mới nhất") **không đổi** dù cột là `numeric` hay `bigint` (lần 2: 39 ms numeric, 104 ms bigint JSONB; 16,5 và 39 ms bảng cột), vì planner chọn đi theo index `modified_at` rồi lọc khoảng 11.000 dòng ở cả bốn trường hợp; chênh lệch giữa các lần chạy là do số worker song song. Kiểu cột quyết định khi khoảng là điều kiện chọn lọc chính (bảng ở mục 4.1: 190 ms so với 2,4 ms).
 
-Bài học cho kernel: `Currency` khi materialised phải thành `bigint` đơn vị nhỏ nhất, không phải `numeric(18,2)`. `ledger` hiện dùng `numeric(18,2)` cho `debit`/`credit`, nên chịu cùng giới hạn nếu có truy vấn khoảng dưới RLS. Materialised projection chưa có trong kernel (lộ trình Phase 4).
+Bài học cho kernel: `Currency` khi materialised phải thành `bigint` đơn vị nhỏ nhất, không phải `numeric(18,2)`. `ledger` hiện dùng `numeric(18,2)` cho `debit`/`credit`, nên chịu cùng giới hạn nếu có truy vấn khoảng dưới RLS.
+
+**Nay đã có trong kernel.** `projected: materialised` (Currency, Int, Float, Date, Datetime, Check) thêm cột kiểu thật `m_<field>` (Currency thành bigint phần trăm, 4.900.000,50 thành 490000050) kèm index, do một trigger tính từ `data` ở mọi lần ghi nên mọi đường ghi, kể cả instance cũ trong lúc nâng cấp, đều đúng. Dữ liệu có sẵn được backfill ở nền theo từng tenant và từng lô; khi chưa xong, bộ lọc đọc giá trị từ JSON nên kết quả không bao giờ thiếu dòng. Bộ lọc khoảng qua REST: `cod_amount__gt=4900000`, `__gte`, `__lt`, `__lte`; cũng dùng được cho `created_at` và `modified_at`. Lọc khoảng trên field không materialised bị từ chối (422) vì nó sẽ quét cả tenant. CustomerOrder khai báo `cod_amount` như vậy.
+
+Đo trên 4 triệu đơn, "COD trên ngưỡng cao, 20 đơn mới nhất", 16 client (lần 2):
+
+| Cách lọc | Giao dịch/giây | p50 | p99 |
+| --- | --- | --- | --- |
+| Từ JSON (cast mỗi dòng), như khi chưa materialise | 16 | 986 ms | 1.298 ms |
+| Cột materialised, plan dùng chung của prepared statement | 46 | 303 ms | 373 ms |
+| **Cột materialised, plan theo giá trị** (kernel đặt `prepareThreshold 0` cho danh sách có lọc khoảng) | **135** | **13 ms** | 336 ms |
+
+Plan dùng chung không biết ngưỡng nên chọn đi theo index `modified_at` và lọc 13.378 dòng; plan theo giá trị đi thẳng vào index của cột. Đuôi p99 còn dài khi một ngưỡng khớp hàng nghìn đơn phải đọc từ đĩa: đây là truy vấn đối soát, không nằm trên đường nóng.
 
 ### 5.4 Tổng hợp (Q7): chỗ JSONB thua và phải tránh
 
@@ -291,7 +306,26 @@ Kernel trước sửa dừng ở khoảng 230 đơn/giây, đúng bằng mức �
 | Partition theo ngày | vòng đời dữ liệu (DETACH, vacuum từng phần) | point get chậm 2–5 lần, tổng hợp chậm 2–3 lần, mất UNIQUE trên `name` (mục 7) |
 | Bảng cột thay JSONB cho DocType lớn nhất | tạo đơn nhanh hơn tới 17 %, dòng nhỏ hơn 40 %, tổng hợp nhanh hơn 2 lần | mất zero-DDL cho DocType đó (mục 10) |
 
+### 6.6 Cả hệ thống qua HTTP
+
+Các phép đo trên dừng ở database. Bộ đo [scripts/bench/http](../scripts/bench/http/README.md) chạy chính kernel build từ repo này, Keycloak với realm của dự án (token thật, kiểm tra chữ ký và audience mỗi request), PostgreSQL và Redis, rồi dùng k6 đẩy vòng đời đơn của app Express qua REST: tạo đơn, submit (sinh Waybill và bút toán sổ cái), 4 lần quét đến khi giao (lần cuối ghi bút toán COD), 3 lần xem, 2 danh sách theo khách. Tổng cộng 11 request mỗi đơn, ở nhịp đơn/giây cố định, 60 giây mỗi nhịp. Mọi thứ chạy trên máy lần 2, kể cả k6, và database bắt đầu rỗng: đây là trần của tầng ứng dụng khi dữ liệu nằm trọn trong cache.
+
+| Đơn/giây | Request/giây | Bỏ lượt | p99 tạo | p99 submit | p99 quét | p99 xem | CPU kernel | CPU PostgreSQL |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 100 | 1.059 | 0 | 27 ms | 34 ms | 18 ms | 6 ms | 3,1 lõi | 4,0 lõi |
+| 300 | 3.267 | 0 | 25 ms | 32 ms | 23 ms | 8 ms | 7,6 lõi | 5,6 lõi |
+| **400** | **4.360** | **0** | 34 ms | 47 ms | 33 ms | 14 ms | 8,0 lõi | 9,1 lõi |
+| 500 | 1.630 đạt được | 57 % | 5,2 s | 10,6 s | 5,0 s | 5,0 s | 5,2 lõi | 4,1 lõi |
+
+**Trần của một máy, khi gánh cả kernel, database, Keycloak và bộ tạo tải, là khoảng 400–450 đơn/giây, gần 2 lần mức đỉnh mục tiêu.** Ở 500 đơn/giây máy hết CPU: các request xếp hàng chờ kết nối từ pool cho tới mức chờ 5 giây thì hỏng (độ trễ dừng đúng ở 5 s), nên thông lượng sụp chứ không giảm từ từ. Mỗi request tốn khoảng 1,8 ms CPU ở kernel (xác thực token, Jackson, hook, kiểm quyền) và 2,1 ms CPU ở PostgreSQL; kernel không giữ trạng thái nên phần của nó scale bằng thêm instance, còn phần database là một primary.
+
+**Lỗi tìm ra nhờ bài đo này, đã sửa:** header `X-Tx-LSN` (vị trí WAL trả về sau mỗi lần ghi, cho read-your-writes qua replica) được đọc bằng một kết nối thứ hai mượn từ pool sau khi giao dịch đã trả kết nối của nó. Mỗi request ghi vì thế cần hai lần lấy kết nối, và khi pool căng, các request ghi chờ lẫn nhau. Trước khi sửa, hệ thống sụp ngay ở 400 đơn/giây (đạt 147 đơn/giây, 9.248 lỗi "acquisition timeout"); sau khi đọc vị trí WAL trên chính kết nối vừa commit, cùng nhịp đó chạy sạch như bảng trên.
+
 ## 7. Partition: được gì, mất gì
+
+### 7.1 Partition theo ngày trong chuỗi đo gốc
+
+Bảng `astra_doc_part` là bảng kernel partition RANGE theo `created_at` từng ngày, đủ index như bảng gốc.
 
 | | Kết quả đo |
 | --- | --- |
@@ -300,9 +334,23 @@ Kernel trước sửa dừng ở khoảng 230 đơn/giây, đúng bằng mức �
 | Tổng hợp một ngày (Q7) | 1.944 / 3.866 ms so với 863 / 1.182 ms: tệ hơn |
 | Ràng buộc unique | phải chứa khoá partition: `UNIQUE (tenant_id, doctype, name, created_at)`; tính duy nhất của `name` **không còn được PostgreSQL bảo đảm** |
 | Múi giờ | partition theo ngày UTC, nghiệp vụ theo +07, mọi truy vấn "một ngày" chạm 2 partition |
-| Vận hành | kernel phải tạo partition trước (`astra_ledger_ensure_partition` đã có mẫu), N index × M partition, planning time tăng theo số partition |
 
-Partition là công cụ **quản lý vòng đời dữ liệu**, không phải công cụ tăng tốc truy vấn OLTP có index đúng. Với 730 triệu đơn/năm, partition theo **tháng** trên `astra_doc` là cần cho vacuum và archive, với hai điều kiện: ranh giới theo múi giờ nghiệp vụ, và `name` của DocType `kind: transaction` mang ngày (`ORD-.YYYYMMDD.-`) để kernel suy ra partition khi `get` theo `name`. DocType master (Customer, Item) không partition. Chưa làm trong kernel.
+### 7.2 Partition theo tháng như kernel làm (18 tháng dữ liệu)
+
+Kernel nay có `partition: month` cho DocType `kind: transaction`: tài liệu nằm ở `astra_doc_txn`, partition theo tháng của `created_at` với ranh giới theo múi giờ nghiệp vụ (`astra.storage.partition-time-zone`), partition được tạo trước 2 tháng và có partition mặc định đỡ mọi dòng ngoài khoảng; dữ liệu cũ của DocType vừa bật được chuyển vào đúng tháng lúc khởi động; tên do người dùng chọn được kiểm tra trùng xuyên tháng dưới advisory lock (khoá unique của PostgreSQL chỉ trong một tháng). Đo bằng cùng đơn và vận đơn chép vào 18 partition, ngày tạo trải đều từ 2025-05 đến 2026-10 (7,6 triệu doc), 64 client:
+
+| Giao dịch/giây | `astra_doc` | `astra_doc_txn`, 18 tháng | + cận dưới theo ngày trong tên |
+| --- | --- | --- | --- |
+| Lấy theo tên | 33.787 | 13.797 | 17.780 |
+| Danh sách theo khách | 33.292 | 8.747 | không áp dụng |
+| Danh sách theo trạng thái | 25.455 | 7.952 | không áp dụng |
+| Tạo đơn | 8.826 | **9.941** | |
+| Quét Waybill | 8.416 | 3.619 | 3.999 |
+| Tải hỗn hợp | 14.306 | 6.451 | 8.294 |
+
+Lấy một đơn theo tên trên 18 partition dò 18 index (21 ms trong plan, so với 1,3 ms trên bảng đơn); danh sách theo khách mở 18 index rồi trộn theo `modified_at`. Kernel thêm `created_at >= <ngày trong tên> - 1 ngày` khi tên đến từ series có ngày (`ORD-.YYYYMMDD.-`, `WB-.YYMM.-`): một tài liệu không bao giờ được tạo trước ngày trong tên của nó (bản sửa đổi `-1` còn tạo muộn hơn), nên các tháng cũ hơn bị bỏ qua lúc chạy (0,6 ms trong plan cho một đơn giữa kỳ). Trong phép đo, tên được chọn đều trên 18 tháng nên trung bình vẫn dò một nửa; hệ thống thật tra cứu chủ yếu đơn đang xử lý, chỉ một hai partition. Danh sách theo khách hay trạng thái không có ngày nên không thu hẹp được. Chỉ việc tạo đơn nhanh hơn, vì index của tháng hiện tại nhỏ.
+
+**Quyết định:** `partition: month` có trong kernel nhưng **tắt cho CustomerOrder và Waybill**. Với mục tiêu thông lượng, một bảng với index đúng thắng rõ. Partition là công cụ vòng đời: vacuum từng tháng, `DETACH` rồi archive tháng cũ trong một lệnh thay vì xoá hàng trăm triệu dòng. Bật nó khi những việc đó trở thành vấn đề (bảng vài trăm GB), và giữ số partition đang gắn ít (archive sau vài tháng), vì mỗi tra cứu không có ngày phải dò mọi partition đang gắn.
 
 ## 8. Thay đổi đã làm trong kernel
 
@@ -317,13 +365,17 @@ Partition là công cụ **quản lý vòng đời dữ liệu**, không phải 
 | 7 | Kiểm tra mọi Link của một doc bằng một câu lệnh | bớt N−1 round trip mỗi lần ghi doc có N Link |
 | 8 | Phân trang keyset: `?after=<cursor>`, header `X-Next-Cursor`; `offset` vẫn dùng được | OFFSET 200.000: 200–250 ms xuống 0,2–0,3 ms |
 | 9 | Pool kết nối chỉnh được (`ASTRA_DB_POOL_MIN`, `ASTRA_DB_POOL_MAX`) | trần đọc ở khoảng 2,7 kết nối mỗi luồng CPU của database |
+| 10 | `projected: materialised`: cột kiểu thật do trigger tính, backfill ở nền, bộ lọc khoảng `__gt/__gte/__lt/__lte`, plan theo giá trị cho danh sách có lọc khoảng; `cod_amount` của CustomerOrder dùng nó | lọc khoảng COD: 16 lên 135/giây, p50 986 xuống 13 ms (mục 5.3) |
+| 11 | `partition: month` (tuỳ chọn): bảng `astra_doc_txn` theo tháng, tạo partition trước, chuyển dữ liệu cũ, kiểm tra tên trùng xuyên tháng, thu hẹp partition theo ngày trong tên series | có sẵn cho vòng đời dữ liệu; tắt mặc định vì giảm OLTP một nửa (mục 7.2) |
+| 12 | `X-Tx-LSN` đọc trên chính kết nối vừa commit | HTTP: 400 đơn/giây từ sụp (147 đạt được) thành sạch (mục 6.6) |
+| 13 | Hàm `astra_ext.tenants()` của superuser: kernel liệt kê tenant để backfill và chuyển dữ liệu, dù RLS che các tenant khác | điều kiện của 10 và 11 |
 
-Test mới: `DocListTest` (con trỏ đi qua mọi doc đúng một lần theo thứ tự; bộ lọc projection là Index Cond dưới RLS, còn `->>` là Filter), `SeriesBlockTest` (300 đơn tạo đồng thời có số duy nhất, đúng 7 chữ số), và khẳng định định nghĩa index trong `ExpressFlowTest`.
+Test mới: `DocListTest` (con trỏ đi qua mọi doc đúng một lần theo thứ tự; bộ lọc projection là Index Cond dưới RLS, còn `->>` là Filter), `SeriesBlockTest` (300 đơn tạo đồng thời có số duy nhất, đúng 7 chữ số), `StorageLayoutTest` (cột materialised và index của nó dưới RLS, backfill, tài liệu tháng cũ tìm được theo tên và qua Link, tên trùng xuyên tháng bị chặn, dữ liệu cũ chuyển vào đúng tháng), và khẳng định định nghĩa index trong `ExpressFlowTest`. Toàn bộ 84 test của `astra-server` qua.
 
 Còn lại, chưa làm:
 
-- **Materialised projection** cho `Currency` (cột `bigint` đơn vị nhỏ nhất), `Date`, `Float`, kèm job backfill theo batch và repack.
-- **Partition theo tháng** cho DocType `kind: transaction`.
+- **Archive tháng cũ** của `astra_doc_txn` (`DETACH PARTITION` rồi chuyển sang lưu trữ rẻ) như một job của kernel; hiện làm bằng tay.
+- **CPU của kernel**: khoảng 1,8 ms mỗi request (xác thực token, Jackson, hook). Chưa profile; cache khoá công khai JWT, giảm chép `Map` giữa các lớp là chỗ nên xem trước.
 - Tách field nóng: trạng thái đổi nhiều lần đã nằm ở Waybill hẹp; `scan_log` trong Waybill lớn dần theo mỗi lần quét, nên doc nên giữ dưới 2 KB (TOAST) hoặc chuyển log sang bảng append-only.
 
 ## 9. Hạn chế còn lại sau khi sửa
@@ -348,6 +400,7 @@ Còn lại, chưa làm:
 | Tải hỗn hợp tối đa, chạy hết sức | 7.145 giao dịch/giây | 14.522 | 7.200 |
 | Nhịp cố định duy trì được | 7.200 (p99 tạo đơn 316 ms); không theo kịp ở 10.800 | 7.200 (trung vị 3 ms); tụt lại ở 10.800 | 7.200 |
 | Đọc tối đa | 14 giao dịch/giây (lọc theo field) | 32.700 | khoảng 5.000 |
+| **Cả hệ thống qua HTTP, một máy** | sụp ở 400 đơn/giây | **400 đơn/giây sạch**, sụp ở 500 khi hết CPU | 231 đơn/giây |
 
 **Kết luận: khả thi trên một primary PostgreSQL cỡ vừa cộng replica đọc**, với các thay đổi ở mục 8 và:
 
@@ -356,7 +409,7 @@ Còn lại, chưa làm:
 3. Partition `astra_doc` theo tháng, archive sau 12–18 tháng; khi dữ liệu vượt RAM, phần đơn đang xử lý (vài ngày gần nhất, khoảng 10 GB) vẫn phải nằm trong cache: cỡ RAM database theo tập nóng, không theo tổng dữ liệu.
 4. Báo cáo, đối soát, dashboard trên `replica_*` và `astra_ledger`; theo dõi độ trễ CDC (`_cdc_sync_watermark.lag_ms`).
 5. Tổng kết nối từ mọi instance kernel khoảng 2–3 lần số luồng CPU database; dùng pool phía kernel, hoặc PgBouncer ở chế độ transaction (kernel luôn gán tenant trong `BEGIN` tường minh).
-6. Đo lại tầng Java (HTTP, Jackson, hook): phép đo ở đây dừng ở database. Tầng kernel không trạng thái nên scale ngang bằng thêm pod.
+6. Tầng kernel tốn khoảng 1,8 ms CPU mỗi request: 2.540 request/giây giờ cao điểm cần khoảng 5 lõi cho kernel, chia trên 2–3 pod để còn dư; database cần khoảng 2,1 ms CPU mỗi request, tức khoảng 6 lõi giờ cao điểm cộng phần dự phòng.
 
 **Có nên dùng bảng cột riêng cho CustomerOrder?** Sau khi sửa, khác biệt đọc dưới 0,1 ms và dưới 8 % thông lượng; tạo đơn chậm hơn tới 17 %; tổng hợp chậm 2 lần (đã chuyển sang replica); dung lượng gấp 1,7 lần. Chuyển một hai DocType khối lượng lớn nhất sang bảng cột (`storage: ledger`-like, overlay chỉ thêm vào cột `extra jsonb`) đáng cân nhắc vì **dung lượng**, không vì tốc độ. Đó là quyết định sản phẩm.
 
@@ -368,6 +421,13 @@ Trên một máy chủ Linux có Docker (xem [README của bộ đo](../scripts/
 cd scripts/bench/doctype-jsonb
 DATA_DIR=/mnt/nvme/astra-bench BENCH_NOTE="<loại máy, đĩa, vùng>" ./bench.sh   # khoảng 2,5 giờ
 ./compare.sh                                                                     # so mọi lần chạy trong results/
+```
+
+Cả hệ thống qua HTTP (kernel build từ repo, Keycloak, PostgreSQL, Redis, k6):
+
+```bash
+cd scripts/bench/http
+RATES="100 200 300 400 500" BENCH_NOTE="<loại máy>" ./run.sh
 ```
 
 Mỗi lần chạy ghi vào `results/<label>/`: thông tin máy, `pg_test_fsync`, mọi plan, mọi output pgbench, `metrics.csv` và `report.md`. Hai lần chạy trong tài liệu này nằm ở `results/m1pro-10c-16g-docker-20261022/` và `results/xeon-e5-2678v3-24t-docker-wsl2-20261023/`.

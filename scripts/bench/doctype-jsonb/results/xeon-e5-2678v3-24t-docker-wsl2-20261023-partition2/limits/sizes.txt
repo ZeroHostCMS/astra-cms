@@ -1,0 +1,36 @@
+  relname   | heap_toast | indexes |  total  |  rows   
+------------+------------+---------+---------+---------
+ astra_doc  | 5300 MB    | 3632 MB | 8933 MB | 9793503
+ orders_rel | 1526 MB    | 1594 MB | 3120 MB | 5001280
+
+           indexrelname            |  size  
+-----------------------------------+--------
+ astra_doc_created_idx             | 652 MB
+ astra_doc_list_idx                | 564 MB
+ astra_doc_pf_customer             | 369 MB
+ astra_doc_pf_ops_status           | 552 MB
+ astra_doc_pf_zone                 | 324 MB
+ astra_doc_pkey                    | 361 MB
+ astra_doc_tenant_doctype_name_key | 811 MB
+ orders_rel_created_idx            | 194 MB
+ orders_rel_customer               | 281 MB
+ orders_rel_list_idx               | 194 MB
+ orders_rel_ops_status             | 251 MB
+ orders_rel_pkey                   | 150 MB
+ orders_rel_tenant_name_key        | 282 MB
+ orders_rel_zone                   | 243 MB
+
+  relname   |  toast  
+------------+---------
+ astra_doc  | 0 bytes
+ orders_rel | 0 bytes
+
+  relname   | avg_row_bytes | free_pct | dead_tuple_count 
+------------+---------------+----------+------------------
+ astra_doc  |           542 |      4.4 |                0
+ orders_rel |           315 |      1.5 |                0
+
+ avg_json_bytes 
+----------------
+            417
+
