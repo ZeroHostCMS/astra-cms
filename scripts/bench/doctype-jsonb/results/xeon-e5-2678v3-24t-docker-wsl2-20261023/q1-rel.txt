@@ -1,0 +1,41 @@
+hanoi-express
+Index Scan using orders_rel_tenant_name_key on orders_rel  (cost=0.56..2.78 rows=1 width=291) (actual time=1.855..1.855 rows=0 loops=1)
+  Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (name = 'ORD-20261021-02500000'::text))
+  Buffers: shared read=4
+  I/O Timings: shared read=1.757
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 1.277 ms
+Execution Time: 1.922 ms
+----- run 1: 1.922 ms
+hanoi-express
+Index Scan using orders_rel_tenant_name_key on orders_rel  (cost=0.56..2.78 rows=1 width=291) (actual time=0.107..0.108 rows=0 loops=1)
+  Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (name = 'ORD-20261021-02500000'::text))
+  Buffers: shared hit=4
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=245
+Planning Time: 1.933 ms
+Execution Time: 0.225 ms
+----- run 2: 0.225 ms
+hanoi-express
+Index Scan using orders_rel_tenant_name_key on orders_rel  (cost=0.56..2.78 rows=1 width=291) (actual time=0.109..0.110 rows=0 loops=1)
+  Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (name = 'ORD-20261021-02500000'::text))
+  Buffers: shared hit=4
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=245
+Planning Time: 2.044 ms
+Execution Time: 0.229 ms
+----- run 3: 0.229 ms
+hanoi-express
+Index Scan using orders_rel_tenant_name_key on orders_rel  (cost=0.56..2.78 rows=1 width=291) (actual time=0.107..0.107 rows=0 loops=1)
+  Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (name = 'ORD-20261021-02500000'::text))
+  Buffers: shared hit=4
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=245
+Planning Time: 1.928 ms
+Execution Time: 0.226 ms
+----- run 4: 0.226 ms

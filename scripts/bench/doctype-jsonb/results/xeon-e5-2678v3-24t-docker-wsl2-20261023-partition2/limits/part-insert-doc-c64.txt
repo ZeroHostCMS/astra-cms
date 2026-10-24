@@ -1,0 +1,20 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 1570.6 tps, lat 40.119 ms stddev 34.558, 0 failed
+progress: 10.0 s, 7552.3 tps, lat 8.466 ms stddev 6.506, 0 failed
+progress: 15.0 s, 9453.7 tps, lat 6.732 ms stddev 4.180, 0 failed
+progress: 20.0 s, 10611.7 tps, lat 5.990 ms stddev 3.826, 0 failed
+progress: 25.0 s, 12176.7 tps, lat 5.216 ms stddev 1.249, 0 failed
+progress: 30.0 s, 11615.5 tps, lat 5.467 ms stddev 1.411, 0 failed
+transaction type: ./workloads/jsonb-insert-seq.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 264952
+number of failed transactions: 0 (0.000%)
+latency average = 7.198 ms
+latency stddev = 9.091 ms
+initial connection time = 46.882 ms
+tps = 8825.607479 (without initial connection time)

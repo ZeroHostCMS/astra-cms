@@ -1,0 +1,105 @@
+hanoi-express
+Finalize Aggregate  (cost=414804.19..414804.20 rows=1 width=8) (actual time=884.273..946.012 rows=1 loops=1)
+  Buffers: shared hit=788629 read=3531
+  I/O Timings: shared read=25.635
+  ->  Gather  (cost=414803.77..414804.18 rows=4 width=8) (actual time=883.686..945.982 rows=5 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=788629 read=3531
+        I/O Timings: shared read=25.635
+        ->  Partial Aggregate  (cost=413803.77..413803.78 rows=1 width=8) (actual time=852.875..852.876 rows=1 loops=5)
+              Buffers: shared hit=788629 read=3531
+              I/O Timings: shared read=25.635
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..413777.81 rows=10387 width=0) (actual time=368.022..852.571 rows=1217 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+                    Rows Removed by Filter: 798952
+                    Buffers: shared hit=788629 read=3531
+                    I/O Timings: shared read=25.635
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=231 read=1
+  I/O Timings: shared read=0.016
+Planning Time: 1.887 ms
+JIT:
+  Functions: 37
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 3.675 ms, Inlining 0.000 ms, Optimization 2.375 ms, Emission 42.946 ms, Total 48.996 ms
+Execution Time: 973.943 ms
+----- run 1: 973.943 ms
+hanoi-express
+Finalize Aggregate  (cost=414804.19..414804.20 rows=1 width=8) (actual time=875.974..936.121 rows=1 loops=1)
+  Buffers: shared hit=792158
+  ->  Gather  (cost=414803.77..414804.18 rows=4 width=8) (actual time=875.943..936.102 rows=5 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792158
+        ->  Partial Aggregate  (cost=413803.77..413803.78 rows=1 width=8) (actual time=848.002..848.003 rows=1 loops=5)
+              Buffers: shared hit=792158
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..413777.81 rows=10387 width=0) (actual time=336.240..847.671 rows=1217 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+                    Rows Removed by Filter: 798952
+                    Buffers: shared hit=792158
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=232
+Planning Time: 0.936 ms
+JIT:
+  Functions: 37
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 2.545 ms, Inlining 0.000 ms, Optimization 1.702 ms, Emission 33.502 ms, Total 37.750 ms
+Execution Time: 958.701 ms
+----- run 2: 958.701 ms
+hanoi-express
+Finalize Aggregate  (cost=414804.19..414804.20 rows=1 width=8) (actual time=831.056..893.850 rows=1 loops=1)
+  Buffers: shared hit=792159 read=2
+  I/O Timings: shared read=0.037
+  ->  Gather  (cost=414803.77..414804.18 rows=4 width=8) (actual time=830.374..893.829 rows=5 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792159 read=2
+        I/O Timings: shared read=0.037
+        ->  Partial Aggregate  (cost=413803.77..413803.78 rows=1 width=8) (actual time=804.933..804.934 rows=1 loops=5)
+              Buffers: shared hit=792159 read=2
+              I/O Timings: shared read=0.037
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..413777.81 rows=10387 width=0) (actual time=322.230..804.612 rows=1217 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+                    Rows Removed by Filter: 798952
+                    Buffers: shared hit=792159 read=2
+                    I/O Timings: shared read=0.037
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=232
+Planning Time: 1.930 ms
+JIT:
+  Functions: 37
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 2.505 ms, Inlining 0.000 ms, Optimization 1.649 ms, Emission 29.253 ms, Total 33.407 ms
+Execution Time: 924.584 ms
+----- run 3: 924.584 ms
+hanoi-express
+Finalize Aggregate  (cost=414804.19..414804.20 rows=1 width=8) (actual time=918.622..980.718 rows=1 loops=1)
+  Buffers: shared hit=792156
+  ->  Gather  (cost=414803.77..414804.18 rows=4 width=8) (actual time=918.594..980.700 rows=5 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792156
+        ->  Partial Aggregate  (cost=413803.77..413803.78 rows=1 width=8) (actual time=892.018..892.019 rows=1 loops=5)
+              Buffers: shared hit=792156
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..413777.81 rows=10387 width=0) (actual time=361.351..891.723 rows=1217 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+                    Rows Removed by Filter: 798952
+                    Buffers: shared hit=792156
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=232
+Planning Time: 1.852 ms
+JIT:
+  Functions: 37
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 3.049 ms, Inlining 0.000 ms, Optimization 1.823 ms, Emission 32.919 ms, Total 37.791 ms
+Execution Time: 1007.772 ms
+----- run 4: 1007.772 ms

@@ -1,0 +1,54 @@
+DROP TABLE
+psql:07-leakproof-inline-check.sql:9: NOTICE:  table "lp_test" does not exist, skipping
+DROP FUNCTION
+CREATE FUNCTION
+GRANT
+         proname         | language | proleakproof 
+-------------------------+----------+--------------
+ astra_field             | internal | t
+ jsonb_object_field_text | internal | f
+ lp_sql                  | sql      | t
+
+SET
+CREATE TABLE
+INSERT 0 200000
+ALTER TABLE
+ALTER TABLE
+CREATE POLICY
+CREATE INDEX
+CREATE INDEX
+ANALYZE
+  set_config   
+---------------
+ hanoi-express
+
+--- SQL wrapper declared LEAKPROOF, under RLS (Index Scan or Seq Scan + Filter?)
+                                                     QUERY PLAN                                                      
+---------------------------------------------------------------------------------------------------------------------
+ Gather
+   Workers Planned: 1
+   ->  Parallel Seq Scan on lp_test
+         Filter: ((tenant_id = current_setting('astra.tenant'::text, true)) AND ((data ->> 'k'::text) = 'v5'::text))
+
+--- LANGUAGE internal alias, under RLS (expected: Index Scan)
+                                                        QUERY PLAN                                                         
+---------------------------------------------------------------------------------------------------------------------------
+ Index Scan using lp_test_int on lp_test
+   Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (astra_field(data, 'k'::text) = 'v5'::text))
+
+--- same two queries as superuser (bypasses the policy, no RLS)
+RESET
+--- SQL wrapper, superuser (no RLS)
+                    QUERY PLAN                     
+---------------------------------------------------
+ Index Scan using lp_test_sql on lp_test
+   Index Cond: ((data ->> 'k'::text) = 'v5'::text)
+
+--- internal alias, superuser (no RLS)
+                        QUERY PLAN                         
+-----------------------------------------------------------
+ Index Scan using lp_test_int on lp_test
+   Index Cond: (astra_field(data, 'k'::text) = 'v5'::text)
+
+DROP TABLE
+DROP FUNCTION

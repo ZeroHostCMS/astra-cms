@@ -1,0 +1,91 @@
+# End-to-end HTTP benchmark of the Astra kernel: PostgreSQL (tuned), Keycloak with the project's realm, Redis,
+# the kernel built from this checkout, and k6 driving the Express order flow with real access tokens.
+# Started and driven by run.sh; every service is on one network so token issuers match what the kernel expects.
+name: astra-httpbench
+
+services:
+  postgres:
+    image: ${PG_IMAGE:-pgvector/pgvector:pg16}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=${PG_SHARED_BUFFERS:-4GB}
+      - -c
+      - effective_cache_size=${PG_EFFECTIVE_CACHE:-10GB}
+      - -c
+      - max_connections=400
+      - -c
+      - work_mem=32MB
+      - -c
+      - max_wal_size=16GB
+      - -c
+      - checkpoint_timeout=15min
+      - -c
+      - wal_compression=lz4
+      - -c
+      - random_page_cost=1.1
+      - -c
+      - wal_level=logical
+      - -c
+      - track_io_timing=on
+    environment:
+      POSTGRES_DB: astra
+      POSTGRES_USER: astra
+      POSTGRES_PASSWORD: astra
+    shm_size: 2g
+    volumes:
+      - ../../../deploy/docker/init:/docker-entrypoint-initdb.d:ro   # astra_app role and astra_ext functions
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U astra -d astra"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HEALTH_ENABLED: "true"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: astra-local-admin
+    volumes:
+      - ../../../deploy/keycloak/realm:/opt/keycloak/data/import:ro
+
+  redis:
+    image: redis:7-alpine
+
+  kernel:
+    image: ${JRE_IMAGE:-eclipse-temurin:25-jre}
+    command: ["java", "-XX:MaxRAMPercentage=70", "-jar", "/app/quarkus-run.jar"]
+    environment:
+      QUARKUS_PROFILE: prod
+      ASTRA_DB_URL: jdbc:postgresql://postgres:5432/astra
+      ASTRA_DB_POOL_MIN: ${ASTRA_DB_POOL_MAX:-48}
+      ASTRA_DB_POOL_MAX: ${ASTRA_DB_POOL_MAX:-48}
+      ASTRA_REDIS_URL: redis://redis:6379
+      ASTRA_OIDC_URL: http://keycloak:8080/auth/realms/astra
+      ASTRA_OIDC_ISSUER: http://keycloak:8080/auth/realms/astra
+      ASTRA_KEYCLOAK_URL: http://keycloak:8080/auth
+      ASTRA_SEATA_ENABLED: "false"
+      QUARKUS_LOG_CATEGORY__IO_ASTRA__LEVEL: WARN
+    volumes:
+      - ../../../astra-server/target/quarkus-app:/app:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "127.0.0.1:${KERNEL_PORT:-18080}:8080"
+
+  k6:
+    image: ${K6_IMAGE:-grafana/k6:0.57.0}
+    profiles: ["load"]
+    user: "0:0"                      # writes its JSON summary into the bind-mounted results folder
+    volumes:
+      - ./:/scripts:ro
+      - ${OUT_DIR:-./results}:/out
+    environment:
+      API: http://kernel:8080
+      KEYCLOAK: http://keycloak:8080/auth/realms/astra

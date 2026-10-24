@@ -1,0 +1,43 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 32
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 323125
+number of failed transactions: 0 (0.000%)
+latency average = 2.977 ms
+initial connection time = 29.159 ms
+tps = 10748.191909 (without initial connection time)
+SQL script 1: ./workloads/rel-insert-series.sql
+ - weight: 1 (targets 3.2% of total)
+ - 10426 transactions (3.2% of total, tps = 346.802782)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 45.016 ms
+ - latency stddev = 84.868 ms
+SQL script 2: ./workloads/rel-update.sql
+ - weight: 8 (targets 25.8% of total)
+ - 83101 transactions (25.7% of total, tps = 2764.210432)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 3.577 ms
+ - latency stddev = 23.591 ms
+SQL script 3: ./workloads/rel-get.sql
+ - weight: 14 (targets 45.2% of total)
+ - 145710 transactions (45.1% of total, tps = 4846.790075)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 0.743 ms
+ - latency stddev = 0.235 ms
+SQL script 4: ./workloads/rel-list-customer.sql
+ - weight: 6 (targets 19.4% of total)
+ - 62544 transactions (19.4% of total, tps = 2080.417531)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 0.989 ms
+ - latency stddev = 0.495 ms
+SQL script 5: ./workloads/rel-list-status.sql
+ - weight: 2 (targets 6.5% of total)
+ - 20909 transactions (6.5% of total, tps = 695.501569)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 0.814 ms
+ - latency stddev = 0.207 ms

@@ -296,10 +296,12 @@ tenant needed the field, a tenant overlay would add it at run time without a new
   The kernel is the only intended writer, and row-level security still applies to every statement.
 - **Index semantics are text equality.** The expression is `data->>'field'`, so the index serves equality
   filters on text. Range queries on numbers or dates, sorting by a business field, or aggregation are not
-  served by these indexes today.
+  served by these indexes. Since the video, `projected: materialised` adds a typed column for range filters
+  (`field__gt`, `__lt`, ...).
 - **Hot fields.** PostgreSQL rewrites the whole row on `UPDATE`. A DocType whose few fields change many
-  times a day (stock, balances, counters) bloats a JSONB row. The design answer is materialised projection
-  columns and ledgers ([explain.en.md](../explain.en.md)); materialised projections are not built yet.
+  times a day (stock, balances, counters) bloats a JSONB row. The design answer is small documents and ledgers
+  ([explain.en.md](../explain.en.md)). The materialised columns added since the video are a typed copy for
+  range filters and do not make an update cheaper.
   Measure update rate per DocType before putting high-churn data in `astra_doc`.
 - **Index lifecycle.** The indexer only creates. Removing `projected: true` does not drop the index;
   that is a manual `DROP INDEX CONCURRENTLY` today.
@@ -340,6 +342,12 @@ and expand "Raw JSON from GET /api/doctype/CustomerOrder" to see the exact defin
 
 ## To be accurate
 
+- **The projection expression has changed since the video.** Under row-level security PostgreSQL never used
+  an index on `(data->>'field')`, because `->>` is not a LEAKPROOF function, so list filters scanned the whole
+  tenant. The kernel now filters and indexes on `astra_ext.astra_field(data, 'field')`, a LEAKPROOF alias of
+  the same function created by the bootstrap superuser, and the indexes are `astra_doc_pf_<field>` with
+  `modified_at DESC` appended and `WHERE ... IS NOT NULL`. The code and catalog output quoted in this article
+  show the version recorded in the video. Measurements and reasons: [benchmark-doctype-jsonb-the-right-way.md](../benchmark-doctype-jsonb-the-right-way.md).
 - **`CONCURRENTLY` is not visible in the catalog.** `pg_index` stores only the index definition, so the
   definition column never shows the word `CONCURRENTLY`; the narration says this on screen.
 - **The index count is install-specific.** The video showed ten projection indexes. The current image
@@ -347,7 +355,7 @@ and expand "Raw JSON from GET /api/doctype/CustomerOrder" to see the exact defin
 - **Projection indexes are built at kernel startup.** A field added by an app needs a new image; there is
   no projection builder triggered by a metadata change at run time.
 - **`pii` masks only the MCP path.** Desk and REST show PII to users whose role can read the DocType.
-- **Not built:** materialised projections, typed expression indexes, projection quotas and dropping
+- **Not built:** typed expression indexes, projection quotas and dropping
   unused indexes. These appear in the README as target architecture. Child tables are declared in the
   SPI's `FieldType` enum (`TABLE`), but neither the kernel validator nor Desk handles them yet.
 - **Any declared field can be filtered**, projected or not. Only projected fields have an index behind

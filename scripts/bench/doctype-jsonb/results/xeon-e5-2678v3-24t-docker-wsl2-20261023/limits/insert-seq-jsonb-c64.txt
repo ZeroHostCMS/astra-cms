@@ -1,0 +1,13 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+transaction type: ./workloads/jsonb-insert-seq.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 265953
+number of failed transactions: 0 (0.000%)
+latency average = 7.217 ms
+initial connection time = 57.194 ms
+tps = 8868.040642 (without initial connection time)

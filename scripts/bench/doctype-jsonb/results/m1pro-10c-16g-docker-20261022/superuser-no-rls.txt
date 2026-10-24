@@ -1,0 +1,188 @@
+                                                                           QUERY PLAN                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=4.77..4.78 rows=4 width=491) (actual time=2.486..2.487 rows=3 loops=1)
+   Buffers: shared hit=6 read=4
+   I/O Timings: shared read=2.214
+   ->  Sort  (cost=4.77..4.78 rows=4 width=491) (actual time=2.485..2.485 rows=3 loops=1)
+         Sort Key: modified_at DESC
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=6 read=4
+         I/O Timings: shared read=2.214
+         ->  Index Scan using astra_doc_p_customer on astra_doc  (cost=0.56..4.73 rows=4 width=491) (actual time=2.305..2.338 rows=3 loops=1)
+               Index Cond: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+               Buffers: shared hit=3 read=4
+               I/O Timings: shared read=2.214
+ Planning:
+   Buffers: shared hit=268
+ Planning Time: 1.044 ms
+ Execution Time: 2.521 ms
+(16 rows)
+
+                                                                           QUERY PLAN                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=4.77..4.78 rows=4 width=491) (actual time=0.093..0.094 rows=3 loops=1)
+   Buffers: shared hit=10
+   ->  Sort  (cost=4.77..4.78 rows=4 width=491) (actual time=0.092..0.093 rows=3 loops=1)
+         Sort Key: modified_at DESC
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=10
+         ->  Index Scan using astra_doc_p_customer on astra_doc  (cost=0.56..4.73 rows=4 width=491) (actual time=0.054..0.069 rows=3 loops=1)
+               Index Cond: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+               Buffers: shared hit=7
+ Planning:
+   Buffers: shared hit=268
+ Planning Time: 0.597 ms
+ Execution Time: 0.191 ms
+(13 rows)
+
+                                                                           QUERY PLAN                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=4.77..4.78 rows=4 width=491) (actual time=0.067..0.069 rows=3 loops=1)
+   Buffers: shared hit=10
+   ->  Sort  (cost=4.77..4.78 rows=4 width=491) (actual time=0.067..0.067 rows=3 loops=1)
+         Sort Key: modified_at DESC
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=10
+         ->  Index Scan using astra_doc_p_customer on astra_doc  (cost=0.56..4.73 rows=4 width=491) (actual time=0.040..0.055 rows=3 loops=1)
+               Index Cond: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text) AND ((data ->> 'customer'::text) = 'CUST-0123456'::text))
+               Buffers: shared hit=7
+ Planning:
+   Buffers: shared hit=268
+ Planning Time: 0.466 ms
+ Execution Time: 0.089 ms
+(13 rows)
+
+                                                                QUERY PLAN                                                                
+------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=693.00..693.05 rows=20 width=491) (actual time=1.769..1.770 rows=3 loops=1)
+   Buffers: shared hit=7 read=6
+   I/O Timings: shared read=1.530
+   ->  Sort  (cost=693.00..694.04 rows=416 width=491) (actual time=1.767..1.768 rows=3 loops=1)
+         Sort Key: modified_at DESC
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=7 read=6
+         I/O Timings: shared read=1.530
+         ->  Bitmap Heap Scan on astra_doc  (cost=12.69..681.93 rows=416 width=491) (actual time=1.103..1.748 rows=3 loops=1)
+               Recheck Cond: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+               Filter: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text))
+               Rows Removed by Filter: 2
+               Heap Blocks: exact=5
+               Buffers: shared hit=4 read=6
+               I/O Timings: shared read=1.530
+               ->  Bitmap Index Scan on astra_doc_data_gin  (cost=0.00..12.58 rows=601 width=0) (actual time=1.079..1.079 rows=5 loops=1)
+                     Index Cond: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+                     Buffers: shared hit=1 read=4
+                     I/O Timings: shared read=1.004
+ Planning:
+   Buffers: shared hit=273 read=2
+   I/O Timings: shared read=0.859
+ Planning Time: 1.522 ms
+ Execution Time: 1.815 ms
+(24 rows)
+
+                                                                QUERY PLAN                                                                
+------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=693.00..693.05 rows=20 width=491) (actual time=0.080..0.081 rows=3 loops=1)
+   Buffers: shared hit=13
+   ->  Sort  (cost=693.00..694.04 rows=416 width=491) (actual time=0.079..0.079 rows=3 loops=1)
+         Sort Key: modified_at DESC
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=13
+         ->  Bitmap Heap Scan on astra_doc  (cost=12.69..681.93 rows=416 width=491) (actual time=0.034..0.063 rows=3 loops=1)
+               Recheck Cond: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+               Filter: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text))
+               Rows Removed by Filter: 2
+               Heap Blocks: exact=5
+               Buffers: shared hit=10
+               ->  Bitmap Index Scan on astra_doc_data_gin  (cost=0.00..12.58 rows=601 width=0) (actual time=0.019..0.020 rows=5 loops=1)
+                     Index Cond: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+                     Buffers: shared hit=5
+ Planning:
+   Buffers: shared hit=275
+ Planning Time: 0.522 ms
+ Execution Time: 0.109 ms
+(19 rows)
+
+                                                                QUERY PLAN                                                                
+------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=693.00..693.05 rows=20 width=491) (actual time=0.130..0.131 rows=3 loops=1)
+   Buffers: shared hit=13
+   ->  Sort  (cost=693.00..694.04 rows=416 width=491) (actual time=0.129..0.129 rows=3 loops=1)
+         Sort Key: modified_at DESC
+         Sort Method: quicksort  Memory: 28kB
+         Buffers: shared hit=13
+         ->  Bitmap Heap Scan on astra_doc  (cost=12.69..681.93 rows=416 width=491) (actual time=0.050..0.076 rows=3 loops=1)
+               Recheck Cond: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+               Filter: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text))
+               Rows Removed by Filter: 2
+               Heap Blocks: exact=5
+               Buffers: shared hit=10
+               ->  Bitmap Index Scan on astra_doc_data_gin  (cost=0.00..12.58 rows=601 width=0) (actual time=0.032..0.032 rows=5 loops=1)
+                     Index Cond: (data @> '{"customer": "CUST-0123456"}'::jsonb)
+                     Buffers: shared hit=5
+ Planning:
+   Buffers: shared hit=275
+ Planning Time: 0.969 ms
+ Execution Time: 0.174 ms
+(19 rows)
+
+                                                               QUERY PLAN                                                                
+-----------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=691.32..691.33 rows=1 width=8) (actual time=471.955..471.956 rows=1 loops=1)
+   Buffers: shared hit=5966 read=1623
+   I/O Timings: shared read=350.367
+   ->  Bitmap Heap Scan on astra_doc  (cost=21.04..690.28 rows=416 width=0) (actual time=19.672..471.420 rows=5929 loops=1)
+         Recheck Cond: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+         Filter: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text))
+         Rows Removed by Filter: 1513
+         Heap Blocks: exact=7357
+         Buffers: shared hit=5966 read=1623
+         I/O Timings: shared read=350.367
+         ->  Bitmap Index Scan on astra_doc_data_gin  (cost=0.00..20.93 rows=601 width=0) (actual time=18.810..18.810 rows=7442 loops=1)
+               Index Cond: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+               Buffers: shared hit=104 read=128
+               I/O Timings: shared read=6.388
+ Planning:
+   Buffers: shared hit=236
+ Planning Time: 0.715 ms
+ Execution Time: 472.164 ms
+(18 rows)
+
+                                                              QUERY PLAN                                                               
+---------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=691.32..691.33 rows=1 width=8) (actual time=43.340..43.341 rows=1 loops=1)
+   Buffers: shared hit=7589
+   ->  Bitmap Heap Scan on astra_doc  (cost=21.04..690.28 rows=416 width=0) (actual time=10.190..42.938 rows=5929 loops=1)
+         Recheck Cond: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+         Filter: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text))
+         Rows Removed by Filter: 1513
+         Heap Blocks: exact=7357
+         Buffers: shared hit=7589
+         ->  Bitmap Index Scan on astra_doc_data_gin  (cost=0.00..20.93 rows=601 width=0) (actual time=9.352..9.352 rows=7442 loops=1)
+               Index Cond: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+               Buffers: shared hit=232
+ Planning:
+   Buffers: shared hit=236
+ Planning Time: 0.749 ms
+ Execution Time: 43.573 ms
+(15 rows)
+
+                                                               QUERY PLAN                                                                
+-----------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=691.32..691.33 rows=1 width=8) (actual time=57.342..57.343 rows=1 loops=1)
+   Buffers: shared hit=7589
+   ->  Bitmap Heap Scan on astra_doc  (cost=21.04..690.28 rows=416 width=0) (actual time=11.074..56.954 rows=5929 loops=1)
+         Recheck Cond: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+         Filter: ((tenant_id = 'hanoi-express'::text) AND (doctype = 'CustomerOrder'::text))
+         Rows Removed by Filter: 1513
+         Heap Blocks: exact=7357
+         Buffers: shared hit=7589
+         ->  Bitmap Index Scan on astra_doc_data_gin  (cost=0.00..20.93 rows=601 width=0) (actual time=10.321..10.321 rows=7442 loops=1)
+               Index Cond: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+               Buffers: shared hit=232
+ Planning:
+   Buffers: shared hit=236
+ Planning Time: 0.988 ms
+ Execution Time: 57.523 ms
+(15 rows)
+

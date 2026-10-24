@@ -1,0 +1,22 @@
+== partition  norders=3800707 secs=30 threads=8  2026-10-23 17:20:09 UTC  3985MB sb, 16GB wal, sync_commit=on
+part-get-doc-c64                   c=64 R=- tps=33787 fail=0 cpu=83% hit=95.9% wal/tx=0 warmup=10s  s0 n=763758 p50=1.31 p95=3.23 p99=5.96 max=142.4
+part-get-txn-c64                   c=64 R=- tps=13797 fail=0 cpu=86% hit=98.9% wal/tx=0 warmup=10s  s0 n=288754 p50=3.95 p95=8.51 p99=12.15 max=52.6
+part-get-txnpruned-c64             c=64 R=- tps=17780 fail=0 cpu=87% hit=99.5% wal/tx=0 warmup=10s  s0 n=368920 p50=3.12 p95=6.66 p99=9.39 max=54.0
+part-list-customer-doc-c64         c=64 R=- tps=33292 fail=0 cpu=85% hit=95.3% wal/tx=0 warmup=10s  s0 n=702266 p50=1.38 p95=3.79 p99=7.66 max=146.0
+part-list-customer-txn-c64         c=64 R=- tps=8747 fail=0 cpu=85% hit=97.7% wal/tx=0 warmup=10s  s0 n=187101 p50=5.18 p95=17.03 p99=24.78 max=86.6
+part-list-status-doc-c64           c=64 R=- tps=25455 fail=0 cpu=83% hit=100.0% wal/tx=0 warmup=10s  s0 n=517550 p50=1.68 p95=5.55 p99=9.72 max=130.0
+part-list-status-txn-c64           c=64 R=- tps=7952 fail=0 cpu=89% hit=100.0% wal/tx=0 warmup=10s  s0 n=166040 p50=6.34 p95=18.58 p99=26.70 max=65.9
+part-insert-doc-c64                c=64 R=- tps=8826 fail=0 cpu=58% hit=98.7% wal/tx=2835 warmup=10s  s0 n=219431 p50=5.43 p95=8.98 p99=11.20 max=114.3
+part-insert-txn-c64                c=64 R=- tps=9941 fail=0 cpu=72% hit=99.7% wal/tx=1822 warmup=10s  s0 n=205404 p50=5.64 p95=11.33 p99=22.27 max=120.5
+part-update-waybill-doc-c64        c=64 R=- tps=8416 fail=0 cpu=67% hit=96.8% wal/tx=4085 warmup=10s  s0 n=187203 p50=6.31 p95=10.91 p99=19.24 max=125.0
+part-update-waybill-txn-c64        c=64 R=- tps=3619 fail=0 cpu=81% hit=99.0% wal/tx=6412 warmup=10s  s0 n=76784 p50=15.45 p95=25.81 p99=34.67 max=126.2
+part-update-waybill-txnpruned-c64  c=64 R=- tps=3999 fail=0 cpu=70% hit=99.5% wal/tx=6144 warmup=10s  s0 n=87993 p50=13.43 p95=24.56 p99=38.66 max=130.6
+part-mix-doc-c64                   c=64 R=- tps=14306 fail=0 cpu=68% hit=91.7% wal/tx=1681 warmup=10s  s0 n=10068 p50=6.80 p95=18.36 p99=42.98 max=228.6  s1 n=80960 p50=7.51 p95=19.64 p99=44.50 max=232.4  s2 n=141653 p50=1.49 p95=3.40 p99=5.17 max=98.8  s3 n=60445 p50=2.12 p95=5.53 p99=9.48 max=103.5  s4 n=20071 p50=1.59 p95=3.19 p99=4.43 max=28.7
+part-mix-txn-c64                   c=64 R=- tps=6451 fail=0 cpu=82% hit=98.0% wal/tx=2458 warmup=10s  s0 n=4631 p50=9.87 p95=20.21 p99=36.01 max=116.4  s1 n=37567 p50=16.53 p95=28.64 p99=44.19 max=129.2  s2 n=66215 p50=4.06 p95=10.06 p99=14.27 max=101.9  s3 n=28209 p50=7.04 p95=14.45 p99=19.79 max=125.6  s4 n=9495 p50=4.86 p95=11.23 p99=15.99 max=33.2
+part-mix-txnpruned-c64             c=64 R=- tps=8294 fail=0 cpu=84% hit=98.8% wal/tx=2237 warmup=10s  s0 n=5865 p50=9.08 p95=17.77 p99=33.62 max=144.1  s1 n=46570 p50=13.64 p95=24.15 p99=38.26 max=152.2  s2 n=81840 p50=3.10 p95=8.51 p99=12.55 max=101.9  s3 n=34976 p50=4.92 p95=10.88 p99=15.00 max=98.2  s4 n=11531 p50=5.00 p95=10.77 p99=14.93 max=32.2
+range-cod-col-doc-c16              c=16 R=- tps=46 fail=0 cpu=58% hit=100.0% wal/tx=7773 warmup=10s  s0 n=1091 p50=303.23 p95=353.57 p99=373.24 max=407.7
+range-cod-col-txn-c16              c=16 R=- tps=38 fail=0 cpu=63% hit=100.0% wal/tx=6799 warmup=10s  s0 n=838 p50=395.70 p95=490.92 p99=555.56 max=618.1
+range-cod-json-txn-c16             c=16 R=- tps=16 fail=0 cpu=67% hit=100.0% wal/tx=0 warmup=10s  s0 n=314 p50=997.62 p95=1261.02 p99=1349.05 max=1404.2
+range-cod-col-doc-custom-c16       c=16 R=- tps=135 fail=0 cpu=68% hit=100.0% wal/tx=0 warmup=10s  s0 n=2840 p50=13.19 p95=320.20 p99=335.77 max=356.4
+range-cod-col-txn-custom-c16       c=16 R=- tps=97 fail=0 cpu=68% hit=100.0% wal/tx=0 warmup=10s  s0 n=2030 p50=17.51 p95=419.41 p99=440.13 max=456.8
+range-cod-json-txn-custom-c16      c=16 R=- tps=16 fail=0 cpu=67% hit=100.0% wal/tx=0 warmup=10s  s0 n=325 p50=985.70 p95=1202.54 p99=1297.81 max=1389.1

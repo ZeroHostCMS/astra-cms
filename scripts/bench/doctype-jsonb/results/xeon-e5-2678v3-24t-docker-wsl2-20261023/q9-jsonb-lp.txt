@@ -1,0 +1,44 @@
+hanoi-express
+Aggregate  (cost=6.01..6.02 rows=1 width=8) (actual time=0.123..0.124 rows=1 loops=1)
+  Buffers: shared hit=9
+  ->  Index Scan using astra_doc_lp_customer on astra_doc  (cost=0.56..6.00 rows=4 width=0) (actual time=0.065..0.117 rows=5 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+        Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=283
+Planning Time: 1.234 ms
+Execution Time: 0.278 ms
+----- run 1: 0.278 ms
+hanoi-express
+Aggregate  (cost=6.01..6.02 rows=1 width=8) (actual time=0.237..0.238 rows=1 loops=1)
+  Buffers: shared hit=9
+  ->  Index Scan using astra_doc_lp_customer on astra_doc  (cost=0.56..6.00 rows=4 width=0) (actual time=0.131..0.226 rows=5 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+        Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=283
+Planning Time: 2.709 ms
+Execution Time: 0.555 ms
+----- run 2: 0.555 ms
+hanoi-express
+Aggregate  (cost=6.01..6.02 rows=1 width=8) (actual time=0.141..0.141 rows=1 loops=1)
+  Buffers: shared hit=9
+  ->  Index Scan using astra_doc_lp_customer on astra_doc  (cost=0.56..6.00 rows=4 width=0) (actual time=0.076..0.133 rows=5 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+        Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=283
+Planning Time: 1.418 ms
+Execution Time: 0.295 ms
+----- run 3: 0.295 ms
+hanoi-express
+Aggregate  (cost=6.01..6.02 rows=1 width=8) (actual time=0.145..0.145 rows=1 loops=1)
+  Buffers: shared hit=9
+  ->  Index Scan using astra_doc_lp_customer on astra_doc  (cost=0.56..6.00 rows=4 width=0) (actual time=0.076..0.138 rows=5 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (astra_field(data, 'customer'::text) = 'CUST-0123456'::text))
+        Buffers: shared hit=9
+Planning:
+  Buffers: shared hit=283
+Planning Time: 1.441 ms
+Execution Time: 0.290 ms
+----- run 4: 0.290 ms

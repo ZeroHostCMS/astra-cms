@@ -113,7 +113,9 @@ async fn run(cfg: &Config, url: &str) -> Result<()> {
                 Message::Begin { commit_unix_micros, .. } => commit_micros = commit_unix_micros,
                 Message::Insert { relation, new } | Message::Update { relation, new } => {
                     let Some(rel) = relations.get(&relation) else { bail!("change for unknown relation {relation}") };
-                    if rel.namespace != "public" || rel.name != "astra_doc" { continue; }
+                    // astra_doc_txn holds DocTypes with `partition: month`; the publication sends its rows under the parent
+                    // name (publish_via_partition_root), with the same columns as astra_doc.
+                    if rel.namespace != "public" || (rel.name != "astra_doc" && rel.name != "astra_doc_txn") { continue; }
                     if apply(&tx, cfg, &upserts, rel, &new, &lsn).await? { applied += 1; }
                 }
                 Message::Delete => debug!("delete at {lsn} ignored: documents are never deleted, only cancelled"),

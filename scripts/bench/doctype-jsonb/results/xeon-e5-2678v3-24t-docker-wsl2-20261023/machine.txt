@@ -1,0 +1,18 @@
+label: xeon-e5-2678v3-24t-docker-wsl2-20261023
+note: second run, before bench.sh existed (same SQL and runners, orchestrated by hand); PostgreSQL in Docker Desktop on Windows 10 (WSL2 VM 16 GB, 24 CPU, shared with ~3 GB of other containers); data on a VHDX on the NVMe; pgbench inside the PostgreSQL container. Original chain with the first-run settings (max_wal_size 4GB), limits phase with the tuned settings below
+date_utc: 2026-10-23
+kernel: Linux (WSL2) under Windows 10 Pro 19045
+os: Docker Desktop 4.x, Docker 29.9.1
+vendor: (desktop)
+product: (desktop)
+cpu_model: Intel(R) Xeon(R) CPU E5-2678 v3 @ 2.50GHz
+cpus: 24
+cpu_governor: n/a (Windows)
+ram_mb: 32651
+docker: 29.9.1
+pg_image: pgvector/pgvector:pg16 pgvector/pgvector@sha256:7b822b0aac60967beb1ea5e576b8602c94c300a157d187f385ae3e0da199b90a
+server: container on the same machine, data in Docker volume astra-bench-pg (VHDX on WD Blue SN570 NVMe)
+rows: 5000000
+profile: auto (limits phase): shared_buffers=4GB effective_cache_size=11GB work_mem=32MB maintenance_work_mem=1GB max_connections=400 wal_buffers=64MB max_wal_size=16GB min_wal_size=2GB checkpoint_timeout=15min wal_compression=lz4 random_page_cost=1.1 effective_io_concurrency=200 max_worker_processes=24 max_parallel_workers=12 max_parallel_workers_per_gather=4 autovacuum_max_workers=4 autovacuum_naptime=10s autovacuum_vacuum_cost_limit=2000
+data_device: WD Blue SN570 500GB NVMe (through a Docker Desktop VHDX)
+PostgreSQL 16.15 (Debian 16.15-1.pgdg12+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14+deb12u1) 12.2.0, 64-bit

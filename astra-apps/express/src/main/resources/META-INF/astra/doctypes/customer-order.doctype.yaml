@@ -3,7 +3,7 @@ module: oms
 kind: transaction
 submittable: true                 # Draft (0) -> Submitted (1) -> Cancelled (2) -> Amend
 transaction: global               # submit/cancel span BMS credit (Seata AT) and pickup capacity (Seata TCC)
-naming: { series: "ORD-.YYYYMMDD.-.#####" }
+naming: { series: "ORD-.YYYYMMDD.-.#######", gapless: false }   # 7 digits: up to 9,999,999 orders a day per tenant; numbers come from per-instance blocks, no counter lock
 
 fields:
   - { name: customer,         type: Link,     options: Customer, required: true, in-list: true, projected: true }
@@ -13,7 +13,7 @@ fields:
   - { name: zone,             type: Select,   options: [Same city, Domestic, Remote], default: Domestic, in-list: true, projected: true }
   - { name: service,          type: Select,   options: [Standard, Express], default: Standard, in-list: true }
   - { name: weight_kg,        type: Float,    required: true, label: Weight (kg) }
-  - { name: cod_amount,       type: Currency, default: 0, label: COD amount }
+  - { name: cod_amount,       type: Currency, default: 0, label: COD amount, projected: materialised }   # bigint column: range filters (cod_amount__gt=...) use an index
   - { name: shipping_fee,     type: Currency, read-only: true, in-list: true }   # computed by ShippingFeeHook
   - { name: priced_by,        type: Data,     read-only: true, in-list: true }   # standard tariff or the tenant's Wasm rule
   - { name: waybill,          type: Link,     options: Waybill, read-only: true, in-list: true }   # created on submit

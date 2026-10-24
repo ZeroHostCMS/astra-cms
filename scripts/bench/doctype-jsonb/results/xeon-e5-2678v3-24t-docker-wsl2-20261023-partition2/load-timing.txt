@@ -1,0 +1,105 @@
+Timing is on.
+Timing is on.
+SET
+Time: 0.407 ms
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 0.628 ms
+SELECT 5000000
+Time: 85345.613 ms (01:25.346)
+ANALYZE
+Time: 1086.764 ms (00:01.087)
+INSERT 0 4000050
+Time: 55310.770 ms (00:55.311)
+   set_config   
+----------------
+ saigon-express
+(1 row)
+
+Time: 0.367 ms
+INSERT 0 900459
+Time: 14114.902 ms (00:14.115)
+   set_config   
+----------------
+ danang-express
+(1 row)
+
+Time: 0.446 ms
+INSERT 0 99491
+Time: 3097.581 ms (00:03.098)
+CREATE FUNCTION
+Time: 2.907 ms
+DO
+Time: 465609.512 ms (07:45.610)
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 2.109 ms
+INSERT 0 1000000
+Time: 68143.442 ms (01:08.143)
+RESET
+Time: 2.372 ms
+SET
+Time: 1.367 ms
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 0.969 ms
+DROP TABLE
+Time: 604.638 ms
+ALTER TABLE
+Time: 7.770 ms
+UPDATE 4000050
+Time: 206402.267 ms (03:26.402)
+VACUUM
+Time: 117412.319 ms (01:57.412)
+ALTER TABLE
+Time: 90081.849 ms (01:30.082)
+RESET
+Time: 0.385 ms
+CREATE FUNCTION
+Time: 13.539 ms
+GRANT
+Time: 2.245 ms
+SET
+Time: 0.338 ms
+CREATE INDEX
+Time: 17797.773 ms (00:17.798)
+CREATE INDEX
+Time: 23943.659 ms (00:23.944)
+CREATE INDEX
+Time: 10593.732 ms (00:10.594)
+CREATE INDEX
+Time: 20913.597 ms (00:20.914)
+CREATE INDEX
+Time: 13948.550 ms (00:13.949)
+CREATE INDEX
+Time: 9970.142 ms (00:09.970)
+CREATE INDEX
+Time: 9237.247 ms (00:09.237)
+CREATE INDEX
+Time: 18734.856 ms (00:18.735)
+CREATE INDEX
+Time: 5888.968 ms (00:05.889)
+CREATE INDEX
+Time: 11820.728 ms (00:11.821)
+CREATE INDEX
+Time: 5606.438 ms (00:05.606)
+CREATE INDEX
+Time: 5375.326 ms (00:05.375)
+psql:06-lean-reload.sql:32: NOTICE:  drop cascades to function gen_doc(gen)
+DROP TABLE
+Time: 45.653 ms
+VACUUM
+Time: 1815.591 ms (00:01.816)
+VACUUM
+Time: 5167.251 ms (00:05.167)
+RESET
+Time: 0.172 ms

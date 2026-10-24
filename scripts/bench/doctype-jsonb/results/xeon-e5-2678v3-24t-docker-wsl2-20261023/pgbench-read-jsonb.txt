@@ -1,0 +1,29 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 10.0 s, 17.0 tps, lat 902.834 ms stddev 1767.253, 0 failed
+progress: 20.0 s, 14.0 tps, lat 1117.952 ms stddev 1925.792, 0 failed
+progress: 30.0 s, 14.3 tps, lat 1051.709 ms stddev 1821.907, 0 failed
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 16
+number of threads: 4
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 469
+number of failed transactions: 0 (0.000%)
+latency average = 1112.744 ms
+latency stddev = 1885.295 ms
+initial connection time = 21.644 ms
+tps = 14.101052 (without initial connection time)
+SQL script 1: /tmp/tmp.CWSva0SAfI/read-jsonb.sql
+ - weight: 7 (targets 70.0% of total)
+ - 326 transactions (69.5% of total, tps = 9.801584)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 3.046 ms
+ - latency stddev = 4.306 ms
+SQL script 2: /tmp/tmp.CWSva0SAfI/list-jsonb.sql
+ - weight: 3 (targets 30.0% of total)
+ - 143 transactions (30.5% of total, tps = 4.299468)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 3642.543 ms
+ - latency stddev = 1565.246 ms

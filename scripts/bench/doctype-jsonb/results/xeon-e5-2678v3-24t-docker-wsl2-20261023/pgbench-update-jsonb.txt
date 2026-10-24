@@ -1,0 +1,17 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 10.0 s, 5378.9 tps, lat 2.759 ms stddev 1.291, 0 failed
+progress: 20.0 s, 5603.3 tps, lat 2.813 ms stddev 50.158, 0 failed
+progress: 30.0 s, 5649.4 tps, lat 2.803 ms stddev 53.615, 0 failed
+transaction type: /tmp/tmp.CWSva0SAfI/update-jsonb.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 16
+number of threads: 4
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 166332
+number of failed transactions: 0 (0.000%)
+latency average = 2.813 ms
+latency stddev = 43.546 ms
+initial connection time = 22.147 ms
+tps = 5400.726805 (without initial connection time)

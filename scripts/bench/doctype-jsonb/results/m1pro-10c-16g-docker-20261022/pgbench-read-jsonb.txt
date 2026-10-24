@@ -1,0 +1,31 @@
+pgbench (18.3, server 16.15 (Debian 16.15-1.pgdg12+2))
+progress: 10.0 s, 9.8 tps, lat 1314.475 ms stddev 2701.140, 0 failed
+progress: 20.0 s, 12.9 tps, lat 1162.815 ms stddev 2024.862, 0 failed
+progress: 30.0 s, 8.0 tps, lat 1894.064 ms stddev 2488.179, 0 failed
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 16
+number of threads: 4
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 323
+number of failed transactions: 0 (0.000%)
+latency average = 1615.140 ms
+latency stddev = 2546.320 ms
+initial connection time = 59.500 ms
+tps = 9.452591 (without initial connection time)
+SQL script 1: /var/folders/dx/1ynqbct53v15xb_jhtmrwwkc0000gp/T/tmp.UMSwsaCPhS/read-jsonb.sql
+ - weight: 7 (targets 70.0% of total)
+ - 217 transactions (67.2% of total)
+ - number of transactions actually processed: 217 (tps = 6.350502)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 30.652 ms
+ - latency stddev = 24.852 ms
+SQL script 2: /var/folders/dx/1ynqbct53v15xb_jhtmrwwkc0000gp/T/tmp.UMSwsaCPhS/list-jsonb.sql
+ - weight: 3 (targets 30.0% of total)
+ - 106 transactions (32.8% of total)
+ - number of transactions actually processed: 106 (tps = 3.102089)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 4858.857 ms
+ - latency stddev = 2023.483 ms

@@ -297,10 +297,12 @@ Nếu chỉ một tenant cần field này, một overlay của tenant sẽ thêm
   `data`. Kernel là bên ghi duy nhất theo thiết kế, và row-level security vẫn áp lên mọi câu lệnh.
 - **Ngữ nghĩa index là so sánh bằng trên chuỗi.** Biểu thức là `data->>'field'`, nên index phục vụ bộ lọc
   so sánh bằng trên text. Truy vấn theo khoảng trên số hay ngày, sắp xếp theo một field nghiệp vụ, hay tổng
-  hợp đều chưa được các index này phục vụ.
+  hợp đều không được các index này phục vụ. Sau khi quay video, `projected: materialised` thêm một cột có
+  kiểu cho lọc khoảng (`field__gt`, `__lt`, ...).
 - **Field nóng.** PostgreSQL ghi lại toàn bộ dòng khi `UPDATE`. Một DocType có vài field thay đổi nhiều lần
-  mỗi ngày (tồn kho, số dư, bộ đếm) sẽ làm phình dòng JSONB. Câu trả lời trong thiết kế là các cột
-  projection vật lý hoá và sổ cái ([explain.md](../explain.md)); projection vật lý hoá chưa được xây. Hãy
+  mỗi ngày (tồn kho, số dư, bộ đếm) sẽ làm phình dòng JSONB. Câu trả lời trong thiết kế là giữ tài liệu
+  nhỏ và dùng sổ cái ([explain.md](../explain.md)). Cột materialised thêm sau khi quay video là bản sao có
+  kiểu phục vụ lọc khoảng, nên không làm update rẻ hơn. Hãy
   đo tần suất cập nhật theo từng DocType trước khi đưa dữ liệu thay đổi liên tục vào `astra_doc`.
 - **Vòng đời index.** Indexer chỉ tạo. Bỏ `projected: true` không xoá index; hiện tại việc đó là một lệnh
   `DROP INDEX CONCURRENTLY` chạy tay.
@@ -341,6 +343,12 @@ mở rộng mục "Raw JSON from GET /api/doctype/CustomerOrder" để xem đún
 
 ## Nói đúng
 
+- **Biểu thức projection đã đổi sau khi quay video.** Dưới row-level security, PostgreSQL không bao giờ dùng
+  index trên `(data->>'field')`, vì `->>` không phải hàm LEAKPROOF, nên mọi bộ lọc danh sách quét toàn tenant.
+  Kernel nay lọc và đánh index bằng `astra_ext.astra_field(data, 'field')`, một alias LEAKPROOF của cùng hàm do
+  superuser bootstrap tạo, và index có tên `astra_doc_pf_<field>`, thêm `modified_at DESC` và `WHERE ... IS NOT
+  NULL`. Mã và output catalog trích trong bài là phiên bản lúc quay video. Số đo và lý do:
+  [benchmark-doctype-jsonb-the-right-way.md](../benchmark-doctype-jsonb-the-right-way.md).
 - **`CONCURRENTLY` không hiện trong catalog.** `pg_index` chỉ lưu định nghĩa index, nên cột định nghĩa
   không bao giờ có chữ `CONCURRENTLY`; lời thuyết minh nói rõ điều này trên màn hình.
 - **Số index tuỳ từng bản cài.** Video cho thấy mười projection index. Image hiện tại còn đóng gói HRM và
@@ -348,7 +356,7 @@ mở rộng mục "Raw JSON from GET /api/doctype/CustomerOrder" để xem đún
 - **Projection index được tạo lúc kernel khởi động.** Một field do app thêm vào cần image mới; không có bộ
   tạo projection nào được kích hoạt bởi thay đổi metadata lúc chạy.
 - **`pii` chỉ che trên đường MCP.** Desk và REST vẫn hiện PII cho người dùng có role đọc được DocType.
-- **Chưa được xây:** projection vật lý hoá, expression index có kiểu, hạn mức projection và xoá index không
+- **Chưa được xây:** expression index có kiểu, hạn mức projection và xoá index không
   dùng. Những thứ này xuất hiện trong README dưới dạng kiến trúc mục tiêu. Bảng con được khai báo trong enum
   `FieldType` của SPI (`TABLE`), nhưng cả validator của kernel lẫn Desk đều chưa xử lý.
 - **Field nào đã khai báo cũng lọc được**, projected hay không. Chỉ field projected mới có index đằng sau

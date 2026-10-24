@@ -1,0 +1,182 @@
+hanoi-express
+Limit  (cost=2.44..488.32 rows=20 width=544) (actual time=7.634..17.230 rows=20 loops=1)
+  Buffers: shared hit=3458 read=139
+  I/O Timings: shared read=5.612
+  ->  Merge Append  (cost=2.44..475626.61 rows=19578 width=544) (actual time=7.633..17.221 rows=20 loops=1)
+        Sort Key: astra_doc_part.modified_at DESC
+        Buffers: shared hit=3458 read=139
+        I/O Timings: shared read=5.612
+        ->  Index Scan using astra_doc_part_2026_10_18_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.13..2.35 rows=1 width=230) (actual time=0.007..0.007 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+        ->  Index Scan using astra_doc_part_2026_10_19_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.43..55592.17 rows=2564 width=544) (actual time=2.475..2.475 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 143
+              Buffers: shared hit=144 read=4
+              I/O Timings: shared read=1.548
+        ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.56..189840.93 rows=7284 width=544) (actual time=2.912..2.912 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 60
+              Buffers: shared read=66
+              I/O Timings: shared read=2.441
+        ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.56..190162.54 rows=8018 width=544) (actual time=1.613..1.613 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 36
+              Buffers: shared read=42
+              I/O Timings: shared read=1.403
+        ->  Index Scan using astra_doc_part_2026_10_22_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.42..39651.11 rows=1709 width=544) (actual time=0.595..10.170 rows=20 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 3290
+              Buffers: shared hit=3308 read=27
+              I/O Timings: shared read=0.220
+        ->  Index Scan using astra_doc_part_2026_10_23_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.13..2.35 rows=1 width=230) (actual time=0.013..0.013 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+        ->  Index Scan using astra_doc_part_2026_10_24_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.13..2.35 rows=1 width=230) (actual time=0.013..0.013 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1369
+Planning Time: 8.342 ms
+Execution Time: 17.398 ms
+----- run 1: 17.398 ms
+hanoi-express
+Limit  (cost=2.44..488.32 rows=20 width=544) (actual time=3.690..15.992 rows=20 loops=1)
+  Buffers: shared hit=3597
+  ->  Merge Append  (cost=2.44..475626.61 rows=19578 width=544) (actual time=3.688..15.981 rows=20 loops=1)
+        Sort Key: astra_doc_part.modified_at DESC
+        Buffers: shared hit=3597
+        ->  Index Scan using astra_doc_part_2026_10_18_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.13..2.35 rows=1 width=230) (actual time=0.010..0.010 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+        ->  Index Scan using astra_doc_part_2026_10_19_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.43..55592.17 rows=2564 width=544) (actual time=1.772..1.772 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 143
+              Buffers: shared hit=148
+        ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.56..189840.93 rows=7284 width=544) (actual time=0.470..0.470 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 60
+              Buffers: shared hit=66
+        ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.56..190162.54 rows=8018 width=544) (actual time=0.293..0.293 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 36
+              Buffers: shared hit=42
+        ->  Index Scan using astra_doc_part_2026_10_22_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.42..39651.11 rows=1709 width=544) (actual time=1.089..13.365 rows=20 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 3290
+              Buffers: shared hit=3335
+        ->  Index Scan using astra_doc_part_2026_10_23_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.13..2.35 rows=1 width=230) (actual time=0.021..0.021 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+        ->  Index Scan using astra_doc_part_2026_10_24_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.13..2.35 rows=1 width=230) (actual time=0.026..0.026 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1369
+Planning Time: 9.968 ms
+Execution Time: 16.288 ms
+----- run 2: 16.288 ms
+hanoi-express
+Limit  (cost=2.44..488.32 rows=20 width=544) (actual time=1.870..11.287 rows=20 loops=1)
+  Buffers: shared hit=3597
+  ->  Merge Append  (cost=2.44..475626.61 rows=19578 width=544) (actual time=1.869..11.279 rows=20 loops=1)
+        Sort Key: astra_doc_part.modified_at DESC
+        Buffers: shared hit=3597
+        ->  Index Scan using astra_doc_part_2026_10_18_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.13..2.35 rows=1 width=230) (actual time=0.006..0.007 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+        ->  Index Scan using astra_doc_part_2026_10_19_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.43..55592.17 rows=2564 width=544) (actual time=0.851..0.851 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 143
+              Buffers: shared hit=148
+        ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.56..189840.93 rows=7284 width=544) (actual time=0.270..0.270 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 60
+              Buffers: shared hit=66
+        ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.56..190162.54 rows=8018 width=544) (actual time=0.132..0.132 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 36
+              Buffers: shared hit=42
+        ->  Index Scan using astra_doc_part_2026_10_22_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.42..39651.11 rows=1709 width=544) (actual time=0.578..9.974 rows=20 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 3290
+              Buffers: shared hit=3335
+        ->  Index Scan using astra_doc_part_2026_10_23_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.13..2.35 rows=1 width=230) (actual time=0.013..0.013 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+        ->  Index Scan using astra_doc_part_2026_10_24_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.13..2.35 rows=1 width=230) (actual time=0.014..0.014 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1369
+Planning Time: 4.919 ms
+Execution Time: 11.453 ms
+----- run 3: 11.453 ms
+hanoi-express
+Limit  (cost=2.44..488.32 rows=20 width=544) (actual time=3.205..13.026 rows=20 loops=1)
+  Buffers: shared hit=3597
+  ->  Merge Append  (cost=2.44..475626.61 rows=19578 width=544) (actual time=3.203..13.016 rows=20 loops=1)
+        Sort Key: astra_doc_part.modified_at DESC
+        Buffers: shared hit=3597
+        ->  Index Scan using astra_doc_part_2026_10_18_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_18 astra_doc_part_1  (cost=0.13..2.35 rows=1 width=230) (actual time=0.011..0.011 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+        ->  Index Scan using astra_doc_part_2026_10_19_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_19 astra_doc_part_2  (cost=0.43..55592.17 rows=2564 width=544) (actual time=1.499..1.499 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 143
+              Buffers: shared hit=148
+        ->  Index Scan using astra_doc_part_2026_10_20_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_20 astra_doc_part_3  (cost=0.56..189840.93 rows=7284 width=544) (actual time=0.487..0.487 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 60
+              Buffers: shared hit=66
+        ->  Index Scan using astra_doc_part_2026_10_21_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_21 astra_doc_part_4  (cost=0.56..190162.54 rows=8018 width=544) (actual time=0.231..0.231 rows=1 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 36
+              Buffers: shared hit=42
+        ->  Index Scan using astra_doc_part_2026_10_22_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_22 astra_doc_part_5  (cost=0.42..39651.11 rows=1709 width=544) (actual time=0.941..10.738 rows=20 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Rows Removed by Filter: 3290
+              Buffers: shared hit=3335
+        ->  Index Scan using astra_doc_part_2026_10_23_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_23 astra_doc_part_6  (cost=0.13..2.35 rows=1 width=230) (actual time=0.013..0.014 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+        ->  Index Scan using astra_doc_part_2026_10_24_tenant_id_doctype_modified_at_idx on astra_doc_part_2026_10_24 astra_doc_part_7  (cost=0.13..2.35 rows=1 width=230) (actual time=0.016..0.016 rows=0 loops=1)
+              Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+              Filter: ((data ->> 'ops_status'::text) = 'Cancelled'::text)
+              Buffers: shared hit=2
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=1369
+Planning Time: 10.167 ms
+Execution Time: 13.322 ms
+----- run 4: 13.322 ms

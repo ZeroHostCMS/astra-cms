@@ -164,8 +164,9 @@ public class LedgerStore implements GeneralLedger {
 
     private void requireAccounts(Connection conn, List<Entry> lines) throws SQLException {
         if (registry.find(accountDoctype).isEmpty()) return;
+        String table = io.astra.doctype.store.DocTables.of(registry.require(accountDoctype));
         for (String account : lines.stream().map(Entry::account).distinct().toList()) {
-            try (PreparedStatement ps = conn.prepareStatement("SELECT 1 FROM astra_doc WHERE doctype = ? AND name = ?")) {
+            try (PreparedStatement ps = conn.prepareStatement("SELECT 1 FROM " + table + " WHERE doctype = ? AND name = ?")) {
                 ps.setString(1, accountDoctype);
                 ps.setString(2, account);
                 try (ResultSet rs = ps.executeQuery()) {

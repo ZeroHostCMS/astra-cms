@@ -1,0 +1,45 @@
+Timing is on.
+SET
+Time: 0.359 ms
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 0.650 ms
+SELECT 5000000
+Time: 90517.281 ms (01:30.517)
+ANALYZE
+Time: 1120.796 ms (00:01.121)
+INSERT 0 4000842
+Time: 61796.358 ms (01:01.796)
+   set_config   
+----------------
+ saigon-express
+(1 row)
+
+Time: 0.486 ms
+INSERT 0 899752
+Time: 17157.540 ms (00:17.158)
+   set_config   
+----------------
+ danang-express
+(1 row)
+
+Time: 0.323 ms
+INSERT 0 99406
+Time: 3182.717 ms (00:03.183)
+CREATE FUNCTION
+Time: 5.412 ms
+DO
+Time: 450769.020 ms (07:30.769)
+  set_config   
+---------------
+ hanoi-express
+(1 row)
+
+Time: 0.311 ms
+INSERT 0 1000000
+Time: 37600.981 ms (00:37.601)
+RESET
+Time: 0.323 ms

@@ -1,0 +1,46 @@
+hanoi-express
+Limit  (cost=0.56..12.28 rows=20 width=497) (actual time=4.064..5.581 rows=20 loops=1)
+  Buffers: shared hit=20 read=4
+  I/O Timings: shared read=3.392
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..746722.81 rows=1274281 width=497) (actual time=4.062..5.575 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (modified_at < '2026-10-20 20:00:00+00'::timestamp with time zone))
+        Buffers: shared hit=20 read=4
+        I/O Timings: shared read=3.392
+Planning:
+  Buffers: shared hit=371
+Planning Time: 1.649 ms
+Execution Time: 5.624 ms
+----- run 1: 5.624 ms
+hanoi-express
+Limit  (cost=0.56..12.28 rows=20 width=497) (actual time=0.046..0.194 rows=20 loops=1)
+  Buffers: shared hit=24
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..746722.81 rows=1274281 width=497) (actual time=0.045..0.192 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (modified_at < '2026-10-20 20:00:00+00'::timestamp with time zone))
+        Buffers: shared hit=24
+Planning:
+  Buffers: shared hit=371
+Planning Time: 0.758 ms
+Execution Time: 0.281 ms
+----- run 2: 0.281 ms
+hanoi-express
+Limit  (cost=0.56..12.28 rows=20 width=497) (actual time=0.039..0.202 rows=20 loops=1)
+  Buffers: shared hit=24
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..746722.81 rows=1274281 width=497) (actual time=0.038..0.200 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (modified_at < '2026-10-20 20:00:00+00'::timestamp with time zone))
+        Buffers: shared hit=24
+Planning:
+  Buffers: shared hit=371
+Planning Time: 0.712 ms
+Execution Time: 0.241 ms
+----- run 3: 0.241 ms
+hanoi-express
+Limit  (cost=0.56..12.28 rows=20 width=497) (actual time=0.059..0.289 rows=20 loops=1)
+  Buffers: shared hit=24
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..746722.81 rows=1274281 width=497) (actual time=0.058..0.285 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (modified_at < '2026-10-20 20:00:00+00'::timestamp with time zone))
+        Buffers: shared hit=24
+Planning:
+  Buffers: shared hit=371
+Planning Time: 0.867 ms
+Execution Time: 0.323 ms
+----- run 4: 0.323 ms

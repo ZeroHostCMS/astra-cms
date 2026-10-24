@@ -1,0 +1,20 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 25184.9 tps, lat 2.275 ms stddev 1.888, 0 failed
+progress: 10.0 s, 25585.8 tps, lat 2.230 ms stddev 2.328, 0 failed
+progress: 15.0 s, 25874.7 tps, lat 2.205 ms stddev 2.213, 0 failed
+progress: 20.0 s, 24935.4 tps, lat 2.276 ms stddev 2.521, 0 failed
+progress: 25.0 s, 25552.4 tps, lat 2.239 ms stddev 2.314, 0 failed
+progress: 30.0 s, 25413.0 tps, lat 2.241 ms stddev 2.330, 0 failed
+transaction type: ./workloads/jsonb-list-status.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 762901
+number of failed transactions: 0 (0.000%)
+latency average = 2.244 ms
+latency stddev = 2.274 ms
+initial connection time = 42.914 ms
+tps = 25454.592773 (without initial connection time)

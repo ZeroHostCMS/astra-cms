@@ -1,0 +1,11 @@
+Timing is on.
+SET
+Time: 0.347 ms
+ALTER TABLE
+Time: 136298.048 ms (02:16.298)
+VACUUM
+Time: 20655.040 ms (00:20.655)
+VACUUM
+Time: 12536.089 ms (00:12.536)
+RESET
+Time: 0.410 ms

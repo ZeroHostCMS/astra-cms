@@ -1,0 +1,105 @@
+hanoi-express
+Finalize GroupAggregate  (cost=1000.49..423784.58 rows=3 width=72) (actual time=2990.141..3047.411 rows=3 loops=1)
+  Group Key: ((data ->> 'zone'::text))
+  Buffers: shared hit=792055
+  ->  Gather Merge  (cost=1000.49..423784.42 rows=12 width=72) (actual time=2986.415..3046.817 rows=14 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792055
+        ->  Partial GroupAggregate  (cost=0.43..422782.93 rows=3 width=72) (actual time=2478.724..2873.645 rows=3 loops=5)
+              Group Key: (data ->> 'zone'::text)
+              Buffers: shared hit=792055
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..417575.68 rows=347147 width=398) (actual time=958.705..2723.725 rows=320029 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+                    Rows Removed by Filter: 480162
+                    Buffers: shared hit=792055
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=285 read=3
+  I/O Timings: shared read=0.750
+Planning Time: 2.865 ms
+JIT:
+  Functions: 53
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 3.911 ms, Inlining 0.000 ms, Optimization 1.345 ms, Emission 33.010 ms, Total 38.266 ms
+Execution Time: 3063.723 ms
+----- run 1: 3063.723 ms
+hanoi-express
+Finalize GroupAggregate  (cost=1000.49..423784.58 rows=3 width=72) (actual time=802.460..823.764 rows=3 loops=1)
+  Group Key: ((data ->> 'zone'::text))
+  Buffers: shared hit=792044
+  ->  Gather Merge  (cost=1000.49..423784.42 rows=12 width=72) (actual time=799.863..823.649 rows=14 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792044
+        ->  Partial GroupAggregate  (cost=0.43..422782.93 rows=3 width=72) (actual time=369.304..685.566 rows=3 loops=5)
+              Group Key: (data ->> 'zone'::text)
+              Buffers: shared hit=792044
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..417575.68 rows=347147 width=398) (actual time=140.880..571.813 rows=320029 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+                    Rows Removed by Filter: 480162
+                    Buffers: shared hit=792044
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=288
+Planning Time: 0.967 ms
+JIT:
+  Functions: 53
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 5.845 ms, Inlining 0.000 ms, Optimization 2.621 ms, Emission 59.685 ms, Total 68.151 ms
+Execution Time: 862.612 ms
+----- run 2: 862.612 ms
+hanoi-express
+Finalize GroupAggregate  (cost=1000.49..423784.58 rows=3 width=72) (actual time=1706.824..1736.189 rows=3 loops=1)
+  Group Key: ((data ->> 'zone'::text))
+  Buffers: shared hit=791971
+  ->  Gather Merge  (cost=1000.49..423784.42 rows=12 width=72) (actual time=1702.933..1735.935 rows=14 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=791971
+        ->  Partial GroupAggregate  (cost=0.43..422782.93 rows=3 width=72) (actual time=477.460..1439.181 rows=3 loops=5)
+              Group Key: (data ->> 'zone'::text)
+              Buffers: shared hit=791971
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..417575.68 rows=347147 width=398) (actual time=120.907..1259.963 rows=320029 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+                    Rows Removed by Filter: 480162
+                    Buffers: shared hit=791971
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=288
+Planning Time: 0.849 ms
+JIT:
+  Functions: 53
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 3.690 ms, Inlining 0.000 ms, Optimization 1.427 ms, Emission 46.350 ms, Total 51.467 ms
+Execution Time: 1790.277 ms
+----- run 3: 1790.277 ms
+hanoi-express
+Finalize GroupAggregate  (cost=1000.49..423784.58 rows=3 width=72) (actual time=895.348..919.435 rows=3 loops=1)
+  Group Key: ((data ->> 'zone'::text))
+  Buffers: shared hit=792045
+  ->  Gather Merge  (cost=1000.49..423784.42 rows=12 width=72) (actual time=891.310..919.310 rows=14 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792045
+        ->  Partial GroupAggregate  (cost=0.43..422782.93 rows=3 width=72) (actual time=280.472..751.517 rows=3 loops=5)
+              Group Key: (data ->> 'zone'::text)
+              Buffers: shared hit=792045
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..417575.68 rows=347147 width=398) (actual time=88.565..624.415 rows=320029 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone))
+                    Rows Removed by Filter: 480162
+                    Buffers: shared hit=792045
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=288
+Planning Time: 2.326 ms
+JIT:
+  Functions: 53
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 4.476 ms, Inlining 0.000 ms, Optimization 2.078 ms, Emission 43.170 ms, Total 49.724 ms
+Execution Time: 945.246 ms
+----- run 4: 945.246 ms

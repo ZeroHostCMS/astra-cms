@@ -1,0 +1,54 @@
+hanoi-express
+Aggregate  (cost=1.63..1.64 rows=1 width=8) (actual time=1.572..1.574 rows=1 loops=1)
+  Buffers: shared read=7
+  I/O Timings: shared read=1.333
+  ->  Index Only Scan using orders_rel_customer on orders_rel  (cost=0.43..1.62 rows=4 width=0) (actual time=0.967..1.561 rows=4 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (customer = 'CUST-0123456'::text))
+        Heap Fetches: 0
+        Buffers: shared read=7
+        I/O Timings: shared read=1.333
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=163
+Planning Time: 1.352 ms
+Execution Time: 1.674 ms
+----- run 1: 1.674 ms
+hanoi-express
+Aggregate  (cost=1.63..1.64 rows=1 width=8) (actual time=0.166..0.167 rows=1 loops=1)
+  Buffers: shared hit=7
+  ->  Index Only Scan using orders_rel_customer on orders_rel  (cost=0.43..1.62 rows=4 width=0) (actual time=0.137..0.158 rows=4 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (customer = 'CUST-0123456'::text))
+        Heap Fetches: 0
+        Buffers: shared hit=7
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=163
+Planning Time: 1.463 ms
+Execution Time: 0.268 ms
+----- run 2: 0.268 ms
+hanoi-express
+Aggregate  (cost=1.63..1.64 rows=1 width=8) (actual time=0.161..0.163 rows=1 loops=1)
+  Buffers: shared hit=7
+  ->  Index Only Scan using orders_rel_customer on orders_rel  (cost=0.43..1.62 rows=4 width=0) (actual time=0.133..0.153 rows=4 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (customer = 'CUST-0123456'::text))
+        Heap Fetches: 0
+        Buffers: shared hit=7
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=163
+Planning Time: 1.340 ms
+Execution Time: 0.259 ms
+----- run 3: 0.259 ms
+hanoi-express
+Aggregate  (cost=1.63..1.64 rows=1 width=8) (actual time=0.076..0.077 rows=1 loops=1)
+  Buffers: shared hit=7
+  ->  Index Only Scan using orders_rel_customer on orders_rel  (cost=0.43..1.62 rows=4 width=0) (actual time=0.062..0.072 rows=4 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (customer = 'CUST-0123456'::text))
+        Heap Fetches: 0
+        Buffers: shared hit=7
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=163
+Planning Time: 0.690 ms
+Execution Time: 0.121 ms
+----- run 4: 0.121 ms

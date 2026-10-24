@@ -1,0 +1,20 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 8835.3 tps, lat 7.120 ms stddev 7.810, 0 failed
+progress: 10.0 s, 8232.5 tps, lat 7.735 ms stddev 6.993, 0 failed
+progress: 15.0 s, 8275.3 tps, lat 7.690 ms stddev 7.175, 0 failed
+progress: 20.0 s, 11206.2 tps, lat 5.667 ms stddev 1.354, 0 failed
+progress: 25.0 s, 7990.2 tps, lat 7.944 ms stddev 8.186, 0 failed
+progress: 30.0 s, 8164.3 tps, lat 7.792 ms stddev 34.748, 0 failed
+transaction type: ./workloads/txn-insert-seq.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 263734
+number of failed transactions: 0 (0.000%)
+latency average = 7.227 ms
+latency stddev = 15.002 ms
+initial connection time = 52.794 ms
+tps = 8792.864648 (without initial connection time)

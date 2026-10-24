@@ -1,0 +1,54 @@
+hanoi-express
+Limit  (cost=0.56..2522.75 rows=20 width=497) (actual time=1.861..47.424 rows=20 loops=1)
+  Buffers: shared hit=11237 read=301
+  I/O Timings: shared read=2.451
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..925517.15 rows=7339 width=497) (actual time=1.859..47.409 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: ((astra_field(data, 'zone'::text) = 'Remote'::text) AND (m_cod_amount > '4900000'::numeric))
+        Rows Removed by Filter: 11353
+        Buffers: shared hit=11237 read=301
+        I/O Timings: shared read=2.451
+Planning:
+  Buffers: shared hit=365
+Planning Time: 3.086 ms
+Execution Time: 47.634 ms
+----- run 1: 47.634 ms
+hanoi-express
+Limit  (cost=0.56..2522.75 rows=20 width=497) (actual time=0.973..39.026 rows=20 loops=1)
+  Buffers: shared hit=11538
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..925517.15 rows=7339 width=497) (actual time=0.971..39.013 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: ((astra_field(data, 'zone'::text) = 'Remote'::text) AND (m_cod_amount > '4900000'::numeric))
+        Rows Removed by Filter: 11353
+        Buffers: shared hit=11538
+Planning:
+  Buffers: shared hit=365
+Planning Time: 1.641 ms
+Execution Time: 39.147 ms
+----- run 2: 39.147 ms
+hanoi-express
+Limit  (cost=0.56..2522.75 rows=20 width=497) (actual time=0.965..38.901 rows=20 loops=1)
+  Buffers: shared hit=11538
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..925517.15 rows=7339 width=497) (actual time=0.964..38.887 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: ((astra_field(data, 'zone'::text) = 'Remote'::text) AND (m_cod_amount > '4900000'::numeric))
+        Rows Removed by Filter: 11353
+        Buffers: shared hit=11538
+Planning:
+  Buffers: shared hit=365
+Planning Time: 1.814 ms
+Execution Time: 38.998 ms
+----- run 3: 38.998 ms
+hanoi-express
+Limit  (cost=0.56..2522.75 rows=20 width=497) (actual time=1.613..41.098 rows=20 loops=1)
+  Buffers: shared hit=11538
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..925517.15 rows=7339 width=497) (actual time=1.611..41.085 rows=20 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Filter: ((astra_field(data, 'zone'::text) = 'Remote'::text) AND (m_cod_amount > '4900000'::numeric))
+        Rows Removed by Filter: 11353
+        Buffers: shared hit=11538
+Planning:
+  Buffers: shared hit=365
+Planning Time: 3.139 ms
+Execution Time: 41.303 ms
+----- run 4: 41.303 ms

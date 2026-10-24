@@ -1,0 +1,60 @@
+== read-jsonb clients=16 secs=30 Thu Oct 22 20:41:53 +07 2026
+progress: 10.0 s, 9.8 tps, lat 1314.475 ms stddev 2701.140, 0 failed
+progress: 20.0 s, 12.9 tps, lat 1162.815 ms stddev 2024.862, 0 failed
+progress: 30.0 s, 8.0 tps, lat 1894.064 ms stddev 2488.179, 0 failed
+latency average = 1615.140 ms
+latency stddev = 2546.320 ms
+tps = 9.452591 (without initial connection time)
+ - number of transactions actually processed: 217 (tps = 6.350502)
+ - latency average = 30.652 ms
+ - latency stddev = 24.852 ms
+ - number of transactions actually processed: 106 (tps = 3.102089)
+ - latency average = 4858.857 ms
+ - latency stddev = 2023.483 ms
+== read-rel clients=16 secs=30 Thu Oct 22 20:42:27 +07 2026
+progress: 10.0 s, 2472.7 tps, lat 6.406 ms stddev 6.262, 0 failed
+progress: 20.0 s, 3501.5 tps, lat 4.562 ms stddev 1.970, 0 failed
+progress: 30.0 s, 4237.3 tps, lat 3.773 ms stddev 1.533, 0 failed
+latency average = 4.681 ms
+latency stddev = 3.587 ms
+tps = 3412.798816 (without initial connection time)
+ - number of transactions actually processed: 71540 (tps = 2390.105112)
+ - latency average = 4.612 ms
+ - latency stddev = 3.501 ms
+ - number of transactions actually processed: 30410 (tps = 1015.978424)
+ - latency average = 4.839 ms
+ - latency stddev = 3.769 ms
+astra_doc|6000000|0|0|0.0|0
+orders_rel|5000000|0|0|0.0|0
+== insert-jsonb clients=16 secs=30 Thu Oct 22 20:42:57 +07 2026
+progress: 10.0 s, 2166.9 tps, lat 7.121 ms stddev 6.104, 0 failed
+progress: 20.0 s, 2666.6 tps, lat 6.143 ms stddev 58.845, 0 failed
+progress: 30.0 s, 3087.8 tps, lat 5.185 ms stddev 15.866, 0 failed
+latency average = 6.038 ms
+latency stddev = 35.697 ms
+tps = 2644.714816 (without initial connection time)
+== insert-rel clients=16 secs=30 Thu Oct 22 20:43:27 +07 2026
+progress: 10.0 s, 3060.4 tps, lat 5.190 ms stddev 3.613, 0 failed
+progress: 20.0 s, 3537.0 tps, lat 4.522 ms stddev 1.669, 0 failed
+progress: 30.0 s, 3532.9 tps, lat 4.524 ms stddev 1.962, 0 failed
+latency average = 4.724 ms
+latency stddev = 2.521 ms
+tps = 3381.483501 (without initial connection time)
+astra_doc|6079235|0|0|0.0|0
+orders_rel|5101336|0|0|0.0|0
+== update-jsonb clients=16 secs=30 Thu Oct 22 20:43:57 +07 2026
+progress: 10.0 s, 2200.9 tps, lat 7.217 ms stddev 45.497, 0 failed
+progress: 20.0 s, 1930.5 tps, lat 8.279 ms stddev 47.929, 0 failed
+progress: 30.0 s, 1854.6 tps, lat 8.613 ms stddev 64.522, 0 failed
+latency average = 7.994 ms
+latency stddev = 52.834 ms
+tps = 1998.786894 (without initial connection time)
+== update-rel clients=16 secs=30 Thu Oct 22 20:44:28 +07 2026
+progress: 10.0 s, 2661.9 tps, lat 5.969 ms stddev 7.075, 0 failed
+progress: 20.0 s, 2899.3 tps, lat 5.512 ms stddev 3.739, 0 failed
+progress: 30.0 s, 3175.8 tps, lat 5.036 ms stddev 2.393, 0 failed
+latency average = 5.481 ms
+latency stddev = 4.719 ms
+tps = 2909.218535 (without initial connection time)
+astra_doc|6079235|47933|0|0.0|47933
+orders_rel|5101336|70009|0|0.0|70009

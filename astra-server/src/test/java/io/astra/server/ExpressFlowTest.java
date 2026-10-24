@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItem;
@@ -50,7 +51,7 @@ class ExpressFlowTest {
         String t = newTenant("ex-price");
         String today = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE);
         as(t).body(ORDER).post("/api/doc/CustomerOrder").then().statusCode(201)
-                .body("name", equalTo("ORD-" + today + "-00001"))
+                .body("name", equalTo("ORD-" + today + "-0000001"))
                 .body("docstatus", equalTo(0))
                 // Domestic 30,000 + 3 x 5,000 for 1.2 kg extra = 45,000; Express x1.5 = 67,500; COD 1% = 5,000 → 73,000
                 .body("data.shipping_fee", equalTo(73000));
@@ -81,7 +82,7 @@ class ExpressFlowTest {
         String order = draftOrder(t);
         String waybill = as(t).post("/api/doc/CustomerOrder/" + order + "/submit").then().statusCode(200)
                 .body("docstatus", equalTo(1))
-                .body("data.waybill", matchesPattern("WB-\\d{4}-\\d{6}"))
+                .body("data.waybill", matchesPattern("WB-\\d{4}-\\d{8}"))
                 .extract().path("data.waybill");
 
         as(t).body("{\"note\":\"x\"}").put("/api/doc/CustomerOrder/" + order).then().statusCode(422)
@@ -147,7 +148,10 @@ class ExpressFlowTest {
     @TestSecurity(user = "u-admin", roles = "/tenants/acme/admin")
     void projectedFieldsHaveOnlineIndexes() {
         as("acme").get("/api/doctype/Waybill/projections").then().statusCode(200)
-                .body("find { it.field == 'ops_status' }.valid", equalTo(true));
+                .body("find { it.field == 'ops_status' }.valid", equalTo(true))
+                .body("find { it.field == 'ops_status' }.index", equalTo("astra_doc_pf_ops_status"))
+                .body("find { it.field == 'ops_status' }.definition",
+                        containsString("(tenant_id, doctype, astra_ext.astra_field(data, 'ops_status'::text), modified_at DESC)"));
         as("acme").get("/api/app").then().statusCode(200)
                 .body("find { it.id == 'io.astra.express' }.doctypes", hasItem("CustomerOrder"));
     }

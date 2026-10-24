@@ -1,0 +1,20 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 6214.1 tps, lat 10.137 ms stddev 3.418, 0 failed
+progress: 10.0 s, 4375.9 tps, lat 14.436 ms stddev 15.008, 0 failed
+progress: 15.0 s, 7451.4 tps, lat 8.615 ms stddev 6.567, 0 failed
+progress: 20.0 s, 8307.6 tps, lat 7.673 ms stddev 6.219, 0 failed
+progress: 25.0 s, 10255.2 tps, lat 6.205 ms stddev 1.683, 0 failed
+progress: 30.0 s, 4827.8 tps, lat 13.210 ms stddev 52.521, 0 failed
+transaction type: ./workloads/jsonb-update-waybill.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 207223
+number of failed transactions: 0 (0.000%)
+latency average = 9.210 ms
+latency stddev = 19.254 ms
+initial connection time = 55.886 ms
+tps = 6911.691165 (without initial connection time)

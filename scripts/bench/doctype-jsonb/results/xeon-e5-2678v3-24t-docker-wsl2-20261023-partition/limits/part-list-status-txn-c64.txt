@@ -1,0 +1,20 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 7502.6 tps, lat 8.322 ms stddev 16.804, 0 failed
+progress: 10.0 s, 8071.3 tps, lat 7.892 ms stddev 5.436, 0 failed
+progress: 15.0 s, 8204.4 tps, lat 7.761 ms stddev 5.144, 0 failed
+progress: 20.0 s, 7870.0 tps, lat 8.080 ms stddev 5.527, 0 failed
+progress: 25.0 s, 7695.1 tps, lat 8.262 ms stddev 5.466, 0 failed
+progress: 30.0 s, 7683.4 tps, lat 8.269 ms stddev 5.625, 0 failed
+transaction type: ./workloads/txn-list-status.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 235188
+number of failed transactions: 0 (0.000%)
+latency average = 8.094 ms
+latency stddev = 8.366 ms
+initial connection time = 51.479 ms
+tps = 7846.594193 (without initial connection time)

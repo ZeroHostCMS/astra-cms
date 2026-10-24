@@ -1,0 +1,20 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 2531.5 tps, lat 24.910 ms stddev 36.196, 0 failed
+progress: 10.0 s, 4007.5 tps, lat 15.867 ms stddev 8.887, 0 failed
+progress: 15.0 s, 3990.2 tps, lat 16.014 ms stddev 10.164, 0 failed
+progress: 20.0 s, 4194.7 tps, lat 15.189 ms stddev 7.908, 0 failed
+progress: 25.0 s, 4417.1 tps, lat 14.419 ms stddev 9.495, 0 failed
+progress: 30.0 s, 4849.6 tps, lat 13.131 ms stddev 4.205, 0 failed
+transaction type: ./workloads/txn-update-waybill-pruned.sql
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 120007
+number of failed transactions: 0 (0.000%)
+latency average = 15.912 ms
+latency stddev = 14.504 ms
+initial connection time = 57.114 ms
+tps = 3999.297898 (without initial connection time)

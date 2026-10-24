@@ -1,0 +1,120 @@
+hanoi-express
+Limit  (cost=423197.11..423203.10 rows=50 width=491) (actual time=2239.988..2298.669 rows=50 loops=1)
+  Buffers: shared hit=791982
+  ->  Gather Merge  (cost=423197.11..427331.31 rows=34528 width=491) (actual time=2235.589..2294.264 rows=50 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=791982
+        ->  Sort  (cost=422197.06..422218.64 rows=8632 width=491) (actual time=2197.378..2197.398 rows=45 loops=5)
+              Sort Key: created_at DESC
+              Sort Method: top-N heapsort  Memory: 124kB
+              Buffers: shared hit=791982
+              Worker 0:  Sort Method: top-N heapsort  Memory: 124kB
+              Worker 1:  Sort Method: top-N heapsort  Memory: 124kB
+              Worker 2:  Sort Method: top-N heapsort  Memory: 126kB
+              Worker 3:  Sort Method: top-N heapsort  Memory: 122kB
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..421910.31 rows=8632 width=491) (actual time=150.516..2189.656 rows=9621 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone) AND ((data ->> 'ops_status'::text) = 'Failed Delivery'::text))
+                    Rows Removed by Filter: 790569
+                    Buffers: shared hit=791950
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 1.032 ms
+JIT:
+  Functions: 26
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 5.609 ms, Inlining 0.000 ms, Optimization 3.254 ms, Emission 43.332 ms, Total 52.195 ms
+Execution Time: 2321.809 ms
+----- run 1: 2321.809 ms
+hanoi-express
+Limit  (cost=423197.11..423203.10 rows=50 width=491) (actual time=2735.797..2783.030 rows=50 loops=1)
+  Buffers: shared hit=792029
+  ->  Gather Merge  (cost=423197.11..427331.31 rows=34528 width=491) (actual time=2724.139..2771.367 rows=50 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792029
+        ->  Sort  (cost=422197.06..422218.64 rows=8632 width=491) (actual time=2689.219..2689.229 rows=41 loops=5)
+              Sort Key: created_at DESC
+              Sort Method: top-N heapsort  Memory: 124kB
+              Buffers: shared hit=792029
+              Worker 0:  Sort Method: top-N heapsort  Memory: 123kB
+              Worker 1:  Sort Method: top-N heapsort  Memory: 125kB
+              Worker 2:  Sort Method: top-N heapsort  Memory: 125kB
+              Worker 3:  Sort Method: top-N heapsort  Memory: 124kB
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..421910.31 rows=8632 width=491) (actual time=122.868..2679.818 rows=9621 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone) AND ((data ->> 'ops_status'::text) = 'Failed Delivery'::text))
+                    Rows Removed by Filter: 790569
+                    Buffers: shared hit=791997
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 3.241 ms
+JIT:
+  Functions: 26
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 4.955 ms, Inlining 0.000 ms, Optimization 4.045 ms, Emission 49.726 ms, Total 58.727 ms
+Execution Time: 2838.187 ms
+----- run 2: 2838.187 ms
+hanoi-express
+Limit  (cost=423197.11..423203.10 rows=50 width=491) (actual time=699.726..727.900 rows=50 loops=1)
+  Buffers: shared hit=792045
+  ->  Gather Merge  (cost=423197.11..427331.31 rows=34528 width=491) (actual time=688.286..716.455 rows=50 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792045
+        ->  Sort  (cost=422197.06..422218.64 rows=8632 width=491) (actual time=630.804..630.812 rows=40 loops=5)
+              Sort Key: created_at DESC
+              Sort Method: top-N heapsort  Memory: 124kB
+              Buffers: shared hit=792045
+              Worker 0:  Sort Method: top-N heapsort  Memory: 125kB
+              Worker 1:  Sort Method: top-N heapsort  Memory: 124kB
+              Worker 2:  Sort Method: top-N heapsort  Memory: 124kB
+              Worker 3:  Sort Method: top-N heapsort  Memory: 122kB
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..421910.31 rows=8632 width=491) (actual time=103.038..626.957 rows=9621 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone) AND ((data ->> 'ops_status'::text) = 'Failed Delivery'::text))
+                    Rows Removed by Filter: 790569
+                    Buffers: shared hit=792013
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 1.555 ms
+JIT:
+  Functions: 26
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 4.501 ms, Inlining 0.000 ms, Optimization 2.245 ms, Emission 58.896 ms, Total 65.642 ms
+Execution Time: 780.743 ms
+----- run 3: 780.743 ms
+hanoi-express
+Limit  (cost=423197.11..423203.10 rows=50 width=491) (actual time=494.281..522.593 rows=50 loops=1)
+  Buffers: shared hit=792085
+  ->  Gather Merge  (cost=423197.11..427331.31 rows=34528 width=491) (actual time=490.831..519.138 rows=50 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792085
+        ->  Sort  (cost=422197.06..422218.64 rows=8632 width=491) (actual time=472.698..472.704 rows=46 loops=5)
+              Sort Key: created_at DESC
+              Sort Method: top-N heapsort  Memory: 124kB
+              Buffers: shared hit=792085
+              Worker 0:  Sort Method: top-N heapsort  Memory: 123kB
+              Worker 1:  Sort Method: top-N heapsort  Memory: 124kB
+              Worker 2:  Sort Method: top-N heapsort  Memory: 124kB
+              Worker 3:  Sort Method: top-N heapsort  Memory: 125kB
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..421910.31 rows=8632 width=491) (actual time=65.437..469.829 rows=9621 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: ((created_at >= '2026-10-20 17:00:00+00'::timestamp with time zone) AND (created_at < '2026-10-21 17:00:00+00'::timestamp with time zone) AND ((data ->> 'ops_status'::text) = 'Failed Delivery'::text))
+                    Rows Removed by Filter: 790569
+                    Buffers: shared hit=792053
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=279
+Planning Time: 0.604 ms
+JIT:
+  Functions: 26
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 1.493 ms, Inlining 0.000 ms, Optimization 1.881 ms, Emission 18.221 ms, Total 21.595 ms
+Execution Time: 534.494 ms
+----- run 4: 534.494 ms

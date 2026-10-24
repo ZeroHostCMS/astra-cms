@@ -1,0 +1,58 @@
+hanoi-express
+Limit  (cost=0.43..29.85 rows=20 width=291) (actual time=0.506..556.480 rows=20 loops=1)
+  Buffers: shared hit=7835 read=3592
+  I/O Timings: shared read=519.970
+  ->  Index Scan using orders_rel_list_idx on orders_rel  (cost=0.43..298008.72 rows=202595 width=291) (actual time=0.505..556.458 rows=20 loops=1)
+        Index Cond: (tenant_id = current_setting('astra.tenant'::text, true))
+        Filter: ((zone = 'Remote'::text) AND (cod_amount > '4900000'::numeric))
+        Rows Removed by Filter: 11353
+        Buffers: shared hit=7835 read=3592
+        I/O Timings: shared read=519.970
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=266
+Planning Time: 1.081 ms
+Execution Time: 556.533 ms
+----- run 1: 556.533 ms
+hanoi-express
+Limit  (cost=0.43..29.85 rows=20 width=291) (actual time=0.804..23.960 rows=20 loops=1)
+  Buffers: shared hit=11427
+  ->  Index Scan using orders_rel_list_idx on orders_rel  (cost=0.43..298008.72 rows=202595 width=291) (actual time=0.802..23.944 rows=20 loops=1)
+        Index Cond: (tenant_id = current_setting('astra.tenant'::text, true))
+        Filter: ((zone = 'Remote'::text) AND (cod_amount > '4900000'::numeric))
+        Rows Removed by Filter: 11353
+        Buffers: shared hit=11427
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=266
+Planning Time: 2.118 ms
+Execution Time: 24.034 ms
+----- run 2: 24.034 ms
+hanoi-express
+Limit  (cost=0.43..29.85 rows=20 width=291) (actual time=0.809..22.598 rows=20 loops=1)
+  Buffers: shared hit=11427
+  ->  Index Scan using orders_rel_list_idx on orders_rel  (cost=0.43..298008.72 rows=202595 width=291) (actual time=0.807..22.583 rows=20 loops=1)
+        Index Cond: (tenant_id = current_setting('astra.tenant'::text, true))
+        Filter: ((zone = 'Remote'::text) AND (cod_amount > '4900000'::numeric))
+        Rows Removed by Filter: 11353
+        Buffers: shared hit=11427
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=266
+Planning Time: 2.121 ms
+Execution Time: 22.674 ms
+----- run 3: 22.674 ms
+hanoi-express
+Limit  (cost=0.43..29.85 rows=20 width=291) (actual time=0.761..26.052 rows=20 loops=1)
+  Buffers: shared hit=11427
+  ->  Index Scan using orders_rel_list_idx on orders_rel  (cost=0.43..298008.72 rows=202595 width=291) (actual time=0.759..26.034 rows=20 loops=1)
+        Index Cond: (tenant_id = current_setting('astra.tenant'::text, true))
+        Filter: ((zone = 'Remote'::text) AND (cod_amount > '4900000'::numeric))
+        Rows Removed by Filter: 11353
+        Buffers: shared hit=11427
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=266
+Planning Time: 1.532 ms
+Execution Time: 26.101 ms
+----- run 4: 26.101 ms

@@ -1,0 +1,48 @@
+hanoi-express
+Limit  (cost=22621.56..22623.82 rows=20 width=491) (actual time=322.915..322.934 rows=20 loops=1)
+  Buffers: shared hit=201449
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..470742.91 rows=4161995 width=491) (actual time=0.040..316.221 rows=200020 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Buffers: shared hit=201449
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 0.608 ms
+Execution Time: 322.964 ms
+----- run 1: 322.964 ms
+hanoi-express
+Limit  (cost=22621.56..22623.82 rows=20 width=491) (actual time=199.860..199.877 rows=20 loops=1)
+  Buffers: shared hit=201449
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..470742.91 rows=4161995 width=491) (actual time=0.048..194.435 rows=200020 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Buffers: shared hit=201449
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 0.720 ms
+Execution Time: 199.907 ms
+----- run 2: 199.907 ms
+hanoi-express
+Limit  (cost=22621.56..22623.82 rows=20 width=491) (actual time=201.317..201.348 rows=20 loops=1)
+  Buffers: shared hit=201449
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..470742.91 rows=4161995 width=491) (actual time=0.030..195.764 rows=200020 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Buffers: shared hit=201449
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 0.547 ms
+Execution Time: 201.382 ms
+----- run 3: 201.382 ms
+hanoi-express
+Limit  (cost=22621.56..22623.82 rows=20 width=491) (actual time=213.381..213.408 rows=20 loops=1)
+  Buffers: shared hit=201449
+  ->  Index Scan using astra_doc_list_idx on astra_doc  (cost=0.56..470742.91 rows=4161995 width=491) (actual time=0.054..207.689 rows=200020 loops=1)
+        Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+        Buffers: shared hit=201449
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=271
+Planning Time: 0.664 ms
+Execution Time: 213.435 ms
+----- run 4: 213.435 ms

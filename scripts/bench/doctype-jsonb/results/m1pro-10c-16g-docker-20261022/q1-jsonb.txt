@@ -1,0 +1,41 @@
+hanoi-express
+Index Scan using astra_doc_tenant_doctype_name_key on astra_doc  (cost=0.56..2.78 rows=1 width=491) (actual time=11.659..11.660 rows=0 loops=1)
+  Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+  Buffers: shared hit=1 read=3
+  I/O Timings: shared read=4.396
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=250
+Planning Time: 12.478 ms
+Execution Time: 11.806 ms
+----- run 1: 11.806 ms
+hanoi-express
+Index Scan using astra_doc_tenant_doctype_name_key on astra_doc  (cost=0.56..2.78 rows=1 width=491) (actual time=0.068..0.068 rows=0 loops=1)
+  Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+  Buffers: shared hit=4
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=250
+Planning Time: 0.575 ms
+Execution Time: 0.106 ms
+----- run 2: 0.106 ms
+hanoi-express
+Index Scan using astra_doc_tenant_doctype_name_key on astra_doc  (cost=0.56..2.78 rows=1 width=491) (actual time=0.045..0.045 rows=0 loops=1)
+  Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+  Buffers: shared hit=4
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=250
+Planning Time: 0.519 ms
+Execution Time: 0.071 ms
+----- run 3: 0.071 ms
+hanoi-express
+Index Scan using astra_doc_tenant_doctype_name_key on astra_doc  (cost=0.56..2.78 rows=1 width=491) (actual time=0.046..0.046 rows=0 loops=1)
+  Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text) AND (name = 'ORD-20261021-02500000'::text))
+  Buffers: shared hit=4
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=250
+Planning Time: 0.597 ms
+Execution Time: 0.106 ms
+----- run 4: 0.106 ms

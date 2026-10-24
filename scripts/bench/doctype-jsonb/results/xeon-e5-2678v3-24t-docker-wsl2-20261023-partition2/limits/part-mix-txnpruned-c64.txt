@@ -1,0 +1,50 @@
+pgbench (16.15 (Debian 16.15-1.pgdg12+2))
+progress: 5.0 s, 6596.2 tps, lat 9.480 ms stddev 19.500, 0 failed
+progress: 10.0 s, 8470.1 tps, lat 7.339 ms stddev 6.011, 0 failed
+progress: 15.0 s, 8668.3 tps, lat 7.285 ms stddev 5.634, 0 failed
+progress: 20.0 s, 8744.7 tps, lat 7.218 ms stddev 6.764, 0 failed
+progress: 25.0 s, 8990.0 tps, lat 7.031 ms stddev 5.299, 0 failed
+progress: 30.0 s, 8360.4 tps, lat 7.588 ms stddev 9.083, 0 failed
+transaction type: multiple scripts
+scaling factor: 1
+query mode: prepared
+number of clients: 64
+number of threads: 8
+maximum number of tries: 1
+duration: 30 s
+number of transactions actually processed: 249192
+number of failed transactions: 0 (0.000%)
+latency average = 7.584 ms
+latency stddev = 9.475 ms
+initial connection time = 50.442 ms
+tps = 8293.652656 (without initial connection time)
+SQL script 1: ./workloads/txn-insert-seq.sql
+ - weight: 1 (targets 3.2% of total)
+ - 8034 transactions (3.2% of total, tps = 267.389023)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 10.273 ms
+ - latency stddev = 7.037 ms
+SQL script 2: ./workloads/txn-update-waybill-pruned.sql
+ - weight: 8 (targets 25.8% of total)
+ - 64089 transactions (25.7% of total, tps = 2133.021546)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 15.093 ms
+ - latency stddev = 10.890 ms
+SQL script 3: ./workloads/txn-get-pruned.sql
+ - weight: 14 (targets 45.2% of total)
+ - 112659 transactions (45.2% of total, tps = 3749.536962)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 3.956 ms
+ - latency stddev = 6.163 ms
+SQL script 4: ./workloads/txn-list-customer.sql
+ - weight: 6 (targets 19.4% of total)
+ - 48294 transactions (19.4% of total, tps = 1607.329535)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 6.126 ms
+ - latency stddev = 8.850 ms
+SQL script 5: ./workloads/txn-list-status.sql
+ - weight: 2 (targets 6.5% of total)
+ - 15983 transactions (6.4% of total, tps = 531.949061)
+ - number of failed transactions: 0 (0.000%)
+ - latency average = 6.107 ms
+ - latency stddev = 7.958 ms

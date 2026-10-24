@@ -187,8 +187,8 @@ Recorded from the running demo: real Desk screens and terminal output. Videos 8 
 > pods. See [Run the thin slice today](#run-the-thin-slice-today) and the [Demo videos](#demo-videos).
 >
 > **Not yet:** everything else below describes the **target architecture and the intended public API**; those
-> code samples do not compile yet. Performance figures are **design targets** to be validated by public
-> benchmarks, not measurements.
+> code samples do not compile yet. The table under Performance lists **design targets**; what has been measured
+> so far (DocType storage and the full system over HTTP) is in the [DocType JSONB benchmark](docs/benchmark-doctype-jsonb-the-right-way.md).
 >
 > **Clean-room notice.** Astra is inspired by the architecture of Frappe Framework (MIT) and ERPNext (GPL-3.0).
 > It shares **no code, schema, or assets** with either. Concepts such as "DocType" are used as common vocabulary;
@@ -344,13 +344,15 @@ Frappe creates one table per DocType and runs DDL when you add a Custom Field. A
 
 | `storage` | Used for | How it works | DDL in production |
 | --- | --- | --- | --- |
-| `jsonb` (default) | Masters, transactions, settings, content | Core metadata (`id`, `tenant_id`, `doctype`, `docstatus`, `owner`, timestamps, `version`) in indexed relational columns; fields in `JSONB` with GIN `jsonb_path_ops`. Fields marked `projected: true` get an **expression index** (`CREATE INDEX CONCURRENTLY ... ((data->>'field')::type)`), which is genuinely online; generated queries use the same expression so the planner picks it up. For heavy sort/aggregate workloads a field can be `projected: materialised`: a nullable column added as a metadata-only change, backfilled in batches by a job, kept in sync by the kernel on write, then indexed `CONCURRENTLY`. Stored generated columns are **not** used on existing tables because PostgreSQL rewrites the table to add them. | Never for fields. Expression indexes are online, additive, and reversible (`DROP INDEX CONCURRENTLY`); materialised projections are online but take time to backfill |
+| `jsonb` (default) | Masters, transactions, settings, content | Core metadata (`id`, `tenant_id`, `doctype`, `docstatus`, `owner`, timestamps, `version`) in indexed relational columns; fields in `JSONB`. Fields marked `projected: true` get a partial **expression index** on `astra_ext.astra_field(data, 'field')`, a LEAKPROOF accessor (under row-level security PostgreSQL never uses an index on `data->>'field'`), ending in `modified_at DESC` and built `CONCURRENTLY`; generated queries use the same expression so the planner picks it up. For range filters (`field__gt`, `__lt`, ...) a field can be `projected: materialised`: a typed column (Currency as bigint hundredths) added as a metadata-only change, kept in sync by a trigger, backfilled in batches in the background, then indexed `CONCURRENTLY`. High-volume transaction DocTypes can opt into `partition: month`. Stored generated columns are **not** used on existing tables because PostgreSQL rewrites the table to add them. | Never for fields. Expression indexes are online, additive, and reversible (`DROP INDEX CONCURRENTLY`); materialised projections are online but take time to backfill |
 | `ledger` | General Ledger entries, Stock Ledger entries, payroll postings, audit trails | Append-only, partitioned relational tables with fixed columns. Rows are never updated; corrections are reversing entries. Written only inside `@AstraGlobalTransactional` by the owning app. Partition by period for closing and archival. | Schema owned by the app, evolved with expand/contract |
 | `virtual` | External systems | A `DocTypeAdapter` maps the DocType onto an ERP, CRM, or legacy database. Same API, permissions, and tools. | n/a |
 
+**Measured performance.** This storage design was benchmarked on 5 million orders with row-level security enabled as in production, against a relational table holding the same data. After the kernel changes that came out of the benchmark, reads on JSONB are within 0.1 ms per query and within 8 % of the relational table's throughput. On a single server the whole system, including the kernel, authentication and the database, handles 400 orders per second, about twice the peak hour of 2 million orders a day. In return, JSONB needs about 70 % more storage, and aggregate reports belong on read replicas. Monthly partitioning lowers transaction throughput, so it is worth enabling only for data lifecycle management. The [DocType JSONB benchmark](docs/benchmark-doctype-jsonb-the-right-way.md) has the method, the full results and the tooling to repeat the measurements on your own infrastructure.
+
 **Projection budgets.** Flexibility must not cost performance. Each DocType has a projection and index quota (default 8 projections, 12 indexes), each tenant has an overlay projection quota, and materialised projections on DocTypes above a row threshold require an approval step. Over-quota requests fail during metadata validation, before they reach a production database.
 
-**Hot DocTypes need materialised columns.** A PostgreSQL `UPDATE` rewrites the whole row, so a DocType whose few fields change many times a day (stock levels, outstanding amounts, counters, status churn) bloats and churns vacuum if every field lives in JSONB. Rules the kernel enforces and the DocType linter reports: keep hot fields as materialised columns so the large JSONB stays TOASTed and untouched; leave hot fields unindexed where possible so updates stay heap-only (HOT) and set `fillfactor` below 100; put counters and balances in `ledger` storage or Redis; and split a hot status field into a narrow side DocType when churn is extreme. `jsonb` is the flexible default, not a universal choice.
+**Hot DocTypes.** A PostgreSQL `UPDATE` rewrites the whole row, so a DocType whose few fields change many times a day (stock levels, outstanding amounts, counters, status churn) bloats and keeps vacuum busy if every field lives in JSONB. Rules for these DocTypes: keep documents small, under about 2 KB, so an update does not rewrite TOAST; leave fast-changing fields unindexed where possible so updates stay heap-only (HOT), and set `fillfactor` below 100; put counters and balances in `ledger` storage or Redis; and split a hot status field into a narrow side DocType when churn is extreme. Today's `projected: materialised` columns are a typed copy kept in sync from JSONB for range filters, so they do not make an update cheaper. For the highest-churn DocTypes, `ledger` or a relational table fits better than `jsonb`.
 
 ### 3. Document lifecycle, versions, and amendments
 
@@ -358,7 +360,7 @@ Frappe creates one table per DocType and runs DDL when you add a Custom Field. A
 * **Track changes** stores a diff per save; **versions** are queryable.
 * **Links** are validated on write and protect referential integrity across JSONB and ledger storage; `fetch-from` copies denormalised values at write time, the way ERP documents expect.
 * **Child tables** are ordered sub-documents stored inline (JSONB) or projected (ledger) by the parent's strategy.
-* **Naming series** are cluster-safe (Redis-backed counters with gap-free mode for fiscal documents).
+* **Naming series** are cluster-safe: gap-free by default (the counter row is locked until the document commits, as fiscal documents need), or `gapless: false` for high-volume documents, where each instance takes numbers from a block it reserved, about 20 times faster under concurrency.
 
 ### 4. Customisation as overlays that survive upgrades
 
@@ -597,7 +599,7 @@ An `Organisation` groups tenants (a holding company with subsidiaries, a franchi
 
 * **Bulkheads per tenant and per app**: virtual-thread concurrency limits, request rate limits, job concurrency, and agent token budgets. A noisy tenant degrades itself, not its neighbours.
 * **Quotas** come from the plan and can be overridden per tenant; breaches produce events and, where configured, soft limits before hard limits. Quotas cover compute and storage **and metadata**: projections and indexes per DocType and per tenant, overlay count, app versions kept warm.
-* **Metering** emits usage records (requests, storage, jobs, agent tokens, seats) as a `ledger` DocType for billing integrations. Astra does not ship billing; it ships the meter.
+* **Metering** emits usage records (requests, storage, jobs, agent tokens, seats) as a `ledger` DocType for billing integrations. Astra does not do billing itself; it supplies the usage data a billing system needs.
 
 ### 7. Tenant lifecycle
 
@@ -719,14 +721,14 @@ Platform features that ERP needs and the kernel already provides:
 ## Performance: Principles and Targets
 
 * No reflection on the hot path; dispatch chains built once per rollout.
-* DocType reads served from L1/L2 cache keyed by metadata version; list and report queries hit expression indexes or materialised projections, never a JSONB scan.
+* DocType reads served from L1/L2 cache keyed by metadata version; list queries hit expression indexes or materialised projections and never scan JSONB; aggregate reports run on CDC replica tables or ledgers.
 * Bulkheads per app; zero cost when idle; Seata proxy bypassed without an XID.
 * In-process isolation. High tenant density per pod is the design goal and a **hypothesis until benchmarked** with real overlay, cache and ClassLoader footprints.
 * Structured concurrency for hook fan-out; one failure cancels siblings and triggers global rollback.
 * The Seata transaction coordinator is a central component. It is kept off the hot path by smart bypass (most requests never touch it) and is **sharded by transaction service group** (per app or per tenant shard, each a Raft cluster) so coordinator throughput scales with the number of groups, not the number of kernel pods.
 * Plugin host memory is budgeted where the JVM allows it: Metaspace per ClassLoader is tracked and capped by `keep-previous`; Wasm linear memory is a hard cap per instance; **JVM heap per Tier 1 app is observable (per-plugin allocation metrics) but not enforceable**, which is one more reason untrusted code belongs in Tier 2.
 
-Every target is stated with the conditions under which it is measured.
+Every target is stated with the conditions under which it is measured. Measured results so far, with the harnesses to reproduce them: [docs/benchmark-doctype-jsonb-the-right-way.md](docs/benchmark-doctype-jsonb-the-right-way.md).
 
 | Metric | Condition | Target (to be validated by public benchmarks) |
 | --- | --- | --- |
@@ -927,14 +929,14 @@ What the demo exercises, all from real code in this repository:
 | Tenant resolved from `X-Astra-Tenant` or subdomain, bound in a `ScopedValue`, never a parameter | `astra-kernel` `TenantResolverFilter`, `astra-spi` `TenantContext` |
 | Row-level security on every statement via a transaction-local setting; kernel refuses to start as a superuser or `BYPASSRLS` role | `astra-doctype` `DocumentStore`, `RowLevelSecurityGuard`, Flyway `V1__astra_doc.sql` |
 | DocType loaded from app YAML, validated, served at `/api/doc/{doctype}` and `/api/doctype` | `astra-doctype` registry and resources |
-| Cluster-safe, per-tenant naming series (`ART-00001`) | `SeriesService` |
+| Cluster-safe, per-tenant naming series (`ART-00001`): gap-free, or block-allocated with `gapless: false` | `SeriesService` |
 | Tier 0 app contributing a DocType and a lifecycle hook through `astra-spi` only | `astra-apps/cms` |
 | Virtual threads per request (`@RunOnVirtualThread`), Quarkus 3.39 on JDK 25 | `DocResource`, `astra-server` |
 | Sign-in through Keycloak 26 with the Astra login theme (vi/en); bearer tokens verified by the server; tenant roles from Keycloak groups `/tenants/<tenant>/<role>`; tenant admins provision members and public users self-join | `astra-iam`, `deploy/keycloak`, [docs/iam-mobile-integration.md](docs/iam-mobile-integration.md) |
 | DocType permission rules per tenant role (`read`, `create`, `write`, `if-owner`), enforced by the generated API | `DocPermissions`, `article.doctype.yaml` |
 | Submittable lifecycle (draft → submitted → cancelled → amend) with hooks that write other documents in the same transaction | `DocumentStore.submit/cancel/amend`, `DocumentService`, `astra-apps/express` |
-| `projected: true` fields become online expression indexes (`CREATE INDEX CONCURRENTLY`) used by list filters | `ProjectionIndexer`, `GET /api/doctype/{name}/projections` |
-| Link fields validated inside the tenant; read-only fields owned by hooks; dated series (`ORD-.YYYYMMDD.-.#####`) | `DocumentStore`, `DocumentValidator`, `SeriesService` |
+| `projected: true` fields become online expression indexes (`CREATE INDEX CONCURRENTLY`) on the leakproof `astra_field` accessor, so list filters use them under row-level security; `projected: materialised` adds a typed column for range filters (`field__gt`, `__lt`) | `ProjectionIndexer`, `MaterialisedProjections`, `GET /api/doctype/{name}/projections` |
+| Link fields validated inside the tenant; read-only fields owned by hooks; dated series (`ORD-.YYYYMMDD.-.#######`) | `DocumentStore`, `DocumentValidator`, `SeriesService` |
 | Desk UI generated from DocType metadata, with an API inspector and a two-tenant compare view | `astra-server` `META-INF/resources/desk` |
 | Append-only ledger (trigger-enforced), monthly partitions, balanced double entry, reversals; maker/checker (segregation of duties) on submit | `V3__ledger.sql`, `LedgerStore`, `GeneralLedger` SPI, `DocPermissions` |
 | Per-tenant DocType overlays applied at runtime, without a restart | `Overlays`, `DocTypeOverlays`, `tenants/*/overlays` |
@@ -946,7 +948,7 @@ What the demo exercises, all from real code in this repository:
 | STMS: vehicle routing with Timefold Solver (capacity and time windows as hard constraints), re-solving on live events, MCP tools and a dispatch copilot (the language model is a scripted mock for the demo; the solver and tools are real) | `astra-apps/stms`, `RoutePlanner`, `Replanner`, `DispatchCopilot` |
 | SAML 2.0 SSO through Keycloak brokering (signed assertions, IdP groups become tenant roles) and per-tenant SCIM 2.0 Users/Groups at `/scim/v2`, with the tenant taken from the token | `deploy/keycloak/realm`, `astra-iam` `ScimResource`, `ScimDirectory` |
 
-Not in the thin slice yet: row-level permission conditions, materialised projections, Tier 1 loader, rollout control plane, audit hash-chain, field encryption, Apache Doris, AI agents beyond MCP tools, and a full Desk (dashboards, reports). The roadmap below sequences them. The video series that walks through the demo is in [docs/demo-video-series.en.md](docs/demo-video-series.en.md).
+Not in the thin slice yet: row-level permission conditions, Tier 1 loader, rollout control plane, audit hash-chain, field encryption, Apache Doris, AI agents beyond MCP tools, and a full Desk (dashboards, reports). The roadmap below sequences them. The video series that walks through the demo is in [docs/demo-video-series.en.md](docs/demo-video-series.en.md).
 
 ## Getting Started (Target Workflow)
 
@@ -999,9 +1001,9 @@ astra:
 </tr>
 </table>
 
-**Done** (see [Run the thin slice today](#run-the-thin-slice-today)): tenancy with row-level security and a fail-closed guard, zero-DDL JSONB storage with generated REST and Desk, the submittable lifecycle, an append-only ledger, per-tenant overlays, a Tier 2 Wasm sandbox, an MCP server, a Rust CDC worker with Sync-Aware LSN, Seata AT + TCC, Keycloak with SAML SSO and SCIM, and two kernel pods on k3d.
+**Done** (see [Run the thin slice today](#run-the-thin-slice-today)): tenancy with row-level security and a fail-closed guard, zero-DDL JSONB storage with generated REST and Desk, materialised projections for range filters, opt-in monthly partitioning, the submittable lifecycle, an append-only ledger, per-tenant overlays, a Tier 2 Wasm sandbox, an MCP server, a Rust CDC worker with Sync-Aware LSN, Seata AT + TCC, Keycloak with SAML SSO and SCIM, and two kernel pods on k3d.
 
-**Next:** the Tier 1 isolated-JVM loader, canary rollout across pods, row-level permission conditions, materialised projections, the audit hash-chain, field encryption, streaming CDC and agents beyond MCP tools. The phases below sequence the full platform; the compliance work is a set of **profiles enabled over time**, not a single Phase 5 deliverable.
+**Next:** the Tier 1 isolated-JVM loader, canary rollout across pods, row-level permission conditions, the audit hash-chain, field encryption, streaming CDC and agents beyond MCP tools. The phases below sequence the full platform; the compliance work is a set of **profiles enabled over time**, not a single Phase 5 deliverable.
 
 * [ ] **Phase 1: Architecture & SPI** (in progress). Blueprint (this README). Next: `astra-spi` with extension points, DocType model and YAML schema **including compliance attributes**, manifest schema, maturity levels, deprecation policy, `AGENTS.md` / `llms.txt`, `SECURITY.md`, OSCAL control catalogue skeleton.
 * [ ] **Phase 2: Kernel, Plugin Host & DocType Engine core**. Registry with side-by-side versions and tenant pins; **tenancy core** (Tenant DocType, resolution, `ScopedValue` context, RLS, `shared-rls` profile, bulkheads); Tier 0/1/2 loaders **with instruction counting for Tier 2**; DocType metadata registry, JSONB storage, expression-index projections with quotas, naming, links, child tables, permissions, submittable lifecycle, versions; **tamper-evident audit ledger from the first write**; generated REST; **thin MCP server (`doc.search / get / create`)**; **Seata spike** (AT + TCC + virtual threads, go/no-go for Phase 4); `astra-plugin-testkit`; SLSA Level 3 build pipeline; first public benchmarks.

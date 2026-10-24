@@ -1,0 +1,12 @@
+# Test-only: a month-partitioned DocType named by a field, whose names the kernel checks across months.
+name: TestParcelCode
+module: test
+kind: transaction
+partition: month
+naming: { field: code }
+
+fields:
+  - { name: code, type: Data, required: true }
+
+permissions:
+  - { role: admin, read: true, create: true, write: true }

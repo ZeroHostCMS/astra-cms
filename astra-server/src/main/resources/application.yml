@@ -28,8 +28,10 @@ quarkus:
     username: ${ASTRA_DB_USER:astra_app}     # non-superuser role; see deploy/docker/init/01-app-role.sql
     password: ${ASTRA_DB_PASSWORD:astra_app}
     jdbc:
-      min-size: 2
-      max-size: 20
+      # Per kernel instance. Size the total over all instances to about 2-3x the database's CPU threads:
+      # throughput peaked at 64 connections on 24 threads and fell beyond (docs/benchmark-doctype-jsonb-the-right-way.md).
+      min-size: ${ASTRA_DB_POOL_MIN:2}
+      max-size: ${ASTRA_DB_POOL_MAX:20}
   flyway:
     migrate-at-start: true
     bms:                                  # BMS's own schema (astra-tx-seata/src/main/resources/db/bms)
@@ -73,6 +75,10 @@ astra:
     tx-group: astra_tx_group
   cdc:
     replicas: replica_waybill:Waybill,replica_order:CustomerOrder   # replica table : source DocType (astra-cdc-rust/cdc-routes.yaml)
+  storage:
+    # Month boundaries of astra_doc_txn (DocTypes with partition: month) follow the business day, not UTC.
+    partition-time-zone: ${ASTRA_PARTITION_TZ:Asia/Ho_Chi_Minh}
+    months-ahead: 2                       # partitions created ahead of time; rows outside them go to the default partition
   tenancy:
     mode: ${ASTRA_TENANCY_MODE:multi}      # single | multi
     default-tenant: default

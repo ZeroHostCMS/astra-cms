@@ -1,0 +1,12 @@
+label: xeon-e5-2678v3-24t-docker-wsl2-20261023-lsnfix
+note: after X-Tx-LSN on the committing connection; 100/s first to warm the JIT
+date_utc: 2026-10-23 16:12:53
+git_commit: 336c4ef
+cpu_model: Intel(R) Xeon(R) CPU E5-2678 v3 @ 2.50GHz
+cpus: 24
+ram_mb: 15943
+product: 
+rates: 100 300 400 500 600
+duration: 60s
+db_pool_max: 48
+layout: PostgreSQL, Keycloak, Redis, kernel and k6 on this one machine

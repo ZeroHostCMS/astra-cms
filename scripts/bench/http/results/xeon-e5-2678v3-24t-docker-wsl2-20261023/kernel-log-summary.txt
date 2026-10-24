@@ -1,0 +1,47 @@
+# kernel log summary (full log was 3060 bytes): first 60 lines, then counts of ERROR/WARN causes
+kernel-1  | __  ____  __  _____   ___  __ ____  ______ 
+kernel-1  |  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/ 
+kernel-1  |  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \   
+kernel-1  | --\___\_\____/_/ |_/_/|_/_/|_|\____/___/   
+kernel-1  | 2026-10-23 15:46:58,440 INFO  [org.flywaydb.core.FlywayExecutor] (main) Database: jdbc:postgresql://postgres:5432/astra (PostgreSQL 16.15)
+kernel-1  | 2026-10-23 15:46:58,570 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] (main) Schema history table "public"."flyway_schema_history" does not exist yet
+kernel-1  | 2026-10-23 15:46:58,577 INFO  [org.flywaydb.core.internal.command.DbValidate] (main) Successfully validated 7 migrations (execution time 00:00.055s)
+kernel-1  | 2026-10-23 15:46:58,602 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] (main) Creating Schema History table "public"."flyway_schema_history" ...
+kernel-1  | 2026-10-23 15:46:58,668 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Current version of schema "public": << Empty Schema >>
+kernel-1  | 2026-10-23 15:46:58,693 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "1 - astra doc"
+kernel-1  | 2026-10-23 15:46:58,752 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "2 - amendments"
+kernel-1  | 2026-10-23 15:46:58,783 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "3 - ledger"
+kernel-1  | 2026-10-23 15:46:58,829 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "4 - overlays"
+kernel-1  | 2026-10-23 15:46:58,855 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "5 - cdc replicas"
+kernel-1  | 2026-10-23 15:46:58,891 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "6 - astra doc performance"
+kernel-1  | 2026-10-23 15:46:58,927 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "7 - month partitions and materialised"
+kernel-1  | 2026-10-23 15:46:58,984 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Successfully applied 7 migrations to schema "public", now at version v7 (execution time 00:00.150s)
+kernel-1  | 2026-10-23 15:46:59,647 INFO  [ai.timefold.solver.quarkus.bean.TimefoldSolverBannerBean] (main) Using Timefold Solver Community Edition v2.7.1 (ef8a69d).
+kernel-1  | 2026-10-23 15:46:59,794 INFO  [io.quarkus] (main) astra 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.39.5) started in 10.234s. Listening on: http://0.0.0.0:8080
+kernel-1  | 2026-10-23 15:46:59,794 INFO  [io.quarkus] (main) Profile prod activated. 
+kernel-1  | 2026-10-23 15:46:59,795 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, config-yaml, flyway, jdbc-postgresql, narayana-jta, oidc, redis-client, rest, rest-client, rest-client-jackson, rest-jackson, security, smallrye-context-propagation, smallrye-health, timefold-solver, vertx]
+
+# ERROR lines: 0
+
+# last 40 lines
+kernel-1  | __  ____  __  _____   ___  __ ____  ______ 
+kernel-1  |  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/ 
+kernel-1  |  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \   
+kernel-1  | --\___\_\____/_/ |_/_/|_/_/|_|\____/___/   
+kernel-1  | 2026-10-23 15:46:58,440 INFO  [org.flywaydb.core.FlywayExecutor] (main) Database: jdbc:postgresql://postgres:5432/astra (PostgreSQL 16.15)
+kernel-1  | 2026-10-23 15:46:58,570 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] (main) Schema history table "public"."flyway_schema_history" does not exist yet
+kernel-1  | 2026-10-23 15:46:58,577 INFO  [org.flywaydb.core.internal.command.DbValidate] (main) Successfully validated 7 migrations (execution time 00:00.055s)
+kernel-1  | 2026-10-23 15:46:58,602 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] (main) Creating Schema History table "public"."flyway_schema_history" ...
+kernel-1  | 2026-10-23 15:46:58,668 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Current version of schema "public": << Empty Schema >>
+kernel-1  | 2026-10-23 15:46:58,693 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "1 - astra doc"
+kernel-1  | 2026-10-23 15:46:58,752 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "2 - amendments"
+kernel-1  | 2026-10-23 15:46:58,783 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "3 - ledger"
+kernel-1  | 2026-10-23 15:46:58,829 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "4 - overlays"
+kernel-1  | 2026-10-23 15:46:58,855 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "5 - cdc replicas"
+kernel-1  | 2026-10-23 15:46:58,891 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "6 - astra doc performance"
+kernel-1  | 2026-10-23 15:46:58,927 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Migrating schema "public" to version "7 - month partitions and materialised"
+kernel-1  | 2026-10-23 15:46:58,984 INFO  [org.flywaydb.core.internal.command.DbMigrate] (main) Successfully applied 7 migrations to schema "public", now at version v7 (execution time 00:00.150s)
+kernel-1  | 2026-10-23 15:46:59,647 INFO  [ai.timefold.solver.quarkus.bean.TimefoldSolverBannerBean] (main) Using Timefold Solver Community Edition v2.7.1 (ef8a69d).
+kernel-1  | 2026-10-23 15:46:59,794 INFO  [io.quarkus] (main) astra 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.39.5) started in 10.234s. Listening on: http://0.0.0.0:8080
+kernel-1  | 2026-10-23 15:46:59,794 INFO  [io.quarkus] (main) Profile prod activated. 
+kernel-1  | 2026-10-23 15:46:59,795 INFO  [io.quarkus] (main) Installed features: [agroal, cdi, config-yaml, flyway, jdbc-postgresql, narayana-jta, oidc, redis-client, rest, rest-client, rest-client-jackson, rest-jackson, security, smallrye-context-propagation, smallrye-health, timefold-solver, vertx]

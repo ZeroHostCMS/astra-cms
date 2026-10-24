@@ -1,0 +1,101 @@
+hanoi-express
+Finalize Aggregate  (cost=415133.00..415133.01 rows=1 width=8) (actual time=1188.509..1221.646 rows=1 loops=1)
+  Buffers: shared hit=788520 read=3532
+  I/O Timings: shared read=123.184
+  ->  Gather  (cost=415132.58..415132.99 rows=4 width=8) (actual time=1188.486..1221.625 rows=5 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=788520 read=3532
+        I/O Timings: shared read=123.184
+        ->  Partial Aggregate  (cost=414132.58..414132.59 rows=1 width=8) (actual time=1134.105..1134.106 rows=1 loops=5)
+              Buffers: shared hit=788520 read=3532
+              I/O Timings: shared read=123.184
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..414106.57 rows=10405 width=0) (actual time=697.116..1133.717 rows=1186 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+                    Rows Removed by Filter: 799005
+                    Buffers: shared hit=788520 read=3532
+                    I/O Timings: shared read=123.184
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=231 read=1
+  I/O Timings: shared read=1.610
+Planning Time: 5.515 ms
+JIT:
+  Functions: 37
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 10.867 ms, Inlining 0.000 ms, Optimization 4.744 ms, Emission 171.226 ms, Total 186.837 ms
+Execution Time: 1287.652 ms
+----- run 1: 1287.652 ms
+hanoi-express
+Finalize Aggregate  (cost=415133.00..415133.01 rows=1 width=8) (actual time=827.594..868.392 rows=1 loops=1)
+  Buffers: shared hit=792016
+  ->  Gather  (cost=415132.58..415132.99 rows=4 width=8) (actual time=827.001..868.367 rows=5 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792016
+        ->  Partial Aggregate  (cost=414132.58..414132.59 rows=1 width=8) (actual time=809.284..809.285 rows=1 loops=5)
+              Buffers: shared hit=792016
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..414106.57 rows=10405 width=0) (actual time=286.495..808.925 rows=1186 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+                    Rows Removed by Filter: 799005
+                    Buffers: shared hit=792016
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=232
+Planning Time: 0.613 ms
+JIT:
+  Functions: 37
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 2.254 ms, Inlining 0.000 ms, Optimization 1.800 ms, Emission 26.216 ms, Total 30.270 ms
+Execution Time: 887.144 ms
+----- run 2: 887.144 ms
+hanoi-express
+Finalize Aggregate  (cost=415133.00..415133.01 rows=1 width=8) (actual time=1121.050..1149.365 rows=1 loops=1)
+  Buffers: shared hit=792032
+  ->  Gather  (cost=415132.58..415132.99 rows=4 width=8) (actual time=1121.022..1149.344 rows=5 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792032
+        ->  Partial Aggregate  (cost=414132.58..414132.59 rows=1 width=8) (actual time=1078.625..1078.625 rows=1 loops=5)
+              Buffers: shared hit=792032
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..414106.57 rows=10405 width=0) (actual time=593.658..1077.219 rows=1186 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+                    Rows Removed by Filter: 799005
+                    Buffers: shared hit=792032
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=232
+Planning Time: 2.255 ms
+JIT:
+  Functions: 37
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 4.618 ms, Inlining 0.000 ms, Optimization 8.289 ms, Emission 74.194 ms, Total 87.100 ms
+Execution Time: 1199.252 ms
+----- run 3: 1199.252 ms
+hanoi-express
+Finalize Aggregate  (cost=415133.00..415133.01 rows=1 width=8) (actual time=666.776..691.799 rows=1 loops=1)
+  Buffers: shared hit=792056
+  ->  Gather  (cost=415132.58..415132.99 rows=4 width=8) (actual time=666.363..691.766 rows=5 loops=1)
+        Workers Planned: 4
+        Workers Launched: 4
+        Buffers: shared hit=792056
+        ->  Partial Aggregate  (cost=414132.58..414132.59 rows=1 width=8) (actual time=622.537..622.538 rows=1 loops=5)
+              Buffers: shared hit=792056
+              ->  Parallel Index Scan using astra_doc_p_zone on astra_doc  (cost=0.43..414106.57 rows=10405 width=0) (actual time=337.179..622.283 rows=1186 loops=5)
+                    Index Cond: ((tenant_id = current_setting('astra.tenant'::text, true)) AND (doctype = 'CustomerOrder'::text))
+                    Filter: (data @> '{"zone": "Remote", "ops_status": "Returned"}'::jsonb)
+                    Rows Removed by Filter: 799005
+                    Buffers: shared hit=792056
+Settings: work_mem = '64MB', effective_cache_size = '12GB', random_page_cost = '1.1', max_parallel_workers_per_gather = '4'
+Planning:
+  Buffers: shared hit=232
+Planning Time: 1.299 ms
+JIT:
+  Functions: 37
+  Options: Inlining false, Optimization false, Expressions true, Deforming true
+  Timing: Generation 14.419 ms, Inlining 0.000 ms, Optimization 6.539 ms, Emission 59.879 ms, Total 80.837 ms
+Execution Time: 738.458 ms
+----- run 4: 738.458 ms
