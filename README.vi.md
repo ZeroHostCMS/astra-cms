@@ -56,7 +56,7 @@ App đầu tiên là Astra CMS, tiếp theo là Astra ERP.
 
 ## Video demo
 
-Quay từ bản demo đang chạy: màn hình Desk và output terminal thật. Các video 8 đến 17 và 19 đến 21 kết thúc bằng mục "Nói đúng" ghi rõ phần nào chưa làm. Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md). Mỗi video có một bài viết chuyên sâu cho developer và tech lead, có code, ví dụ thực tế và prompt vẽ hình minh hoạ: [tất cả bài viết](docs/articles/README.vi.md).
+Quay từ bản demo đang chạy: màn hình Desk và output terminal thật. Các video 8 đến 17 và 19 đến 21 kết thúc bằng mục "Nói đúng" ghi rõ phần nào chưa làm. Kịch bản: [docs/demo-video-series.md](docs/demo-video-series.md). Mỗi video có một bài viết chuyên sâu cho developer và tech lead, có code, ví dụ thực tế và hình minh hoạ: [tất cả bài viết](docs/articles/README.vi.md).
 
 <table>
 <tr><th colspan="2" align="left">Teaser: Một nền tảng, mọi nghiệp vụ <sub>(1:30)</sub></th></tr>

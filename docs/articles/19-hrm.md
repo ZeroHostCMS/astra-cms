@@ -65,6 +65,9 @@ days, Monday to Saturday) for `saigon-express`. The script signs in as `hanh` (r
 10. **Cancel** (scene 8). The slips move to docstatus 2, the voucher gets five more lines with `is_reversal: true`, and
     the trial balance of 334, 3383, 3384, 3386 and 642 returns to 0. No row is deleted.
 
+![Figure 3: Cancel adds rows, never deletes](./figures/video-19-figure-3.png)
+*Cancelling a payroll run posts mirror reversals to astra_ledger, preserving historical payroll audit trails.*
+
 ## How it works
 
 ### The shape of the app
@@ -115,6 +118,9 @@ permissions:
   - { role: hr,         read: true, create: true, write: true, submit: true, cancel: true }
   - { role: accountant, read: true }
 ```
+
+![Figure 1: One save, four slips, one transaction](./figures/video-19-figure-1.png)
+*One payroll entry save computes four employee salary slips in parallel within a single database transaction.*
 
 ### Save, submit, cancel
 
@@ -271,6 +277,9 @@ deadline and the save is rejected:
         c.set("self_test", "kpi(1000 pieces, 26/26 days) = " + bonus + " VND in " + micros + " µs");
 ```
 
+![Figure 4: The courier bonus tiers](./figures/video-19-figure-4.png)
+*Courier performance bonuses evaluated dynamically via WebAssembly pricing formulas per tenant.*
+
 ### One accrual voucher per run
 
 On submit the entry submits every draft slip, totals earnings and deductions per GL account, and posts one voucher
@@ -309,6 +318,9 @@ through) and asks the ledger for one reversal. The ledger table itself refuses U
         ledger.reverse("PayrollEntry", entry.name());
     }
 ```
+
+![Figure 2: The accrual voucher balances](./figures/video-19-figure-2.png)
+*Submitting a payroll run posts a balanced general ledger accrual voucher across salary expense and payable accounts.*
 
 ### The AI agent's view
 
@@ -412,31 +424,23 @@ From the script's "To be accurate" section for Video 19:
 - The figures in the script were computed from the hook's logic; the numbers in this article's "What the video shows"
   come from the recorded run, and the "Real-world example" values are hand-computed and illustrative.
 
-## Visualize it: sketch prompts
+## Figures
 
 ### Figure 1 · One save, four slips, one transaction
-*Where it goes:* How it works
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Left: a box labelled "PayrollEntry PAY-2610-002 (draft)" with a small calendar "1–30 Sep". Middle: a dashed rectangle labelled "one DB transaction" containing, left to right: a box "PayrollInputs.load", a fan of four thin parallel arrows labelled "virtual thread" each ending in a small box "kpi() Wasm", and four stacked cards labelled "SAL-…05 NV001", "SAL-…06 NV002", "SAL-…07 NV003", "SAL-…08 NV004". Right: a cylinder labelled "astra_doc". Highlight in blue the four parallel arrows and the dashed transaction border. Small note under the fan: "compute only, no storage".
-```
+
+![Figure 1: One save, four slips, one transaction](./figures/video-19-figure-1.png)
 
 ### Figure 2 · The accrual voucher balances
-*Where it goes:* How it works, "One accrual voucher per run"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A large T-account drawn by hand, titled "Voucher PAY-2610-002". Left column "Debit": one line "642  35,837,501". Right column "Credit": four lines "3383  2,680,000", "3384  502,500", "3386  335,000", "334  32,320,001". Under the T-account a handwritten equation "35,837,501 = 2,680,000 + 502,500 + 335,000 + 32,320,001" with a blue check mark. To the right, a small box "GeneralLedger.post()" with an arrow into a cylinder labelled "astra_ledger (append-only)". Highlight the equation in blue.
-```
+
+![Figure 2: The accrual voucher balances](./figures/video-19-figure-2.png)
 
 ### Figure 3 · Cancel adds rows, never deletes
-*Where it goes:* What the video shows, scene 8
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Top to bottom: a table sketch labelled "astra_ledger" with five rows marked "is_reversal: false" (accounts 642, 3383, 3384, 3386, 334). An arrow labelled "Cancel PAY-2610-002" points down to the same table now with five more rows appended at the bottom marked "is_reversal: true", amounts on the opposite side. A crossed-out eraser icon labelled "no UPDATE / DELETE". On the right, a small trial balance box "334 · 3383 · 3384 · 3386 · 642 → balance 0". Highlight the five appended rows in blue.
-```
+
+![Figure 3: Cancel adds rows, never deletes](./figures/video-19-figure-3.png)
 
 ### Figure 4 · The courier bonus tiers
-*Where it goes:* How it works, "The tenant's bonus formula"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A horizontal axis labelled "parcels delivered" with ticks at 0, 600, 1,000 and 1,007. Three stacked bars rising like steps: "1,500 ₫ / parcel" from 0 to 600, "2,000 ₫ / parcel" from 600 to 1,000, "2,500 ₫ / parcel" beyond 1,000. A marker at 1,007 labelled "NV002: kpi = 1,717,500 ₫". A separate small box on the right "+500,000 ₫ if payment days = working days". Above everything a small box "courier-kpi.wasm (Rust, tenant code)" with a stopwatch labelled "50 ms deadline". Highlight the marker at 1,007 in blue.
-```
+
+![Figure 4: The courier bonus tiers](./figures/video-19-figure-4.png)
 
 ## Related
 

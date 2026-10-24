@@ -65,6 +65,9 @@ Bản quay chạy `make demo-hrm` trên stack k3d sau `make demo-seed`; lệnh s
 10. **Cancel** (cảnh 8). Các phiếu chuyển sang docstatus 2, bút toán có thêm năm dòng với `is_reversal: true`, và số dư
     thử của 334, 3383, 3384, 3386 và 642 về 0. Không dòng nào bị xoá.
 
+![Hình 3: Cancel thêm dòng, không bao giờ xoá](./figures/video-19-figure-3.png)
+*Cancel thêm dòng, không bao giờ xoá.*
+
 ## Cách hoạt động
 
 ### Hình dạng của app
@@ -115,6 +118,9 @@ permissions:
   - { role: hr,         read: true, create: true, write: true, submit: true, cancel: true }
   - { role: accountant, read: true }
 ```
+
+![Hình 1: Một lần lưu, bốn phiếu lương, một transaction](./figures/video-19-figure-1.png)
+*Một lần lưu, bốn phiếu lương, một transaction.*
 
 ### Lưu, submit, cancel
 
@@ -272,6 +278,9 @@ lần lưu bị từ chối:
         c.set("self_test", "kpi(1000 pieces, 26/26 days) = " + bonus + " VND in " + micros + " µs");
 ```
 
+![Hình 4: Các bậc thưởng bưu tá](./figures/video-19-figure-4.png)
+*Các bậc thưởng bưu tá.*
+
 ### Mỗi lượt chạy một bút toán dồn tích
 
 Khi submit, entry submit mọi phiếu nháp, cộng thu nhập và khấu trừ theo từng tài khoản sổ cái, rồi ghi một bút toán qua
@@ -310,6 +319,9 @@ Cancel là hình ảnh phản chiếu: entry huỷ các phiếu của chính nó
         ledger.reverse("PayrollEntry", entry.name());
     }
 ```
+
+![Hình 2: Bút toán dồn tích cân đối](./figures/video-19-figure-2.png)
+*Bút toán dồn tích cân đối.*
 
 ### Góc nhìn của agent AI
 
@@ -413,33 +425,23 @@ Theo mục "Nói đúng" của kịch bản Video 19:
 - Số liệu trong kịch bản được tính theo logic của hook; các con số ở mục "Video cho thấy gì" của bài này lấy từ lần quay,
   còn các giá trị ở "Ví dụ thực tế" được tính tay và mang tính minh hoạ.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Một lần lưu, bốn phiếu lương, một transaction
-*Đặt ở:* Cách hoạt động
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Left: a box labelled "PayrollEntry PAY-2610-002 (draft)" with a small calendar "1–30 Sep". Middle: a dashed rectangle labelled "one DB transaction" containing, left to right: a box "PayrollInputs.load", a fan of four thin parallel arrows labelled "virtual thread" each ending in a small box "kpi() Wasm", and four stacked cards labelled "SAL-…05 NV001", "SAL-…06 NV002", "SAL-…07 NV003", "SAL-…08 NV004". Right: a cylinder labelled "astra_doc". Highlight in blue the four parallel arrows and the dashed transaction border. Small note under the fan: "compute only, no storage".
-```
+
+![Hình 1: Một lần lưu, bốn phiếu lương, một transaction](./figures/video-19-figure-1.png)
 
 ### Hình 2 · Bút toán dồn tích cân đối
-*Đặt ở:* Cách hoạt động, mục "Mỗi lượt chạy một bút toán dồn tích"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A large T-account drawn by hand, titled "Voucher PAY-2610-002". Left column "Debit": one line "642  35,837,501". Right column "Credit": four lines "3383  2,680,000", "3384  502,500", "3386  335,000", "334  32,320,001". Under the T-account a handwritten equation "35,837,501 = 2,680,000 + 502,500 + 335,000 + 32,320,001" with a blue check mark. To the right, a small box "GeneralLedger.post()" with an arrow into a cylinder labelled "astra_ledger (append-only)". Highlight the equation in blue.
-```
+
+![Hình 2: Bút toán dồn tích cân đối](./figures/video-19-figure-2.png)
 
 ### Hình 3 · Cancel thêm dòng, không bao giờ xoá
-*Đặt ở:* Video cho thấy gì, cảnh 8
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Top to bottom: a table sketch labelled "astra_ledger" with five rows marked "is_reversal: false" (accounts 642, 3383, 3384, 3386, 334). An arrow labelled "Cancel PAY-2610-002" points down to the same table now with five more rows appended at the bottom marked "is_reversal: true", amounts on the opposite side. A crossed-out eraser icon labelled "no UPDATE / DELETE". On the right, a small trial balance box "334 · 3383 · 3384 · 3386 · 642 → balance 0". Highlight the five appended rows in blue.
-```
+
+![Hình 3: Cancel thêm dòng, không bao giờ xoá](./figures/video-19-figure-3.png)
 
 ### Hình 4 · Các bậc thưởng bưu tá
-*Đặt ở:* Cách hoạt động, mục "Công thức thưởng của tenant"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A horizontal axis labelled "parcels delivered" with ticks at 0, 600, 1,000 and 1,007. Three stacked bars rising like steps: "1,500 ₫ / parcel" from 0 to 600, "2,000 ₫ / parcel" from 600 to 1,000, "2,500 ₫ / parcel" beyond 1,000. A marker at 1,007 labelled "NV002: kpi = 1,717,500 ₫". A separate small box on the right "+500,000 ₫ if payment days = working days". Above everything a small box "courier-kpi.wasm (Rust, tenant code)" with a stopwatch labelled "50 ms deadline". Highlight the marker at 1,007 in blue.
-```
+
+![Hình 4: Các bậc thưởng bưu tá](./figures/video-19-figure-4.png)
 
 ## Liên quan
 

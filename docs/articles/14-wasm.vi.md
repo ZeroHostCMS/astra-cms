@@ -49,6 +49,9 @@ Video dài 2:20.
    mỗi lần gọi một instance mới. Mỗi rule tự đặt deadline, tối đa 200 ms.
 7. **Nói đúng.** Chicory chưa đếm được số lệnh, nên CPU bị giới hạn theo thời gian. Tier 1 còn trên roadmap.
 
+![Hình 3: Script chạy vô hạn bị chặn và không bao giờ được bật](./figures/video-14-figure-3.png)
+*Script chạy vô hạn bị chặn và không bao giờ được bật.*
+
 ## Cách hoạt động
 
 ```mermaid
@@ -61,6 +64,9 @@ flowchart LR
     O["Lưu CustomerOrder"] -->|"ShippingFeeHook: có rule đang bật cho segment?"| S
     S -->|"fee(weight_g, zone, express, cod)"| F["shipping_fee + priced_by"]
 ```
+
+![Hình 1: Từ mã nguồn Rust tới một đơn đã tính cước](./figures/video-14-figure-1.png)
+*Từ mã nguồn Rust tới một đơn đã tính cước.*
 
 ### Code của tenant: một hàm export, không import gì
 
@@ -218,6 +224,9 @@ Vì sao có từng lớp kiểm soát:
 
 Vì sao dùng deadline thời gian thay vì ngân sách lệnh: Chicory chưa có cơ chế đếm lệnh ("fuel"), nên thời gian thực là cách
 kiểm soát CPU duy nhất hiện có. Đó là giới hạn được nêu trong video.
+
+![Hình 2: Sandbox ngăn những gì](./figures/video-14-figure-2.png)
+*Sandbox ngăn những gì.*
 
 ### Lưu rule là chạy thử
 
@@ -392,36 +401,19 @@ Trong Desk, bằng `mai`: Pricing Rule → mở rule → xem `self_test` → b�
   gắn vào overlay, như phác thảo trong [overlay-wasm.md](../overlay-wasm.md), chưa được xây.
 - Tier 1 (app JVM cô lập có hot-swap) còn trên roadmap, chưa được xây.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Từ mã nguồn Rust tới một đơn đã tính cước
 
-*Đặt ở:* Cách hoạt động, sơ đồ đầu mục
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right: a sheet "lib.rs  fn fee(weight_g, zone, express, cod) -> i64", arrow labelled "build-wasm.sh" to a tiny cube "tet-promo.wasm 421 bytes", arrow labelled "POST /api/doc/PricingRule" to a document card "PricingRule PRL-001  active: true", arrow to a sealed box drawn in blue "WasmSandbox (Chicory)", arrow to an order card "CustomerOrder  shipping_fee 51,000  priced_by PRL-001 (Wasm)". Above the order card, a small crossed-out "73,000". Highlight the blue sandbox box and the final arrow.
-```
+![Hình 1: Từ mã nguồn Rust tới một đơn đã tính cước](./figures/video-14-figure-1.png)
 
 ### Hình 2 · Sandbox ngăn những gì
 
-*Đặt ở:* Cách hoạt động, "Sandbox"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Center: a thick-walled box drawn in blue labelled "fresh Instance per call", containing a small block "linear memory ≤ 1 MiB (16 pages)" and a stopwatch "deadline ≤ 200 ms". One arrow in from the left labelled "4 × i64", one arrow out to the right labelled "1 × i64". Outside the box, four crossed-out arrows pointing at the wall labelled "network", "files", "clock", "host imports". Below the box, a JVM rectangle labelled "kernel keeps running" with other tenants as small icons. Highlight the blue box walls.
-```
+![Hình 2: Sandbox ngăn những gì](./figures/video-14-figure-2.png)
 
 ### Hình 3 · Script chạy vô hạn bị chặn và không bao giờ được bật
 
-*Đặt ở:* Video cho thấy gì, cảnh 5
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a card "runaway.wasm  loop { i += 1 }" with a circular arrow. Arrow to a box "PricingRuleHook self-test". Inside, a stopwatch at "50 ms" and a hand pulling a plug labelled "cancel(true)". Arrow down to a black ink stamp "422 module rejected (timeout)" and a note "never active". On the right, a separate blue path: a new order card "next order" going to "Standard tariff / priced normally". Highlight the blue path for the next order.
-```
+![Hình 3: Script chạy vô hạn bị chặn và không bao giờ được bật](./figures/video-14-figure-3.png)
 
 ## Liên quan
 

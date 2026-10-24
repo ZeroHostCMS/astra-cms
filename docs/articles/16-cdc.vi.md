@@ -29,6 +29,9 @@ không có được sự tách rời. Astra giữ sự tách rời và làm cho 
 lệnh ghi trả về một vị trí trong log; lệnh đọc có thể nói "tôi cần ít nhất vị trí đó"; kernel hoặc trả dữ liệu đã bao
 gồm lần ghi, hoặc trả lời "chưa xong" mà không kèm dữ liệu.
 
+![Hình 1: Ghi, vị trí, đọc](./figures/video-16-figure-1.png)
+*Ghi, vị trí, đọc.*
+
 ## Video cho thấy gì
 
 | Cảnh | Bạn thấy gì | Điều được chứng minh |
@@ -137,6 +140,9 @@ Vì sao làm như vậy:
   Insert, Update, Delete, Truncate). pgoutput là output plugin có sẵn của PostgreSQL, nên database không cần cài
   extension nào. Lệnh Delete bị bỏ qua vì document không bao giờ bị xoá, chỉ bị hủy.
 
+![Hình 2: Bên trong một lần poll của worker](./figures/video-16-figure-2.png)
+*Bên trong một lần poll của worker.*
+
 ### 3. Dòng replica được ghi dưới RLS
 
 Worker không được cấp role đặc quyền. Tenant của từng dòng được gắn trước khi upsert:
@@ -241,6 +247,9 @@ Ghi chú thiết kế:
 Bản thân endpoint replica (`ReplicaResource`) đòi quyền đọc trên DocType *nguồn*, nên role nào không đọc được Waybill
 thì cũng không đọc được `replica_waybill`.
 
+![Hình 3: Cổng 202](./figures/video-16-figure-3.png)
+*Cổng 202.*
+
 ## Ví dụ thực tế
 
 **Một đơn vị giao hàng chặng cuối ở Hà Nội có đội hỗ trợ riêng.** Bưu tá cập nhật trạng thái bưu kiện từ máy cầm tay
@@ -343,36 +352,19 @@ cụm k3d.
 - Số liệu độ trễ thay đổi giữa các lần chạy; con số "khoảng 50 ms" trong kịch bản gốc thành 117 ms ở lần quay này, và
   video nói rõ điều đó.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Ghi, vị trí, đọc
 
-*Đặt ở:* Vấn đề
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: stick figure "quang (OPS)" with an arrow to a box "Kernel" labelled "PUT Waybill → 200". A blue ticket comes back to quang labelled "X-Tx-LSN 0/387F920". A dotted handoff carries the same blue ticket to the right, to stick figure "ha (CARE)". From ha an arrow goes back to "Kernel" labelled "GET replica + X-Required-LSN". Two outcomes stacked on the right: top "202 sync pending (no data)", bottom "200 Out for Delivery". Highlight the blue ticket being carried from writer to reader.
-```
+![Hình 1: Ghi, vị trí, đọc](./figures/video-16-figure-1.png)
 
 ### Hình 2 · Bên trong một lần poll của worker
 
-*Đặt ở:* Cách hoạt động (vòng lặp của worker)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right: a long tape labelled "WAL" with a marker "slot astra_cdc". Arrow "peek up to current LSN" to a gear box labelled "astra-cdc (Rust) · pgoutput decode". From the gear, one blue bracket labelled "one transaction" encloses two boxes: "upsert replica_waybill (RLS)" and "_cdc_sync_watermark.last_lsn". After the bracket, an arrow labelled "then: pg_replication_slot_advance" back to the slot marker. A small clock labelled "50 ms" loops back to the start. Highlight the blue "one transaction" bracket.
-```
+![Hình 2: Bên trong một lần poll của worker](./figures/video-16-figure-2.png)
 
 ### Hình 3 · Cổng 202
 
-*Đặt ở:* Cách hoạt động (cổng của kernel)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A horizontal number line labelled "WAL position" with two marks: "watermark 0/387CFC0" (left) and "required 0/387F920" (right). Above, a gate labelled "SyncAwareLsnFilter" with a sign "watermark >= required ?". Left branch "no → 202 sync-pending, retryAfterMs 50". Right branch in blue "yes → 200 replica row". A small arrow shows the watermark mark sliding right over time. Highlight the comparison sign.
-```
+![Hình 3: Cổng 202](./figures/video-16-figure-3.png)
 
 ## Liên quan
 

@@ -45,6 +45,9 @@ và `bao` của nó không phải `linh` dispatcher trong [Video 20](./20-stms.v
 | Fail closed | Token của globex: user của acme → 404, filter → 0 kết quả, `X-Astra-Tenant: acme` → 403, thêm user acme vào role globex → 400 `invalidValue`, filter `co` → 400 `invalidFilter` | Lỗi theo RFC 7644; token của tenant khác không thấy gì. |
 | Xoá | `DELETE` → 204, GET → 404 | User đã xoá là mất hẳn. |
 
+![Hình 2: Assertion bị giả mạo](./figures/video-21-figure-2.png)
+*Assertion bị giả mạo.*
+
 ## Cách hoạt động
 
 ### SAML: Keycloak làm broker, kernel không nhìn thấy
@@ -116,6 +119,9 @@ Vì sao dùng broker thay vì nhúng SAML vào Astra: kiểm chữ ký XML là n
 metadata, xoay vòng chứng chỉ, lệch đồng hồ (`allowedClockSkew: 30`) và liên kết tài khoản. Kernel giữ một đường
 tin cậy duy nhất là JWT OIDC, và code trong [Video 11](./11-keycloak.vi.md) chạy không cần sửa. Vì vậy cảnh giả mạo
 là phép thử cho khâu kiểm tra của Keycloak, và đó chính là mục đích: Astra không phải viết gì cho nó.
+
+![Hình 1: SAML SP-initiated qua broker](./figures/video-21-figure-1.png)
+*SAML SP-initiated qua broker.*
 
 ### SCIM: tenant lấy từ token, không bao giờ từ request
 
@@ -259,6 +265,9 @@ không thể liệt kê, đọc, hay thêm Chi vào một role; mọi lần th�
 Những gì công ty phải tự cung cấp để chạy được trên production nằm trong danh sách "Nói đúng": mục IdP và các group
 mapper của riêng họ trong Keycloak, cùng một quy ước đặt tên nhóm đã được kiểm thử.
 
+![Hình 3: SCIM vào làm, chuyển vị trí, nghỉ việc trong một tenant](./figures/video-21-figure-3.png)
+*SCIM vào làm, chuyển vị trí, nghỉ việc trong một tenant.*
+
 ## Dành cho tech lead
 
 - **Một đường tin cậy.** Kernel chỉ tin một thứ: JWT do Keycloak ký. SAML, mật khẩu local và các broker sau này đều
@@ -331,33 +340,19 @@ Mật khẩu IdP và secret của các client SCIM trong các file realm JSON ch
 - Liệt kê user phân trang trong bộ nhớ, mỗi user thêm một lần đọc group: đủ cho demo, chưa dành cho hàng trăm nghìn
   user.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · SAML SP-initiated qua broker
-*Đặt ở:* Cách hoạt động, phần SAML
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Four boxes left to right: "Desk (browser)", "Keycloak · realm astra (SP urn:astra:sp)", "IdP · acme-corp-idp", and far right "Astra kernel". Top arrows left to right: "OIDC + kc_idp_hint=acme-corp" from Desk to Keycloak, then "SAML AuthnRequest" from Keycloak to IdP. A stick figure "linh" next to the IdP with a padlock "password stays here". Return arrow from IdP to Keycloak labelled "signed SAMLResponse · memberOf astra-editors", with a small wax seal icon "RSA-SHA256". Inside Keycloak a small note "memberOf → /tenants/acme/editor". Arrow from Keycloak back to Desk "OIDC code → token". Final arrow from Desk to Astra kernel "Bearer JWT · groups[/tenants/acme/editor]". Highlight in blue the signed SAMLResponse arrow and the final JWT arrow. A dashed line around Astra kernel labelled "no SAML code here".
-```
+![Hình 1: SAML SP-initiated qua broker](./figures/video-21-figure-1.png)
 
 ### Hình 2 · Assertion bị giả mạo
-*Đặt ở:* Video cho thấy gì
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a sealed envelope labelled "SAMLResponse for bao" containing the text "memberOf astra-readers". In the middle, a hand with a pen crossing out "readers" and writing "admins". Right: a box "Keycloak signature check" with a broken seal icon and a large "400 · invalid signature". Below it, an empty slot labelled "OIDC code" with a cross. Highlight in blue the broken seal and the empty code slot.
-```
+![Hình 2: Assertion bị giả mạo](./figures/video-21-figure-2.png)
 
 ### Hình 3 · SCIM vào làm, chuyển vị trí, nghỉ việc trong một tenant
-*Đặt ở:* Ví dụ thực tế
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a box "Company directory · scim-acme" with a token tag "scim_tenant: acme". Three arrows to the right, stacked top to bottom, labelled "POST /Users → 201", "PATCH /Groups/editor → add member", "PATCH active=False". They enter a box "ScimResource" and then a Keycloak folder tree: "/tenants/acme" (with a small label "ownership") containing "editor", "reader". A person icon "chi" moves from the root folder into "editor", then gets a grey cross "disabled". On the far right, a box "globex token" with a dashed arrow towards chi ending in a wall "404". Highlight in blue the arrow "PATCH /Groups/editor" and chi's move into "editor".
-```
+![Hình 3: SCIM vào làm, chuyển vị trí, nghỉ việc trong một tenant](./figures/video-21-figure-3.png)
 
 ## Liên quan
 

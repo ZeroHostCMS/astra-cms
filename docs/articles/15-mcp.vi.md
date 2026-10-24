@@ -30,6 +30,9 @@ Câu trả lời của Astra là **agent chỉ là một client nữa của cùn
 lần gọi tool đi qua cùng những bước kiểm tra quyền như REST API và Desk, và các trường khai báo `pii: true` trong
 DocType bị che trên kênh MCP.
 
+![Hình 1: Agent mang danh tính của người dùng](./figures/video-15-figure-1.png)
+*Agent mang danh tính của người dùng.*
+
 ## Video cho thấy gì
 
 | Cảnh | Bạn thấy gì | Điều được chứng minh |
@@ -44,6 +47,9 @@ DocType bị che trên kênh MCP.
 Cảnh terminal (`SCENES=13`) còn cho thấy hai điều mà lời dẫn chỉ lướt qua: `ha` gọi `cod_outstanding` bị từ chối với
 `not permitted: read Account`, và `ha` tạo một SupportTicket qua MCP thì thành công, đồng thời hook phân loại của app
 vẫn nâng mức ưu tiên lên High (`auto-escalated: mentions 'vỡ'`).
+
+![Hình 4: Bị từ chối, không phải bị lỗi](./figures/video-15-figure-4.png)
+*Bị từ chối, không phải bị lỗi.*
 
 ## Cách hoạt động
 
@@ -170,6 +176,9 @@ Vì sao thiết kế như vậy:
 - **Áp ở kênh, không áp ở tầng lưu trữ.** Desk hiện đầy đủ dữ liệu cho người dùng đã đăng nhập; chỉ dữ liệu đi ra qua
   MCP mới bị che. Nhờ vậy quy trình làm việc của con người không bị ảnh hưởng.
 
+![Hình 2: Lớp che làm gì với một đơn hàng](./figures/video-15-figure-2.png)
+*Lớp che làm gì với một đơn hàng.*
+
 ### App đóng góp một tool chỉ bằng một class
 
 SPI `McpTool` nằm trong `astra-spi`, nên app không phụ thuộc vào thứ gì trong `astra-ai`. Tool khai báo các DocType mà
@@ -234,6 +243,9 @@ Hai ghi chú thiết kế nên biết:
 - **Việc che dữ liệu phụ thuộc vào hình dạng kết quả.** SPI yêu cầu tool trả document dưới dạng map `{doctype, name, data}`.
   Một tool tự "làm phẳng" trường PII vào map riêng của nó (ví dụ `{"phone": "0901…"}`) sẽ lọt qua lớp che. Hãy review
   các tool của app về điểm này.
+
+![Hình 3: Một tool của app, nhiều việc của kernel](./figures/video-15-figure-3.png)
+*Một tool của app, nhiều việc của kernel.*
 
 ### Lệnh ghi báo vị trí WAL của mình
 
@@ -324,45 +336,23 @@ quyền, tool không tồn tại) và chạy bằng `make test`.
   là đã rút gọn.
 - MCP server chỉ trả lời bằng JSON; client nào mở stream GET sẽ nhận 405.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Agent mang danh tính của người dùng
 
-*Đặt ở:* Vấn đề
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a stick figure labelled "ha (care)" next to a small robot labelled "Claude". Both hold the same key labelled "Keycloak token". Middle: a single door labelled "/mcp". Right: a box labelled "Astra kernel" containing three stacked layers labelled "tenant: saigon-express", "RLS", "DocType permissions", and below it a cylinder labelled "astra_doc". The blue accent path goes from the robot through "/mcp" and through all three layers to the cylinder. Below, a crossed-out grey path labelled "service account (god mode)" goes around the layers directly to the cylinder. Highlight the shared key.
-```
+![Hình 1: Agent mang danh tính của người dùng](./figures/video-15-figure-1.png)
 
 ### Hình 2 · Lớp che làm gì với một đơn hàng
 
-*Đặt ở:* Cách hoạt động
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a card labelled "CustomerOrder (Desk)" with four rows: "receiver_name: Lê Văn Demo", "receiver_phone: 0901234567", "receiver_address: 1 Bạch Đằng, Đà Nẵng", "shipping_fee: 73000". Middle: a funnel labelled "PiiMasking (pii: true)". Right: a card labelled "to the model" with rows "receiver_name: L*** V*** D***", "receiver_phone: *******567", "receiver_address: 1*** B*** Đ*** Đ*** N***", "shipping_fee: 73000". Blue arrow from left card through the funnel to the right card. Highlight that shipping_fee is unchanged with a small check mark.
-```
+![Hình 2: Lớp che làm gì với một đơn hàng](./figures/video-15-figure-2.png)
 
 ### Hình 3 · Một tool của app, nhiều việc của kernel
 
-*Đặt ở:* Cách hoạt động (tool của app)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Center: a small box labelled "TrackWaybillTool" with a tag "reads: Waybill, CustomerOrder, SupportTicket". Around it, a larger frame labelled "kernel (AppToolInvoker)" with five numbered steps along the top from left to right: "1 auth token", "2 bind tenant", "3 check READ x3", "4 log user/tenant/tool", "5 mask pii". A blue arrow labelled "tools/call track_waybill" enters at step 1 and exits after step 5 labelled "result". Highlight step 3.
-```
+![Hình 3: Một tool của app, nhiều việc của kernel](./figures/video-15-figure-3.png)
 
 ### Hình 4 · Bị từ chối, không phải bị lỗi
 
-*Đặt ở:* Video cho thấy gì
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top to bottom sequence with three lanes labelled "ha", "Claude", "/mcp". Arrow from ha to Claude: "create order for C001". Arrow from Claude to /mcp: "create_document CustomerOrder". Return arrow from /mcp to Claude in blue: "isError: true · not permitted: create CustomerOrder". Final arrow from Claude to ha: "permissions, not data". Highlight the blue return arrow.
-```
+![Hình 4: Bị từ chối, không phải bị lỗi](./figures/video-15-figure-4.png)
 
 ## Liên quan
 

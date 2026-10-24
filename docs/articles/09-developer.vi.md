@@ -118,6 +118,9 @@ Vì sao: nếu app không import được lớp của kernel, kernel có thể �
 không làm hỏng app. Các package SPI trong repository này là `app`, `doc`, `doctype`, `hook`, `ledger`, `script`,
 `tenant`, `tx`, `kv` và `ai`, nằm dưới `astra-spi/src/main/java/io/astra/spi/`.
 
+![Hình 1: Một app Astra chứa gì và được phép phụ thuộc vào đâu](./figures/video-09-figure-1.png)
+*Một app Astra chứa gì và được phép phụ thuộc vào đâu.*
+
 ### Một hook là một interface với bốn phương thức mặc định
 
 *`astra-spi/src/main/java/io/astra/spi/hook/DocLifecycleHook.java`*
@@ -259,6 +262,9 @@ có outbox, không retry, không job đối soát, vì chúng là các dòng tro
 qua nhiều database (hạn mức tín dụng BMS ở schema khác, một khung giờ lấy hàng trong Redis), `transaction: global` trên
 DocType bọc cùng lời gọi đó trong một global transaction của Seata; đó là Video 17.
 
+![Hình 2: Một lần submit, một transaction](./figures/video-09-figure-2.png)
+*Một lần submit, một transaction.*
+
 ### Một trường là một dòng YAML, lưu trong JSONB
 
 Mọi DocType dùng chung bảng `astra_doc`, và trường nghiệp vụ nằm trong cột `data jsonb` của bảng này, nên thêm trường
@@ -296,6 +302,9 @@ DocType được khai báo là resource được theo dõi:
 Desk không có dòng code nào gọi tên một DocType cụ thể; nó render bất cứ thứ gì `GET /api/doctype` trả về
 (`astra-server/src/main/resources/META-INF/resources/desk/desk.js`, xem
 [S12](../demo-code-snippets.md#s12-desk-generated-from-metadata)). Vì vậy cột mới xuất hiện mà không phải sửa frontend.
+
+![Hình 3: Thêm trường mà không cần migration](./figures/video-09-figure-3.png)
+*Thêm trường mà không cần migration.*
 
 ### Vì sao xoá trường khó hơn thêm trường
 
@@ -405,36 +414,19 @@ thêm test (HRM, STMS, SCIM), nên con số bạn thấy sẽ cao hơn. Các tes
 - Tier 1 (app JVM cô lập, hot-swap lúc chạy) được mô tả trong [explain.md](../explain.md) nhưng chưa được xây. Mọi app
   trong repository này đều là Tier 0, biên dịch vào image của server.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Một app Astra chứa gì và được phép phụ thuộc vào đâu
 
-*Đặt ở:* Cách hoạt động, "Một app là danh sách DocType cộng các CDI bean"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a tall folder box labelled "astra-apps/express" containing four small stacked cards: "ExpressApp.java", "7 × *.doctype.yaml", "hooks (OrderWaybillHook, OrderPostingHook…)", "wasm/ (tet-promo, runaway)". Center: a narrow vertical slab labelled "astra-spi" with tiny tabs "hook", "doc", "ledger", "script", "tx", "ai". Right: a large box labelled "kernel" containing "DocumentStore", "HookRegistry", "astra_doc (JSONB)", "REST + Desk". One thick blue arrow from the app folder to the "astra-spi" slab labelled "only dependency". A thin grey arrow from the kernel to the slab labelled "implements". A crossed-out dashed arrow from the app folder directly to the kernel labelled "not allowed". Highlight the blue arrow.
-```
+![Hình 1: Một app Astra chứa gì và được phép phụ thuộc vào đâu](./figures/video-09-figure-1.png)
 
 ### Hình 2 · Một lần submit, một transaction
 
-*Đặt ở:* Cách hoạt động, "Tác dụng phụ tham gia transaction của chứng từ gốc"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A large rounded rectangle drawn in blue across the middle, labelled "one PostgreSQL transaction". Left of it, a person icon labelled "tuan (sales)" with an arrow into the rectangle labelled "POST …/submit". Inside the rectangle, left to right, three boxes connected by arrows: "OrderWaybillHook → INSERT Waybill", "OrderPostingHook → Dr 131 / Cr 511", "docstatus = 1". Under the rectangle, two outcomes branching down: left "COMMIT: order + waybill + ledger", right "any throw → ROLLBACK: nothing written". Highlight the blue rectangle boundary.
-```
+![Hình 2: Một lần submit, một transaction](./figures/video-09-figure-2.png)
 
 ### Hình 3 · Thêm trường mà không cần migration
 
-*Đặt ở:* Cách hoạt động, "Một trường là một dòng YAML, lưu trong JSONB"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top left: a sheet labelled "customer.doctype.yaml" with one new line written in blue: "- { name: zalo_id, type: Data, in-list: true }". Arrow right to a small stopwatch labelled "dev restart 0.73 s". From the stopwatch, three arrows fanning right to three boxes: "Desk list: zalo_id column", "GET /api/doctype/Customer", "validator". Bottom: a database cylinder labelled "astra_doc" with a column strip "data jsonb" and a note "no ALTER TABLE". A crossed-out box near the cylinder labelled "migration". Highlight the blue YAML line.
-```
+![Hình 3: Thêm trường mà không cần migration](./figures/video-09-figure-3.png)
 
 ## Liên quan
 

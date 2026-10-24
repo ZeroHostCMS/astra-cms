@@ -133,6 +133,10 @@ Why each rule exists:
 The class comment summarises it: an overlay "may not remove or retype fields, so documents written before the
 overlay stay valid and the app's own code keeps working".
 
+![Figure 1: Base DocType plus overlay equals the tenant's effective DocType](./figures/video-13-figure-1.png)
+*Base DocType plus overlay equals the tenant's effective DocType: custom fields merge seamlessly without touching app code.*
+
+
 ### Storage: tenant data under row-level security
 
 *`astra-doctype/src/main/resources/db/migration/V4__overlays.sql`*
@@ -223,6 +227,10 @@ sequenceDiagram
     Note over P2: cache entry expires within 2 s,<br/>next request re-reads and re-applies
 ```
 
+![Figure 3: Saving an overlay across two pods](./figures/video-13-figure-3.png)
+*Saving an overlay across two pods: the 2-second cache TTL guarantees near-instant propagation without cluster cache sync overhead.*
+
+
 ### Who may change an overlay
 
 *`astra-doctype/src/main/java/io/astra/doctype/api/OverlayResource.java`*
@@ -267,6 +275,10 @@ The behaviour below is what `astra-server/src/test/java/io/astra/server/OverlayT
 | order without `note` | hanoi | 422: `field 'note' is required` |
 | overlay modifying `weight_kg` to `type: Data` | hanoi | 422: `field property 'type' cannot be changed by an overlay` |
 | overlay adding `gift_wrap`, as `tuan` (sales) | saigon | 403 |
+
+![Figure 2: Same request, two tenants, two answers](./figures/video-13-figure-2.png)
+*Same request, two tenants, two answers: Saigon processes standard orders, while Hanoi enforces VAT and island shipping fields.*
+
 
 What the regional courier gets: no fork, no schema change, and its rules are enforced on every channel (Desk, REST,
 MCP), because all three validate against the effective definition.
@@ -332,34 +344,19 @@ Run the overlay tests alone (Docker required) with Maven's standard test filter,
 - [overlay-wasm.md](../overlay-wasm.md) describes a broader target design (`add-permissions`, Wasm `scripts` attached
   to an overlay, an upgrade conformance check). Those parts are not built.
 
-## Visualize it: sketch prompts
+## Figures
 
 ### Figure 1 · Base DocType plus overlay equals the tenant's effective DocType
 
-*Where it goes:* How it works, "Merge rules"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a sheet labelled "CustomerOrder (Express app)" listing "zone: Same city, Domestic, Remote" and "note (optional)". Middle: a transparent sheet drawn slightly offset on top, outlined in blue, labelled "hanoi-express overlay", listing "+ vat_invoice", "+ tax_code", "+ invoice_email", "zone + Island", "note required". Right: a merged sheet labelled "effective DocType (hanoi-express)" with all items. Below the merged sheet, three small arrows to "Desk form", "REST", "validation". At the bottom, a separate untouched sheet labelled "saigon-express sees base only". Highlight the blue overlay sheet.
-```
+![Figure 1: Base DocType plus overlay equals the tenant's effective DocType](./figures/video-13-figure-1.png)
 
 ### Figure 2 · Same request, two tenants, two answers
 
-*Where it goes:* Real-world example
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top center: one envelope labelled "POST /api/doc/CustomerOrder  zone: Island, tax_code". Two arrows split down-left and down-right. Left branch labelled "X-Astra-Tenant: hanoi-express" goes to a box "effective DocType has tax_code, Island" and ends in a blue check mark "201". Right branch labelled "X-Astra-Tenant: saigon-express" goes to a box "base DocType" and ends in a cross "422 unknown field 'tax_code'". Highlight the left branch in blue.
-```
+![Figure 2: Same request, two tenants, two answers](./figures/video-13-figure-2.png)
 
 ### Figure 3 · Saving an overlay across two pods
 
-*Where it goes:* How it works, "The effective DocType, cached for two seconds"
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a person icon "mai (admin)" sending an arrow "PUT /api/overlay/CustomerOrder" to a box "pod A". Inside pod A three steps stacked: "Overlays.apply → 422 if unsafe", "write astra_overlay (RLS)", "evict cache". From pod A a blue arrow down to a database cylinder "astra_overlay  version + 1". On the right, a box "pod B" with a small clock labelled "cache TTL 2 s" and a dashed arrow from the cylinder to pod B labelled "re-read on expiry". A small gate icon before pod A labelled "admin only, else 403". Highlight the blue write path.
-```
+![Figure 3: Saving an overlay across two pods](./figures/video-13-figure-3.png)
 
 ## Related
 

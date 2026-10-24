@@ -129,6 +129,9 @@ flowchart LR
 định nghĩa hiệu lực cho tenant đang xét, tức DocType của app đã áp overlay của tenant đó. Vì vậy một field
 chỉ dành cho Hà Nội xuất hiện trong form và API của Hà Nội mà app Express không cần thay đổi (Video 13).
 
+![Hình 1: Một file YAML, nhiều đầu ra](./figures/video-02-figure-1.png)
+*Một file YAML, nhiều đầu ra.*
+
 ### Desk là bộ dựng giao diện, không phải một ứng dụng
 
 Desk hỏi API để lấy định nghĩa và ánh xạ kiểu field sang control. Code form rẽ nhánh theo kiểu field, không
@@ -204,6 +207,9 @@ Các cột là những thứ chính kernel cần trên mọi bản ghi: định 
 nghĩa đều nằm trong `data`. Vì vậy thêm một DocType hay một field là thay đổi metadata, không bao giờ là
 thay đổi schema. (Một migration sau này thêm cột `amended_from` cho chuỗi Amend ở Video 4.)
 
+![Hình 2: Bảng JSONB dùng chung](./figures/video-02-figure-2.png)
+*Bảng JSONB dùng chung.*
+
 ### Projection: index mà không cần `ALTER TABLE`
 
 *`astra-doctype/src/main/java/io/astra/doctype/store/ProjectionIndexer.java`*
@@ -258,6 +264,9 @@ chính là thứ database thực sự có:
 SELECT i.indisvalid, pg_get_indexdef(i.indexrelid) FROM pg_index i
 JOIN pg_class c ON c.oid = i.indexrelid WHERE c.relname = ?
 ```
+
+![Hình 3: Projection index tạo online lúc khởi động](./figures/video-02-figure-3.png)
+*Projection index tạo online lúc khởi động.*
 
 ## Ví dụ thực tế
 
@@ -365,30 +374,19 @@ mở rộng mục "Raw JSON from GET /api/doctype/CustomerOrder" để xem đún
   DocType, nhưng `desk.js` ánh xạ `CustomerOrder` và `Waybill` sang các bảng replica CDC của chúng cho thẻ
   replica (Video 16).
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Một file YAML, nhiều đầu ra
-*Đặt ở:* Cách hoạt động, sau "Mỗi key biến thành gì"
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. On the left, a tall paper sheet labelled "customer-order.doctype.yaml" with five visible lines: "type: Select", "type: Link", "read-only: true", "projected: true", "pii: true". From each line, an arrow fans out to the right to one small box: "Select" to "422 must be one of [...]", "Link" to "Customer exists in tenant?", "read-only" to "client write → 422", "projected" to "astra_doc_p_zone index" (this arrow and box in blue, the highlight), "pii" to "masked in MCP". Above the fan, a separate arrow from the whole sheet to a browser window labelled "Desk form + list", and to a JSON brace labelled "/api/doc/CustomerOrder".
-```
+![Hình 1: Một file YAML, nhiều đầu ra](./figures/video-02-figure-1.png)
 
 ### Hình 2 · Bảng JSONB dùng chung
-*Đặt ở:* Cách hoạt động, "Một bảng cho mọi DocType"
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A wide table drawing labelled "astra_doc" with column headers left to right: "tenant_id", "doctype", "name", "docstatus", "version", "data (jsonb)". Three rows: "saigon-express | CustomerOrder | ORD-...-00001 | 0 | 1 | {zone: Domestic, ...}", "saigon-express | Waybill | WB-... | 0 | 3 | {ops_status: ...}", "hanoi-express | Customer | C001 | 0 | 1 | {segment: B2B}". The "data (jsonb)" column is shaded blue. Under the table, three small index tags hanging from the data column: "GIN jsonb_path_ops", "astra_doc_p_zone", "astra_doc_p_customer". To the right, a padlock doodle labelled "FORCE ROW LEVEL SECURITY: tenant_id = astra.tenant". A crossed-out speech bubble at top right: "ALTER TABLE".
-```
+![Hình 2: Bảng JSONB dùng chung](./figures/video-02-figure-2.png)
 
 ### Hình 3 · Projection index tạo online lúc khởi động
-*Đặt ở:* Cách hoạt động, "Projection"
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Top to bottom timeline. Top: a box "kernel pod starts (StartupEvent)". Arrow down to "ProjectionIndexer: fields with projected: true". Arrow down (blue) to a box "CREATE INDEX CONCURRENTLY IF NOT EXISTS astra_doc_p_zone ON astra_doc (tenant_id, doctype, (data->>'zone'))". To the right of this box, a steady stream of small arrows labelled "INSERT / UPDATE keep flowing" passing by unblocked. Arrow down to "pg_index: indisvalid = true". Arrow down to "GET /api/doctype/CustomerOrder/projections → valid". A small side note next to a second pod icon: "other pod collides → warn, retry next start".
-```
+![Hình 3: Projection index tạo online lúc khởi động](./figures/video-02-figure-3.png)
 
 ## Liên quan
 

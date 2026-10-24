@@ -53,6 +53,10 @@ flowchart LR
     U -.-> R["ERROR: append-only"]
 ```
 
+![Figure 1: One transaction, two writes](./figures/video-12-figure-1.png)
+*One transaction, two writes: submitting a document commits the document status and debit/credit ledger lines atomically.*
+
+
 ### 1. Apps post through an SPI, not SQL
 
 An app never touches the ledger table. It injects `GeneralLedger` from `astra-spi` and describes a voucher.
@@ -162,6 +166,10 @@ Debit and credit swap; `is_reversal` is true; the posting date is *today*. Why t
 and cancelled in November must leave October's figures as they were reported. The reversal lands in November's
 partition.
 
+![Figure 2: Cancel adds, never edits](./figures/video-12-figure-2.png)
+*Cancel adds, never edits: cancelling a document posts an exact mirror reversal entry; previous lines remain immutable.*
+
+
 ### 4. The database protects itself
 
 *`astra-doctype/src/main/resources/db/migration/V3__ledger.sql`*
@@ -230,6 +238,10 @@ Design choices worth noticing:
 
 `LedgerStore.ensurePartition` is also called lazily before each posting. Monthly partitions keep closing a period
 cheap: a past month is a table you can archive or attach to a reporting system without touching the current one.
+
+![Figure 3: Monthly partitions](./figures/video-12-figure-3.png)
+*Monthly partitions: ledger entries route into monthly partitions automatically, keeping table scans fast and maintenance manageable.*
+
 
 ### 6. COD: owed money comes from the ledger
 
@@ -352,31 +364,19 @@ The behaviour is pinned by `astra-server/src/test/java/io/astra/server/LedgerTes
 - The demo app posts billing, COD collection and COD payout. It does not post the courier's cash handover, VAT,
   or period closing.
 
-## Visualize it: sketch prompts
+## Figures
 
 ### Figure 1 · One transaction, two writes
-*Where it goes:* How it works, opening diagram
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A large dashed rounded rectangle across the middle labelled "one PostgreSQL transaction". Inside, left to right: a card "CustomerOrder · Submit", an arrow to a box "OrderPostingHook", an arrow to a box "GeneralLedger.post", which fans out into two arrows: one to a cylinder "astra_doc (order, docstatus=1)" and one to a cylinder "astra_ledger" showing two lines "Dr 131 73,000" and "Cr 511 73,000". At the right edge of the dashed rectangle, a single stamp "COMMIT". Below the rectangle, a small side note with a cross: "debit ≠ credit → 422, nothing written". Highlight in blue the arrows from Submit through post into astra_ledger.
-```
+![Figure 1: One transaction, two writes](./figures/video-12-figure-1.png)
 
 ### Figure 2 · Cancel adds, never edits
-*Where it goes:* How it works, section 3
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A ledger page drawn as a table with columns "account | debit | credit | is_reversal". Top two rows in black: "131 | 73,000 | | false" and "511 | | 73,000 | false". An arrow from a button "Cancel" on the left points to two new rows added below, drawn in blue: "511 | 73,000 | | true" and "131 | | 73,000 | true". To the right, a small total box "balance 131 = 0". Off to the side, an eraser and a pencil both crossed out with the label "UPDATE / DELETE → ERROR: append-only".
-```
+![Figure 2: Cancel adds, never edits](./figures/video-12-figure-2.png)
 
 ### Figure 3 · Monthly partitions
-*Where it goes:* How it works, section 5
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top center: a box "astra_ledger (PARTITION BY RANGE posting_date)". Below it, a row of four drawers left to right: "astra_ledger_2026_10", "astra_ledger_2026_11", "astra_ledger_2026_12", and a differently shaped drawer "astra_ledger_default". On the left, a small server icon "kernel startup" with an arrow "LedgerPartitions: this month + 2" pointing at the first three drawers. A posting arrow "posting_date = 2026-10-22" drops into the first drawer, highlighted in blue. A faint arrow "outside range" goes to the default drawer. Each drawer has a tiny lock labelled "RLS: astra.tenant".
-```
+![Figure 3: Monthly partitions](./figures/video-12-figure-3.png)
 
 ## Related
 

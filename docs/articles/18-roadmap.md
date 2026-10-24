@@ -92,6 +92,9 @@ flowchart LR
     T --> T2
 ```
 
+![Figure 1: Running versus In development](./figures/video-18-figure-1.png)
+*Architecture roadmap: core kernel features and business apps running today versus roadmap capabilities in development.*
+
 ### Storage
 
 - **Running:** every DocType in one JSONB table with online expression indexes for `projected: true` fields
@@ -211,6 +214,9 @@ not. The interface's documentation says so:
 public interface LlmClient {
 ```
 
+![Figure 2: Interfaces exist, implementations do not](./figures/video-18-figure-2.png)
+*SPI contracts and extension points exist across modules; target enterprise domains will implement them incrementally.*
+
 ### Smaller gaps named in other videos
 
 These are not in the Video 18 table but are stated in the scripts' "To be accurate" notes. All are **In development**:
@@ -244,6 +250,9 @@ operations, COD settlement, payroll and dispatch. Its CTO maps the requirements 
 
 **Output of the exercise:** a pilot scoped to OMS, OPS, BMS and tenant overlays, with payroll and dispatch kept on
 existing tools, and a list of five roadmap items to track. That is the decision Video 18 is meant to support.
+
+![Figure 3: A CTO's pilot scope](./figures/video-18-figure-3.png)
+*Recommended pilot scope: validating tenancy, doc lifecycle, append-only ledgers, and developer ergonomics.*
 
 ## For technical leaders
 
@@ -290,25 +299,19 @@ make demo-express SCENES=8`. Each scene's expected output is described in its ar
 - This article does not give dates or an order of delivery for the In-development items; the README's phase list is the
   authority on sequencing.
 
-## Visualize it: sketch prompts
+## Figures
 
 ### Figure 1 · Running versus In development
-*Where it goes:* How it works, at the top
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Two columns separated by a vertical dashed line. Left column titled "Running" with solid boxes stacked top to bottom: "JSONB DocTypes", "append-only ledger", "Seata AT + TCC", "Keycloak · SAML · SCIM", "Tier 2 Wasm", "Rust CDC + X-Tx-LSN", "MCP + PII masking", "HRM slice", "STMS slice". Right column titled "In development" with dashed-outline boxes, each with a small stamp "IN DEVELOPMENT": "schema per module", "audit hash chain", "TCC fence table", "row-level permissions", "Tier 1 isolated JVM", "streaming CDC · Doris", "autonomous agents", "income tax · payout", "real LLM · maps". Thin arrows from each left box to its right counterpart. Draw the left solid boxes in blue.
-```
+
+![Figure 1: Running versus In development](./figures/video-18-figure-1.png)
 
 ### Figure 2 · Interfaces exist, implementations do not
-*Where it goes:* How it works, "Business modules"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Center: a socket drawn like a wall plug labelled "LlmClient (interface)". Plugged into it from the left: a solid plug labelled "MockLlmClient – simulated, regex script". On the right, an unplugged dashed plug labelled "real LLM provider – IN DEVELOPMENT". Above the socket a box "DispatchCopilot" with an arrow down into the socket. Below, a small note "tools and Timefold solver are real". Highlight the socket and the solid mock plug in blue; leave the dashed plug in black.
-```
+
+![Figure 2: Interfaces exist, implementations do not](./figures/video-18-figure-2.png)
 
 ### Figure 3 · A CTO's pilot scope
-*Where it goes:* Real-world example
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A large hand-drawn checklist on a clipboard titled "3PL pilot". Ticked lines: "tenants per branch (RLS)", "order → waybill → ledger", "VAT overlay for Hanoi", "COD maker/checker". Unticked lines with a small "IN DEVELOPMENT" tag: "branch-level row permissions", "payroll with income tax", "real-road routing", "LLM assistant", "audit hash chain". A circle drawn around the ticked lines labelled "pilot scope". Highlight the circle in blue.
-```
+
+![Figure 3: A CTO's pilot scope](./figures/video-18-figure-3.png)
 
 ## Related
 

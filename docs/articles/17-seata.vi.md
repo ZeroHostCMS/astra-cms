@@ -31,6 +31,9 @@ Astra dùng một bộ điều phối transaction. App nói nó muốn *gì* (d�
 và điều khiển commit hoặc rollback cho tất cả. Các lệnh ghi database được hoàn tác tự động (chế độ AT); các tài nguyên
 không phải database thì cài đặt try/confirm/cancel (chế độ TCC).
 
+![Hình 1: Một lần submit, ba tài nguyên](./figures/video-17-figure-1.png)
+*Một lần submit, ba tài nguyên.*
+
 ## Video cho thấy gì
 
 | Cảnh | Bạn thấy gì | Điều được chứng minh |
@@ -41,6 +44,9 @@ không phải database thì cài đặt try/confirm/cancel (chế độ TCC).
 | Từ chối muộn | Ngày được đặt thành kín chỗ (200 trên 200); submit `ORD-20261021-00008` | AT đã trừ công nợ, rồi TCC từ chối: `no pickup slot left for 2026-10-21 (capacity 200)`. Seata khôi phục công nợ của C001 từ undo log (vẫn là 196.000), `undo_rows` bằng 0, số chỗ đang giữ vẫn là 0 |
 | Log server | Log thật của Seata Server 2.6.0 (JDK 25) | Begin, hai lần đăng ký nhánh, cả hai bị rollback: khoảng 75 ms theo đồng hồ của server |
 | Code | `OrderCreditHook`, `PickupCapacity` | App gọi một SPI và không thấy kiểu nào của Seata. AT là JDBC thuần trên một datasource được proxy; TCC là một participant của app, ném lỗi khi hết chỗ |
+
+![Hình 2: Rollback sau khi một nhánh đã commit](./figures/video-17-figure-2.png)
+*Rollback sau khi một nhánh đã commit.*
 
 ## Cách hoạt động
 
@@ -148,6 +154,9 @@ Bắt `Throwable` thay vì `Exception` là có chủ ý: một khi nhánh AT đ�
 rollback mới giải phóng được. Seata bị tắt trừ khi `astra.seata.enabled` là true; khi tắt, `global(...)` chạy công việc
 cục bộ và hook bên dưới bỏ qua các bước kiểm tra.
 
+![Hình 3: Các trạng thái của TCC participant](./figures/video-17-figure-3.png)
+*Các trạng thái của TCC participant.*
+
 ### 3. Hook của app thấy một SPI, không thấy Seata
 
 *`astra-apps/express/src/main/java/io/astra/apps/express/OrderCreditHook.java`*
@@ -245,6 +254,9 @@ chạy trên một thread của Seata, không có HTTP request nào, nên dispat
         });
     }
 ```
+
+![Hình 4: Ai nhìn thấy Seata](./figures/video-17-figure-4.png)
+*Ai nhìn thấy Seata.*
 
 ### 4. Bộ điều phối đã thấy gì
 
@@ -357,45 +369,23 @@ từ chối, từ chối sau khi nhánh AT đã commit) trên Seata Server và R
   một cách thông minh và annotation `@AstraGlobalTransactional`), những phần đó chưa được xây. Trong code đang chạy, cờ
   YAML `transaction: global` là công tắc.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Một lần submit, ba tài nguyên
 
-*Đặt ở:* Vấn đề
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top center: a button labelled "Submit ORD-…-00007". Below it a large dashed frame labelled "global transaction (Seata Server 2.6.0)". Inside, three boxes left to right: "AT · bms.customer_credit · used +73,000", "TCC · Redis · pickup slot +1", "Kernel tx · astra_doc · waybill + ledger (commits last)". Blue arrows from the button into all three boxes. Below the frame, two outcomes: "all commit" with a check mark, "any fails → all roll back" with a curved arrow. Highlight the dashed frame.
-```
+![Hình 1: Một lần submit, ba tài nguyên](./figures/video-17-figure-1.png)
 
 ### Hình 2 · Rollback sau khi một nhánh đã commit
 
-*Đặt ở:* Video cho thấy gì (từ chối muộn)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A timeline left to right with four steps: "1 begin", "2 AT: used + fee, committed locally (undo_log saved)", "3 TCC try: 1 + 200 > 200 → refuse", "4 global rollback". From step 4, a blue arrow loops back to step 2 labelled "restore before image → used 196,000". A small table at the bottom right labelled "undo_rows: 0" and "reserved: 0". Highlight the blue restore arrow.
-```
+![Hình 2: Rollback sau khi một nhánh đã commit](./figures/video-17-figure-2.png)
 
 ### Hình 3 · Các trạng thái của TCC participant
 
-*Đặt ở:* Cách hoạt động (TCC)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Three circles left to right: "prepare (try)", "commit (confirm)", "rollback (cancel)". From prepare, a blue arrow to commit labelled "reserved -1, booked +1" and a second arrow to rollback labelled "reserved -1". Under each circle a small sticky note: under prepare "tcc-try:<branchId>", under commit "markOnce tcc-done", under rollback "only if tcc-try > 0 (empty rollback)". A separate note at the bottom: "late try after cancel → refused". Highlight the markOnce notes as the idempotency guard.
-```
+![Hình 3: Các trạng thái của TCC participant](./figures/video-17-figure-3.png)
 
 ### Hình 4 · Ai nhìn thấy Seata
 
-*Đặt ở:* Cách hoạt động (SPI)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Three horizontal layers top to bottom. Top layer "Express app": boxes "OrderCreditHook", "CreditLimits (JDBC)", "PickupCapacity". Middle layer "astra-spi": boxes "GlobalTransactions", "TccParticipant". Bottom layer "astra-tx-seata": boxes "SeataTransactions", "DataSourceProxy (AT)", "AstraTccDispatcher (astra-tcc)". Blue arrows go only from the top layer to the middle layer, and from the middle layer to the bottom layer. A crossed-out arrow from the top layer directly to the bottom layer labelled "no Seata types in apps". Highlight the middle layer.
-```
+![Hình 4: Ai nhìn thấy Seata](./figures/video-17-figure-4.png)
 
 ## Liên quan
 

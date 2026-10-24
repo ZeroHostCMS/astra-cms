@@ -145,6 +145,9 @@ Ghi chú thiết kế, đọc thẳng từ code:
   REST giữa các module, không có DAO dùng chung, và lần đọc diễn ra bên trong transaction của ticket, dưới cùng
   tenant.
 
+![Hình 1: Một lần lưu, ba trường được điền](./figures/video-06-figure-1.png)
+*Một lần lưu, ba trường được điền.*
+
 ### Kernel gọi hook ở đâu
 
 *`astra-doctype/src/main/java/io/astra/doctype/store/DocumentStore.java`*
@@ -218,6 +221,9 @@ bảng vận hành thì gánh các lần ghi từ máy quét. Tách luồng đ�
 [use-case-01.md](../use-case-01.md). Hook vẫn đọc một điểm trên Waybill lúc lưu, việc này rẻ và cho ticket một
 trạng thái nhất quán với thời điểm nó được lưu.
 
+![Hình 2: Hai cách CSKH nhìn một bưu kiện](./figures/video-06-figure-2.png)
+*Hai cách CSKH nhìn một bưu kiện.*
+
 ## Ví dụ thực tế
 
 Một nhà cung cấp dịch vụ fulfilment thương mại điện tử ở Việt Nam vận hành một hotline và một kênh Zalo. Ba ticket
@@ -237,6 +243,9 @@ bưu kiện trong thẻ replica trên cùng màn hình.
 
 Với bộ phận khiếu nại của ngân hàng, mẫu này vẫn đúng: quy tắc theo từ khoá hoặc danh mục nâng mức ưu tiên, thời hạn
 phản hồi của cơ quan quản lý trở thành `sla_due`, và trạng thái của giao dịch được liên kết được ghi lại lúc tiếp nhận.
+
+![Hình 3: Hàng đợi phân loại](./figures/video-06-figure-3.png)
+*Hàng đợi phân loại.*
 
 ## Dành cho tech lead
 
@@ -308,39 +317,19 @@ phụ thuộc vào số ticket đang có khi bạn chạy cảnh này.
 - **Khiếu nại và bồi thường** (một `ClaimCase` ghi sổ cái khi được duyệt) là phạm vi mục tiêu, chưa được xây dựng.
 - **Độ trễ worker 47 ms** là giá trị hiện trong một lần ghi hình; nó thay đổi theo tải.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Một lần lưu, ba trường được điền
 
-*Đặt ở:* Cách hoạt động
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a ticket card labelled "SupportTicket (before)" with lines "subject: Hàng bị vỡ…", "waybill: WB-2610-000001", "priority: Normal", and three empty lines "waybill_status: —", "sla_due: —", "triage_note: —". Middle: a box "TicketTriageHook.beforeSave" with three small rules written inside: "keyword 'vỡ' → High", "High → +24h", "read Waybill.ops_status". A thin arrow from the middle box down to a small document "Waybill · Delivered". Right: the same ticket card labelled "SupportTicket (saved)" with "priority: High", "triage_note: auto-escalated: mentions 'vỡ'", "sla_due: +24h", "waybill_status: Delivered".
-Highlight in blue: the three fields that changed on the right card.
-```
+![Hình 1: Một lần lưu, ba trường được điền](./figures/video-06-figure-1.png)
 
 ### Hình 2 · Hai cách CSKH nhìn một bưu kiện
 
-*Đặt ở:* Cách hoạt động
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top to bottom on the left: a cylinder "astra_doc" containing a small card "Waybill". From it, a solid black arrow up-right to a ticket field "waybill_status (snapshot at save)" labelled "hook: docs.get". From the same cylinder, a dotted arrow to the right labelled "WAL · pgoutput" into a gear box "astra-cdc-rust", then a solid blue arrow into a second cylinder "replica_waybill". From "replica_waybill" a blue arrow up to a card "CARE replica (CDC) · in sync · lag 47 ms" with a small header tag "X-Required-LSN".
-Highlight in blue: the CDC path from the WAL to the replica card.
-```
+![Hình 2: Hai cách CSKH nhìn một bưu kiện](./figures/video-06-figure-2.png)
 
 ### Hình 3 · Hàng đợi phân loại
 
-*Đặt ở:* Ví dụ thực tế
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: three incoming envelopes labelled "Hotline: Hàng bị vỡ", "Zalo: Hỏi giờ giao hàng (Low)", "Email: Parcel lost (Urgent)". They pass through a funnel labelled "keywords: mất, thất lạc, hỏng, vỡ, lost, damaged, broken · only Low/Normal → High". Right: three stacked queue lanes "Urgent · 4h", "High · 24h", "Low · 5 days", with each envelope landing in its lane: the Hotline envelope in High, the Email envelope in Urgent, the Zalo envelope in Low.
-Highlight in blue: the Hotline envelope's path from Normal into the High lane.
-```
+![Hình 3: Hàng đợi phân loại](./figures/video-06-figure-3.png)
 
 ## Liên quan
 

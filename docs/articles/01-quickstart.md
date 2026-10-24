@@ -39,6 +39,9 @@ from day one.
 | Scene 1 of `demo-express` | `/api/app` and `/api/doctype` | At recording time: one server, two apps, eight DocTypes across OMS, OPS, CARE, BMS and CMS |
 | Desk | Login as `mai`, Installed apps, left menu | The menu is generated from the DocTypes the app contributes |
 
+![Figure 2: Five commands from laptop to Desk](./figures/video-01-figure-2.png)
+*Figure 2: Five commands from laptop to Desk.*
+
 ## How it works
 
 ### One server, apps compiled in
@@ -112,6 +115,9 @@ Why explicit resource lists instead of classpath scanning: the javadoc says it k
 deterministic inside jars and native images. You always know which DocTypes an app brings by reading one
 method.
 
+![Figure 3: An app is metadata plus code, compiled in](./figures/video-01-figure-3.png)
+*Figure 3: An app is metadata plus code, compiled in.*
+
 ### What `make k3d-up` actually does
 
 The Makefile target calls [`scripts/k3d-up.sh`](../../scripts/k3d-up.sh). It creates or reuses the k3d
@@ -159,6 +165,9 @@ stored in PostgreSQL per tenant (`astra_series`), which is why order numbers sta
 | `keycloak` | OIDC login, per-tenant roles as groups (Video 11) |
 | `seata-server` | Global transaction coordinator (Video 17) |
 | `astra-cdc` | Rust worker decoding `pgoutput` into replica tables (Video 16) |
+
+![Figure 1: The seven pods and who talks to whom](./figures/video-01-figure-1.png)
+*Figure 1: The seven pods and who talks to whom.*
 
 ### Seeding through the front door
 
@@ -298,28 +307,19 @@ superuser, so never point it at real data. `make k3d-down` deletes the cluster.
 - **k3d is a local cluster.** The manifests in `deploy/k8s/base` are not a production deployment: no
   managed database, no backups, no high availability for PostgreSQL or Keycloak.
 
-## Visualize it: sketch prompts
+## Figures
 
 ### Figure 1 · The seven pods and who talks to whom
-*Where it goes:* How it works, after "Seven pods"
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A large rounded rectangle labelled "k3d cluster astra · namespace astra". Inside, on the left, a stick-figure laptop user labelled "Desk / curl" with an arrow into a small box "Service :8080". From that box, two parallel blue arrows into two identical boxes stacked vertically, each labelled "astra-server" (the blue path is the highlight). To the right of the two kernel boxes, a column of five boxes top to bottom: "postgres-0 (astra_doc, wal_level=logical)", "redis", "keycloak", "seata-server", "astra-cdc (Rust)". Thin black arrows from both astra-server boxes to postgres-0, redis, keycloak and seata-server. A dashed arrow from postgres-0 to astra-cdc labelled "WAL pgoutput". A small handwritten note under the kernel boxes: "replicas: 2 from day one".
-```
+![Figure 1: The seven pods and who talks to whom](./figures/video-01-figure-1.png)
 
 ### Figure 2 · Five commands from laptop to Desk
-*Where it goes:* What the video shows
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Five numbered boxes left to right connected by blue arrows: "1 make k3d-up", "2 kubectl -n astra get pods", "3 make demo-seed", "4 make demo-express SCENES=1", "5 /desk/ login mai". Under each box a tiny result doodle with a short label: under 1 a cluster icon "7 pods"; under 2 a checklist "Running"; under 3 two small buildings "saigon-express" and "hanoi-express" with a note "via REST API, no SQL"; under 4 a JSON brace "/api/app"; under 5 a browser window with a left menu listing "OMS OPS CARE BMS". Highlight the arrow from box 3 to box 4 in thicker blue.
-```
+![Figure 2: Five commands from laptop to Desk](./figures/video-01-figure-2.png)
 
 ### Figure 3 · An app is metadata plus code, compiled in
-*Where it goes:* How it works, "One server, apps compiled in"
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. On the left, a folder labelled "astra-apps/express" containing two small file icons: "ExpressApp.java (AstraApp)" and "customer-order.doctype.yaml". A thin line from the folder to a narrow box labelled "astra-spi" (the only dependency). In the center, a large box "astra-server image" with four small app boxes inside: "express", "cms", "hrm", "stms", and a label on the box edge "Tier 0: shared, build-time". On the right, a JSON card labelled "GET /api/app" with the line "tier: 0 (shared, build-time)". A blue arrow from the folder into the server box, and from the server box to the JSON card.
-```
+![Figure 3: An app is metadata plus code, compiled in](./figures/video-01-figure-3.png)
 
 ## Related
 

@@ -25,6 +25,9 @@ vì kế toán và nhân viên vận hành vốn đã quen, và bổ sung hai đ
 bước vòng đời và mọi thứ các hook của nó ghi ra dùng chung một transaction, và bảng sổ cái từ chối `UPDATE` và
 `DELETE` ngay ở tầng cơ sở dữ liệu.
 
+![Hình 1: Ba trạng thái, một chiều](./figures/video-04-figure-1.png)
+*Ba trạng thái, một chiều.*
+
 ## Video cho thấy gì
 
 Video theo một đơn hàng mới của khách C001 trong tenant `saigon-express`, đăng nhập bằng `mai` (admin).
@@ -225,6 +228,9 @@ sequenceDiagram
     DS-->>Desk: 200, data.waybill = WB-…
 ```
 
+![Hình 2: Submit trong một transaction](./figures/video-04-figure-2.png)
+*Submit trong một transaction.*
+
 ### Cancel chỉ nối thêm, cơ sở dữ liệu ép buộc điều đó
 
 `LedgerStore.reverse` đọc các dòng gốc của chứng từ và insert bản đối xứng của chúng với `is_reversal = true`.
@@ -256,6 +262,9 @@ CREATE TRIGGER astra_ledger_no_update_delete
 
 Bút toán đảo mang ngày cancel, không phải ngày ghi sổ gốc. Đó đúng là cách thường dùng để điều chỉnh một tháng đã
 khoá sổ: kỳ cũ giữ nguyên như đã báo cáo, phần điều chỉnh xuất hiện ở kỳ hiện tại.
+
+![Hình 3: Cancel chỉ nối thêm, không bao giờ sửa](./figures/video-04-figure-3.png)
+*Cancel chỉ nối thêm, không bao giờ sửa.*
 
 ### Amend: đúng một bản kế tiếp
 
@@ -380,39 +389,19 @@ toàn bộ bộ test, Quarkus Dev Services khởi động PostgreSQL trong Docke
   Express, COD 500,000) có cước 73,000 ₫.
 - **Bút toán đảo mang ngày cancel.** Hiện chưa có tuỳ chọn ghi lùi ngày bút toán đảo về kỳ gốc.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Ba trạng thái, một chiều
 
-*Đặt ở:* Vấn đề
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right: three rounded boxes labelled "Draft (0)", "Submitted (1)", "Cancelled (2)". Arrow from Draft to Submitted labelled "Submit", arrow from Submitted to Cancelled labelled "Cancel". Under Draft a small pencil icon and the note "editable". Under Submitted and Cancelled a small padlock icon and the note "immutable". From Cancelled, a curved blue arrow going down and back to the left into a new box "Draft (0) ORD-…-1" labelled "Amend (once)". A second dashed arrow from Cancelled labelled "Amend again" ending in a black X with the note "422 already amended". No arrow goes backwards from Submitted to Draft; add a crossed-out arrow there with the note "no edit".
-Highlight in blue: the Amend arrow and the new Draft box.
-```
+![Hình 1: Ba trạng thái, một chiều](./figures/video-04-figure-1.png)
 
 ### Hình 2 · Submit trong một transaction
 
-*Đặt ở:* Cách hoạt động
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A large blue rounded rectangle spanning the drawing, labelled at the top "one connection · inTenantTx (ScopedValue)". Inside, top to bottom: a box "DocumentStore.submit", then two side-by-side boxes "OrderWaybillHook.onSubmit" and "OrderPostingHook.onSubmit", then a cylinder labelled "PostgreSQL". Arrows from the hooks to the cylinder labelled "INSERT astra_doc: Waybill" and "INSERT astra_ledger: Dr 131 / Cr 511". A third arrow from DocumentStore.submit to the cylinder labelled "UPDATE docstatus = 1". At the bottom edge of the rectangle two exits: "COMMIT" (blue check) and "ROLLBACK on any error" (black).
-Highlight in blue: the enclosing transaction rectangle.
-```
+![Hình 2: Submit trong một transaction](./figures/video-04-figure-2.png)
 
 ### Hình 3 · Cancel chỉ nối thêm, không bao giờ sửa
 
-*Đặt ở:* Cách hoạt động
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A ledger table drawn as a ruled sheet titled "astra_ledger". Columns: "account", "debit", "credit", "is_reversal". Two rows in black ink: "131 | 73,000 | 0 | false" and "511 | 0 | 73,000 | false". Below them, two new rows written in blue: "511 | 73,000 | 0 | true" and "131 | 0 | 73,000 | true", with a blue bracket labelled "Cancel → reverse()". To the right, a pencil eraser with a big X over it and the note "UPDATE / DELETE blocked by trigger". Small caption at bottom: "old rows stay as they were".
-Highlight in blue: the two appended reversal rows.
-```
+![Hình 3: Cancel chỉ nối thêm, không bao giờ sửa](./figures/video-04-figure-3.png)
 
 ## Liên quan
 

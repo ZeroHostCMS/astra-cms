@@ -53,6 +53,9 @@ flowchart LR
     U -.-> R["ERROR: append-only"]
 ```
 
+![Hình 1: Một transaction, hai lần ghi](./figures/video-12-figure-1.png)
+*Một transaction, hai lần ghi.*
+
 ### 1. App ghi sổ qua SPI, không qua SQL
 
 App không bao giờ chạm vào bảng sổ cái. Nó inject `GeneralLedger` từ `astra-spi` và mô tả một chứng từ.
@@ -162,6 +165,9 @@ Nợ và Có đổi chỗ; `is_reversal` là true; ngày ghi sổ là *hôm nay*
 Mười và bị hủy trong tháng Mười Một phải để nguyên số liệu tháng Mười như đã báo cáo. Bút toán đảo rơi vào phân
 vùng của tháng Mười Một.
 
+![Hình 2: Cancel thêm dòng, không bao giờ sửa](./figures/video-12-figure-2.png)
+*Cancel thêm dòng, không bao giờ sửa.*
+
 ### 4. Database tự bảo vệ
 
 *`astra-doctype/src/main/resources/db/migration/V3__ledger.sql`*
@@ -232,6 +238,9 @@ Những lựa chọn thiết kế đáng chú ý:
 `LedgerStore.ensurePartition` cũng được gọi theo kiểu lười trước mỗi lần ghi sổ. Phân vùng theo tháng giúp việc
 khoá sổ một kỳ rẻ: một tháng đã qua là một bảng bạn có thể lưu trữ hoặc gắn sang hệ thống báo cáo mà không đụng
 tới bảng hiện tại.
+
+![Hình 3: Phân vùng theo tháng](./figures/video-12-figure-3.png)
+*Phân vùng theo tháng.*
 
 ### 6. COD: số tiền đang nợ lấy từ sổ cái
 
@@ -353,33 +362,19 @@ Hành vi này được giữ cố định bởi `astra-server/src/test/java/io/a
 - App demo ghi bút toán tính phí, thu COD và chi trả COD. Nó không ghi việc bưu tá nộp tiền mặt, VAT, hay khoá sổ
   cuối kỳ.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Một transaction, hai lần ghi
-*Đặt ở:* Cách hoạt động, sơ đồ mở đầu
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A large dashed rounded rectangle across the middle labelled "one PostgreSQL transaction". Inside, left to right: a card "CustomerOrder · Submit", an arrow to a box "OrderPostingHook", an arrow to a box "GeneralLedger.post", which fans out into two arrows: one to a cylinder "astra_doc (order, docstatus=1)" and one to a cylinder "astra_ledger" showing two lines "Dr 131 73,000" and "Cr 511 73,000". At the right edge of the dashed rectangle, a single stamp "COMMIT". Below the rectangle, a small side note with a cross: "debit ≠ credit → 422, nothing written". Highlight in blue the arrows from Submit through post into astra_ledger.
-```
+![Hình 1: Một transaction, hai lần ghi](./figures/video-12-figure-1.png)
 
 ### Hình 2 · Cancel thêm dòng, không bao giờ sửa
-*Đặt ở:* Cách hoạt động, mục 3
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A ledger page drawn as a table with columns "account | debit | credit | is_reversal". Top two rows in black: "131 | 73,000 | | false" and "511 | | 73,000 | false". An arrow from a button "Cancel" on the left points to two new rows added below, drawn in blue: "511 | 73,000 | | true" and "131 | | 73,000 | true". To the right, a small total box "balance 131 = 0". Off to the side, an eraser and a pencil both crossed out with the label "UPDATE / DELETE → ERROR: append-only".
-```
+![Hình 2: Cancel thêm dòng, không bao giờ sửa](./figures/video-12-figure-2.png)
 
 ### Hình 3 · Phân vùng theo tháng
-*Đặt ở:* Cách hoạt động, mục 5
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top center: a box "astra_ledger (PARTITION BY RANGE posting_date)". Below it, a row of four drawers left to right: "astra_ledger_2026_10", "astra_ledger_2026_11", "astra_ledger_2026_12", and a differently shaped drawer "astra_ledger_default". On the left, a small server icon "kernel startup" with an arrow "LedgerPartitions: this month + 2" pointing at the first three drawers. A posting arrow "posting_date = 2026-10-22" drops into the first drawer, highlighted in blue. A faint arrow "outside range" goes to the default drawer. Each drawer has a tiny lock labelled "RLS: astra.tenant".
-```
+![Hình 3: Phân vùng theo tháng](./figures/video-12-figure-3.png)
 
 ## Liên quan
 

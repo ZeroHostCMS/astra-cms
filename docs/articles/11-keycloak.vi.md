@@ -43,6 +43,9 @@ chỉ đọc một token đã ký.
 Video kết thúc bằng ghi chú "Nói đúng": điều kiện theo từng dòng vẫn còn trên roadmap, còn SAML và SCIM nay đã
 chạy, xem [Video 21](./21-sso.vi.md).
 
+![Hình 2: Cùng một đơn, bốn role](./figures/video-11-figure-2.png)
+*Cùng một đơn, bốn role.*
+
 ## Cách hoạt động
 
 ### Đường đi của một request
@@ -142,6 +145,9 @@ public record Memberships(Map<String, Set<String>> byTenant, boolean platformAdm
 Vì sao dùng nhóm thay cho client role: một đường dẫn nhóm Keycloak mang cùng lúc hai thông tin (tenant và role),
 nó chính là thứ SCIM sau này thao tác dưới tên "Groups" ([Video 21](./21-sso.vi.md)), và quản trị viên có thể
 xem toàn bộ nhân sự của một tenant chỉ bằng cách mở một nhóm trong Keycloak console.
+
+![Hình 1: Một danh tính, role theo tenant](./figures/video-11-figure-1.png)
+*Một danh tính, role theo tenant.*
 
 ### 3. Header tenant dùng để chọn, không dùng để cấp quyền
 
@@ -261,6 +267,9 @@ Phép so sánh dùng subject của token (`principal-claim: sub`) đối chiếu
 user trong Keycloak không giúp họ tự duyệt được bản nháp cũ của mình. Map quyền hiệu lực không mô hình hoá phân
 tách nhiệm vụ, nên Desk vẫn hiện nút Submit cho Khoa; kernel trả 403, đúng như video cho thấy.
 
+![Hình 3: Người lập không phải người duyệt](./figures/video-11-figure-3.png)
+*Người lập không phải người duyệt.*
+
 ## Ví dụ thực tế
 
 *Tình huống minh hoạ: công ty, con người và số liệu là giả định; cơ chế và các quy tắc được áp dụng là thật, như đã trình bày ở trên.*
@@ -342,33 +351,19 @@ Chúng chỉ dành cho môi trường local.
   từ chối bằng 403.
 - Thay đổi role đến Astra cùng token tiếp theo; một access token đã cấp vẫn giữ role cũ cho tới khi hết hạn.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Một danh tính, role theo tenant
-*Đặt ở:* Cách hoạt động, mục 2
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a stick figure labelled "Lan". Center-left: a box labelled "Keycloak" containing a small folder tree: "/tenants" with two branches "hanoi-express → accountant" and "saigon-express → care". An arrow from Keycloak to the right labelled "access token: groups[]". Center-right: a box labelled "Memberships.of()" producing a two-row table "hanoi-express: {accountant}" and "saigon-express: {care}". Right: a box "TenantResolverFilter" with an input arrow labelled "X-Astra-Tenant: hanoi-express" and an output arrow labelled "roles = {accountant}". Highlight in blue the path from the hanoi-express group to "roles = {accountant}". A small crossed-out note near the header arrow: "header picks, never grants".
-```
+![Hình 1: Một danh tính, role theo tenant](./figures/video-11-figure-1.png)
 
 ### Hình 2 · Cùng một đơn, bốn role
-*Đặt ở:* Video cho thấy gì
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Center: one document card labelled "CustomerOrder ORD-…" with a smaller linked card "Waybill". Around it, four stick figures with role tags: top-left "tuan · sales", top-right "quang · ops", bottom-left "ha · care", bottom-right "khoa · accountant". Arrows from each figure to the card, each with a short label and a tick or cross: tuan "submit ✓ / cancel ✗", quang "edit waybill ✓ / create order ✗", ha "open SupportTicket ✓", khoa "cancel ✓". Under the card, a small scroll labelled "customer-order.doctype.yaml · permissions". Highlight in blue the arrow from khoa labelled "cancel ✓".
-```
+![Hình 2: Cùng một đơn, bốn role](./figures/video-11-figure-2.png)
 
 ### Hình 3 · Người lập không phải người duyệt
-*Đặt ở:* Cách hoạt động, mục 6
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right. A stick figure "khoa" creating a voucher card "CODRemittance 350,000 VND, owner = khoa". From khoa, an arrow labelled "Submit" hits a wall labelled "requireSubmit: segregation-of-duties" and bounces back with "403". Below, a second stick figure "thu" sends an arrow "Submit" through the same wall, which lets it pass because "thu ≠ owner". The passing arrow continues into a ledger book labelled "astra_ledger: Dr 3388 / Cr 112". Highlight in blue the path from thu through the wall to the ledger book.
-```
+![Hình 3: Người lập không phải người duyệt](./figures/video-11-figure-3.png)
 
 ## Liên quan
 

@@ -93,6 +93,9 @@ flowchart LR
     T --> T2
 ```
 
+![Hình 1: Đang chạy và Đang phát triển](./figures/video-18-figure-1.png)
+*Đang chạy và Đang phát triển.*
+
 ### Lưu trữ
 
 - **Đang chạy:** mọi DocType nằm trong một bảng JSONB, với expression index tạo online cho các trường `projected: true`
@@ -213,6 +216,9 @@ thật thì chưa. Tài liệu của interface nói rõ điều đó:
 public interface LlmClient {
 ```
 
+![Hình 2: Interface đã có, bản hiện thực thì chưa](./figures/video-18-figure-2.png)
+*Interface đã có, bản hiện thực thì chưa.*
+
 ### Các khoảng trống nhỏ hơn nêu ở video khác
 
 Những mục này không nằm trong bảng của Video 18 nhưng được ghi trong phần "Nói đúng" của các kịch bản. Tất cả đều
@@ -247,6 +253,9 @@ vận hành bưu kiện, đối soát COD, tính lương và điều phối. CTO
 
 **Kết quả của bài tập:** một đợt thí điểm giới hạn ở OMS, OPS, BMS và overlay theo tenant, còn tính lương và điều phối
 vẫn ở công cụ hiện có, kèm danh sách năm hạng mục lộ trình cần theo dõi. Đó chính là quyết định mà Video 18 muốn hỗ trợ.
+
+![Hình 3: Phạm vi thí điểm của một CTO](./figures/video-18-figure-3.png)
+*Phạm vi thí điểm của một CTO.*
 
 ## Dành cho tech lead
 
@@ -293,27 +302,19 @@ make demo-express SCENES=8`. Kết quả mong đợi của từng cảnh đượ
 - Bài này không đưa ra mốc thời gian hay thứ tự bàn giao cho các hạng mục Đang phát triển; danh sách phase trong README
   là nguồn có thẩm quyền về trình tự.
 
-## Minh hoạ: prompt vẽ hình
-
-Prompt giữ nguyên tiếng Anh để mô hình tạo ảnh hiểu chính xác; nhãn trên hình là tên kỹ thuật thật.
+## Hình minh hoạ
 
 ### Hình 1 · Đang chạy và Đang phát triển
-*Đặt ở:* Cách hoạt động, ở đầu mục
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Two columns separated by a vertical dashed line. Left column titled "Running" with solid boxes stacked top to bottom: "JSONB DocTypes", "append-only ledger", "Seata AT + TCC", "Keycloak · SAML · SCIM", "Tier 2 Wasm", "Rust CDC + X-Tx-LSN", "MCP + PII masking", "HRM slice", "STMS slice". Right column titled "In development" with dashed-outline boxes, each with a small stamp "IN DEVELOPMENT": "schema per module", "audit hash chain", "TCC fence table", "row-level permissions", "Tier 1 isolated JVM", "streaming CDC · Doris", "autonomous agents", "income tax · payout", "real LLM · maps". Thin arrows from each left box to its right counterpart. Draw the left solid boxes in blue.
-```
+
+![Hình 1: Đang chạy và Đang phát triển](./figures/video-18-figure-1.png)
 
 ### Hình 2 · Interface đã có, bản hiện thực thì chưa
-*Đặt ở:* Cách hoạt động, mục "Module nghiệp vụ"
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. Center: a socket drawn like a wall plug labelled "LlmClient (interface)". Plugged into it from the left: a solid plug labelled "MockLlmClient – simulated, regex script". On the right, an unplugged dashed plug labelled "real LLM provider – IN DEVELOPMENT". Above the socket a box "DispatchCopilot" with an arrow down into the socket. Below, a small note "tools and Timefold solver are real". Highlight the socket and the solid mock plug in blue; leave the dashed plug in black.
-```
+
+![Hình 2: Interface đã có, bản hiện thực thì chưa](./figures/video-18-figure-2.png)
 
 ### Hình 3 · Phạm vi thí điểm của một CTO
-*Đặt ở:* Ví dụ thực tế
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9. A large hand-drawn checklist on a clipboard titled "3PL pilot". Ticked lines: "tenants per branch (RLS)", "order → waybill → ledger", "VAT overlay for Hanoi", "COD maker/checker". Unticked lines with a small "IN DEVELOPMENT" tag: "branch-level row permissions", "payroll with income tax", "real-road routing", "LLM assistant", "audit hash chain". A circle drawn around the ticked lines labelled "pilot scope". Highlight the circle in blue.
-```
+
+![Hình 3: Phạm vi thí điểm của một CTO](./figures/video-18-figure-3.png)
 
 ## Liên quan
 

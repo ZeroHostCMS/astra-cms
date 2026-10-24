@@ -28,6 +28,9 @@ problem, and also does not get the decoupling. Astra keeps the decoupling and ma
 bounded**: the write returns a position in the log; a read can say "I need at least that position"; the kernel
 either serves data that includes the write or answers "not yet" without data.
 
+![Figure 1: Write, position, read](./figures/video-16-figure-1.png)
+*Write, position, read: writes return an X-Tx-LSN watermark; subsequent reads from read replicas await synchronization.*
+
 ## What the video shows
 
 | Scene | What you see | What it proves |
@@ -136,6 +139,9 @@ Why it is built this way:
   Insert, Update, Delete, Truncate). pgoutput is PostgreSQL's built-in output plugin, so no extension is needed on
   the database. Deletes are ignored because documents are never deleted, only cancelled.
 
+![Figure 2: Inside one worker poll](./figures/video-16-figure-2.png)
+*Inside the Rust CDC worker loop: pgoutput decoding, watermark updates, and transactional replay into replica tables.*
+
 ### 3. Replica rows are written under RLS
 
 The worker does not get a privileged role. Each row's tenant is bound before the upsert:
@@ -240,6 +246,9 @@ Design notes:
 The replica endpoint itself (`ReplicaResource`) requires read permission on the *source* DocType, so a role that
 cannot read Waybill cannot read `replica_waybill` either.
 
+![Figure 3: The 202 gate](./figures/video-16-figure-3.png)
+*The 202 gate: reads with an X-Required-LSN yield 202 Sync Pending until the CDC replica watermark catches up.*
+
 ## Real-world example
 
 **A last-mile operator in Hanoi with a separate support team.** Couriers update parcel status from handhelds
@@ -342,34 +351,19 @@ exercised by scene 14 on the k3d stack.
 - Latency numbers vary between runs; the script's original "about 50 ms" became 117 ms in this recording, and the
   video says so.
 
-## Visualize it: sketch prompts
+## Figures
 
 ### Figure 1 · Write, position, read
 
-*Where it goes:* The problem
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: stick figure "quang (OPS)" with an arrow to a box "Kernel" labelled "PUT Waybill → 200". A blue ticket comes back to quang labelled "X-Tx-LSN 0/387F920". A dotted handoff carries the same blue ticket to the right, to stick figure "ha (CARE)". From ha an arrow goes back to "Kernel" labelled "GET replica + X-Required-LSN". Two outcomes stacked on the right: top "202 sync pending (no data)", bottom "200 Out for Delivery". Highlight the blue ticket being carried from writer to reader.
-```
+![Figure 1: Write, position, read](./figures/video-16-figure-1.png)
 
 ### Figure 2 · Inside one worker poll
 
-*Where it goes:* How it works (worker loop)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left to right: a long tape labelled "WAL" with a marker "slot astra_cdc". Arrow "peek up to current LSN" to a gear box labelled "astra-cdc (Rust) · pgoutput decode". From the gear, one blue bracket labelled "one transaction" encloses two boxes: "upsert replica_waybill (RLS)" and "_cdc_sync_watermark.last_lsn". After the bracket, an arrow labelled "then: pg_replication_slot_advance" back to the slot marker. A small clock labelled "50 ms" loops back to the start. Highlight the blue "one transaction" bracket.
-```
+![Figure 2: Inside one worker poll](./figures/video-16-figure-2.png)
 
 ### Figure 3 · The 202 gate
 
-*Where it goes:* How it works (kernel gate)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-A horizontal number line labelled "WAL position" with two marks: "watermark 0/387CFC0" (left) and "required 0/387F920" (right). Above, a gate labelled "SyncAwareLsnFilter" with a sign "watermark >= required ?". Left branch "no → 202 sync-pending, retryAfterMs 50". Right branch in blue "yes → 200 replica row". A small arrow shows the watermark mark sliding right over time. Highlight the comparison sign.
-```
+![Figure 3: The 202 gate](./figures/video-16-figure-3.png)
 
 ## Related
 

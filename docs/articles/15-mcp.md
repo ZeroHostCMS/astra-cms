@@ -30,6 +30,9 @@ Astra's answer is that **the agent is just another client of the same kernel**. 
 tool call goes through the same permission checks as the REST API and the Desk, and fields declared `pii: true` in
 the DocType are masked on the MCP channel.
 
+![Figure 1: The agent carries the user's identity](./figures/video-15-figure-1.png)
+*The AI agent accesses Astra over MCP using the caller's verified bearer token, inheriting tenant and role permissions.*
+
 ## What the video shows
 
 | Scene | What you see | What it proves |
@@ -44,6 +47,9 @@ the DocType are masked on the MCP channel.
 The terminal scene (`SCENES=13`) also shows two things the narration only touches on: `ha` calling
 `cod_outstanding` is refused with `not permitted: read Account`, and `ha` creating a SupportTicket through MCP
 succeeds, with the app's triage hook still raising its priority to High (`auto-escalated: mentions 'vỡ'`).
+
+![Figure 4: Refused, not broken](./figures/video-15-figure-4.png)
+*Permission boundaries enforced cleanly: an unauthorized tool invocation returns an informative error without breaking the agent loop.*
 
 ## How it works
 
@@ -169,6 +175,9 @@ Why this design:
 - **It is applied at the channel, not at storage.** The Desk shows full data to the signed-in user; only data
   leaving through MCP is masked. That keeps the human workflow intact.
 
+![Figure 2: What masking does to one order](./figures/video-15-figure-2.png)
+*Masking PII on the way out: customer name and phone numbers declared as pii: true are redacted before reaching the model.*
+
 ### An app contributes a tool with one class
 
 The `McpTool` SPI is in `astra-spi`, so an app depends on nothing in `astra-ai`. The tool declares the DocTypes it
@@ -233,6 +242,9 @@ Two design notes worth knowing:
 - **Masking depends on the result shape.** The SPI asks tools to return documents as `{doctype, name, data}` maps.
   A tool that flattens a PII field into its own map (for example `{"phone": "0901…"}`) would bypass masking. Review
   app tools for this.
+
+![Figure 3: One app tool, many kernel duties](./figures/video-15-figure-3.png)
+*A single McpTool SPI implementation provides tool execution while the kernel handles tenant isolation, permissions, and auditing.*
 
 ### Writes report their WAL position
 
@@ -324,43 +336,23 @@ permissions, unknown tools) and run with `make test`.
   them as shortened.
 - The MCP server answers with JSON only; a client that opens a GET stream gets 405.
 
-## Visualize it: sketch prompts
+## Figures
 
 ### Figure 1 · The agent carries the user's identity
 
-*Where it goes:* The problem
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a stick figure labelled "ha (care)" next to a small robot labelled "Claude". Both hold the same key labelled "Keycloak token". Middle: a single door labelled "/mcp". Right: a box labelled "Astra kernel" containing three stacked layers labelled "tenant: saigon-express", "RLS", "DocType permissions", and below it a cylinder labelled "astra_doc". The blue accent path goes from the robot through "/mcp" and through all three layers to the cylinder. Below, a crossed-out grey path labelled "service account (god mode)" goes around the layers directly to the cylinder. Highlight the shared key.
-```
+![Figure 1: The agent carries the user's identity](./figures/video-15-figure-1.png)
 
 ### Figure 2 · What masking does to one order
 
-*Where it goes:* How it works
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a card labelled "CustomerOrder (Desk)" with four rows: "receiver_name: Lê Văn Demo", "receiver_phone: 0901234567", "receiver_address: 1 Bạch Đằng, Đà Nẵng", "shipping_fee: 73000". Middle: a funnel labelled "PiiMasking (pii: true)". Right: a card labelled "to the model" with rows "receiver_name: L*** V*** D***", "receiver_phone: *******567", "receiver_address: 1*** B*** Đ*** Đ*** N***", "shipping_fee: 73000". Blue arrow from left card through the funnel to the right card. Highlight that shipping_fee is unchanged with a small check mark.
-```
+![Figure 2: What masking does to one order](./figures/video-15-figure-2.png)
 
 ### Figure 3 · One app tool, many kernel duties
 
-*Where it goes:* How it works (app tool)
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Center: a small box labelled "TrackWaybillTool" with a tag "reads: Waybill, CustomerOrder, SupportTicket". Around it, a larger frame labelled "kernel (AppToolInvoker)" with five numbered steps along the top from left to right: "1 auth token", "2 bind tenant", "3 check READ x3", "4 log user/tenant/tool", "5 mask pii". A blue arrow labelled "tools/call track_waybill" enters at step 1 and exits after step 5 labelled "result". Highlight step 3.
-```
+![Figure 3: One app tool, many kernel duties](./figures/video-15-figure-3.png)
 
 ### Figure 4 · Refused, not broken
 
-*Where it goes:* What the video shows
-
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Top to bottom sequence with three lanes labelled "ha", "Claude", "/mcp". Arrow from ha to Claude: "create order for C001". Arrow from Claude to /mcp: "create_document CustomerOrder". Return arrow from /mcp to Claude in blue: "isError: true · not permitted: create CustomerOrder". Final arrow from Claude to ha: "permissions, not data". Highlight the blue return arrow.
-```
+![Figure 4: Refused, not broken](./figures/video-15-figure-4.png)
 
 ## Related
 

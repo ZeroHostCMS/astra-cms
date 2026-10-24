@@ -44,6 +44,9 @@ IdP. Its users `linh` and `bao` are not the dispatcher `linh` from [Video 20](./
 | Fail closed | globex's token: acme user → 404, filter → 0 results, `X-Astra-Tenant: acme` → 403, adding an acme user to a globex role → 400 `invalidValue`, filter `co` → 400 `invalidFilter` | Errors follow RFC 7644; another tenant's token sees nothing. |
 | Delete | `DELETE` → 204, GET → 404 | Deleted users are gone. |
 
+![Figure 2: Tampered assertion](./figures/video-21-figure-2.png)
+*Cryptographic assertion verification: tampered SAML assertions or mismatched tenant tokens are rejected immediately.*
+
 ## How it works
 
 ### SAML: brokered by Keycloak, invisible to the kernel
@@ -116,6 +119,9 @@ and Keycloak already handles metadata, certificate rotation, clock skew (`allowe
 linking. The kernel keeps a single trust path, an OIDC JWT, and the code in [Video 11](./11-keycloak.md) works
 unchanged. The tamper scene is therefore a test of Keycloak's verification, which is the point: nothing in Astra
 had to be written for it.
+
+![Figure 1: SP-initiated SAML through a broker](./figures/video-21-figure-1.png)
+*SP-initiated SAML flow: enterprise identity providers authenticate users through Keycloak without exposing SAML complexity to the kernel.*
 
 ### SCIM: the tenant comes from the token, never from the request
 
@@ -260,6 +266,9 @@ read, or add Chi to a role; every attempt returns 404, 0 results, 403 or 400 as 
 What the company has to supply for this to work in production is in the "To be accurate" list: its own IdP entry
 and group mappers in Keycloak, and a tested group naming convention.
 
+![Figure 3: SCIM joiner, mover, leaver inside one tenant](./figures/video-21-figure-3.png)
+*Automated identity lifecycle: SCIM 2.0 synchronizes joiners, role changes, and departures directly into tenant group memberships.*
+
 ## For technical leaders
 
 - **One trust path.** The kernel trusts one thing, a Keycloak-signed JWT. SAML, local passwords and future
@@ -333,31 +342,19 @@ The IdP passwords and the SCIM client secrets in the realm JSON files are for lo
 - Listing users paginates in memory with one extra group read per user: enough for the demo, not for hundreds of
   thousands of users.
 
-## Visualize it: sketch prompts
+## Figures
 
 ### Figure 1 · SP-initiated SAML through a broker
-*Where it goes:* How it works, SAML
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Four boxes left to right: "Desk (browser)", "Keycloak · realm astra (SP urn:astra:sp)", "IdP · acme-corp-idp", and far right "Astra kernel". Top arrows left to right: "OIDC + kc_idp_hint=acme-corp" from Desk to Keycloak, then "SAML AuthnRequest" from Keycloak to IdP. A stick figure "linh" next to the IdP with a padlock "password stays here". Return arrow from IdP to Keycloak labelled "signed SAMLResponse · memberOf astra-editors", with a small wax seal icon "RSA-SHA256". Inside Keycloak a small note "memberOf → /tenants/acme/editor". Arrow from Keycloak back to Desk "OIDC code → token". Final arrow from Desk to Astra kernel "Bearer JWT · groups[/tenants/acme/editor]". Highlight in blue the signed SAMLResponse arrow and the final JWT arrow. A dashed line around Astra kernel labelled "no SAML code here".
-```
+![Figure 1: SP-initiated SAML through a broker](./figures/video-21-figure-1.png)
 
 ### Figure 2 · Tampered assertion
-*Where it goes:* What the video shows
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a sealed envelope labelled "SAMLResponse for bao" containing the text "memberOf astra-readers". In the middle, a hand with a pen crossing out "readers" and writing "admins". Right: a box "Keycloak signature check" with a broken seal icon and a large "400 · invalid signature". Below it, an empty slot labelled "OIDC code" with a cross. Highlight in blue the broken seal and the empty code slot.
-```
+![Figure 2: Tampered assertion](./figures/video-21-figure-2.png)
 
 ### Figure 3 · SCIM joiner, mover, leaver inside one tenant
-*Where it goes:* Real-world example
 
-```text
-Hand-drawn whiteboard sketch, black ink line art on off-white paper, one accent color (#6b8cff blue) for the key path, simple boxes and arrows, short handwritten labels in English, generous white space, no logos, no photorealism, 16:9.
-Left: a box "Company directory · scim-acme" with a token tag "scim_tenant: acme". Three arrows to the right, stacked top to bottom, labelled "POST /Users → 201", "PATCH /Groups/editor → add member", "PATCH active=False". They enter a box "ScimResource" and then a Keycloak folder tree: "/tenants/acme" (with a small label "ownership") containing "editor", "reader". A person icon "chi" moves from the root folder into "editor", then gets a grey cross "disabled". On the far right, a box "globex token" with a dashed arrow towards chi ending in a wall "404". Highlight in blue the arrow "PATCH /Groups/editor" and chi's move into "editor".
-```
+![Figure 3: SCIM joiner, mover, leaver inside one tenant](./figures/video-21-figure-3.png)
 
 ## Related
 
