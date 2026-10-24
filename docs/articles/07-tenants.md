@@ -354,9 +354,17 @@ rules without the demo stack: `make test`.
 
 ## Figures
 
-- [Figure 1 · One URL, two companies](#what-the-video-shows)
-- [Figure 2 · Who decides the tenant](#step-1-resolve-the-tenant-once-from-trusted-inputs)
-- [Figure 3 · Zero rows without a tenant](#step-4-let-postgresql-enforce-it)
+### Figure 1 · One URL, two companies
+
+![Figure 1: One URL, two companies](./figures/video-07-figure-1.png)
+
+### Figure 2 · Who decides the tenant
+
+![Figure 2: Who decides the tenant](./figures/video-07-figure-2.png)
+
+### Figure 3 · Zero rows without a tenant
+
+![Figure 3: Zero rows without a tenant](./figures/video-07-figure-3.png)
 
 ## Related
 

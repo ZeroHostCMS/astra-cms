@@ -353,9 +353,17 @@ exercised by scene 14 on the k3d stack.
 
 ## Figures
 
-- [Figure 1 · Write, position, read](#the-problem)
-- [Figure 2 · Inside one worker poll](#2-the-worker-loop-peek-apply-with-the-watermark-then-advance)
-- [Figure 3 · The 202 gate](#4-the-kernels-lsn-gate)
+### Figure 1 · Write, position, read
+
+![Figure 1: Write, position, read](./figures/video-16-figure-1.png)
+
+### Figure 2 · Inside one worker poll
+
+![Figure 2: Inside one worker poll](./figures/video-16-figure-2.png)
+
+### Figure 3 · The 202 gate
+
+![Figure 3: The 202 gate](./figures/video-16-figure-3.png)
 
 ## Related
 

@@ -364,9 +364,17 @@ Hành vi này được giữ cố định bởi `astra-server/src/test/java/io/a
 
 ## Hình minh hoạ
 
-- [Hình 1 · Một transaction, hai lần ghi](#cách-hoạt-động)
-- [Hình 2 · Cancel thêm dòng, không bao giờ sửa](#3-bút-toán-đảo-là-bản-phản-chiếu-không-bao-giờ-là-sửa)
-- [Hình 3 · Phân vùng theo tháng](#5-phân-vùng-được-tạo-trước)
+### Hình 1 · Một transaction, hai lần ghi
+
+![Hình 1: Một transaction, hai lần ghi](./figures/video-12-figure-1.png)
+
+### Hình 2 · Cancel thêm dòng, không bao giờ sửa
+
+![Hình 2: Cancel thêm dòng, không bao giờ sửa](./figures/video-12-figure-2.png)
+
+### Hình 3 · Phân vùng theo tháng
+
+![Hình 3: Phân vùng theo tháng](./figures/video-12-figure-3.png)
 
 ## Liên quan
 

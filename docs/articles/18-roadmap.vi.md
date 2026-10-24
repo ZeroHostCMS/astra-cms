@@ -304,9 +304,17 @@ make demo-express SCENES=8`. Kết quả mong đợi của từng cảnh đượ
 
 ## Hình minh hoạ
 
-- [Hình 1 · Đang chạy và Đang phát triển](#cách-hoạt-động)
-- [Hình 2 · Interface đã có, bản hiện thực thì chưa](#module-nghiệp-vụ)
-- [Hình 3 · Phạm vi thí điểm của một CTO](#ví-dụ-thực-tế)
+### Hình 1 · Đang chạy và Đang phát triển
+
+![Hình 1: Đang chạy và Đang phát triển](./figures/video-18-figure-1.png)
+
+### Hình 2 · Interface đã có, bản hiện thực thì chưa
+
+![Hình 2: Interface đã có, bản hiện thực thì chưa](./figures/video-18-figure-2.png)
+
+### Hình 3 · Phạm vi thí điểm của một CTO
+
+![Hình 3: Phạm vi thí điểm của một CTO](./figures/video-18-figure-3.png)
 
 ## Liên quan
 

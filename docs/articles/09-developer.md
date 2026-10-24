@@ -421,9 +421,17 @@ gained tests since then (HRM, STMS, SCIM), so the count you see will be higher. 
 
 ## Figures
 
-- [Figure 1 · What an Astra app contains and what it may depend on](#an-app-is-a-list-of-doctypes-plus-cdi-beans)
-- [Figure 2 · One submit, one transaction](#side-effects-join-the-source-documents-transaction)
-- [Figure 3 · Adding a field without a migration](#a-field-is-one-yaml-line-stored-in-jsonb)
+### Figure 1 · What an Astra app contains and what it may depend on
+
+![Figure 1: What an Astra app contains and what it may depend on](./figures/video-09-figure-1.png)
+
+### Figure 2 · One submit, one transaction
+
+![Figure 2: One submit, one transaction](./figures/video-09-figure-2.png)
+
+### Figure 3 · Adding a field without a migration
+
+![Figure 3: Adding a field without a migration](./figures/video-09-figure-3.png)
 
 ## Related
 

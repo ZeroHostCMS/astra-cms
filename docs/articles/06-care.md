@@ -324,9 +324,17 @@ Ticket numbers depend on how many tickets exist when you run the scene.
 
 ## Figures
 
-- [Figure 1 · One save, three filled fields](#the-triage-hook)
-- [Figure 2 · Two ways care sees a parcel](#the-replica-card)
-- [Figure 3 · The triage queue](#real-world-example)
+### Figure 1 · One save, three filled fields
+
+![Figure 1: One save, three filled fields](./figures/video-06-figure-1.png)
+
+### Figure 2 · Two ways care sees a parcel
+
+![Figure 2: Two ways care sees a parcel](./figures/video-06-figure-2.png)
+
+### Figure 3 · The triage queue
+
+![Figure 3: The triage queue](./figures/video-06-figure-3.png)
 
 ## Related
 

@@ -371,10 +371,21 @@ từ chối, từ chối sau khi nhánh AT đã commit) trên Seata Server và R
 
 ## Hình minh hoạ
 
-- [Hình 1 · Một lần submit, ba tài nguyên](#vấn-đề)
-- [Hình 2 · Rollback sau khi một nhánh đã commit](#video-cho-thấy-gì)
-- [Hình 3 · Các trạng thái của TCC participant](#2-bộ-điều-phối-begin-chạy-commit-hoặc-rollback)
-- [Hình 4 · Ai nhìn thấy Seata](#3-hook-của-app-thấy-một-spi-không-thấy-seata)
+### Hình 1 · Một lần submit, ba tài nguyên
+
+![Hình 1: Một lần submit, ba tài nguyên](./figures/video-17-figure-1.png)
+
+### Hình 2 · Rollback sau khi một nhánh đã commit
+
+![Hình 2: Rollback sau khi một nhánh đã commit](./figures/video-17-figure-2.png)
+
+### Hình 3 · Các trạng thái của TCC participant
+
+![Hình 3: Các trạng thái của TCC participant](./figures/video-17-figure-3.png)
+
+### Hình 4 · Ai nhìn thấy Seata
+
+![Hình 4: Ai nhìn thấy Seata](./figures/video-17-figure-4.png)
 
 ## Liên quan
 

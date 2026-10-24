@@ -300,9 +300,17 @@ Kết quả mong đợi: `Tenant isolation guard: role 'astra_app' is subject to
 
 ## Hình minh hoạ
 
-- [Hình 1 · Hai chuỗi kết nối, hai kết cục](#vấn-đề)
-- [Hình 2 · Cơ chế chặn đứng trước Flyway](#vì-sao-nó-chạy-trước-flyway)
-- [Hình 3 · Hai lớp, ba lỗ hổng](#hai-lớp-không-phải-một)
+### Hình 1 · Hai chuỗi kết nối, hai kết cục
+
+![Hình 1: Hai chuỗi kết nối, hai kết cục](./figures/video-08-figure-1.png)
+
+### Hình 2 · Cơ chế chặn đứng trước Flyway
+
+![Hình 2: Cơ chế chặn đứng trước Flyway](./figures/video-08-figure-2.png)
+
+### Hình 3 · Hai lớp, ba lỗ hổng
+
+![Hình 3: Hai lớp, ba lỗ hổng](./figures/video-08-figure-3.png)
 
 ## Liên quan
 

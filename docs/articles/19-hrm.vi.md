@@ -427,10 +427,21 @@ Theo mục "Nói đúng" của kịch bản Video 19:
 
 ## Hình minh hoạ
 
-- [Hình 1 · Một lần lưu, bốn phiếu lương, một transaction](#cách-hoạt-động)
-- [Hình 2 · Bút toán dồn tích cân đối](#mỗi-lượt-chạy-một-bút-toán-dồn-tích)
-- [Hình 3 · Cancel thêm dòng, không bao giờ xoá](#video-cho-thấy-gì)
-- [Hình 4 · Các bậc thưởng bưu tá](#công-thức-thưởng-của-tenant)
+### Hình 1 · Một lần lưu, bốn phiếu lương, một transaction
+
+![Hình 1: Một lần lưu, bốn phiếu lương, một transaction](./figures/video-19-figure-1.png)
+
+### Hình 2 · Bút toán dồn tích cân đối
+
+![Hình 2: Bút toán dồn tích cân đối](./figures/video-19-figure-2.png)
+
+### Hình 3 · Cancel thêm dòng, không bao giờ xoá
+
+![Hình 3: Cancel thêm dòng, không bao giờ xoá](./figures/video-19-figure-3.png)
+
+### Hình 4 · Các bậc thưởng bưu tá
+
+![Hình 4: Các bậc thưởng bưu tá](./figures/video-19-figure-4.png)
 
 ## Liên quan
 

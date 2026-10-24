@@ -349,9 +349,17 @@ tắc này mà không cần stack demo: `make test`.
 
 ## Hình minh hoạ
 
-- [Hình 1 · Một URL, hai công ty](#video-cho-thấy-gì)
-- [Hình 2 · Ai quyết định tenant](#bước-1-nhận-diện-tenant-một-lần-từ-đầu-vào-đáng-tin)
-- [Hình 3 · Không dòng nào khi thiếu tenant](#bước-4-để-postgresql-thực-thi)
+### Hình 1 · Một URL, hai công ty
+
+![Hình 1: Một URL, hai công ty](./figures/video-07-figure-1.png)
+
+### Hình 2 · Ai quyết định tenant
+
+![Hình 2: Ai quyết định tenant](./figures/video-07-figure-2.png)
+
+### Hình 3 · Không dòng nào khi thiếu tenant
+
+![Hình 3: Không dòng nào khi thiếu tenant](./figures/video-07-figure-3.png)
 
 ## Liên quan
 

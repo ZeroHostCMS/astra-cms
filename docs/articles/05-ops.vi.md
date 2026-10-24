@@ -327,9 +327,17 @@ thái Delivered.
 
 ## Hình minh hoạ
 
-- [Hình 1 · Máy trạng thái bưu kiện](#bảng-chuyển-trạng-thái)
-- [Hình 2 · Nhảy cóc trạng thái bị từ chối, không có gì được ghi](#video-cho-thấy-gì)
-- [Hình 3 · Quyền phủ quyết hủy đơn trên hai chứng từ](#quyền-phủ-quyết-phía-đơn-hàng)
+### Hình 1 · Máy trạng thái bưu kiện
+
+![Hình 1: Máy trạng thái bưu kiện](./figures/video-05-figure-1.png)
+
+### Hình 2 · Nhảy cóc trạng thái bị từ chối, không có gì được ghi
+
+![Hình 2: Nhảy cóc trạng thái bị từ chối, không có gì được ghi](./figures/video-05-figure-2.png)
+
+### Hình 3 · Quyền phủ quyết hủy đơn trên hai chứng từ
+
+![Hình 3: Quyền phủ quyết hủy đơn trên hai chứng từ](./figures/video-05-figure-3.png)
 
 ## Liên quan
 

@@ -370,10 +370,21 @@ The integration test `astra-server/src/test/java/io/astra/server/SeataTest.java`
 
 ## Figures
 
-- [Figure 1 · One submit, three resources](#the-problem)
-- [Figure 2 · Rollback after a branch committed](#what-the-video-shows)
-- [Figure 3 · TCC participant states](#2-the-coordinator-begin-run-commit-or-roll-back)
-- [Figure 4 · Who sees Seata](#3-the-app-hook-sees-an-spi-not-seata)
+### Figure 1 · One submit, three resources
+
+![Figure 1: One submit, three resources](./figures/video-17-figure-1.png)
+
+### Figure 2 · Rollback after a branch committed
+
+![Figure 2: Rollback after a branch committed](./figures/video-17-figure-2.png)
+
+### Figure 3 · TCC participant states
+
+![Figure 3: TCC participant states](./figures/video-17-figure-3.png)
+
+### Figure 4 · Who sees Seata
+
+![Figure 4: Who sees Seata](./figures/video-17-figure-4.png)
 
 ## Related
 

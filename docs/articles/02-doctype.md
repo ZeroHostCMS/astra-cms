@@ -366,9 +366,17 @@ and expand "Raw JSON from GET /api/doctype/CustomerOrder" to see the exact defin
 
 ## Figures
 
-- [Figure 1 · One YAML file, many outputs](#what-each-key-turns-into)
-- [Figure 2 · The shared JSONB table](#one-table-for-every-doctype)
-- [Figure 3 · Online projection index at startup](#projections-indexes-without-alter-table)
+### Figure 1 · One YAML file, many outputs
+
+![Figure 1: One YAML file, many outputs](./figures/video-02-figure-1.png)
+
+### Figure 2 · The shared JSONB table
+
+![Figure 2: The shared JSONB table](./figures/video-02-figure-2.png)
+
+### Figure 3 · Online projection index at startup
+
+![Figure 3: Online projection index at startup](./figures/video-02-figure-3.png)
 
 ## Related
 

@@ -354,9 +354,17 @@ cụm k3d.
 
 ## Hình minh hoạ
 
-- [Hình 1 · Ghi, vị trí, đọc](#vấn-đề)
-- [Hình 2 · Bên trong một lần poll của worker](#2-vòng-lặp-của-worker-peek-áp-dụng-cùng-watermark-rồi-advance)
-- [Hình 3 · Cổng 202](#4-cổng-lsn-của-kernel)
+### Hình 1 · Ghi, vị trí, đọc
+
+![Hình 1: Ghi, vị trí, đọc](./figures/video-16-figure-1.png)
+
+### Hình 2 · Bên trong một lần poll của worker
+
+![Hình 2: Bên trong một lần poll của worker](./figures/video-16-figure-2.png)
+
+### Hình 3 · Cổng 202
+
+![Hình 3: Cổng 202](./figures/video-16-figure-3.png)
 
 ## Liên quan
 

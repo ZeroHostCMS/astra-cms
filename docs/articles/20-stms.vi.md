@@ -398,10 +398,21 @@ Theo mục "Nói đúng" của kịch bản Video 20:
 
 ## Hình minh hoạ
 
-- [Hình 1 · Phần nào thật, phần nào giả lập](#copilot-và-vì-sao-llm-của-nó-là-giả-lập)
-- [Hình 2 · Ràng buộc cứng và ràng buộc mềm](#solver-ràng-buộc-cứng-và-mềm)
-- [Hình 3 · Lập lại kế hoạch bắt đầu từ các tuyến hiện tại](#giải-là-một-lần-lưu-lập-lại-kế-hoạch-là-một-lần-lưu-có-warm-start)
-- [Hình 4 · Ai được lập lại kế hoạch](#phân-quyền-qua-danh-sách-đọc-mà-tool-khai-báo)
+### Hình 1 · Phần nào thật, phần nào giả lập
+
+![Hình 1: Phần nào thật, phần nào giả lập](./figures/video-20-figure-1.png)
+
+### Hình 2 · Ràng buộc cứng và ràng buộc mềm
+
+![Hình 2: Ràng buộc cứng và ràng buộc mềm](./figures/video-20-figure-2.png)
+
+### Hình 3 · Lập lại kế hoạch bắt đầu từ các tuyến hiện tại
+
+![Hình 3: Lập lại kế hoạch bắt đầu từ các tuyến hiện tại](./figures/video-20-figure-3.png)
+
+### Hình 4 · Ai được lập lại kế hoạch
+
+![Hình 4: Ai được lập lại kế hoạch](./figures/video-20-figure-4.png)
 
 ## Liên quan
 

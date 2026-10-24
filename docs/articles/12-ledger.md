@@ -366,9 +366,17 @@ The behaviour is pinned by `astra-server/src/test/java/io/astra/server/LedgerTes
 
 ## Figures
 
-- [Figure 1 · One transaction, two writes](#how-it-works)
-- [Figure 2 · Cancel adds, never edits](#3-reversal-mirrors-it-never-edits)
-- [Figure 3 · Monthly partitions](#5-partitions-are-created-ahead-of-time)
+### Figure 1 · One transaction, two writes
+
+![Figure 1: One transaction, two writes](./figures/video-12-figure-1.png)
+
+### Figure 2 · Cancel adds, never edits
+
+![Figure 2: Cancel adds, never edits](./figures/video-12-figure-2.png)
+
+### Figure 3 · Monthly partitions
+
+![Figure 3: Monthly partitions](./figures/video-12-figure-3.png)
 
 ## Related
 

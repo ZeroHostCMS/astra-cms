@@ -368,9 +368,17 @@ mở rộng mục "Raw JSON from GET /api/doctype/CustomerOrder" để xem đún
 
 ## Hình minh hoạ
 
-- [Hình 1 · Một file YAML, nhiều đầu ra](#mỗi-key-biến-thành-gì)
-- [Hình 2 · Bảng JSONB dùng chung](#một-bảng-cho-mọi-doctype)
-- [Hình 3 · Projection index tạo online lúc khởi động](#projection-index-mà-không-cần-alter-table)
+### Hình 1 · Một file YAML, nhiều đầu ra
+
+![Hình 1: Một file YAML, nhiều đầu ra](./figures/video-02-figure-1.png)
+
+### Hình 2 · Bảng JSONB dùng chung
+
+![Hình 2: Bảng JSONB dùng chung](./figures/video-02-figure-2.png)
+
+### Hình 3 · Projection index tạo online lúc khởi động
+
+![Hình 3: Projection index tạo online lúc khởi động](./figures/video-02-figure-3.png)
 
 ## Liên quan
 

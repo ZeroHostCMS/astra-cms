@@ -338,10 +338,21 @@ quyền, tool không tồn tại) và chạy bằng `make test`.
 
 ## Hình minh hoạ
 
-- [Hình 1 · Agent mang danh tính của người dùng](#vấn-đề)
-- [Hình 2 · Lớp che làm gì với một đơn hàng](#che-dữ-liệu-trên-đường-ra)
-- [Hình 3 · Một tool của app, nhiều việc của kernel](#app-đóng-góp-một-tool-chỉ-bằng-một-class)
-- [Hình 4 · Bị từ chối, không phải bị lỗi](#video-cho-thấy-gì)
+### Hình 1 · Agent mang danh tính của người dùng
+
+![Hình 1: Agent mang danh tính của người dùng](./figures/video-15-figure-1.png)
+
+### Hình 2 · Lớp che làm gì với một đơn hàng
+
+![Hình 2: Lớp che làm gì với một đơn hàng](./figures/video-15-figure-2.png)
+
+### Hình 3 · Một tool của app, nhiều việc của kernel
+
+![Hình 3: Một tool của app, nhiều việc của kernel](./figures/video-15-figure-3.png)
+
+### Hình 4 · Bị từ chối, không phải bị lỗi
+
+![Hình 4: Bị từ chối, không phải bị lỗi](./figures/video-15-figure-4.png)
 
 ## Liên quan
 

@@ -338,10 +338,21 @@ permissions, unknown tools) and run with `make test`.
 
 ## Figures
 
-- [Figure 1 · The agent carries the user's identity](#the-problem)
-- [Figure 2 · What masking does to one order](#masking-on-the-way-out)
-- [Figure 3 · One app tool, many kernel duties](#an-app-contributes-a-tool-with-one-class)
-- [Figure 4 · Refused, not broken](#what-the-video-shows)
+### Figure 1 · The agent carries the user's identity
+
+![Figure 1: The agent carries the user's identity](./figures/video-15-figure-1.png)
+
+### Figure 2 · What masking does to one order
+
+![Figure 2: What masking does to one order](./figures/video-15-figure-2.png)
+
+### Figure 3 · One app tool, many kernel duties
+
+![Figure 3: One app tool, many kernel duties](./figures/video-15-figure-3.png)
+
+### Figure 4 · Refused, not broken
+
+![Figure 4: Refused, not broken](./figures/video-15-figure-4.png)
 
 ## Related
 

@@ -402,10 +402,21 @@ From the script's "To be accurate" section for Video 20:
 
 ## Figures
 
-- [Figure 1 · What is real and what is simulated](#the-copilot-and-why-its-llm-is-simulated)
-- [Figure 2 · Hard versus soft constraints](#the-solver-hard-and-soft-constraints)
-- [Figure 3 · A replan starts from the current routes](#solving-is-a-save-replanning-is-a-save-with-a-warm-start)
-- [Figure 4 · Who may replan](#permissions-through-the-tools-declared-reads)
+### Figure 1 · What is real and what is simulated
+
+![Figure 1: What is real and what is simulated](./figures/video-20-figure-1.png)
+
+### Figure 2 · Hard versus soft constraints
+
+![Figure 2: Hard versus soft constraints](./figures/video-20-figure-2.png)
+
+### Figure 3 · A replan starts from the current routes
+
+![Figure 3: A replan starts from the current routes](./figures/video-20-figure-3.png)
+
+### Figure 4 · Who may replan
+
+![Figure 4: Who may replan](./figures/video-20-figure-4.png)
 
 ## Related
 

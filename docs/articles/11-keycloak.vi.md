@@ -353,9 +353,17 @@ Chúng chỉ dành cho môi trường local.
 
 ## Hình minh hoạ
 
-- [Hình 1 · Một danh tính, role theo tenant](#2-server-là-resource-server-đọc-đường-dẫn-nhóm)
-- [Hình 2 · Cùng một đơn, bốn role](#video-cho-thấy-gì)
-- [Hình 3 · Người lập không phải người duyệt](#6-phân-tách-nhiệm-vụ-chỉ-là-một-cờ)
+### Hình 1 · Một danh tính, role theo tenant
+
+![Hình 1: Một danh tính, role theo tenant](./figures/video-11-figure-1.png)
+
+### Hình 2 · Cùng một đơn, bốn role
+
+![Hình 2: Cùng một đơn, bốn role](./figures/video-11-figure-2.png)
+
+### Hình 3 · Người lập không phải người duyệt
+
+![Hình 3: Người lập không phải người duyệt](./figures/video-11-figure-3.png)
 
 ## Liên quan
 

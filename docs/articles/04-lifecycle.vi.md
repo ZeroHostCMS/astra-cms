@@ -391,9 +391,17 @@ toàn bộ bộ test, Quarkus Dev Services khởi động PostgreSQL trong Docke
 
 ## Hình minh hoạ
 
-- [Hình 1 · Ba trạng thái, một chiều](#vấn-đề)
-- [Hình 2 · Submit trong một transaction](#các-hook-đi-kèm)
-- [Hình 3 · Cancel chỉ nối thêm, không bao giờ sửa](#cancel-chỉ-nối-thêm-cơ-sở-dữ-liệu-ép-buộc-điều-đó)
+### Hình 1 · Ba trạng thái, một chiều
+
+![Hình 1: Ba trạng thái, một chiều](./figures/video-04-figure-1.png)
+
+### Hình 2 · Submit trong một transaction
+
+![Hình 2: Submit trong một transaction](./figures/video-04-figure-2.png)
+
+### Hình 3 · Cancel chỉ nối thêm, không bao giờ sửa
+
+![Hình 3: Cancel chỉ nối thêm, không bao giờ sửa](./figures/video-04-figure-3.png)
 
 ## Liên quan
 

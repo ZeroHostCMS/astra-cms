@@ -311,9 +311,17 @@ bootstrap cục bộ, nên tuyệt đối không trỏ nó vào dữ liệu th�
 
 ## Hình minh hoạ
 
-- [Hình 1 · Bảy pod và ai nói chuyện với ai](#bảy-pod-và-vì-sao-hai-trong-số-đó-là-kernel)
-- [Hình 2 · Năm lệnh từ laptop đến Desk](#video-cho-thấy-gì)
-- [Hình 3 · Một app là metadata cộng code, biên dịch kèm](#một-server-app-được-biên-dịch-kèm)
+### Hình 1 · Bảy pod và ai nói chuyện với ai
+
+![Hình 1: Bảy pod và ai nói chuyện với ai](./figures/video-01-figure-1.png)
+
+### Hình 2 · Năm lệnh từ laptop đến Desk
+
+![Hình 2: Năm lệnh từ laptop đến Desk](./figures/video-01-figure-2.png)
+
+### Hình 3 · Một app là metadata cộng code, biên dịch kèm
+
+![Hình 3: Một app là metadata cộng code, biên dịch kèm](./figures/video-01-figure-3.png)
 
 ## Liên quan
 

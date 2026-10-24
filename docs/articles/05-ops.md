@@ -330,9 +330,17 @@ is Delivered.
 
 ## Figures
 
-- [Figure 1 · The parcel state machine](#the-transition-table)
-- [Figure 2 · A skipped state is rejected, nothing is written](#what-the-video-shows)
-- [Figure 3 · Order cancel veto across two documents](#the-order-side-veto)
+### Figure 1 · The parcel state machine
+
+![Figure 1: The parcel state machine](./figures/video-05-figure-1.png)
+
+### Figure 2 · A skipped state is rejected, nothing is written
+
+![Figure 2: A skipped state is rejected, nothing is written](./figures/video-05-figure-2.png)
+
+### Figure 3 · Order cancel veto across two documents
+
+![Figure 3: Order cancel veto across two documents](./figures/video-05-figure-3.png)
 
 ## Related
 

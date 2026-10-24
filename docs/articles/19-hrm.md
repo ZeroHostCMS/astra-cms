@@ -426,10 +426,21 @@ From the script's "To be accurate" section for Video 19:
 
 ## Figures
 
-- [Figure 1 · One save, four slips, one transaction](#how-it-works)
-- [Figure 2 · The accrual voucher balances](#one-accrual-voucher-per-run)
-- [Figure 3 · Cancel adds rows, never deletes](#what-the-video-shows)
-- [Figure 4 · The courier bonus tiers](#the-tenants-bonus-formula)
+### Figure 1 · One save, four slips, one transaction
+
+![Figure 1: One save, four slips, one transaction](./figures/video-19-figure-1.png)
+
+### Figure 2 · The accrual voucher balances
+
+![Figure 2: The accrual voucher balances](./figures/video-19-figure-2.png)
+
+### Figure 3 · Cancel adds rows, never deletes
+
+![Figure 3: Cancel adds rows, never deletes](./figures/video-19-figure-3.png)
+
+### Figure 4 · The courier bonus tiers
+
+![Figure 4: The courier bonus tiers](./figures/video-19-figure-4.png)
 
 ## Related
 

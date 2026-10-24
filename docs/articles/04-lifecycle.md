@@ -392,9 +392,17 @@ runs the whole suite with Quarkus Dev Services starting PostgreSQL in Docker.
 
 ## Figures
 
-- [Figure 1 · Three states, one direction](#the-problem)
-- [Figure 2 · Submit in one transaction](#the-hooks-that-ride-along)
-- [Figure 3 · Cancel appends, never edits](#cancel-appends-the-database-enforces-it)
+### Figure 1 · Three states, one direction
+
+![Figure 1: Three states, one direction](./figures/video-04-figure-1.png)
+
+### Figure 2 · Submit in one transaction
+
+![Figure 2: Submit in one transaction](./figures/video-04-figure-2.png)
+
+### Figure 3 · Cancel appends, never edits
+
+![Figure 3: Cancel appends, never edits](./figures/video-04-figure-3.png)
 
 ## Related
 

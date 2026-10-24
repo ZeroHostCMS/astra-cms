@@ -346,9 +346,17 @@ Run the overlay tests alone (Docker required) with Maven's standard test filter,
 
 ## Figures
 
-- [Figure 1 · Base DocType plus overlay equals the tenant's effective DocType](#merge-rules-what-an-overlay-may-and-may-not-do)
-- [Figure 2 · Same request, two tenants, two answers](#real-world-example)
-- [Figure 3 · Saving an overlay across two pods](#the-effective-doctype-cached-for-two-seconds)
+### Figure 1 · Base DocType plus overlay equals the tenant's effective DocType
+
+![Figure 1: Base DocType plus overlay equals the tenant's effective DocType](./figures/video-13-figure-1.png)
+
+### Figure 2 · Same request, two tenants, two answers
+
+![Figure 2: Same request, two tenants, two answers](./figures/video-13-figure-2.png)
+
+### Figure 3 · Saving an overlay across two pods
+
+![Figure 3: Saving an overlay across two pods](./figures/video-13-figure-3.png)
 
 ## Related
 

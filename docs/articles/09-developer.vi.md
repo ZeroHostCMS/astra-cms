@@ -416,9 +416,17 @@ thêm test (HRM, STMS, SCIM), nên con số bạn thấy sẽ cao hơn. Các tes
 
 ## Hình minh hoạ
 
-- [Hình 1 · Một app Astra chứa gì và được phép phụ thuộc vào đâu](#một-app-là-danh-sách-doctype-cộng-các-cdi-bean)
-- [Hình 2 · Một lần submit, một transaction](#tác-dụng-phụ-tham-gia-transaction-của-chứng-từ-gốc)
-- [Hình 3 · Thêm trường mà không cần migration](#một-trường-là-một-dòng-yaml-lưu-trong-jsonb)
+### Hình 1 · Một app Astra chứa gì và được phép phụ thuộc vào đâu
+
+![Hình 1: Một app Astra chứa gì và được phép phụ thuộc vào đâu](./figures/video-09-figure-1.png)
+
+### Hình 2 · Một lần submit, một transaction
+
+![Hình 2: Một lần submit, một transaction](./figures/video-09-figure-2.png)
+
+### Hình 3 · Thêm trường mà không cần migration
+
+![Hình 3: Thêm trường mà không cần migration](./figures/video-09-figure-3.png)
 
 ## Liên quan
 

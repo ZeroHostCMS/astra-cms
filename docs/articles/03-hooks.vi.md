@@ -330,9 +330,17 @@ một PostgreSQL thật; `make test` chạy toàn bộ bộ test.
 
 ## Hình minh hoạ
 
-- [Hình 1 · Ba kênh, một quy tắc](#vấn-đề)
-- [Hình 2 · Cước phí, từng bước](#hook)
-- [Hình 3 · Đường ghi và nơi mỗi lần từ chối xảy ra](#đường-ghi-theo-thứ-tự)
+### Hình 1 · Ba kênh, một quy tắc
+
+![Hình 1: Ba kênh, một quy tắc](./figures/video-03-figure-1.png)
+
+### Hình 2 · Cước phí, từng bước
+
+![Hình 2: Cước phí, từng bước](./figures/video-03-figure-2.png)
+
+### Hình 3 · Đường ghi và nơi mỗi lần từ chối xảy ra
+
+![Hình 3: Đường ghi và nơi mỗi lần từ chối xảy ra](./figures/video-03-figure-3.png)
 
 ## Liên quan
 

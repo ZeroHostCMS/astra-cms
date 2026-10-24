@@ -327,9 +327,17 @@ PostgreSQL; `make test` runs the whole suite.
 
 ## Figures
 
-- [Figure 1 · Three channels, one rule](#the-problem)
-- [Figure 2 · The fee, step by step](#the-hook)
-- [Figure 3 · The write path and where each rejection happens](#the-write-path-in-order)
+### Figure 1 · Three channels, one rule
+
+![Figure 1: Three channels, one rule](./figures/video-03-figure-1.png)
+
+### Figure 2 · The fee, step by step
+
+![Figure 2: The fee, step by step](./figures/video-03-figure-2.png)
+
+### Figure 3 · The write path and where each rejection happens
+
+![Figure 3: The write path and where each rejection happens](./figures/video-03-figure-3.png)
 
 ## Related
 

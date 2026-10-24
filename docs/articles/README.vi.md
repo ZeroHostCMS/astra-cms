@@ -9,7 +9,7 @@ Danh sách video nằm trong [README](../../README.vi.md#video-demo); kịch b�
 
 ## Hình minh hoạ
 
-Mỗi bài nhúng hình ngay cạnh phần mà hình giải thích, và liệt kê lại ở mục *Hình* cuối bài. Tất cả dùng chung một
+Mỗi bài nhúng hình ngay cạnh phần mà hình giải thích, và gom lại ở mục *Hình* cuối bài, nơi trước đây là prompt vẽ hình. Tất cả dùng chung một
 phong cách: nét vector gọn trên nền giấy trắng ngà (`#fbfbfa`), một màu nhấn (`#6b8cff`) cho đường chính, hộp và mũi
 tên đơn giản, nhãn ngắn bằng tiếng Anh, tỉ lệ 16:9 ở 960×540.
 

@@ -319,9 +319,17 @@ phụ thuộc vào số ticket đang có khi bạn chạy cảnh này.
 
 ## Hình minh hoạ
 
-- [Hình 1 · Một lần lưu, ba trường được điền](#hook-phân-loại)
-- [Hình 2 · Hai cách CSKH nhìn một bưu kiện](#thẻ-replica)
-- [Hình 3 · Hàng đợi phân loại](#ví-dụ-thực-tế)
+### Hình 1 · Một lần lưu, ba trường được điền
+
+![Hình 1: Một lần lưu, ba trường được điền](./figures/video-06-figure-1.png)
+
+### Hình 2 · Hai cách CSKH nhìn một bưu kiện
+
+![Hình 2: Hai cách CSKH nhìn một bưu kiện](./figures/video-06-figure-2.png)
+
+### Hình 3 · Hàng đợi phân loại
+
+![Hình 3: Hàng đợi phân loại](./figures/video-06-figure-3.png)
 
 ## Liên quan
 

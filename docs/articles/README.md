@@ -9,7 +9,8 @@ The videos are listed in the [README](../../README.md#demo-videos); the scene-by
 
 ## Figures
 
-Every article embeds its figures next to the section they explain, and links them from a *Figures* list at the end.
+Every article embeds its figures next to the section they explain, and collects them in a *Figures* section at the end,
+where the sketch prompts used to live.
 They share one style: clean vector line art on off-white paper (`#fbfbfa`), one accent color (`#6b8cff`) for the key
 path, simple boxes and arrows, short labels in English, 16:9 at 960×540.
 

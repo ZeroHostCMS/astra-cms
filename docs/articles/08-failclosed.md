@@ -306,9 +306,17 @@ Expected: `Tenant isolation guard: role 'astra_app' is subject to row-level secu
 
 ## Figures
 
-- [Figure 1 · Two connection strings, two outcomes](#the-problem)
-- [Figure 2 · The guard stands before Flyway](#why-it-runs-before-flyway)
-- [Figure 3 · Two layers, three holes](#two-layers-not-one)
+### Figure 1 · Two connection strings, two outcomes
+
+![Figure 1: Two connection strings, two outcomes](./figures/video-08-figure-1.png)
+
+### Figure 2 · The guard stands before Flyway
+
+![Figure 2: The guard stands before Flyway](./figures/video-08-figure-2.png)
+
+### Figure 3 · Two layers, three holes
+
+![Figure 3: Two layers, three holes](./figures/video-08-figure-3.png)
 
 ## Related
 

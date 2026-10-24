@@ -344,9 +344,17 @@ The IdP passwords and the SCIM client secrets in the realm JSON files are for lo
 
 ## Figures
 
-- [Figure 1 · SP-initiated SAML through a broker](#saml-brokered-by-keycloak-invisible-to-the-kernel)
-- [Figure 2 · Tampered assertion](#what-the-video-shows)
-- [Figure 3 · SCIM joiner, mover, leaver inside one tenant](#real-world-example)
+### Figure 1 · SP-initiated SAML through a broker
+
+![Figure 1: SP-initiated SAML through a broker](./figures/video-21-figure-1.png)
+
+### Figure 2 · Tampered assertion
+
+![Figure 2: Tampered assertion](./figures/video-21-figure-2.png)
+
+### Figure 3 · SCIM joiner, mover, leaver inside one tenant
+
+![Figure 3: SCIM joiner, mover, leaver inside one tenant](./figures/video-21-figure-3.png)
 
 ## Related
 

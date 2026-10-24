@@ -407,9 +407,17 @@ longer be 73,000.
 
 ## Figures
 
-- [Figure 1 · From Rust source to a priced order](#how-it-works)
-- [Figure 2 · What the sandbox walls off](#the-sandbox-fresh-instance-capped-memory-no-imports-a-deadline)
-- [Figure 3 · A runaway script is stopped and never goes live](#what-the-video-shows)
+### Figure 1 · From Rust source to a priced order
+
+![Figure 1: From Rust source to a priced order](./figures/video-14-figure-1.png)
+
+### Figure 2 · What the sandbox walls off
+
+![Figure 2: What the sandbox walls off](./figures/video-14-figure-2.png)
+
+### Figure 3 · A runaway script is stopped and never goes live
+
+![Figure 3: A runaway script is stopped and never goes live](./figures/video-14-figure-3.png)
 
 ## Related
 

@@ -342,9 +342,17 @@ Mật khẩu IdP và secret của các client SCIM trong các file realm JSON ch
 
 ## Hình minh hoạ
 
-- [Hình 1 · SAML SP-initiated qua broker](#saml-keycloak-làm-broker-kernel-không-nhìn-thấy)
-- [Hình 2 · Assertion bị giả mạo](#video-cho-thấy-gì)
-- [Hình 3 · SCIM vào làm, chuyển vị trí, nghỉ việc trong một tenant](#ví-dụ-thực-tế)
+### Hình 1 · SAML SP-initiated qua broker
+
+![Hình 1: SAML SP-initiated qua broker](./figures/video-21-figure-1.png)
+
+### Hình 2 · Assertion bị giả mạo
+
+![Hình 2: Assertion bị giả mạo](./figures/video-21-figure-2.png)
+
+### Hình 3 · SCIM vào làm, chuyển vị trí, nghỉ việc trong một tenant
+
+![Hình 3: SCIM vào làm, chuyển vị trí, nghỉ việc trong một tenant](./figures/video-21-figure-3.png)
 
 ## Liên quan
 

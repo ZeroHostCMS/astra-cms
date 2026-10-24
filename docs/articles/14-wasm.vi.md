@@ -403,9 +403,17 @@ Trong Desk, bằng `mai`: Pricing Rule → mở rule → xem `self_test` → b�
 
 ## Hình minh hoạ
 
-- [Hình 1 · Từ mã nguồn Rust tới một đơn đã tính cước](#cách-hoạt-động)
-- [Hình 2 · Sandbox ngăn những gì](#sandbox-instance-mới-bộ-nhớ-có-trần-không-import-có-deadline)
-- [Hình 3 · Script chạy vô hạn bị chặn và không bao giờ được bật](#video-cho-thấy-gì)
+### Hình 1 · Từ mã nguồn Rust tới một đơn đã tính cước
+
+![Hình 1: Từ mã nguồn Rust tới một đơn đã tính cước](./figures/video-14-figure-1.png)
+
+### Hình 2 · Sandbox ngăn những gì
+
+![Hình 2: Sandbox ngăn những gì](./figures/video-14-figure-2.png)
+
+### Hình 3 · Script chạy vô hạn bị chặn và không bao giờ được bật
+
+![Hình 3: Script chạy vô hạn bị chặn và không bao giờ được bật](./figures/video-14-figure-3.png)
 
 ## Liên quan
 

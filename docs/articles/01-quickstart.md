@@ -309,9 +309,17 @@ superuser, so never point it at real data. `make k3d-down` deletes the cluster.
 
 ## Figures
 
-- [Figure 1 · The seven pods and who talks to whom](#seven-pods-and-why-two-of-them-are-the-kernel)
-- [Figure 2 · Five commands from laptop to Desk](#what-the-video-shows)
-- [Figure 3 · An app is metadata plus code, compiled in](#one-server-apps-compiled-in)
+### Figure 1 · The seven pods and who talks to whom
+
+![Figure 1: The seven pods and who talks to whom](./figures/video-01-figure-1.png)
+
+### Figure 2 · Five commands from laptop to Desk
+
+![Figure 2: Five commands from laptop to Desk](./figures/video-01-figure-2.png)
+
+### Figure 3 · An app is metadata plus code, compiled in
+
+![Figure 3: An app is metadata plus code, compiled in](./figures/video-01-figure-3.png)
 
 ## Related
 

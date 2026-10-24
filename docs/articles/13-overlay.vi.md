@@ -339,9 +339,17 @@ Chạy riêng test overlay (cần Docker) bằng bộ lọc test chuẩn của M
 
 ## Hình minh hoạ
 
-- [Hình 1 · DocType gốc cộng overlay bằng DocType hiệu lực của tenant](#quy-tắc-trộn-overlay-được-và-không-được-làm-gì)
-- [Hình 2 · Cùng một request, hai tenant, hai câu trả lời](#ví-dụ-thực-tế)
-- [Hình 3 · Lưu overlay khi có hai pod](#doctype-hiệu-lực-cache-trong-hai-giây)
+### Hình 1 · DocType gốc cộng overlay bằng DocType hiệu lực của tenant
+
+![Hình 1: DocType gốc cộng overlay bằng DocType hiệu lực của tenant](./figures/video-13-figure-1.png)
+
+### Hình 2 · Cùng một request, hai tenant, hai câu trả lời
+
+![Hình 2: Cùng một request, hai tenant, hai câu trả lời](./figures/video-13-figure-2.png)
+
+### Hình 3 · Lưu overlay khi có hai pod
+
+![Hình 3: Lưu overlay khi có hai pod](./figures/video-13-figure-3.png)
 
 ## Liên quan
 

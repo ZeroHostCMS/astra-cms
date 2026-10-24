@@ -354,9 +354,17 @@ local environments only.
 
 ## Figures
 
-- [Figure 1 · One identity, roles per tenant](#2-the-server-is-a-resource-server-that-reads-group-paths)
-- [Figure 2 · Same order, four roles](#what-the-video-shows)
-- [Figure 3 · Maker is not checker](#6-segregation-of-duties-is-one-flag)
+### Figure 1 · One identity, roles per tenant
+
+![Figure 1: One identity, roles per tenant](./figures/video-11-figure-1.png)
+
+### Figure 2 · Same order, four roles
+
+![Figure 2: Same order, four roles](./figures/video-11-figure-2.png)
+
+### Figure 3 · Maker is not checker
+
+![Figure 3: Maker is not checker](./figures/video-11-figure-3.png)
 
 ## Related
 

@@ -301,9 +301,17 @@ make demo-express SCENES=8`. Each scene's expected output is described in its ar
 
 ## Figures
 
-- [Figure 1 · Running versus In development](#how-it-works)
-- [Figure 2 · Interfaces exist, implementations do not](#business-modules)
-- [Figure 3 · A CTO's pilot scope](#real-world-example)
+### Figure 1 · Running versus In development
+
+![Figure 1: Running versus In development](./figures/video-18-figure-1.png)
+
+### Figure 2 · Interfaces exist, implementations do not
+
+![Figure 2: Interfaces exist, implementations do not](./figures/video-18-figure-2.png)
+
+### Figure 3 · A CTO's pilot scope
+
+![Figure 3: A CTO's pilot scope](./figures/video-18-figure-3.png)
 
 ## Related
 
