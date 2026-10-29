@@ -19,23 +19,31 @@ Sample code video chiếu cho hai ô của Lớp 2 trên slide:
 | `einvoice-kh` | 1.0.0 | USD/KHR, VAT 10 %, song ngữ Khmer/Anh, gọi `/tax/kh/invoices` |
 
 Mỗi jar có `META-INF/astra-app.yaml`: `tier: isolated-jvm`, `capabilities.network` chỉ host sandbox tương ứng, `runtime: { timeout: 300ms, max-concurrency: 32 }`.
-`scripts/build-plugins.sh` build tất cả jar vào `astra-apps/express-integrations/plugins/`.
+`scripts/build-plugins.sh` build tất cả jar vào `astra-apps/express-integrations/plugins/` (build toàn workspace, không hardcode tên module).
+Thêm `<module>astra-apps/express-integrations</module>` vào `pom.xml` gốc; mỗi plugin là một module Maven chỉ phụ thuộc `astra-spi`
+scope `provided`.
 
 ## Partner sandbox
 `tools/partner-sandbox/` + `deploy/k8s/base/partner-sandbox.yaml`: một HTTP service nhỏ đóng vai sandbox của 3PL và cơ quan thuế
 (`/fastship/*`, `/tax/vn/*`, `/tax/kh/*`), trả mã, độ trễ 20–80 ms. Video nói rõ đây là sandbox, giống sandbox các đối tác thật cấp cho tích hợp.
 
 ## Kernel / app Express (Tier 0)
-- `CarrierBookingHook` (`afterSave` khi Waybill được tạo): `resolve("carrier.booking", tenant)` → plugin → ghi `carrier`, `carrier_tracking`,
-  `carrier_eta`, `booked_by` (`fastship@1.1.0 on <pod>`). Plugin lỗi không làm hỏng Waybill: ghi `booked_by = "pending (… failed)"`, đếm lỗi.
-- `EInvoiceHook` (`onSubmit` của CustomerOrder): chỉ đặt `einvoice_status = Pending` trong transaction. `EInvoiceJob` (2 s) trên mọi pod
-  nhận đơn Pending bằng khoá Redis theo đơn, gọi plugin của slot `einvoice.issue` theo `AppPin` của tenant, ghi `einvoice_no`,
-  `einvoice_lookup`, `einvoice_by`. Gọi ra ngoài không nằm trong transaction submit.
+- **Một job chung ngoài transaction**: hook chạy *trong* transaction chỉ đặt trạng thái `Pending` (không gọi mạng). Một
+  `PluginDispatchJob` (2 s, mọi pod, khoá Redis theo chứng từ) quét việc `Pending` cho mọi slot, gọi `resolve(slot, tenant)` →
+  plugin → ghi kết quả. Hai slot dùng chung đúng cơ chế này:
+  - `CarrierBookingHook` (`afterSave` khi Waybill được tạo, **idempotent**: bỏ qua khi `booked_by` đã có) → đặt `booked_by = "pending"`.
+  - `EInvoiceHook` (`onSubmit` CustomerOrder) → đặt `einvoice_status = Pending`.
+  - `PluginDispatchJob` hoàn tất: `carrier.booking` → ghi `carrier`, `carrier_tracking`, `carrier_eta`, `booked_by`
+    (`fastship@1.1.0 on <pod>`); `einvoice.issue` → ghi `einvoice_no`, `einvoice_lookup`, `einvoice_by`. Plugin lỗi ghi
+    `… = "pending (… failed)"`, đếm lỗi, không làm hỏng chứng từ.
+  - Lý do: lời gọi partner/thuế nằm ngoài transaction submit (không giữ DB mở trong lúc chờ mạng), và một job thay vì hai job
+    (`EInvoiceJob` + `CarrierBookingJob`) dễ bảo trì hơn.
 - DocType: Waybill thêm 4 field carrier; CustomerOrder thêm 4 field einvoice (zero-DDL, JSONB).
 
 ## Tenant thứ ba: `angkor-express` (Campuchia)
-- Tenant config `country: KH`, `currency: USD`; user Keycloak `sophea` (admin) trong `deploy/keycloak/realm/astra-realm.json`;
-  `demo-seed.sh` / `demo-reset.sh` thêm tenant này (khách, tài khoản tối thiểu).
+- Tenant config `country: KH`, `currency: USD`; thêm **nhóm tenant** `angkor-express` (+ subgroups) và user Keycloak `sophea` (admin)
+  trong `deploy/keycloak/realm/astra-realm.json`. Giữ **một nguồn duy nhất** cho tenant/user/role: `demo-seed.sh`, `demo-reset.sh`
+  (cả biến `TENANTS` SQL lẫn vòng Redis `for t in ...`) và realm phải khớp nhau — `demo-reset.sh` hiện hardcode 2 tenant ở hai chỗ.
 - Cảnh demo: tenant mới chưa có plugin hoá đơn → đơn submit ở trạng thái `einvoice_status = Pending (no provider)`;
   upload + duyệt `einvoice-kh`, ghim cho `angkor-express` → job phát hành hoá đơn cho đơn đang chờ, không khởi động lại pod nào.
 

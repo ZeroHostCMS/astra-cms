@@ -4,7 +4,7 @@
 | Bước slide | Cái chạy | Ai làm |
 | --- | --- | --- |
 | 1 · Phát hiện | MCP tool `ops_snapshot`: số liệu 30 ngày về cân lại ở hub, đối soát COD, giao thất bại theo bưu tá | Claude Code |
-| 2 · Tự xây | Claude viết crate Rust `astra-apps/express/wasm/anomaly-<tên>/`, build bằng `scripts/build-wasm.sh`, gọi `anomaly_backtest` chạy module trong `WasmSandbox` trên 30 ngày sự kiện thật của tenant, nhận số cảnh báo theo loại và tỉ lệ trúng | Claude Code |
+| 2 · Tự xây | Claude viết crate Rust `astra-apps/express/wasm/anomaly-<tên>/`, build bằng `scripts/build-wasm.sh` (đã tổng quát hoá: build cả workspace và copy mọi `.wasm` vào `modules/`, không hardcode `tet-promo`/`runaway`), gọi `anomaly_backtest` chạy module trong `WasmSandbox` trên 30 ngày sự kiện thật của tenant, nhận số cảnh báo theo loại và tỉ lệ trúng | Claude Code |
 | 3 · Kiểm soát | `release_propose` tạo `AppRelease` nháp (`tier: wasm`, `slot: ops.anomaly`, `generator: claude-code`); Claude thử submit → **403** | Claude Code, rồi `mai` (admin) duyệt trên Desk |
 | 4 · Phát hành | Canary theo pod (phase 2): pod 1 chấm sự kiện bằng bản mới, khoẻ thì lên cả cụm | kernel |
 | 5 · Đo và tiến hoá | `quang` (OPS), `khoa` (kế toán), `ha` (CSKH) nhận cảnh báo của mình, xác nhận hoặc bác. `release_status` trả số cảnh báo, tỉ lệ bị bác theo loại; Claude đọc và đề xuất v2 (ví dụ bỏ qua lệch cân ở kiện dưới 0,5 kg) | người dùng + Claude Code |
@@ -13,12 +13,13 @@
 | Sự kiện | Đầu vào cho module | Giao cho |
 | --- | --- | --- |
 | Quét kiện ở hub (`WaybillScanHook`) | cân khai báo, cân đo lại ở hub (field mới `measured_weight_kg` trên lời quét), mã hub | OPS (`quang`) |
-| Lưu `CodRemittance` | COD đã thu, COD nộp về, số ngày trễ | Kế toán (`khoa`) |
+| Lưu `CODRemittance` | COD đã thu, COD nộp về, số ngày trễ | Kế toán (`khoa`) |
 | Giao thất bại | số lần thất bại của kiện, của bưu tá trong 7 ngày | CSKH (`ha`) |
 
 ## ABI Wasm (giữ nguyên sandbox hiện tại: chỉ `i64`, không host function)
 `check(kind: i64, a: i64, b: i64, c: i64, d: i64) -> i64`, `kind` 1/2/3 như bảng trên; trả `0` nếu bình thường, ngược lại
-`severity * 100 + reason`. Ghi ABI vào `docs/overlay-wasm.md` (mục mới) để Claude đọc được khi viết module.
+`severity * 100 + reason`. Ghi ABI vào `docs/overlay-wasm.md` (mục mới, kèm **số phiên bản ABI** và một module mẫu) để Claude đọc
+được khi viết module; đây là hợp đồng duy nhất, AI và người cùng đọc một nguồn.
 
 ## Thay đổi code
 - DocType `OpsAlert` (app Express): `kind`, `severity`, `reason`, `ref_doctype`, `ref_name`, `assigned_role`, `assigned_to`,

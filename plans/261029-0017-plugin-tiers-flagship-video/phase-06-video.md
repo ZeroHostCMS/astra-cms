@@ -1,8 +1,9 @@
 # Phase 6 · Quay & dựng video (tiếng Việt, upload R2)
 
 ## Quy trình (giống v01–v21, chỉ bản tiếng Việt)
-HyperFrames project mới `docs/video/v22-tiers/` (cấu trúc như `v14-wasm`: `BRIEF.md`, `compositions/`, `assets/`, `narration.json`,
-`index.html`). Lời đọc bằng `scripts/video-voiceover.py` (VieNeu "Xuân Vĩnh"), nhạc nền chung "Corporate Tower" (CC BY 4.0),
+HyperFrames project mới `docs/video/v22-tiers/` (trong repo, `v14-wasm`/`v15-mcp` chỉ commit `narration.json` + `narration.en.json`;
+`BRIEF.md`/`compositions/`/`index.html` do HyperFrames CLI sinh — làm theo đúng tooling đó). Lời đọc bằng `scripts/video-voiceover.py`
+(VieNeu "Xuân Vĩnh"), nhạc nền chung "Corporate Tower" (CC BY 4.0),
 font Be Vietnam Pro + JetBrains Mono. Không làm `narration.en.json` / `index.en.html`.
 
 ## Nguồn hình
@@ -35,3 +36,6 @@ Upload là công khai, nên hỏi lại anh một lần trước khi đẩy.
 
 ## Validation
 Script lời đọc tự báo khi câu dài hơn cảnh; mọi con số trên màn hình khớp log trong `assets/`; xem lại cả 4 file trước khi upload.
+Thẻ "Nói đúng" phải nêu đủ: partner/thuế là sandbox, dữ liệu seed, cụm 2 pod, lọc cảnh báo theo người được giao, release phạm vi
+cụm (pin theo tenant), và "capability mạng" Tier 1 là quy ước qua đối tượng được cấp (không phải sandbox — plugin tin cậy vẫn có thể
+gọi `java.net.http` trực tiếp).

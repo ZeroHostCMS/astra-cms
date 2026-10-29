@@ -28,6 +28,12 @@ Hiện `astra-plugin-host` chỉ có `WasmSandbox` (Tier 2). Tier 0 là các bea
 - Sau unload + GC, `WeakReference` của loader v1 về `null`.
 - Plugin chạy quá deadline bị dừng; vượt `max-concurrency` bị từ chối nhanh; gọi host ngoài danh sách bị từ chối.
 
+## Ghi chú thiết kế
+- Đóng băng SPI ngay từ đầu: `CarrierAdapter`, `PartnerHttp`, `PluginContext` và các `record` là hợp đồng công khai; mọi thay đổi
+  phải tương thích ngược (thêm interface/field mới, không sửa cái cũ).
+- `IsolatedJvmHost` là "lát mỏng": API nhỏ, không nhét logic rollout vào đây. Quyết định "chạy bản nào" thuộc về
+  `RolloutController.resolve()` (phase 2), host chỉ nạp/gọi/unload. Seam này dùng chung cho Tier 1 và Tier 2.
+
 ## Rủi ro
 Thread-local hoặc static cache trong JDK giữ class plugin → test rò sẽ bắt; plugin mẫu tránh `java.util.logging` tự đăng ký handler.
 

@@ -22,12 +22,19 @@ Submit chuyển stage sang `Canary` trên 1 pod; cancel = rút bản.
 `AppPin` — mỗi tenant ghim `slot → app_id@version` (tách theo tenant nhờ `tenant_id` + RLS sẵn có). Dùng cho: hanoi-express ghim
 FastShip 1.0, và mỗi tenant ghim plugin hoá đơn của nước mình.
 
+Phạm vi: `AppRelease` là **toàn cụm** (artifact + canary pod), `AppPin` là **theo tenant** (override). "Chỉ admin được submit" trong
+demo nghĩa là admin tenant duyệt một release toàn cụm — với 1 tenant thì ổn; ghi rõ giới hạn này vào thẻ "Nói đúng" (bản production
+nhiều tenant sẽ cần tách quyền platform-admin vs tenant-admin).
+
 ## `RolloutController` (kernel)
 - Danh tính pod: biến `POD_NAME` qua downward API trong `deploy/k8s/base/astra-server.yaml`; dev mode dùng hostname.
 - `resolve(slot, tenant)` → bản dùng cho lời gọi: ghim của tenant thắng; nếu không, pod hiện tại nằm trong `canary_pods` thì dùng
-  bản canary, ngược lại dùng bản `Live` trước đó.
+  bản canary, ngược lại dùng bản `Live` trước đó. Trả về **một handle thống nhất** cho cả Tier 1 (`LoadedPlugin`) lẫn Tier 2
+  (wasm bytes + function), để hook không cần biết tier nào đang đứng sau slot.
 - Mọi response có header `X-Astra-Pod`; chứng từ do plugin xử lý ghi `…_by = app@version on <pod>` để log demo thấy rõ.
-- Đếm `calls/errors/latency` theo release và theo pod (Redis, `Counters` SPI).
+- Đếm `calls/errors/latency` theo release và theo pod. Lưu ý `Counters` SPI bị gắn theo tenant; số đo release là phạm vi cụm nên
+  dùng Redis key ngoài tenant (hoặc đếm in-memory per pod rồi báo cáo), không qua `Counters` tenant-scoped.
+- `error_budget`, số lời gọi khoẻ `N`, chu kỳ job, deadline là **cấu hình** (Quarkus config / manifest), không hardcode.
 - Job định kỳ (2 s trong demo), chỉ một pod chạy nhờ khoá Redis `SET NX`:
   - đủ `N` lời gọi khoẻ trên pod canary → thêm pod tiếp theo; đủ mọi pod → `Live`, bản cũ `Retired`, các pod drain + unload;
   - tỉ lệ lỗi vượt `error_budget` → `Rolled back`, xoá `canary_pods`, pod canary quay về bản trước ngay.
@@ -37,6 +44,8 @@ FastShip 1.0, và mỗi tenant ghim plugin hoá đơn của nước mình.
 
 ## Desk
 List `AppRelease` hiện stage, pod, generator, calls/errors; badge màu cho stage (CSS nhỏ). Nút Submit có sẵn từ lifecycle.
+Thêm một góc "bản nào trên pod nào" (pod → slot → app@version) để vận hành trả lời ngay câu hỏi đầu tiên khi có sự cố; nguồn là
+trạng thái Postgres + `X-Astra-Pod` trong log/response.
 
 ## Test
 Pod trong `canary_pods` chọn bản mới, pod ngoài chọn bản cũ; ghim tenant thắng canary; promote 1/2 → 2/2 sau N; rollback khi vượt

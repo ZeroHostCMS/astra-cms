@@ -1,12 +1,15 @@
 # Phase 5 · Tier 0 và kịch bản demo `demo-tiers.sh`
 
 ## Tier 0 (Lớp 1 · Lõi)
-- `deploy/k8s/base/astra-server.yaml`: readinessProbe (`/q/health/ready`), `strategy.rollingUpdate: { maxUnavailable: 0, maxSurge: 1 }`,
-  `PodDisruptionBudget minAvailable: 1`, `preStop` ngắn để drain. Không có thì rolling update có thể rớt request.
+- `deploy/k8s/base/astra-server.yaml`: readinessProbe (`/q/health/ready`), `strategy.rollingUpdate: { maxUnavailable: 0, maxSurge: 1 }`
+  và `PodDisruptionBudget minAvailable: 1` **đã có sẵn** — chỉ cần **thêm** downward API `POD_NAME` và `preStop` ngắn để drain
+  (manifest hiện chưa có hai thứ này). Không cần sửa phần probe/PDB/rollingUpdate.
 - Bench thật cho bảng so sánh: test `TierDispatchBench` trong `astra-plugin-host` (vòng đo có warm-up) đo gọi trực tiếp (Tier 0),
   `MethodHandle` qua bulkhead (Tier 1), Wasm ấm (Tier 2), in p50/p99; số trong video lấy từ đây.
 
 ## `scripts/demo-tiers.sh` (cùng khuôn `demo-express.sh`, dùng lại `scripts/lib/demo-common.sh`)
+Thêm target `demo-tiers` vào `Makefile` (khuôn `demo-express`), để `make demo-tiers SCENES="T0 T1a T1b T2" PAUSE=0` là lệnh duy nhất
+người vận hành cần nhớ; reset/seed/traffic nằm sau nó.
 `scripts/demo-traffic.sh` chạy nền trong T0 và T1, in mỗi dòng: thời điểm, pod (`X-Astra-Pod`), kết quả, bản plugin; cuối in `ok=… fail=…`.
 
 | Cảnh | Nội dung | Bằng chứng trên màn hình |

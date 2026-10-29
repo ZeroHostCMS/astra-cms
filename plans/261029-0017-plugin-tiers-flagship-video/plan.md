@@ -33,6 +33,20 @@ câu chuyện Astra Express trung tính (không logo Viettel), lời đọc ti�
 - GraalVM native cho Tier 1.
 - Không phá video 14: `PricingRule.active` và cảnh 12 giữ nguyên.
 
+## Nguyên tắc bảo trì & vận hành
+- **Một seam phát hành duy nhất**: mọi hook chỉ hỏi `RolloutController.resolve(slot, tenant)` — không hook nào tự đọc
+  `AppRelease`/`AppPin`. Logic "chạy bản nào" nằm đúng một chỗ, test được bằng JUnit thuần (không cần k3d).
+- **SPI đóng băng sớm**: `CarrierAdapter`, `EInvoiceProvider`, `PartnerHttp`, `PluginContext` và các `record` là hợp đồng công
+  khai; đổi SPI là breaking change. Plugin chỉ phụ thuộc `astra-spi` (scope `provided`) + JDK.
+- **ABI Wasm là hợp đồng có một nguồn**: ghi `check(kind, a, b, c, d)` ở `docs/overlay-wasm.md` kèm số phiên bản ABI + module mẫu;
+  AI và người cùng đọc một chỗ.
+- **Gọi ra ngoài nằm ngoài transaction**: hook chạy trong transaction chỉ đặt `slot_status = Pending`; một job chung hoàn tất việc
+  gọi plugin (xem phase 3). Plugin/module lỗi không chặn nghiệp vụ chính.
+- **Trạng thái nhìn thấy ngay**: câu hỏi vận hành đầu tiên là "pod nào đang chạy bản gì?" — phải trả lời trong một giây qua Desk
+  `AppRelease` (stage/pod/generator/calls/errors) + header `X-Astra-Pod` + log cấu trúc.
+- **Một lệnh chạy demo**: `make demo-tiers` là entrypoint duy nhất; reset/seed/traffic nằm sau nó. Chạy lại nhiều lần cho cùng kết quả.
+- **Cấu hình thay vì hardcode**: `error_budget`, số lời gọi khoẻ `N`, deadline, danh sách module build lấy từ workspace/cấu hình.
+
 ## Phases
 | # | Phase | Kết quả chính | File chi tiết |
 |---|-------|---------------|---------------|
@@ -53,7 +67,8 @@ Thứ tự: 0 → 1 → 2 → (3 ∥ 4) → 5 → 6 → 7.
 - `make demo-reset && make demo-seed && make demo-tiers PAUSE=0` chạy hết T0, T1, T2 trên k3d 2 pod, không bước nào giả.
 - Khi rolling update và hot-swap, vòng traffic ghi **0 request lỗi**; log traffic hiện pod nào phục vụ và bản plugin nào.
 - Bảng so sánh 3 tier dùng số đo thật từ bench.
-- Thẻ "Nói đúng" liệt kê giới hạn: partner/thuế là sandbox, dữ liệu seed, cụm 2 pod, lọc cảnh báo theo người được giao.
+- Thẻ "Nói đúng" liệt kê giới hạn: partner/thuế là sandbox, dữ liệu seed, cụm 2 pod, lọc cảnh báo theo người được giao,
+  release là phạm vi cụm (pin theo tenant), và "capability mạng" Tier 1 là quy ước qua đối tượng được cấp (không phải sandbox).
 - Flagship + 3 clip tiếng Việt, 1920×1080, H.264 + AAC, upload R2, thumbnail trong `docs/video-thumbs`.
 
 ## Risks
@@ -63,6 +78,8 @@ Thứ tự: 0 → 1 → 2 → (3 ∥ 4) → 5 → 6 → 7.
 - Phiên AI không xác định: đề bài cố định, tập 2–3 lần, quay lại thay vì cắt ghép kết quả.
 - Homebrew không ghi được trên máy: cài asciinema/agg bằng `cargo install`.
 - Khối lượng tăng (thêm tenant, plugin hoá đơn, pipeline cảnh báo): ước lượng phase 1–5 khoảng 6–8 ngày công, video 1–2 ngày.
+- Bảo trì lâu dài: nhiều thành phần mới (host, controller, 4 plugin, 5 tool MCP) dễ thành "code demo chỉ quay một lần" — giảm thiểu
+  bằng test unit không cần k3d cho resolve/hot-swap/rollback, một seam phát hành và một job chung ngoài transaction (xem "Nguyên tắc").
 
 ## Câu hỏi còn mở
 Không còn; mọi quyết định ở trên đã chốt ngày 2026-10-29.
