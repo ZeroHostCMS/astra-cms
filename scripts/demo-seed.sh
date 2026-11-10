@@ -40,6 +40,8 @@ seed_saigon() {
   customer $T '{"code":"C001","customer_name":"Shop Hoa Mai","segment":"B2B","phone":"0283822111","address":"45 Nguyễn Huệ, Quận 1, TP.HCM","credit_limit":2000000}'
   customer $T '{"code":"C002","customer_name":"Gốm Sứ Minh Long Store","segment":"B2B","phone":"0274366888","address":"Thủ Dầu Một, Bình Dương","credit_limit":150000}'
   customer $T '{"code":"C003","customer_name":"Trần Thị Bích","segment":"Retail","phone":"0908111222"}'
+  customer $T '{"code":"C010","customer_name":"Kênh bán lẻ online","segment":"Retail","phone":"0283777666","credit_limit":1000000000}'   # demo traffic
+  customer $T '{"code":"ABC","customer_name":"Shop ABC","segment":"B2B","phone":"0283999888","address":"Lô 12 KCN Tân Bình, TP.HCM","credit_limit":1000000000}'
 
   local o1 o2 o3 o4 o5 o6 w1 w2 w3 w4 w6
   o1=$(order $T '{"customer":"C001","receiver_name":"Lê Minh Tuấn","receiver_phone":"0912345678","receiver_address":"18 Trần Phú, Hải Châu, Đà Nẵng","zone":"Domestic","service":"Express","weight_kg":1.5,"cod_amount":850000}')
@@ -245,8 +247,18 @@ seed_stms() {
     "Điện máy Minh Khai|21.0150|105.8650" "Cá cảnh Yên Phụ|21.0520|105.8350"
 }
 
+# A third, Cambodian tenant for the e-invoice-per-country scene of scripts/demo-tiers.sh: no invoice plugin yet.
+seed_angkor() {
+  local T=angkor-express
+  echo "Tenant ${T} (Cambodia, admin sophea)"
+  AS=sophea chart_of_accounts $T
+  AS=sophea customer $T '{"code":"K001","customer_name":"Angkor Mart","segment":"B2B","phone":"023999111","address":"Street 51, Phnom Penh"}'
+  AS=sophea customer $T '{"code":"K002","customer_name":"Mekong Crafts","segment":"Retail","phone":"012345678"}'
+}
+
 seed_saigon
 seed_hanoi
+seed_angkor
 seed_hrm_saigon
 seed_hrm_hanoi
 seed_stms

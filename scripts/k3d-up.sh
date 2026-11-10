@@ -34,6 +34,8 @@ kubectl -n astra create configmap astra-public \
   --from-literal=public-url="${PUBLIC_URL}" \
   --from-literal=oidc-issuer="${PUBLIC_URL}/auth/realms/astra" \
   --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n astra create configmap partner-sandbox --from-file=tools/partner-sandbox/partner_sandbox.py \
+  --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n astra rollout status statefulset/postgres --timeout=180s
 scripts/db-setup.sh k3d                                    # BMS schema and CDC role (publication after migration)
 kubectl -n astra rollout status deployment/seata-server --timeout=180s
