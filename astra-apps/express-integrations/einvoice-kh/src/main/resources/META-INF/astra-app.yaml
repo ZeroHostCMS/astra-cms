@@ -1,0 +1,13 @@
+id: einvoice-kh
+version: 1.0.0
+tier: isolated-jvm
+entrypoint: kh.einvoice.astra.EInvoiceKh
+spi: io.astra.spi.integration.EInvoiceProvider
+provenance: { author: astra-localisation-kh, generator: human }
+capabilities:
+  network: [ "http://partner-sandbox:8090" ]      # the General Department of Taxation's sandbox
+config:
+  base-url: http://partner-sandbox:8090
+  vnd-per-usd: "25400"                            # demo rates, not live
+  khr-per-usd: "4100"
+runtime: { timeout: 500ms, max-concurrency: 16 }
