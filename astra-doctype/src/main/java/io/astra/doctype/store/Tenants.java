@@ -14,11 +14,11 @@ import java.util.List;
  * {@code astra_ext.tenants()}, a SECURITY DEFINER function the bootstrap superuser creates
  * (deploy/db/05-astra-field.sql). It returns tenant identifiers only, never document contents.
  */
-final class Tenants {
+public final class Tenants {
 
     private Tenants() { }
 
-    static List<String> list(DataSource dataSource) {
+    public static List<String> list(DataSource dataSource) {
         try (Connection conn = dataSource.getConnection(); Statement st = conn.createStatement()) {
             conn.setAutoCommit(true);
             try (ResultSet rs = st.executeQuery("SELECT to_regprocedure('astra_ext.tenants()') IS NOT NULL")) {
