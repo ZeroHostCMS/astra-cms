@@ -1,4 +1,4 @@
-# Phase 4 · Tier 2 + vòng tự tiến hoá: AI viết bộ phát hiện bất thường (AI thật qua MCP)
+# Phase 5 · Tier 2 + vòng tự tiến hoá: AI viết bộ phát hiện bất thường (AI thật qua MCP)
 
 ## Vòng 5 bước trên slide → cái chạy thật
 | Bước slide | Cái chạy | Ai làm |
@@ -13,7 +13,8 @@
 | Sự kiện | Đầu vào cho module | Giao cho |
 | --- | --- | --- |
 | Quét kiện ở hub (`WaybillScanHook`) | cân khai báo, cân đo lại ở hub (field mới `measured_weight_kg` trên lời quét), mã hub | OPS (`quang`) |
-| Lưu `CodRemittance` | COD đã thu, COD nộp về, số ngày trễ | Kế toán (`khoa`) |
+| Lưu `CODRemittance` | COD đã thu, COD nộp về, số ngày trễ | Kế toán (`khoa`) |
+<!-- Updated: Validation Session 1 - DocType name is CODRemittance -->
 | Giao thất bại | số lần thất bại của kiện, của bưu tá trong 7 ngày | CSKH (`ha`) |
 
 ## ABI Wasm (giữ nguyên sandbox hiện tại: chỉ `i64`, không host function)
@@ -24,11 +25,12 @@
 - DocType `OpsAlert` (app Express): `kind`, `severity`, `reason`, `ref_doctype`, `ref_name`, `assigned_role`, `assigned_to`,
   `status` (`Open`, `Acknowledged`, `Dismissed`), `raised_by` (`<app>@<version> on <pod>`). Desk có list "Cảnh báo của tôi" lọc theo
   người được giao (lọc ở truy vấn, chưa phải quyền theo dòng; ghi trong thẻ "Nói đúng").
-- `AnomalyHook` (Tier 0) trên ba sự kiện: `resolve("ops.anomaly", tenant)` → `WasmSandbox.callLong(...)` → tạo `OpsAlert`.
+- `AnomalyHook` (Tier 0) trên ba sự kiện: `resolve("ops.anomaly", tenant, customer?)` → `WasmSandbox.callLong(...)` → tạo `OpsAlert`. Slot này không ghim theo khách; đối số khách để trống và ghim tenant / canary / Live quyết định bản.
+<!-- Updated: Validation Session 1 - resolve takes customer -->
   Module lỗi hoặc quá deadline không chặn sự kiện, chỉ đếm lỗi cho controller.
 - MCP tools (implement `McpTool`): `ops_snapshot` (read), `anomaly_backtest` (read; module base64, tối đa 2.000 sự kiện, mỗi lời gọi
-  có deadline; trả số cảnh báo theo loại + so với nhãn seed), `release_propose` (`writes() = true`), `release_status` (read),
-  `my_alerts` (read; cảnh báo giao cho người gọi). Kernel lo xác thực, tenant, quyền DocType, che PII.
+  có deadline; trả số cảnh báo theo loại + so với nhãn seed), `my_alerts` (read; cảnh báo giao cho người gọi).
+  `release_propose` / `release_status` là tool chung của kernel (phase 2). Kernel lo xác thực, tenant, quyền DocType, che PII.
 - Token AI: user Keycloak mới `aibot` (role `release-bot` + đọc OPS/BMS); `scripts/mcp-claude.sh aibot saigon-express`.
 - Dữ liệu: `demo-seed.sh` thêm 30 ngày sự kiện cho `saigon-express` với bất thường cài sẵn và có nhãn: ~15 kiện lệch cân > 30 %
   ở một hub, ~6 phiếu COD nộp thiếu, một bưu tá có tỉ lệ giao thất bại cao. Video nói rõ đây là dữ liệu seed.

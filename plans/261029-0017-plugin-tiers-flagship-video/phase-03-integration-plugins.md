@@ -26,8 +26,9 @@ Mỗi jar có `META-INF/astra-app.yaml`: `tier: isolated-jvm`, `capabilities.net
 (`/fastship/*`, `/tax/vn/*`, `/tax/kh/*`), trả mã, độ trễ 20–80 ms. Video nói rõ đây là sandbox, giống sandbox các đối tác thật cấp cho tích hợp.
 
 ## Kernel / app Express (Tier 0)
-- `CarrierBookingHook` (`afterSave` khi Waybill được tạo): `resolve("carrier.booking", tenant)` → plugin → ghi `carrier`, `carrier_tracking`,
-  `carrier_eta`, `booked_by` (`fastship@1.1.0 on <pod>`). Plugin lỗi không làm hỏng Waybill: ghi `booked_by = "pending (… failed)"`, đếm lỗi.
+- `CarrierBookingHook` (`afterSave` khi Waybill được tạo) chỉ đặt `carrier_status = Pending` trong transaction của submit. `CarrierBookingJob` (2 s) nhận đơn Pending bằng khoá Redis theo vận đơn (`Counters.markOnce`, đúng vì khoá này theo tenant), gọi `resolve("carrier.booking", tenant, customer?)`, rồi ghi `carrier`, `carrier_tracking`,
+  `carrier_eta`, `booked_by` (`fastship@1.1.0 on <pod>`). Gọi ra partner không nằm trong transaction submit. Plugin lỗi không làm hỏng Waybill: ghi `booked_by = "pending (… failed)"`, đếm lỗi.
+<!-- Updated: Validation Session 1 - carrier HTTP moved out of submit -->
 - `EInvoiceHook` (`onSubmit` của CustomerOrder): chỉ đặt `einvoice_status = Pending` trong transaction. `EInvoiceJob` (2 s) trên mọi pod
   nhận đơn Pending bằng khoá Redis theo đơn, gọi plugin của slot `einvoice.issue` theo `AppPin` của tenant, ghi `einvoice_no`,
   `einvoice_lookup`, `einvoice_by`. Gọi ra ngoài không nằm trong transaction submit.
