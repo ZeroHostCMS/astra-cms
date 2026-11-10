@@ -28,3 +28,6 @@ deploy/docker/data/
 docs/video/*.mp4
 docs/video/*.wav
 docs/video/*/
+
+# Tier 1 plugin jars are built by scripts/build-plugins.sh
+astra-apps/express-integrations/plugins/

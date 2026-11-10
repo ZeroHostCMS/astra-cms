@@ -460,6 +460,16 @@ from Video 20.
 - Listing users fetches members from Keycloak and paginates in memory, with one extra group read call per user: enough
   for the demo, not meant for hundreds of thousands of users. The SCIM client secrets in the realm JSON are for local environments only.
 
+### Video 22: Software that evolves, plugin tiers 0 · 1 · 2 *(Vietnamese only)*
+
+The three layers of the "Global future" slide on the 2-pod k3d cluster: the core compiled in (Tier 0, rolling update
+with no failed request) with prices as Drools rules that analysts edit and approve like code; market integrations as
+Tier 1 plugins swapped while running (a carrier with a per-pod canary and automatic rollback, one e-invoice module per
+country); and Tier 2 Wasm written by Claude Code over MCP (a customer's contract as a pricing plugin that inherits the
+rule price, an anomaly detector that alerts the right role), proposed by an AI token that cannot approve its own
+release. Script: `make demo-tiers`. The narration, scenes and caveats are in the Vietnamese series,
+[demo-video-series.md](demo-video-series.md#video-22-phần-mềm-tự-tiến-hoá-plugin-tier-0--1--2).
+
 ### Video 18: Roadmap, the rest of use-case-01 *(In development)*
 
 Every frame is labelled **"Roadmap / In development"**.
@@ -469,12 +479,13 @@ Every frame is labelled **"Roadmap / In development"**.
 | JSONB + projection index, ledger, separate schema for BMS | Multi-schema for every module, materialised hot columns |
 | Seata AT + TCC | AT for the kernel itself, TCC fence table, Seata DB/Raft store |
 | Keycloak, DocType permissions, SoD | Row-level permission conditions |
-| Tier 0, Tier 2 Wasm | Tier 1 Isolated JVM (hot-swap), Wasm instruction counting |
+| Tier 0, Tier 2 Wasm | Wasm instruction counting |
 | Rust CDC + LSN | Streaming protocol, Apache Doris, NOC dashboards |
 | MCP + PII masking | Autonomous agents, pgvector RAG, OAuth for MCP |
 | Video 19: HRM (HR, payroll), accrual journal entries through `GeneralLedger` | Personal income tax, employer insurance share, salary payout, month-end background payroll job, employee self-service salary slips |
 | Video 20: STMS (Timefold), replanning, dispatch copilot | A real LLM for the copilot, real maps and traffic, load forecasting (Tier 1), driver app |
 | Video 21: SAML SSO, per-tenant SCIM 2.0 | Single Logout, SCIM Bulk/ETag, full SCIM filters |
+| Video 22: Tier 1 thin slice (hot-swap, per-pod canary, automatic rollback), price rules as data (Drools), Wasm pricing that inherits the rule price, AI-proposed releases approved by a person | Sigstore/SBOM, OCI registry, canary by request share, row-level permissions for alerts |
 | (not yet) | Audit hash chain, field encryption |
 
 ---
