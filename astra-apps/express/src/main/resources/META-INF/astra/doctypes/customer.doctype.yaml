@@ -10,6 +10,8 @@ fields:
   - { name: phone,         type: Data, pii: true }
   - { name: address,       type: Text, pii: true }
   - { name: credit_limit,  type: Currency, label: Credit limit (BMS) }   # mirrored to bms.customer_credit
+  - { name: monthly_orders, type: Int,    read-only: true, label: Orders (30 days) }      # CustomerProfileJob, for customer pricing
+  - { name: return_rate,    type: Float,  read-only: true, label: Return rate (30 days) }
 
 # Roles are per tenant (Keycloak groups /tenants/<tenant>/<role>). No matching rule means no access.
 permissions:
@@ -18,3 +20,4 @@ permissions:
   - { role: ops,        read: true }
   - { role: care,       read: true }
   - { role: accountant, read: true }
+  - { role: release-bot, read: true }   # the AI's token: reads what its pricing tools read, writes nothing

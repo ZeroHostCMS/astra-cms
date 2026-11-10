@@ -27,6 +27,8 @@ public class ExpressApp implements AstraApp {
                 "META-INF/astra/doctypes/support-ticket.doctype.yaml",
                 "META-INF/astra/doctypes/account.doctype.yaml",
                 "META-INF/astra/doctypes/cod-remittance.doctype.yaml",
-                "META-INF/astra/doctypes/pricing-rule.doctype.yaml");
+                "META-INF/astra/doctypes/pricing-rule.doctype.yaml",
+                "META-INF/astra/doctypes/pricing-ruleset.doctype.yaml",
+                "META-INF/astra/doctypes/ops-alert.doctype.yaml");
     }
 }

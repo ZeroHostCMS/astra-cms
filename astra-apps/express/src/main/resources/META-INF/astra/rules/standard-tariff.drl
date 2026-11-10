@@ -1,0 +1,49 @@
+// Bảng cước chuẩn của Astra Express, viết thành luật. Trước đây là bảng TARIFF hard code trong ShippingFeeHook;
+// tổng các dòng (làm tròn lên nghìn đồng) bằng đúng phí cũ.
+package astra.express.pricing
+
+import io.astra.spi.pricing.QuoteRequest
+global io.astra.spi.pricing.QuoteLines lines
+
+// Cước nền: giá kg đầu tiên + mỗi 0,5 kg tiếp theo, theo vùng
+rule "base-same-city"
+    salience 100
+when
+    QuoteRequest(zone == "Same city", $kg : weightKg)
+then
+    lines.add("base", "Cước nền nội thành", 18000 + 2500 * (long) Math.ceil(Math.max(0, $kg - 1) / 0.5));
+end
+
+rule "base-domestic"
+    salience 100
+when
+    QuoteRequest(zone not in ("Same city", "Remote"), $kg : weightKg)
+then
+    lines.add("base", "Cước nền liên tỉnh", 30000 + 5000 * (long) Math.ceil(Math.max(0, $kg - 1) / 0.5));
+end
+
+rule "base-remote"
+    salience 100
+when
+    QuoteRequest(zone == "Remote", $kg : weightKg)
+then
+    lines.add("base", "Cước nền vùng xa", 45000 + 7000 * (long) Math.ceil(Math.max(0, $kg - 1) / 0.5));
+end
+
+// Hoả tốc: cước nền ×1,5, tức thêm một nửa cước nền
+rule "express"
+    salience 50
+when
+    QuoteRequest(express == true)
+then
+    lines.add("express", "Phụ phí hoả tốc (×1,5)", lines.amount("base") / 2);
+end
+
+// Thu hộ: 1 % tiền COD, tối thiểu 5.000 đ
+rule "cod-fee"
+    salience 50
+when
+    QuoteRequest(codAmount > 0, $cod : codAmount)
+then
+    lines.add("cod_fee", "Phí thu hộ COD (1 %, tối thiểu 5.000 đ)", Math.max(5000, (long) Math.ceil($cod * 0.01)));
+end

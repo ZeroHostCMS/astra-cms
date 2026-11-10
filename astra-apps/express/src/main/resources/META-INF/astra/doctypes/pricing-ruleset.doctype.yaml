@@ -1,0 +1,22 @@
+name: PricingRuleset
+module: oms
+kind: setup
+submittable: true                 # submit = propose for release; an admin approves the AppRelease it creates
+naming: { series: "PRS-.###" }
+
+# The tenant's price rules as data: Drools DRL that business analysts edit here. Saving checks every word against the
+# allowlist and compiles the rules; submitting creates a draft release of slot pricing.base. See docs/pricing-rules.md.
+fields:
+  - { name: ruleset_name, type: Data, required: true, in-list: true, label: Rule set }
+  - { name: version,      type: Data, required: true, in-list: true }
+  - { name: rules,        type: Text, required: true, label: Rules (DRL) }
+  - { name: notes,        type: Text }
+  - { name: rule_count,   type: Int,  read-only: true, in-list: true, label: Rules }
+  - { name: self_test,    type: Data, read-only: true, in-list: true }
+  - { name: release,      type: Link, options: AppRelease, read-only: true, in-list: true }
+
+permissions:
+  - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: accountant, read: true, create: true, write: true, submit: true }
+  - { role: sales,      read: true }
+  - { role: release-bot, read: true }

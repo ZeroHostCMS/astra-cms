@@ -1,0 +1,27 @@
+name: OpsAlert
+module: ops
+kind: transaction
+naming: { series: "ALR-.YYMM.-.#####" }
+
+# An anomaly the tenant's detector (slot ops.anomaly, a Wasm module) found in one event, routed to the role that acts
+# on it: weight mismatches to OPS, COD payouts to accounting, failed deliveries to customer care. People acknowledge
+# or dismiss it; dismissals are how a detector's next version learns what was noise.
+fields:
+  - { name: kind,          type: Select, options: [Weight mismatch, COD payout, Failed delivery], required: true, in-list: true, projected: true }
+  - { name: severity,      type: Int,    read-only: true, in-list: true }
+  - { name: reason,        type: Int,    read-only: true }                       # the detector's reason code
+  - { name: detail,        type: Data,   read-only: true, in-list: true }        # the event's numbers, written by the host
+  - { name: ref_doctype,   type: Data,   read-only: true }
+  - { name: ref_name,      type: Data,   read-only: true, in-list: true }
+  - { name: assigned_role, type: Select, options: [ops, accountant, care], read-only: true, in-list: true, projected: true }
+  - { name: status,        type: Select, options: [Open, Acknowledged, Dismissed], default: Open, in-list: true, projected: true }
+  - { name: note,          type: Text }                                          # why it was dismissed, what was done
+  - { name: raised_by,     type: Data,   read-only: true, in-list: true, projected: true }   # detector app@version on pod
+  - { name: release,       type: Data,   read-only: true }
+
+permissions:
+  - { role: admin,       read: true, write: true }
+  - { role: ops,         read: true, write: true }
+  - { role: accountant,  read: true, write: true }
+  - { role: care,        read: true, write: true }
+  - { role: release-bot, read: true }

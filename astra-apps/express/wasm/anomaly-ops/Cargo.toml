@@ -1,0 +1,12 @@
+[package]
+name = "anomaly-ops"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+# v2, after people dismissed false alarms: ignore weight differences on parcels under 0.5 kg.
+v2 = []

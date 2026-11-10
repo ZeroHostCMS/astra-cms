@@ -3,6 +3,25 @@
 version = 4
 
 [[package]]
+name = "abi-probe"
+version = "0.1.0"
+
+[[package]]
+name = "anomaly-ops"
+version = "0.1.0"
+
+[[package]]
+name = "astra-pricing-pdk"
+version = "0.1.0"
+
+[[package]]
+name = "khaigia-shopabc"
+version = "0.1.0"
+dependencies = [
+ "astra-pricing-pdk",
+]
+
+[[package]]
 name = "runaway"
 version = "0.1.0"
 
