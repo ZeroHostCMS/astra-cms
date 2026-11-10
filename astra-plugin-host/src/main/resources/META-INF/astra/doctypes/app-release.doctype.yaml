@@ -1,0 +1,39 @@
+name: AppRelease
+module: platform
+kind: setup
+submittable: true                 # submit = approve the release; cancel = withdraw it
+naming: { series: "REL-.#####" }
+
+# One version of something that can be swapped at run time: a Tier 1 plugin jar, a Tier 2 Wasm module, or a rule set.
+# Saving vets the artifact (load, SPI check, self-test). Submitting starts the rollout: canary on one pod, then every
+# pod, or straight to Live when the slot has nothing live yet. The rollout job owns stage, pods and health counters.
+fields:
+  - { name: slot,            type: Data,   required: true, in-list: true, projected: true }   # carrier.booking, einvoice.issue, pricing.base, pricing.customer, ops.anomaly
+  - { name: tier,            type: Select, options: [isolated-jvm, wasm, rules], required: true, in-list: true }
+  - { name: app_id,          type: Data,   in-list: true, label: App }                        # from the jar manifest for isolated-jvm
+  - { name: version,         type: Data,   in-list: true }
+  - { name: customer,        type: Data,   in-list: true, projected: true }                   # empty: every customer of the tenant
+  - { name: artifact,        type: Attach, required: true }
+  - { name: artifact_sha256, type: Data,   read-only: true, label: Artifact SHA-256 }
+  - { name: artifact_bytes,  type: Int,    read-only: true, label: Artifact size (bytes) }
+  - { name: self_test,       type: Data,   read-only: true }
+  - { name: generator,       type: Select, options: [human, claude-code], read-only: true, in-list: true }
+  - { name: signed_by,       type: Data,   read-only: true, label: Approved by }
+  - { name: notes,           type: Text }
+  - { name: error_budget,    type: Float,  default: 0.05, label: Error budget (share of calls) }
+  - { name: promote_after,   type: Int,    default: 20, label: Healthy calls per canary step }
+  - { name: stage,           type: Select, options: [Draft, Canary, Live, Rolled back, Retired], default: Draft,
+      read-only: true, in-list: true, projected: true }
+  - { name: canary_pods,     type: Data,   read-only: true, in-list: true }
+  - { name: target_pods,     type: Data,   read-only: true, in-list: true, label: Pods }      # e.g. 1/2, then 2/2
+  - { name: calls,           type: Int,    read-only: true, in-list: true }
+  - { name: errors,          type: Int,    read-only: true, in-list: true }
+  - { name: p99_ms,          type: Float,  read-only: true, in-list: true, label: p99 (ms) }
+  - { name: stage_reason,    type: Data,   read-only: true }
+
+permissions:
+  - { role: admin,       read: true, create: true, write: true, submit: true, cancel: true }
+  - { role: release-bot, read: true, create: true }   # an AI token proposes a draft; it cannot edit it after (no swap before review) and cannot approve it
+  - { role: ops,         read: true }
+  - { role: accountant,  read: true }
+  - { role: sales,       read: true }
