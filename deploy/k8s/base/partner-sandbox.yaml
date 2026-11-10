@@ -1,0 +1,44 @@
+# Sandbox of the demo's outside partners (FastShip, Vietnam and Cambodia e-invoice services) for the Tier 1 plugins.
+# The script is tools/partner-sandbox/partner_sandbox.py, put into the ConfigMap partner-sandbox by scripts/k3d-up.sh.
+apiVersion: v1
+kind: Service
+metadata:
+  name: partner-sandbox
+spec:
+  selector:
+    app: partner-sandbox
+  ports:
+    - port: 8090
+      targetPort: 8090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: partner-sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: partner-sandbox
+  template:
+    metadata:
+      labels:
+        app: partner-sandbox
+    spec:
+      containers:
+        - name: partner-sandbox
+          image: python:3.12-alpine
+          command: ["python3", "-u", "/app/partner_sandbox.py", "8090"]
+          ports:
+            - containerPort: 8090
+          readinessProbe:
+            httpGet: { path: /health, port: 8090 }
+            periodSeconds: 5
+          resources:
+            requests: { cpu: 20m, memory: 32Mi }
+            limits: { memory: 64Mi }
+          volumeMounts:
+            - { name: app, mountPath: /app }
+      volumes:
+        - name: app
+          configMap: { name: partner-sandbox }

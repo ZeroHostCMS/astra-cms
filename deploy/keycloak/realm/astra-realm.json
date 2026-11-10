@@ -53,12 +53,17 @@
         {
           "name": "saigon-express",
           "attributes": { "display-name": ["Saigon Express"], "public-signup": ["false"] },
-          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" }, { "name": "hr" }, { "name": "dispatcher" } ]
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" }, { "name": "hr" }, { "name": "dispatcher" }, { "name": "release-bot" } ]
         },
         {
           "name": "hanoi-express",
           "attributes": { "display-name": ["Hanoi Express"], "public-signup": ["false"] },
-          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" }, { "name": "hr" }, { "name": "dispatcher" } ]
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "care" }, { "name": "accountant" }, { "name": "hr" }, { "name": "dispatcher" }, { "name": "release-bot" } ]
+        },
+        {
+          "name": "angkor-express",
+          "attributes": { "display-name": ["Angkor Express (Cambodia)"], "public-signup": ["false"] },
+          "subGroups": [ { "name": "admin" }, { "name": "sales" }, { "name": "ops" }, { "name": "accountant" }, { "name": "release-bot" } ]
         }
       ]
     }
@@ -518,6 +523,18 @@
       "username": "linh", "email": "linh@express.test", "firstName": "Linh", "lastName": "Ngô",
       "enabled": true, "emailVerified": true,
       "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/dispatcher", "/tenants/hanoi-express/dispatcher"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "sophea", "email": "sophea@angkor.test", "firstName": "Sophea", "lastName": "Chan",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/angkor-express/admin"],
+      "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
+    },
+    {
+      "username": "aibot", "email": "aibot@express.test", "firstName": "AI", "lastName": "Release Bot",
+      "enabled": true, "emailVerified": true,
+      "realmRoles": ["default-roles-astra"], "groups": ["/tenants/saigon-express/release-bot"],
       "credentials": [ { "type": "password", "value": "Astra@123", "temporary": false } ]
     },
     {

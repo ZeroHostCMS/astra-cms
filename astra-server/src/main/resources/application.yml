@@ -68,6 +68,7 @@ quarkus:
         level: INFO
 
 astra:
+  pod-name: ${POD_NAME:}                  # set by the Kubernetes downward API; the host name when empty
   seata:
     enabled: ${ASTRA_SEATA_ENABLED:false}
     server: ${ASTRA_SEATA_SERVER:127.0.0.1:8091}
@@ -87,7 +88,7 @@ astra:
     realm: astra
     # Issuer that clients see; behind an ingress it differs from the in-cluster auth-server-url.
     issuer: ${ASTRA_OIDC_ISSUER:http://localhost:8180/auth/realms/astra}
-    tenant-roles: admin,editor,author,reader,sales,ops,care,accountant,hr,dispatcher
+    tenant-roles: admin,editor,author,reader,sales,ops,care,accountant,hr,dispatcher,release-bot
     self-join-role: reader
     desk:
       client-id: astra-desk               # browser Desk at /desk/, Authorization Code + PKCE
@@ -121,6 +122,12 @@ astra:
         url: ${ASTRA_DB_URL:jdbc:postgresql://localhost:5432/astra}
 
 "%test":
+  astra:
+    pod-name: pod-a                        # rollout tests add a second pod by heartbeat
+    rollout:
+      every: "off"                         # tests run the rollout job by hand
+    jobs:
+      every: "off"                         # and the tenant jobs
   quarkus:
     redis:
       devservices:

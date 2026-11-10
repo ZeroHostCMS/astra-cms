@@ -115,6 +115,11 @@ td.num { text-align: right; font-variant-numeric: tabular-nums; }
 .badge.submitted { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
 .badge.cancelled { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
 .badge.accent { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.badge.stage-draft { background: var(--code-bg); color: var(--muted); }
+.badge.stage-canary { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.badge.stage-live { background: var(--ok-soft); color: var(--ok); border-color: transparent; }
+.badge.stage-rolled-back { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
+.badge.stage-retired { background: var(--code-bg); color: var(--muted); text-decoration: line-through; }
 
 /* Forms */
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 14px; }
