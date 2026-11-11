@@ -75,6 +75,12 @@ Check every figure against the article before publishing: generated diagrams mis
 | [▶ 19](https://media.zerohostcms.com/astra-cms/astra-video-19-hrm-en.mp4) <sub>2:40</sub> | [HRM: attendance and payroll](./19-hrm.md) | Following Frappe HRMS concepts: attendance sets working days, Payroll Entry computes salary slips in parallel, a courier bonus in Wasm, one accrual journal entry for the period, cancel reverses; the AI agent only sees masked names. |
 | [▶ 20](https://media.zerohostcms.com/astra-cms/astra-video-20-stms-en.mp4) <sub>2:58</sub> | [STMS: vehicle dispatch with Timefold + AI copilot](./20-stms.md) | Timefold plans routes by capacity and time window and re-plans on a breakdown, an urgent order or a traffic jam; the copilot takes Vietnamese commands and calls real tools. The copilot's LLM is simulated from the demo script, labelled on every frame. |
 
+## Software that evolves
+
+| Video | Article | What you learn |
+| --- | --- | --- |
+| [▶ 22d](https://media.zerohostcms.com/astra-cms/astra-video-22d-live-en.mp4) <sub>4:34</sub> · [▶ 22](https://media.zerohostcms.com/astra-cms/astra-video-22-tiers-vi.mp4) <sub>4:33, Vietnamese</sub> | [Software that evolves: plugin tiers 0 · 1 · 2](./22-plugin-tiers.md) | Prices as Drools rules a BA edits on the Desk (allowlist-checked on save), Tier 1 plugins swapped by pod with automatic rollback, and a customer's contract written by Claude Code as a Wasm plugin that inherits the rule price; the AI proposes with a backtest and cannot approve (403). Recorded live. |
+
 ## What comes next
 
 | Video | Article | What you learn |

@@ -72,6 +72,13 @@ Each entry links to the generated 16:9 diagram PNG and records the corresponding
 | Video 21 | Fig 2 | [figures/video-21-figure-2.png](./figures/video-21-figure-2.png) | **Tampered assertion**<br/>Cryptographic assertion verification: tampered SAML assertions or mismatched tenant tokens are rejected immediately. | [`What the video shows`](21-sso.md#what-the-video-shows) |
 | Video 21 | Fig 1 | [figures/video-21-figure-1.png](./figures/video-21-figure-1.png) | **SP-initiated SAML through a broker**<br/>SP-initiated SAML flow: enterprise identity providers authenticate users through Keycloak without exposing SAML complexity to the kernel. | [`Saml brokered by keycloak invisible to the kernel`](21-sso.md#saml-brokered-by-keycloak-invisible-to-the-kernel) |
 | Video 21 | Fig 3 | [figures/video-21-figure-3.png](./figures/video-21-figure-3.png) | **SCIM joiner, mover, leaver inside one tenant**<br/>Automated identity lifecycle: SCIM 2.0 synchronizes joiners, role changes, and departures directly into tenant group memberships. | [`Real world example`](21-sso.md#real-world-example) |
+| Video 22 | Fig 1 | [figures/video-22-figure-1.png](./figures/video-22-figure-1.png) | **A dangerous rule refused on save**<br/>Frame from video 22d: `System.exit` in a Drools rule is refused by the allowlist validator. | [`Tier 0: rules as data`](22-plugin-tiers.md#tier-0-rules-as-data-an-allowlist-as-the-boundary) |
+| Video 22 | Fig 2 | [figures/video-22-figure-2.png](./figures/video-22-figure-2.png) | **Canary by pod**<br/>Frame from video 22d: one pod prices with the new rules, the other with the old, while real orders run. | [`One release path for every tier`](22-plugin-tiers.md#one-release-path-for-every-tier) |
+| Video 22 | Fig 3 | [figures/video-22-figure-3.png](./figures/video-22-figure-3.png) | **The pricing plugin the AI wrote**<br/>Frame from video 22d: Claude Code's Rust function, one operation per contract clause. | [`Tier 2`](22-plugin-tiers.md#tier-2-a-customers-terms-as-operations-not-a-price) |
+| Video 22 | Fig 4 | [figures/video-22-figure-4.png](./figures/video-22-figure-4.png) | **One Shop ABC order**<br/>Frame from video 22d: rule lines, plugin operations with their clause, an inherited locked line. | [`Tier 2`](22-plugin-tiers.md#tier-2-a-customers-terms-as-operations-not-a-price) |
+| Video 22 | Fig 5 | [figures/video-22-figure-5.png](./figures/video-22-figure-5.png) | **Automatic rollback**<br/>Frame from video 22d: the host refuses a locked line, errors pass the 5 % budget, the release rolls back. | [`What the videos show`](22-plugin-tiers.md#what-the-videos-show) |
+
+Video 22's figures are frames from the recorded video 22d, not drawn diagrams.
 
 ## Verification Summary
 

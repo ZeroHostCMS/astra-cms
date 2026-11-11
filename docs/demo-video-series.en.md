@@ -460,15 +460,23 @@ from Video 20.
 - Listing users fetches members from Keycloak and paginates in memory, with one extra group read call per user: enough
   for the demo, not meant for hundreds of thousands of users. The SCIM client secrets in the realm JSON are for local environments only.
 
-### Video 22: Software that evolves, plugin tiers 0 · 1 · 2 *(Vietnamese only)*
+### Video 22: Software that evolves, plugin tiers 0 · 1 · 2
 
 The three layers of the "Global future" slide on the 2-pod k3d cluster: the core compiled in (Tier 0, rolling update
 with no failed request) with prices as Drools rules that analysts edit and approve like code; market integrations as
 Tier 1 plugins swapped while running (a carrier with a per-pod canary and automatic rollback, one e-invoice module per
 country); and Tier 2 Wasm written by Claude Code over MCP (a customer's contract as a pricing plugin that inherits the
 rule price, an anomaly detector that alerts the right role), proposed by an AI token that cannot approve its own
-release. Script: `make demo-tiers`. The narration, scenes and caveats are in the Vietnamese series,
+release. Script: `make demo-tiers`. The flagship (4:33), its three clips and *Layered pricing* (2:45) are narrated in
+Vietnamese; their scenes and caveats are in the Vietnamese series,
 [demo-video-series.md](demo-video-series.md#video-22-phần-mềm-tự-tiến-hoá-plugin-tier-0--1--2).
+
+**Video 22d, recorded live (4:34, English and Vietnamese):** the pricing story as a screen recording rather than motion
+graphics. A BA edits the rules on the Desk (a `System.exit` is refused on save), an admin approves and the rules reach
+one pod, then both, while real orders run beside it; Claude Code, signed in as `aibot`, turns Shop ABC's contract annex
+into a Wasm plugin, backtests it on 1,410 orders and gets 403 when it tries to approve; a deliberately faulty 1.1.0 is
+refused by the host and rolled back at 16.7 % errors against a 5 % budget, with `fail=0`. How it was recorded, and how
+to record it again: `docs/video/v22-live/BRIEF.md` (local video project). Article: [22-plugin-tiers.md](articles/22-plugin-tiers.md).
 
 ### Video 18: Roadmap, the rest of use-case-01 *(In development)*
 

@@ -172,6 +172,21 @@ Recorded from the running demo: real Desk screens and terminal output. Videos 8 
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-en.mp4"><img src="docs/video-thumbs/video-21-en.jpg" width="320" alt="Watch video 21 · SAML SSO and SCIM"></a></td>
 <td>Login through a signed SAML IdP, IdP groups become tenant roles; SCIM 2.0 creates, regroups, deactivates and deletes users per tenant, and another tenant's token is blocked.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-en.mp4">▶ Watch</a> · <a href="docs/articles/21-sso.md">Read the article</a></td>
 </tr>
+<tr><th colspan="2" align="left">Video 22 · Software that evolves: plugin tiers 0 · 1 · 2 <sub>(4:33, Vietnamese narration)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-tiers-vi.mp4"><img src="docs/video-thumbs/video-22.jpg" width="320" alt="Watch video 22 · Software that evolves (Vietnamese)"></a></td>
+<td>The three layers on a 2-pod cluster: the core compiled in, with prices as Drools rules analysts edit and approve like code; carrier and per-country e-invoice plugins swapped while running, with a per-pod canary and automatic rollback; Tier 2 Wasm written by Claude Code over MCP, proposed by an AI token that cannot approve it.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-tiers-vi.mp4">▶ Watch (Vietnamese)</a> · clips <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22a-tier0-vi.mp4">Tier 0</a>, <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22b-tier1-vi.mp4">Tier 1</a>, <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22c-tier2-vi.mp4">Tier 2</a> · <a href="docs/articles/22-plugin-tiers.md">Read the article</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 22 · Layered pricing <sub>(2:45, Vietnamese narration)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-pricing-vi.mp4"><img src="docs/video-thumbs/video-22-pricing.jpg" width="320" alt="Watch video 22 · Layered pricing (Vietnamese)"></a></td>
+<td>Shared Drools rules, then the segment's PricingRule, then the customer's own Wasm plugin that only declares the difference; one Shop ABC order line by line, and a rule change the customer inherits without touching the plugin.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-pricing-vi.mp4">▶ Watch (Vietnamese)</a> · <a href="docs/articles/22-plugin-tiers.md">Read the article</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 22d · Per-customer prices, changed the same day: recorded live <sub>(4:34)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22d-live-en.mp4"><img src="docs/video-thumbs/video-22d-live-en.jpg" width="320" alt="Watch video 22d · Per-customer prices, changed the same day"></a></td>
+<td>Recorded on the 2-pod k3d cluster: a BA edits Drools price rules on the Desk (a <code>System.exit</code> is refused on save), an admin approves and the rules go to one pod, then both; Claude Code turns Shop ABC's contract annex into a Wasm pricing plugin with a backtest and cannot approve it (403); a deliberately faulty version is refused by the host and rolled back automatically, with no failed order.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22d-live-en.mp4">▶ Watch</a> · <a href="docs/articles/22-plugin-tiers.md">Read the article</a></td>
+</tr>
 </table>
 
 </details>

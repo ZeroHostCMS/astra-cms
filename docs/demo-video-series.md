@@ -481,6 +481,8 @@ Chuẩn bị: `make k3d-up` (thêm pod `partner-sandbox`, user `sophea`, `aibot`
 
 Bảng so sánh của video: hard code (dev sửa, build + deploy), luật Drools (BA, lưu → duyệt → canary, vài giây), Tier 1 (jar trong JVM riêng, hot-swap, 5,0 µs/lời gọi p50), Wasm (BA/PO + AI, sandbox, 10,5 µs p50); Tier 0 gọi trực tiếp 0,04 µs. Số đo từ `TierDispatchBench`; phụ lục Shop ABC bằng luật Drools là 7 luật, 52 dòng (cần mở rộng fact model), bằng plugin là hàm 33 dòng.
 
+**Video 22d, quay thật (4:34, tiếng Việt và tiếng Anh):** câu chuyện định giá bằng màn hình thật thay vì đồ hoạ. BA (`khoa`) sửa luật trên Desk, luật có `System.exit` bị chặn khi lưu; admin (`mai`) duyệt, luật lên một pod rồi cả cụm trong khi đơn thật chạy bên cạnh; Claude Code đăng nhập bằng `aibot` biến phụ lục Shop ABC thành plugin Wasm, backtest 1.410 đơn, thử tự duyệt bị 403; bản 1.1.0 lỗi cố ý bị host từ chối và tự rollback khi lỗi 16,7 % vượt ngân sách 5 %, `fail=0`. Cách quay và quay lại: `docs/video/v22-live/BRIEF.md` (project video cục bộ). Bài viết: [22-plugin-tiers.vi.md](articles/22-plugin-tiers.vi.md).
+
 **Nói đúng:**
 - Hãng vận chuyển và cơ quan thuế là **sandbox** (`tools/partner-sandbox`, một service Python nhỏ trả mã sau 20–80 ms), giống sandbox đối tác cấp cho tích hợp; định dạng hoá đơn không đúng chuẩn pháp lý từng nước; tỷ giá trong plugin Campuchia là số demo.
 - Cụm demo có **2 pod**, nên canary là 1/2 rồi 2/2; cấu hình 10 → 50 → 100 % là cho cụm nhiều pod. Canary chia theo pod, không chia theo % request.

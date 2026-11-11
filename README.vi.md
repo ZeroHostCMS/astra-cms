@@ -170,6 +170,21 @@ Quay từ bản demo đang chạy: màn hình Desk và output terminal thật. C
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4"><img src="docs/video-thumbs/video-21.jpg" width="320" alt="Xem video 21: SAML SSO và SCIM"></a></td>
 <td>Đăng nhập qua IdP SAML có chữ ký, nhóm của IdP thành role của tenant; SCIM 2.0 tạo, đổi nhóm, vô hiệu hoá và xoá user theo từng tenant, token của tenant khác bị chặn.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4">▶ Xem video</a> · <a href="docs/articles/21-sso.vi.md">Đọc bài viết</a></td>
 </tr>
+<tr><th colspan="2" align="left">Video 22 · Phần mềm tự tiến hoá: plugin Tier 0 · 1 · 2 <sub>(4:33)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-tiers-vi.mp4"><img src="docs/video-thumbs/video-22.jpg" width="320" alt="Xem video 22: Phần mềm tự tiến hoá"></a></td>
+<td>Ba lớp trên cụm 2 pod: lõi biên dịch vào image, giá là luật Drools do BA sửa và duyệt như code; plugin hãng vận chuyển và hoá đơn điện tử theo nước thay khi đang chạy, canary theo pod, tự rollback; Wasm Tier 2 do Claude Code viết qua MCP, token AI đề xuất được nhưng không tự duyệt được.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-tiers-vi.mp4">▶ Xem video</a> · clip <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22a-tier0-vi.mp4">Tier 0</a>, <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22b-tier1-vi.mp4">Tier 1</a>, <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22c-tier2-vi.mp4">Tier 2</a> · <a href="docs/articles/22-plugin-tiers.vi.md">Đọc bài viết</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 22 · Định giá xếp tầng <sub>(2:45)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-pricing-vi.mp4"><img src="docs/video-thumbs/video-22-pricing.jpg" width="320" alt="Xem video 22: Định giá xếp tầng"></a></td>
+<td>Luật Drools chung, rồi PricingRule theo phân khúc, rồi plugin Wasm riêng của khách chỉ khai phần khác biệt; một đơn của Shop ABC từng dòng, và luật chung đổi thì khách tự kế thừa, không sửa plugin.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-pricing-vi.mp4">▶ Xem video</a> · <a href="docs/articles/22-plugin-tiers.vi.md">Đọc bài viết</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 22d · Giá riêng từng khách, đổi trong ngày: quay thật <sub>(4:34)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22d-live-vi.mp4"><img src="docs/video-thumbs/video-22d-live.jpg" width="320" alt="Xem video 22d: Giá riêng từng khách, đổi trong ngày"></a></td>
+<td>Quay thật trên cụm k3d 2 pod: BA sửa luật giá Drools trên Desk (luật có <code>System.exit</code> bị chặn khi lưu), admin duyệt, luật lên một pod rồi cả cụm; Claude Code biến phụ lục hợp đồng Shop ABC thành plugin giá Wasm kèm backtest và không tự duyệt được (403); bản lỗi cố ý bị host từ chối và tự rollback, không đơn nào lỗi.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22d-live-vi.mp4">▶ Xem video</a> · <a href="docs/articles/22-plugin-tiers.vi.md">Đọc bài viết</a></td>
+</tr>
 </table>
 
 </details>
