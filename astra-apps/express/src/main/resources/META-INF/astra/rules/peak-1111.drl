@@ -1,0 +1,10 @@
+
+// Phụ phí cao điểm 11.11: +5.000 đ cho đơn vùng xa từ 10/11 đến 12/11. Bắt buộc, giá riêng của khách không bỏ được.
+rule "peak-1111"
+    salience 40
+when
+    QuoteRequest(zone == "Remote", month == 11, day >= 10, day <= 12)
+then
+    lines.add("peak", "Phụ phí cao điểm 11.11", 5000);
+    lines.lock("peak");
+end

@@ -9,3 +9,4 @@ resources:
   - astra-server.yaml
   - cdc.yaml
   - seata.yaml
+  - partner-sandbox.yaml

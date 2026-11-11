@@ -3,7 +3,7 @@
 FROM eclipse-temurin:25-jre
 
 ENV LANGUAGE='en_US:en' \
-    JAVA_OPTS_APPEND="-XX:+UseZGC -XX:MaxRAMPercentage=75.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
+    JAVA_OPTS_APPEND="-XX:+UseZGC -XX:MaxRAMPercentage=65.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 
 WORKDIR /deployments
 COPY --chown=1000:1000 astra-server/target/quarkus-app/lib/ ./lib/

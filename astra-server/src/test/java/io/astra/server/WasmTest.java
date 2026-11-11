@@ -77,8 +77,13 @@ class WasmTest {
                 .body("data.self_test", startsWith("fee(1 kg, Domestic) = 24000 VND"))
                 .body("data.module_bytes", equalTo(module("tet-promo").length));
 
+        // the rule's fee replaces the base line only; the express and COD lines of the layer below stay
         in("wasm-a").body(ORDER).post("/api/doc/CustomerOrder").then().statusCode(201)
-                .body("data.shipping_fee", equalTo(56000)).body("data.priced_by", containsString("(Wasm)"));
+                .body("data.price_breakdown.find { it.code == 'base' }.amount", equalTo(56000))
+                .body("data.price_breakdown.find { it.code == 'base' }.source", equalTo("pricing-rule:Tết B2B"))
+                .body("data.price_breakdown.find { it.code == 'express' }.amount", equalTo(25000))
+                .body("data.price_breakdown.find { it.code == 'cod_fee' }.amount", equalTo(5000))
+                .body("data.shipping_fee", equalTo(86000)).body("data.priced_by", containsString("(Wasm)"));
         in("wasm-a").body(ORDER.replace("C001", "R001")).post("/api/doc/CustomerOrder").then().statusCode(201)
                 .body("data.priced_by", equalTo("Standard tariff"));
 

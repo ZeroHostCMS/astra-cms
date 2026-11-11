@@ -170,6 +170,21 @@ Quay từ bản demo đang chạy: màn hình Desk và output terminal thật. C
 <td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4"><img src="docs/video-thumbs/video-21.jpg" width="320" alt="Xem video 21: SAML SSO và SCIM"></a></td>
 <td>Đăng nhập qua IdP SAML có chữ ký, nhóm của IdP thành role của tenant; SCIM 2.0 tạo, đổi nhóm, vô hiệu hoá và xoá user theo từng tenant, token của tenant khác bị chặn.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-21-sso-vi.mp4">▶ Xem video</a> · <a href="docs/articles/21-sso.vi.md">Đọc bài viết</a></td>
 </tr>
+<tr><th colspan="2" align="left">Video 22 · Phần mềm tự tiến hoá: plugin Tier 0 · 1 · 2 <sub>(4:33)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-tiers-vi.mp4"><img src="docs/video-thumbs/video-22.jpg" width="320" alt="Xem video 22: Phần mềm tự tiến hoá"></a></td>
+<td>Ba lớp trên cụm 2 pod: lõi biên dịch vào image, giá là luật Drools do BA sửa và duyệt như code; plugin hãng vận chuyển và hoá đơn điện tử theo nước thay khi đang chạy, canary theo pod, tự rollback; Wasm Tier 2 do Claude Code viết qua MCP, token AI đề xuất được nhưng không tự duyệt được.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-tiers-vi.mp4">▶ Xem video</a> · clip <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22a-tier0-vi.mp4">Tier 0</a>, <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22b-tier1-vi.mp4">Tier 1</a>, <a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22c-tier2-vi.mp4">Tier 2</a> · <a href="docs/articles/22-plugin-tiers.vi.md">Đọc bài viết</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 22 · Định giá xếp tầng <sub>(2:45)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-pricing-vi.mp4"><img src="docs/video-thumbs/video-22-pricing.jpg" width="320" alt="Xem video 22: Định giá xếp tầng"></a></td>
+<td>Luật Drools chung, rồi PricingRule theo phân khúc, rồi plugin Wasm riêng của khách chỉ khai phần khác biệt; một đơn của Shop ABC từng dòng, và luật chung đổi thì khách tự kế thừa, không sửa plugin.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22-pricing-vi.mp4">▶ Xem video</a> · <a href="docs/articles/22-plugin-tiers.vi.md">Đọc bài viết</a></td>
+</tr>
+<tr><th colspan="2" align="left">Video 22d · Giá riêng từng khách, đổi trong ngày: quay thật <sub>(4:34)</sub></th></tr>
+<tr>
+<td width="330"><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22d-live-vi.mp4"><img src="docs/video-thumbs/video-22d-live.jpg" width="320" alt="Xem video 22d: Giá riêng từng khách, đổi trong ngày"></a></td>
+<td>Quay thật trên cụm k3d 2 pod: BA sửa luật giá Drools trên Desk (luật có <code>System.exit</code> bị chặn khi lưu), admin duyệt, luật lên một pod rồi cả cụm; Claude Code biến phụ lục hợp đồng Shop ABC thành plugin giá Wasm kèm backtest và không tự duyệt được (403); bản lỗi cố ý bị host từ chối và tự rollback, không đơn nào lỗi.<br><a target="_blank" rel="noopener noreferrer" href="https://media.zerohostcms.com/astra-cms/astra-video-22d-live-vi.mp4">▶ Xem video</a> · <a href="docs/articles/22-plugin-tiers.vi.md">Đọc bài viết</a></td>
+</tr>
 </table>
 
 </details>
@@ -956,8 +971,9 @@ Những gì demo kiểm chứng, tất cả từ code thật trong repository n�
 | HRM (nhân sự và tiền lương) theo khái niệm Frappe HRMS: chấm công quyết định ngày công, Payroll Entry tính phiếu lương song song trên virtual thread, thưởng KPI là Wasm của tenant, submit ghi một bút toán dồn tích qua `GeneralLedger` trong cùng transaction | `astra-apps/hrm`, `PayrollEntryHook`, `SalaryCalculator` |
 | STMS: định tuyến xe bằng Timefold Solver (tải trọng và khung giờ là ràng buộc cứng), giải lại khi có sự cố, tool MCP và copilot điều phối (mô hình ngôn ngữ là bản giả lập cho demo; solver và tool chạy thật) | `astra-apps/stms`, `RoutePlanner`, `Replanner`, `DispatchCopilot` |
 | SAML 2.0 SSO qua Keycloak brokering (assertion có chữ ký, nhóm của IdP thành role của tenant) và SCIM 2.0 Users/Groups theo tenant tại `/scim/v2`, tenant lấy từ token | `deploy/keycloak/realm`, `astra-iam` `ScimResource`, `ScimDirectory` |
+| Plugin Tier 1 JVM riêng (mỗi phiên bản một class loader chỉ thấy JDK và SPI, bulkhead, capability `PartnerHttp`) và một đường phát hành chung cho Tier 1, Tier 2 và luật: admin duyệt, canary theo pod, tự rollback, ghim theo tenant và theo khách; giá là luật Drools do BA sửa (kiểm theo danh sách cho phép), plugin giá Wasm riêng của khách kế thừa giá đó | `astra-plugin-host` `jvm`, `rollout`; `astra-kernel` `rules`; `astra-apps/express-integrations`; `LayeredPricing` |
 
-Chưa có trong lát cắt mỏng: điều kiện quyền theo dòng, loader Tier 1, rollout control plane, audit hash-chain, mã hoá trường, Apache Doris, AI agent ngoài các tool MCP và Desk đầy đủ (dashboard, báo cáo). Lộ trình bên dưới sắp thứ tự cho các phần này. Bộ kịch bản video đi qua bản demo nằm ở [docs/demo-video-series.md](docs/demo-video-series.md).
+Chưa có trong lát cắt mỏng: điều kiện quyền theo dòng, chữ ký và SBOM cho release, audit hash-chain, mã hoá trường, Apache Doris, AI agent ngoài các tool MCP và Desk đầy đủ (dashboard, báo cáo). Lộ trình bên dưới sắp thứ tự cho các phần này. Bộ kịch bản video đi qua bản demo nằm ở [docs/demo-video-series.md](docs/demo-video-series.md).
 
 ## Bắt đầu (quy trình mục tiêu)
 
@@ -1010,9 +1026,9 @@ astra:
 </tr>
 </table>
 
-**Đã xong** (xem [Chạy lát cắt mỏng ngay hôm nay](#chạy-lát-cắt-mỏng-ngay-hôm-nay)): tenancy với row-level security và guard fail-closed, lưu trữ JSONB zero-DDL kèm REST và Desk sinh tự động, projection materialised cho lọc khoảng, partition theo tháng (tuỳ chọn), vòng đời submittable, sổ cái append-only, overlay theo tenant, sandbox Wasm Tier 2, MCP server, worker CDC Rust với Sync-Aware LSN, Seata AT + TCC, Keycloak với SAML SSO và SCIM, hai kernel pod trên k3d.
+**Đã xong** (xem [Chạy lát cắt mỏng ngay hôm nay](#chạy-lát-cắt-mỏng-ngay-hôm-nay)): tenancy với row-level security và guard fail-closed, lưu trữ JSONB zero-DDL kèm REST và Desk sinh tự động, projection materialised cho lọc khoảng, partition theo tháng (tuỳ chọn), vòng đời submittable, sổ cái append-only, overlay theo tenant, sandbox Wasm Tier 2, MCP server, worker CDC Rust với Sync-Aware LSN, Seata AT + TCC, Keycloak với SAML SSO và SCIM, lát mỏng Tier 1 với canary theo pod và tự rollback, luật giá là dữ liệu (Drools), hai kernel pod trên k3d.
 
-**Tiếp theo:** loader JVM riêng (Tier 1), canary rollout qua nhiều pod, điều kiện quyền theo dòng, audit hash-chain, mã hoá trường, CDC streaming và agent ngoài các tool MCP. Các phase dưới đây sắp thứ tự cho toàn bộ nền tảng; phần tuân thủ là các **profile được bật dần theo thời gian**, không phải một deliverable duy nhất của Phase 5.
+**Tiếp theo:** chữ ký và SBOM cho release, điều kiện quyền theo dòng, audit hash-chain, mã hoá trường, CDC streaming và agent ngoài các tool MCP. Các phase dưới đây sắp thứ tự cho toàn bộ nền tảng; phần tuân thủ là các **profile được bật dần theo thời gian**, không phải một deliverable duy nhất của Phase 5.
 
 * [ ] **Phase 1: Kiến trúc & SPI** (đang làm). Bản thiết kế (README này). Tiếp theo: `astra-spi` với các extension point, mô hình DocType và YAML schema **kèm thuộc tính tuân thủ**, manifest schema, mức trưởng thành, chính sách deprecation, `AGENTS.md` / `llms.txt`, `SECURITY.md`, khung catalogue control OSCAL.
 * [ ] **Phase 2: Kernel, Plugin Host & lõi DocType Engine**. Registry với phiên bản chạy song song và ghim theo tenant; **lõi tenancy** (Tenant DocType, xác định tenant, ngữ cảnh `ScopedValue`, RLS, profile `shared-rls`, bulkhead); loader Tier 0/1/2 **có đếm lệnh cho Tier 2**; registry metadata DocType, lưu trữ JSONB, projection bằng expression index có quota, naming, link, child table, quyền, submittable lifecycle, phiên bản; **audit ledger chống giả mạo ngay từ lần ghi đầu tiên**; REST sinh tự động; **MCP server mỏng (`doc.search / get / create`)**; **spike Seata** (AT + TCC + virtual thread, quyết định go/no-go cho Phase 4); `astra-plugin-testkit`; pipeline build SLSA Level 3; benchmark công khai đầu tiên.

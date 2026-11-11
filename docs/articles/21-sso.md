@@ -358,7 +358,7 @@ The IdP passwords and the SCIM client secrets in the realm JSON files are for lo
 
 ## Related
 
-- Previous: [Video 20 · STMS](./20-stms.md). Next: [Video 18 · Roadmap](./18-roadmap.md).
+- Previous: [Video 20 · STMS](./20-stms.md). Next: [Video 22 · Plugin tiers 0 · 1 · 2](./22-plugin-tiers.md).
 - [Video 11 · Keycloak](./11-keycloak.md) (tenant roles from group paths, DocType permissions) and
   [Video 7 · Multi-tenancy](./07-tenants.md).
 - Docs: [demo-video-series.en.md, Video 21](../demo-video-series.en.md#video-21-saml-sso-and-scim),

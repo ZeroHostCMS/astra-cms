@@ -29,4 +29,12 @@ public interface DocumentService {
 
     /** Submitted → Cancelled, running {@code onCancel} hooks, under the same caller permission check as the REST cancel. */
     Optional<Document> cancel(String doctype, String name);
+
+    /**
+     * Sets read-only fields (the ones the system maintains, such as an e-invoice number written by a background job)
+     * of a document in any state, submitted included, without running hooks, provided the document is still at
+     * {@code version}. Empty when the document is gone or changed since: two pods claiming the same document by
+     * moving it from one status to the next cannot both win. Fields that are not declared read-only are refused.
+     */
+    Optional<Document> updateSystemFields(String doctype, String name, int version, Map<String, Object> fields);
 }

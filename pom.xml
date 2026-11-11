@@ -22,6 +22,7 @@
     <module>astra-iam</module>
     <module>astra-apps/cms</module>
     <module>astra-apps/express</module>
+    <module>astra-apps/express-integrations</module>
     <module>astra-apps/hrm</module>
     <module>astra-apps/stms</module>
     <module>astra-server</module>
@@ -38,6 +39,8 @@
     <druid.version>1.2.28</druid.version>
     <fastjson.version>2.0.66</fastjson.version>
     <surefire-plugin.version>3.5.3</surefire-plugin.version>
+    <!-- Pinned: KIE does not yet list Java 25 as supported; 10.1.0 is the version verified on this build's JDK. -->
+    <drools.version>10.1.0</drools.version>
   </properties>
 
   <!-- The reactor manages versions directly; astra-bom re-exports the same set for external apps and plugins. -->
@@ -136,6 +139,21 @@
         <groupId>com.dylibso.chicory</groupId>
         <artifactId>runtime</artifactId>
         <version>${chicory.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-engine</artifactId>
+        <version>${drools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-engine-classic</artifactId>
+        <version>${drools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-mvel</artifactId>
+        <version>${drools.version}</version>
       </dependency>
       <dependency>
         <groupId>io.astra</groupId>

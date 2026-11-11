@@ -19,6 +19,7 @@ lược bớt, comment `// ←` là chú thích thêm cho video. Đường dẫn
 | [S10](#s10-rust-cdc-and-sync-aware-lsn) | 16 | WAL → replica, `X-Tx-LSN` / `202 Sync Pending` |
 | [S11](#s11-seata-at-and-tcc) | 17 | Global transaction: AT + TCC + kernel |
 | [S12](#s12-desk-generated-from-metadata) | 2, 9 | Desk không biết trước DocType nào |
+| [S13](#s13-plugin-tiers-0-1-2) | 22 | Luật Drools là dữ liệu, plugin Tier 1 thay khi chạy, Wasm kế thừa giá, AI đề xuất có duyệt |
 
 ---
 
@@ -367,7 +368,7 @@ flowchart LR
     R["tet-promo/src/lib.rs"] -->|cargo build --target wasm32-unknown-unknown| W["tet-promo.wasm · 421 byte"]
     W -->|POST /api/doc/PricingRule (Attach, base64)| P["PricingRule document"]
     P -->|PricingRuleHook: self-test trong sandbox| S["Chicory 1.7.5<br/>≤16 trang bộ nhớ · deadline 50 ms · không host import"]
-    S -->|fee(weight_g, zone, express, cod)| F["ShippingFeeHook → shipping_fee"]
+    S -->|fee(weight_g, zone, express, cod)| F["LayeredPricing: thay dòng base của giá tầng luật"]
 ```
 
 Công thức của tenant, viết bằng Rust (`astra-apps/express/wasm/tet-promo/src/lib.rs`):
@@ -593,3 +594,122 @@ if (doc.docstatus === 1 && perm.cancel) actions.append(button('Cancel'));
 ```
 
 Thêm một trường vào YAML (hoặc overlay) → form, list, filter, validation, API và tool MCP cùng cập nhật.
+
+---
+
+## S13 Plugin tiers 0 · 1 · 2
+
+Video 22. Ba cách thay đổi hành vi trên cùng một cụm, mỗi cách một ranh giới.
+
+### Tier 0: giá là luật Drools, lưu như dữ liệu
+
+`astra-apps/express/src/main/resources/META-INF/astra/rules/standard-tariff.drl` (bảng cước cũ, đúng từng đồng):
+
+```drl
+rule "base-remote"
+    salience 100
+when
+    QuoteRequest(zone == "Remote", $kg : weightKg)
+then
+    lines.add("base", "Cước nền vùng xa", 45000 + 7000 * (long) Math.ceil(Math.max(0, $kg - 1) / 0.5));
+end
+```
+
+Luật BA thêm trên Desk (`peak-1111.drl`), khoá dòng để giá riêng của khách không bỏ được:
+
+```drl
+rule "peak-1111"
+when
+    QuoteRequest(zone == "Remote", month == 11, day >= 10, day <= 12)
+then
+    lines.add("peak", "Phụ phí cao điểm 11.11", 5000);
+    lines.lock("peak");
+end
+```
+
+Ranh giới an toàn (`astra-kernel/…/rules/RuleValidator.java`): danh sách cho phép, không phải danh sách cấm.
+
+```java
+private static void checkWords(String line, int n, List<String> errors) {
+    Matcher m = IDENT.matcher(line);
+    while (m.find()) {
+        String word = m.group();
+        if (word.startsWith("$") || ALLOWED.contains(word)) continue;          // ← QuoteRequest, lines.*, Math.*, từ khoá DRL
+        errors.add("line " + n + ": '" + word + "' is not allowed in a pricing rule");  // ← System, new, eval, from, drools…
+    }
+}
+```
+
+### Tier 1: plugin JVM riêng, thay khi đang chạy
+
+Manifest (`express-integrations/fastship-1.1.0/…/astra-app.yaml`):
+
+```yaml
+id: fastship
+version: 1.1.0
+tier: isolated-jvm
+entrypoint: com.fastship.astra.FastShipAdapter
+spi: io.astra.spi.integration.CarrierAdapter
+capabilities:
+  network: [ "http://partner-sandbox:8090" ]      # ← ngoài host này PartnerHttp từ chối
+runtime: { timeout: 300ms, max-concurrency: 32, circuit-breaker: { failure-rate: 0.5, window: 30s } }
+```
+
+Plugin chỉ thấy SPI (`FastShipAdapter.java`, 1.1.0):
+
+```java
+public Booking book(Shipment s) {
+    String service = "Same city".equals(s.zone()) ? "FAST-2H" : "STD";          // ← mới ở 1.1
+    addressHints(s);                                                             // ← gọi example.com: bị từ chối, đơn vẫn đặt
+    PartnerHttp.Response r = http.postJson(baseUrl + "/fastship/bookings", body);
+    return new Booking("FastShip", field(r.body(), "tracking"), Long.parseLong(field(r.body(), "fee")), service, field(r.body(), "eta"));
+}
+```
+
+Bản nào phục vụ lời gọi này, trên pod này (`astra-plugin-host/…/rollout/RolloutController.java`):
+
+```java
+for (Pin pin : state.pins()) if (pin.slot().equals(slot) && forCustomer && customer.equals(pin.customer())) return pinned(state, pin);
+for (Pin pin : state.pins()) if (pin.slot().equals(slot) && blank(pin.customer())) return pinned(state, pin);   // ← ghim tenant
+Optional<Rel> canary = candidates.stream()
+        .filter(r -> "Canary".equals(r.stage()) && r.canaryPods().contains(pod.name())).max(...);    // ← canary theo pod
+if (canary.isPresent()) return canary;
+return candidates.stream().filter(r -> "Live".equals(r.stage())).max(...);
+```
+
+Hoá đơn theo nước: mỗi nước một mô-đun, mỗi tenant ghim mô-đun của mình (`EInvoiceKh.java`):
+
+```java
+long subtotalCents = Math.round(subtotalVnd / vndPerUsd * 100);
+long vatCents = Math.round(subtotalCents * 0.10);                                // ← VAT 10 %, USD kèm KHR
+```
+
+### Tier 2: giá riêng của khách kế thừa giá tầng luật
+
+`astra-apps/express/wasm/khaigia-shopabc/src/lib.rs` (rút gọn): chỉ khai phần khác biệt.
+
+```rust
+fn adjust(q: &Quote) -> Vec<Op> {
+    let mut ops = vec![];
+    if q.monthly_orders > 2_000 { ops.push(Op::scale("base", 850, "Phụ lục §2: trên 2.000 đơn/tháng, −15 % cước nền")); }
+    else if q.monthly_orders > 500 { ops.push(Op::scale("base", 920, "Phụ lục §2: 501–2.000 đơn/tháng, −8 % cước nền")); }
+    if q.has("cod_fee") && q.return_rate_bp < 500 { ops.push(Op::remove("cod_fee", "Phụ lục §3: miễn phí COD khi tỉ lệ hoàn dưới 5 %")); }
+    // §4 cồng kềnh: Op::add("bulky", …); §5 tối thiểu 15.000 đ: Op::set("base", …)
+    ops                                                                          // ← express, peak, mọi dòng khác: giữ nguyên
+}
+export_adjust!(adjust);
+```
+
+Cùng phụ lục viết bằng luật Drools: 7 luật, 52 dòng, cần mở rộng fact model ([`demo-data/shop-abc-as-rules.drl`](demo-data/shop-abc-as-rules.drl));
+bằng plugin: hàm `adjust` 33 dòng.
+
+Bộ phát hiện bất thường (`anomaly-ops/src/lib.rs`), một hàm chấm một sự kiện:
+
+```rust
+pub extern "C" fn check(kind: i64, a: i64, b: i64, c: i64, _d: i64) -> i64 {
+    match kind { 1 => weight(a, b), 2 => cod(a, b, c), 3 => delivery(a, b, c), _ => 0 }   // ← 0 hoặc severity*100+reason
+}
+```
+
+Chi phí một lời gọi, đo bằng `TierDispatchBench` (Java 25, 10 CPU, p50 / p99): Tier 0 gọi trực tiếp 0,04 / 0,13 µs;
+Tier 1 `MethodHandle` qua bulkhead 5,0 / 21 µs; Tier 2 Wasm 10,5 / 43 µs.

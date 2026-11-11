@@ -1,0 +1,13 @@
+id: einvoice-vn
+version: 1.0.0
+tier: isolated-jvm
+entrypoint: vn.einvoice.astra.EInvoiceVn
+spi: io.astra.spi.integration.EInvoiceProvider
+provenance: { author: astra-localisation-vn, generator: human }
+capabilities:
+  network: [ "http://partner-sandbox:8090" ]      # the tax authority's sandbox
+config:
+  base-url: http://partner-sandbox:8090
+  vat-percent: "8"
+  symbol: 1C26TAS
+runtime: { timeout: 500ms, max-concurrency: 16 }

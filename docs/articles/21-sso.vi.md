@@ -356,7 +356,7 @@ Mật khẩu IdP và secret của các client SCIM trong các file realm JSON ch
 
 ## Liên quan
 
-- Trước: [Video 20 · STMS: điều phối xe với Timefold + AI copilot](./20-stms.vi.md). Tiếp: [Video 18 · Video lộ trình: phần còn lại của use-case-01](./18-roadmap.vi.md).
+- Trước: [Video 20 · STMS: điều phối xe với Timefold + AI copilot](./20-stms.vi.md). Tiếp: [Video 22 · Phần mềm tự tiến hoá: plugin Tier 0 · 1 · 2](./22-plugin-tiers.vi.md).
 - [Video 11 · Keycloak](./11-keycloak.vi.md) (role theo tenant từ đường dẫn nhóm, quyền theo DocType) và
   [Video 7 · Đa thuê bao](./07-tenants.vi.md).
 - Tài liệu: [demo-video-series.md, Video 21](../demo-video-series.md#video-21-saml-sso-và-scim),

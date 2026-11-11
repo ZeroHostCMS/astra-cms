@@ -1,0 +1,66 @@
+// Phụ lục Shop ABC (v1 + v2) viết bằng luật Drools, để so với plugin khaigia-shopabc (Rust, ~30 dòng).
+// Bản thử viết, KHÔNG nạp được như hiện tại: luật chung không thấy hồ sơ 30 ngày của khách, nên phải mở rộng fact
+// model (thêm monthlyOrders, returnRateBp vào QuoteRequest) cho mọi tenant chỉ vì một khách. Luật chỉ thêm được dòng,
+// nên mỗi khoản giảm là một dòng âm, và mỗi luật phải lặp điều kiện customer == "ABC" và tự xếp thứ tự bằng salience.
+package astra.express.pricing.customers
+
+import io.astra.spi.pricing.QuoteRequest
+global io.astra.spi.pricing.QuoteLines lines
+
+rule "abc-tier-1135-week"            // v2 §2a: tuần 11.11 giữ bậc cao nhất
+    salience 30
+when
+    QuoteRequest(customer == "ABC", month == 11, day >= 9, day <= 15)
+then
+    lines.add("abc_tier", "Giảm theo sản lượng (tuần 11.11)", -(lines.amount("base") * 15 / 100));
+end
+
+rule "abc-tier-85"                   // §2: trên 2.000 đơn
+    salience 30
+when
+    QuoteRequest(customer == "ABC", monthlyOrders > 2000, !(month == 11 && day >= 9 && day <= 15))
+then
+    lines.add("abc_tier", "Giảm theo sản lượng 85 %", -(lines.amount("base") * 15 / 100));
+end
+
+rule "abc-tier-92"                   // §2: 501 đến 2.000 đơn
+    salience 30
+when
+    QuoteRequest(customer == "ABC", monthlyOrders > 500, monthlyOrders <= 2000, !(month == 11 && day >= 9 && day <= 15))
+then
+    lines.add("abc_tier", "Giảm theo sản lượng 92 %", -(lines.amount("base") * 8 / 100));
+end
+
+rule "abc-cod-waiver"                // §3: tỉ lệ hoàn dưới 5 %
+    salience 30
+when
+    QuoteRequest(customer == "ABC", codAmount > 0, returnRateBp < 500)
+then
+    lines.add("abc_cod_waiver", "Miễn phí COD", -lines.amount("cod_fee"));
+end
+
+rule "abc-bulky-capped"              // §4: cân quy đổi vượt trần +40 %
+    salience 30
+when
+    QuoteRequest(customer == "ABC", $w : weightKg, $v : volumetricKg, $v > $w * 1.4)
+then
+    lines.add("bulky", "Phụ phí cồng kềnh", 4000 * (long) Math.ceil(($w * 0.4) / 0.5));
+end
+
+rule "abc-bulky"                     // §4: cân quy đổi trong trần
+    salience 30
+when
+    QuoteRequest(customer == "ABC", $w : weightKg, $v : volumetricKg, $v > $w, $v <= $w * 1.4)
+then
+    lines.add("bulky", "Phụ phí cồng kềnh", 4000 * (long) Math.ceil(($v - $w) / 0.5));
+end
+
+rule "abc-minimum"                   // §5: tối thiểu 15.000 đ, sau mọi luật khác
+    salience -100
+when
+    QuoteRequest(customer == "ABC")
+then
+    if (lines.total() < 15000) { lines.add("abc_minimum", "Bù mức tối thiểu", 15000 - lines.total()); }
+end
+
+// §6 (phụ phí bắt buộc không giảm) đúng một cách ngầm định chỉ chừng nào không luật giảm nào tính trên tổng.

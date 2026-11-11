@@ -264,7 +264,8 @@ scene12() {
   AS=tuan api $T POST /api/doc/CustomerOrder "$ORDER" '{name, shipping_fee: .data.shipping_fee, priced_by: .data.priced_by}'
   say "Switch the rule on — no deploy, no restart"
   api $T PUT "/api/doc/PricingRule/$rule" '{"active":true}' '{name, active: .data.active}'
-  AS=tuan api $T POST /api/doc/CustomerOrder "$ORDER" '{name, shipping_fee: .data.shipping_fee, priced_by: .data.priced_by}'; wait_key
+  say "The rule's fee replaces the base line; the express and COD lines of the price below it stay"
+  AS=tuan api $T POST /api/doc/CustomerOrder "$ORDER" '{name, shipping_fee: .data.shipping_fee, priced_by: .data.priced_by, price_breakdown: [.data.price_breakdown[] | {code, amount, source}]}'; wait_key
   say "A script that never returns is stopped at its deadline and never goes live"
   local bad; bad=$(base64 < astra-apps/express/wasm/modules/runaway.wasm | tr -d '\n')
   api $T POST /api/doc/PricingRule "{\"rule_name\":\"Vòng lặp vô hạn\",\"active\":true,\"module_wasm\":\"$bad\"}"

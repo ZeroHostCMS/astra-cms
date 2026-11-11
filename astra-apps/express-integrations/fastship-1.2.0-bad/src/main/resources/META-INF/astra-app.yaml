@@ -1,0 +1,11 @@
+id: fastship
+version: 1.2.0-bad
+tier: isolated-jvm
+entrypoint: com.fastship.astra.FastShipAdapter
+spi: io.astra.spi.integration.CarrierAdapter
+provenance: { author: fastship-integrations, generator: human }
+capabilities:
+  network: [ "http://partner-sandbox:8090" ]      # FastShip's sandbox, nothing else
+config:
+  base-url: http://partner-sandbox:8090
+runtime: { timeout: 300ms, max-concurrency: 32, circuit-breaker: { failure-rate: 0.5, window: 30s } }

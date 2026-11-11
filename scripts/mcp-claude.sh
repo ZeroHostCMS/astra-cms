@@ -15,4 +15,7 @@ login "$USER_NAME"
 claude mcp remove astra >/dev/null 2>&1 || true
 claude mcp add --transport http astra "${BASE}/mcp" \
   --header "Authorization: Bearer ${TOKENS[$USER_NAME]}" --header "X-Astra-Tenant: ${TENANT}"
+# The same session for scripts/astra-mcp.sh (tools that take a file); private to this user, expires with the token.
+SESSION="${ASTRA_MCP_SESSION:-${TMPDIR:-/tmp}/astra-mcp-session.env}"
+( umask 077; printf 'ASTRA_BASE=%q\nASTRA_TENANT=%q\nASTRA_TOKEN=%q\n' "$BASE" "$TENANT" "${TOKENS[$USER_NAME]}" > "$SESSION" )
 echo "Astra MCP registered for ${USER_NAME} in ${TENANT} (token valid for about an hour)."

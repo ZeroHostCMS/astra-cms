@@ -74,6 +74,12 @@ Hãy đối chiếu từng hình với bài viết trước khi đăng: hình si
 | [▶ 19](https://media.zerohostcms.com/astra-cms/astra-video-19-hrm-vi.mp4) <sub>2:40</sub> | [HRM: nhân sự và tiền lương](./19-hrm.vi.md) | Theo khái niệm Frappe HRMS: chấm công quyết định ngày công, Payroll Entry tính phiếu lương song song, thưởng bưu tá bằng Wasm, một bút toán dồn tích cho cả kỳ, huỷ là đảo; agent AI chỉ thấy tên đã che. |
 | [▶ 20](https://media.zerohostcms.com/astra-cms/astra-video-20-stms-vi.mp4) <sub>2:58</sub> | [STMS: điều phối xe với Timefold + AI copilot](./20-stms.vi.md) | Timefold xếp tuyến theo tải trọng và khung giờ, giải lại khi xe hỏng, đơn gấp, kẹt xe; copilot nhận lệnh tiếng Việt và gọi tool thật. LLM của copilot là giả lập theo kịch bản demo, ghi rõ trên mọi khung hình. |
 
+## Phần mềm tự tiến hoá
+
+| Video | Bài viết | Bạn học được gì |
+| --- | --- | --- |
+| [▶ 22](https://media.zerohostcms.com/astra-cms/astra-video-22-tiers-vi.mp4) <sub>4:33</sub> · [▶ 22d](https://media.zerohostcms.com/astra-cms/astra-video-22d-live-vi.mp4) <sub>4:34</sub> | [Phần mềm tự tiến hoá: plugin Tier 0 · 1 · 2](./22-plugin-tiers.vi.md) | Giá là luật Drools do BA sửa trên Desk (kiểm allowlist khi lưu), plugin Tier 1 thay theo pod và tự rollback, hợp đồng của khách được Claude Code viết thành plugin Wasm kế thừa giá luật; AI đề xuất kèm backtest và không tự duyệt được (403). Có bản quay thật. |
+
 ## Phần tiếp theo
 
 | Video | Bài viết | Bạn sẽ hiểu |

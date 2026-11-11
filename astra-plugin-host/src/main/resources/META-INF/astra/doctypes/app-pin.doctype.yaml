@@ -1,0 +1,17 @@
+name: AppPin
+module: platform
+kind: setup
+naming: { series: "PIN-.####" }
+
+# Pins a slot of this tenant (or of one customer of it) to one approved version, ahead of canary and live.
+fields:
+  - { name: slot,     type: Data, required: true, in-list: true, projected: true }
+  - { name: customer, type: Data, in-list: true, projected: true }      # empty: the whole tenant
+  - { name: app_id,   type: Data, required: true, in-list: true, label: App }
+  - { name: version,  type: Data, required: true, in-list: true }
+  - { name: note,     type: Text }
+
+permissions:
+  - { role: admin,       read: true, create: true, write: true }
+  - { role: release-bot, read: true }
+  - { role: ops,         read: true }

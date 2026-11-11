@@ -174,6 +174,11 @@ function display(field, value) {
   }
 }
 
+/** Rollout stage of a release (AppRelease.stage) as a coloured badge: Canary, Live, Rolled back, Retired. */
+function stageBadge(value) {
+  return h('span', { class: 'badge stage-' + String(value).toLowerCase().replace(/\s+/g, '-') }, value);
+}
+
 function statusBadge(doc) {
   const label = DOCSTATUS[doc.docstatus] || doc.docstatus;
   return h('span', { class: 'badge ' + label.toLowerCase() }, label);
@@ -412,7 +417,8 @@ async function listView(doctype, q) {
     h('tbody', null, res.data.map((doc) => h('tr', { onclick: () => { location.hash = '#/form/' + enc(doctype) + '/' + enc(doc.name); } },
       h('td', null, h('strong', null, doc.name)),
       def.submittable ? h('td', null, statusBadge(doc)) : null,
-      columns.map((c) => h('td', { class: ['CURRENCY', 'FLOAT', 'INT'].includes(c.type) ? 'num' : '' }, display(c, doc.data[c.name]))),
+      columns.map((c) => h('td', { class: ['CURRENCY', 'FLOAT', 'INT'].includes(c.type) ? 'num' : '' },
+        c.name === 'stage' && doc.data.stage ? stageBadge(doc.data.stage) : display(c, doc.data[c.name]))),
       h('td', { class: 'muted' }, new Date(doc.modifiedAt).toLocaleString()))))));
 }
 

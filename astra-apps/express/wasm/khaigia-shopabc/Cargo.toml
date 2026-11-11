@@ -1,0 +1,15 @@
+[package]
+name = "khaigia-shopabc"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+astra-pricing-pdk = { path = "../astra-pricing-pdk" }
+
+[features]
+# Phụ lục v2: the 11.11 week keeps the best tier whatever the volume.
+v2 = []

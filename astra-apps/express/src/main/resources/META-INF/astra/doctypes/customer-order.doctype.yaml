@@ -14,10 +14,19 @@ fields:
   - { name: service,          type: Select,   options: [Standard, Express], default: Standard, in-list: true }
   - { name: weight_kg,        type: Float,    required: true, label: Weight (kg) }
   - { name: cod_amount,       type: Currency, default: 0, label: COD amount, projected: materialised }   # bigint column: range filters (cod_amount__gt=...) use an index
-  - { name: shipping_fee,     type: Currency, read-only: true, in-list: true }   # computed by ShippingFeeHook
-  - { name: priced_by,        type: Data,     read-only: true, in-list: true }   # standard tariff or the tenant's Wasm rule
+  - { name: length_cm,        type: Float,    label: Length (cm) }                 # dimensions: volumetric weight L×W×H/6000
+  - { name: width_cm,         type: Float,    label: Width (cm) }
+  - { name: height_cm,        type: Float,    label: Height (cm) }
+  - { name: shipping_fee,     type: Currency, read-only: true, in-list: true }   # sum of price_breakdown, computed by ShippingFeeHook
+  - { name: priced_by,        type: Data,     read-only: true, in-list: true }   # the layers that priced it: rules, PricingRule, customer plugin
+  - { name: price_breakdown,  type: JSON,     read-only: true }                  # one entry per price line, with where it came from
   - { name: waybill,          type: Link,     options: Waybill, read-only: true, in-list: true }   # created on submit
   - { name: note,             type: Text }
+  # Electronic invoice (slot einvoice.issue, the tenant's country plugin), issued by EInvoiceJob after submit
+  - { name: einvoice_status,  type: Data,     read-only: true, in-list: true, projected: true }   # Pending, Pending (no provider), Issuing, Issued
+  - { name: einvoice_no,      type: Data,     read-only: true, in-list: true }
+  - { name: einvoice_lookup,  type: Data,     read-only: true }
+  - { name: einvoice_by,      type: Data,     read-only: true }
 
 permissions:
   - { role: admin,      read: true, create: true, write: true, submit: true, cancel: true }
@@ -25,3 +34,4 @@ permissions:
   - { role: ops,        read: true }
   - { role: care,       read: true }
   - { role: accountant, read: true, cancel: true }
+  - { role: release-bot, read: true }

@@ -35,6 +35,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: POD_NAME                       # canary rollout targets pods by name; also the X-Astra-Pod header
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
             - name: ASTRA_DB_URL
               valueFrom: { secretKeyRef: { name: astra-db, key: url } }
             - name: ASTRA_DB_USER
@@ -59,6 +61,9 @@ spec:
               value: seata-server:8091
             - name: ASTRA_BMS_DB_URL
               value: jdbc:postgresql://postgres:5432/astra?currentSchema=bms
+          lifecycle:
+            preStop:                               # let the Service drop this pod before it stops taking requests
+              exec: { command: ["sleep", "5"] }
           readinessProbe:
             httpGet: { path: /q/health/ready, port: 8080 }
             periodSeconds: 5
@@ -67,7 +72,7 @@ spec:
             periodSeconds: 10
           resources:
             requests: { cpu: 250m, memory: 512Mi }
-            limits: { memory: 1536Mi }   # ZGC heap is 75 % of this; the Timefold solver needs headroom
+            limits: { memory: 2Gi }      # ZGC heap is 65 % of this (Timefold); the rest is Metaspace, code cache and native memory
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

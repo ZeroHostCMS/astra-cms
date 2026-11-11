@@ -1,4 +1,4 @@
-.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam demo-seed demo-express demo-hrm demo-stms demo-sso demo-reset
+.PHONY: build test infra-up infra-down dev image k3d-up k3d-down demo demo-iam demo-seed demo-express demo-hrm demo-stms demo-sso demo-reset demo-tiers demo-traffic
 
 export PATH := $(HOME)/.local/bin:$(PATH)
 
@@ -50,6 +50,12 @@ demo-hrm:         ## HR and payroll scenes (attendance, payroll entry, slips, le
 	scripts/demo-hrm.sh $(or $(BASE),http://localhost:8080) $(SCENES)
 demo-stms:        ## STMS routing demo (Timefold, live replanning, mock-LLM copilot); SCENES="3 4", PAUSE=0, STMS_DATE=YYYY-MM-DD
 	scripts/demo-stms.sh $(or $(BASE),http://localhost:8080) $(SCENES)
+
+demo-tiers:       ## video 22: plugin tiers 0/1/2 on k3d (T0 T0b T1a T1b T2a T2b); SCENES="T1a" picks scenes, PAUSE=0 runs straight through
+	scripts/demo-tiers.sh $(or $(BASE),http://localhost:8080) $(SCENES)
+
+demo-traffic:     ## steady demo traffic with the serving pod per line; MODE=orders|ops RATE=4 DURATION=60
+	scripts/demo-traffic.sh $(or $(BASE),http://localhost:8080)
 
 demo-reset:       ## delete the demo tenants from the Docker Compose database
 	scripts/demo-reset.sh

@@ -10,9 +10,20 @@ fields:
       default: Created, in-list: true, projected: true, label: Ops status }
   - { name: current_hub,   type: Data,   in-list: true, projected: true }
   - { name: scan_log,      type: JSON,   read-only: true }    # appended by WaybillScanHook on every status change
+  - { name: declared_weight_kg, type: Float, read-only: true, label: Declared weight (kg) }   # from the order
+  - { name: measured_weight_kg, type: Float, label: Weight measured at hub (kg) }            # entered with an At Hub scan
+  - { name: courier,       type: Data,   in-list: true, projected: true }                       # entered with Out for Delivery
+  - { name: seed_label,    type: Data,   read-only: true }    # demo seed data only: which planted anomaly this parcel is
+  # Last-mile carrier booking (slot carrier.booking, a Tier 1 plugin), done by CarrierBookingJob after the order committed
+  - { name: carrier_status,   type: Select, options: [Pending, Booking, Booked], read-only: true, in-list: true, projected: true }
+  - { name: carrier,          type: Data,   read-only: true, in-list: true }
+  - { name: carrier_tracking, type: Data,   read-only: true, in-list: true }
+  - { name: carrier_eta,      type: Data,   read-only: true }
+  - { name: booked_by,        type: Data,   read-only: true, in-list: true }   # plugin@version on pod, or why it is still pending
 
 permissions:
   - { role: admin, read: true, write: true }
+  - { role: release-bot, read: true }
   - { role: ops,   read: true, write: true }    # scanning is an OPS action only
   - { role: sales, read: true }
   - { role: care,  read: true }

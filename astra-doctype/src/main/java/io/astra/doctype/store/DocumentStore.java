@@ -272,6 +272,32 @@ public class DocumentStore implements DocumentService {
         }));
     }
 
+    @Override
+    public Optional<Document> updateSystemFields(String doctype, String name, int version, Map<String, Object> fields) {
+        DocTypeDefinition def = overlays.effective(doctype);
+        for (String f : fields.keySet()) {
+            if (def.field(f).filter(FieldDefinition::readOnly).isEmpty()) {
+                throw new DocValidationException("field '" + f + "' of " + doctype + " is not a read-only system field");
+            }
+        }
+        String table = DocTables.of(def);
+        Optional<java.time.OffsetDateTime> notBefore = createdNotBefore(def, name);
+        return inTenantTx(conn -> {
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE " + table + " SET data = data || ?::jsonb, modified_at = now(), version = version + 1 "
+                            + "WHERE doctype = ? AND name = ? AND version = ?" + (notBefore.isPresent() ? " AND created_at >= ?" : "") + " RETURNING *")) {
+                ps.setString(1, toJson(fields));
+                ps.setString(2, doctype);
+                ps.setString(3, name);
+                ps.setInt(4, version);
+                if (notBefore.isPresent()) ps.setObject(5, notBefore.get());
+                try (ResultSet rs = ps.executeQuery()) {
+                    return rs.next() ? Optional.of(read(rs)) : Optional.<Document>empty();
+                }
+            }
+        });
+    }
+
     /**
      * Runs a submit or cancel inside a global transaction when the DocType asks for one and a coordinator
      * is connected; the kernel's database transaction inside commits last, then the global one.

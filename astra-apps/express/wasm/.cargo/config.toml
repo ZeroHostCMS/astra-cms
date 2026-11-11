@@ -1,4 +1,4 @@
-# Tier 2 caps a script's linear memory (16 pages = 1 MiB by default). Rust reserves a 1 MiB stack
-# unless told otherwise, which alone would exceed the cap; pricing scripts need only a few KiB.
+# The sandbox instantiates a module afresh for every call, so its linear memory is allocated every call: link with a
+# 64 KiB stack instead of Rust's default 1 MiB, so a module starts with 2 pages instead of 17.
 [target.wasm32-unknown-unknown]
-rustflags = ["-C", "link-arg=-zstack-size=32768"]
+rustflags = ["-C", "link-arg=-zstack-size=65536"]

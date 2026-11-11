@@ -57,6 +57,8 @@ BASE=http://localhost:8081 make demo-seed            # seed vào dev mode; reset
 | `demo` | cả hai | admin | seed dữ liệu, màn hình so sánh 2 tenant |
 | `hanh` | saigon-express | hr | nhân sự và tiền lương (Video 19) |
 | `linh` | cả hai | dispatcher | điều phối xe (Video 20) |
+| `sophea` | angkor-express (Campuchia) | admin | tenant thứ ba, hoá đơn điện tử theo nước (Video 22) |
+| `aibot` | saigon-express | release-bot | token của agent AI: đọc và đề xuất phát hành, không duyệt được (Video 22) |
 
 ### Công cụ quay
 
@@ -460,6 +462,36 @@ của Video 20.
 - Liệt kê user lấy thành viên từ Keycloak và phân trang trong bộ nhớ, mỗi user thêm một lời gọi đọc group: đủ
   cho demo, chưa dành cho hàng trăm nghìn user. Secret của client SCIM trong realm JSON chỉ dùng cho môi trường local.
 
+### Video 22: Phần mềm tự tiến hoá, plugin Tier 0 · 1 · 2
+
+**Code cho developer:** `astra-plugin-host` (`jvm/IsolatedJvmHost`, `jvm/PluginClassLoader`, `jvm/LoadedPlugin`, `rollout/RolloutController`, `rollout/RolloutJob`), `astra-kernel/…/rules` (`RuleEngine`, `RuleValidator`), `astra-apps/express` (`LayeredPricing`, `CarrierBookingJob`, `EInvoiceJob`, `AnomalyDetector`), `astra-apps/express-integrations/*`, `astra-apps/express/wasm/{astra-pricing-pdk,khaigia-shopabc,anomaly-ops}`; test `IsolatedJvmHostTest`, `ReleaseRolloutTest`, `ExpressIntegrationTest`, `LayeredPricingTest`, `RuleValidatorTest`, `StandardTariffRulesTest`, `AnomalyLoopTest`. Snippet: [S13](demo-code-snippets.md#s13-plugin-tiers-0-1-2).
+
+Mục tiêu: ba lớp của slide "Global future" bằng code chạy thật trên cụm k3d 2 pod. **Lớp 1 · Lõi (Tier 0)**: lõi biên dịch vào image, chỉ Tier 0 ghi sổ cái, đổi lõi là rolling update không lỗi request; giá là luật Drools lưu như dữ liệu, BA sửa trên Desk. **Lớp 2 · Tích hợp thị trường (Tier 1)**: plugin hãng vận chuyển thay khi đang chạy, canary theo pod, bản lỗi tự rollback; hoá đơn điện tử mỗi nước một mô-đun. **Lớp 3 · Tự tiến hoá có phê duyệt (Tier 2 + AI qua MCP)**: Claude Code biến phụ lục hợp đồng của Shop ABC thành plugin giá kế thừa giá tầng luật, và viết bộ phát hiện bất thường; AI không tự phát hành được, người có thẩm quyền duyệt.
+
+Chuẩn bị: `make k3d-up` (thêm pod `partner-sandbox`, user `sophea`, `aibot`), `make demo-reset && make demo-seed`. `demo-tiers` tự ghi 30 ngày lịch sử (`scripts/demo-seed-history.sh`) và build jar plugin nếu thiếu. Hai phiên Claude Code quay riêng: `scripts/mcp-claude.sh aibot saigon-express`, rồi đề bài cố định trong `docs/video/v22-tiers/BRIEF.md`; `scripts/astra-mcp.sh` gửi file module qua MCP.
+
+| Bước | Thao tác | Lời dẫn |
+| --- | --- | --- |
+| T0 | `make demo-tiers SCENES=T0` | `ExpressApp`, `OrderPostingHook` biên dịch vào image; submit đơn → bút toán 131/511. `PluginContext` của Tier 1 không có `DocumentService` hay `GeneralLedger`. Traffic nền chạy, `kubectl rollout restart` thay cả 2 pod; cuối cảnh `ok=… fail=0`. |
+| T0b | `SCENES=T0b` | Bảng `TARIFF` hard code (nhánh `main`) cạnh `standard-tariff.drl`. `mai` lưu bộ luật trên Desk (5 luật, tự kiểm), Submit → bản nháp `AppRelease` → duyệt → Live; đơn có `price_breakdown` từng dòng ghi luật sinh ra nó, tổng bằng phí cũ. Thêm luật phụ phí 11.11: bản sai cú pháp và bản có `System.exit` bị từ chối khi lưu kèm số dòng; bản đúng duyệt → canary 1 pod → Live khi traffic chạy; đơn vùng xa có dòng `rule:peak-1111`, không pod nào khởi động lại. |
+| T1a | `SCENES=T1a` | `fastship-1.0.0.jar` và `astra-app.yaml` (`capabilities.network` chỉ partner sandbox). 1.0.0 Live; 1.1.0 duyệt → canary trên một pod: log traffic thấy `fastship@1.1.0 on <pod A>` cạnh `fastship@1.0.0 on <pod B>` → đủ lời gọi khoẻ → 2/2 → Live; 1.0.0 retired, drain, unload, log `classloader fastship@1.0.0 collected`; `PartnerHttp denied https://example.com/…`. Hanoi ghim 1.0.0. 1.2.0-bad mất vùng Remote: lỗi trên pod canary vượt ngân sách → `Rolled back` trong vài giây; đơn lỗi được 1.1.0 đặt lại ở vòng job kế. `booked_by` có sau `CarrierBookingJob`, không nằm trong transaction submit. |
+| T1b | `SCENES=T1b` | Saigon: `einvoice-vn` (VND, VAT 8 %) ghim cho tenant, đơn có số hoá đơn. `sophea` ở angkor-express: đơn chờ `Pending (no provider)`; tải lên và duyệt `einvoice-kh`, ghim → đơn đang chờ có hoá đơn USD kèm KHR, VAT 10 %; hai tenant hai mô-đun thuế cùng lúc, không khởi động lại. |
+| T2a | phiên AI + `SCENES=T2a` | Phiên AI: Claude đọc `docs/demo-data/shop-abc-contract-v1.md`, `customer_pricing_profile` (1.350 đơn 30 ngày, hoàn 3,1 %), viết hàm `adjust` bằng `astra-pricing-pdk`, `quote_backtest` (doanh thu trước/sau), `release_propose` cho riêng khách ABC. Phát lại: `aibot` submit → 403; `mai` duyệt; đơn của Shop ABC có dòng gốc luật + thao tác `wasm:khaigia-shopabc@1.0.0` (giảm 8 % cước nền, miễn COD, cồng kềnh), khách khác chỉ có dòng luật; phụ phí 11.11 của T0b tự có trên đơn ABC, plugin không đổi (kế thừa). Phụ lục v2: diff vài dòng, duyệt → hot-reload khi traffic chạy, `fail=0`. |
+| T2b | phiên AI + `SCENES=T2b` | Phiên AI: `ops_snapshot` thấy hub HCM-Tân Bình lệch cân, phiếu COD chi thiếu, bưu tá bt05 giao thất bại nhiều; Claude viết `check(kind, a, b, c, d)` bằng Rust, `anomaly_backtest` (trúng/sai/bỏ sót theo nhãn seed), `release_propose`, thử submit → 403. Phát lại: `mai` duyệt; traffic đưa kiện qua hub; `quang` thấy cảnh báo lệch cân, `khoa` thấy phiếu COD, `ha` thấy giao thất bại; `quang` bác một cảnh báo kèm ghi chú; `release_status` trả số cảnh báo theo loại, tỉ lệ bị bác và ghi chú, đầu vào cho bản v2 (bỏ qua kiện dưới 0,5 kg). |
+
+Bảng so sánh của video: hard code (dev sửa, build + deploy), luật Drools (BA, lưu → duyệt → canary, vài giây), Tier 1 (jar trong JVM riêng, hot-swap, 5,0 µs/lời gọi p50), Wasm (BA/PO + AI, sandbox, 10,5 µs p50); Tier 0 gọi trực tiếp 0,04 µs. Số đo từ `TierDispatchBench`; phụ lục Shop ABC bằng luật Drools là 7 luật, 52 dòng (cần mở rộng fact model), bằng plugin là hàm 33 dòng.
+
+**Video 22d, quay thật (4:34, tiếng Việt và tiếng Anh):** câu chuyện định giá bằng màn hình thật thay vì đồ hoạ. BA (`khoa`) sửa luật trên Desk, luật có `System.exit` bị chặn khi lưu; admin (`mai`) duyệt, luật lên một pod rồi cả cụm trong khi đơn thật chạy bên cạnh; Claude Code đăng nhập bằng `aibot` biến phụ lục Shop ABC thành plugin Wasm, backtest 1.410 đơn, thử tự duyệt bị 403; bản 1.1.0 lỗi cố ý bị host từ chối và tự rollback khi lỗi 16,7 % vượt ngân sách 5 %, `fail=0`. Cách quay và quay lại: `docs/video/v22-live/BRIEF.md` (project video cục bộ). Bài viết: [22-plugin-tiers.vi.md](articles/22-plugin-tiers.vi.md).
+
+**Nói đúng:**
+- Hãng vận chuyển và cơ quan thuế là **sandbox** (`tools/partner-sandbox`, một service Python nhỏ trả mã sau 20–80 ms), giống sandbox đối tác cấp cho tích hợp; định dạng hoá đơn không đúng chuẩn pháp lý từng nước; tỷ giá trong plugin Campuchia là số demo.
+- Cụm demo có **2 pod**, nên canary là 1/2 rồi 2/2; cấu hình 10 → 50 → 100 % là cho cụm nhiều pod. Canary chia theo pod, không chia theo % request.
+- Lịch sử 30 ngày (đơn Shop ABC, cân ở hub, phiếu COD, bưu tá) là **dữ liệu seed** ghi thẳng bằng SQL, có nhãn cho các bất thường cài sẵn; hook không chạy trên dữ liệu này (không bút toán, không `price_breakdown`). Phụ lục hợp đồng của Shop ABC là dữ liệu demo.
+- Tier 1 là **cô lập, không phải sandbox**: ClassLoader chỉ lộ JDK + `io.astra.spi.*`, mạng được cấp qua `PartnerHttp`, nhưng Java 25 không có SecurityManager nên code plugin vẫn có thể dùng lớp JDK để mở socket. Code không tin cậy, kể cả code AI viết, chạy ở Tier 2.
+- Cảnh báo giao **theo vai trò** (ops, accountant, care) và lọc theo vai trò của người xem; quyền theo dòng vẫn ở roadmap.
+- Chưa có chữ ký Sigstore, SBOM hay OCI registry: release chỉ ghim SHA-256 và ghi `generator` (lấy từ token), `signed_by` (người duyệt). AI không có quyền nới thêm theo mức tin cậy; đó là hướng đi, chỉ nói trong lời dẫn.
+- Luật Drools 10.1.0 chạy trên Java 25 dù KIE chưa công bố hỗ trợ chính thức; phiên bản được ghim. Module `PricingRule` của video 14 giờ chỉ thay dòng `base`, nên số ở cảnh 12 khác bản video 14 đã xuất bản.
+
 ### Video 18: Roadmap, phần còn lại của use-case-01 *(Đang phát triển)*
 
 Mọi khung hình gắn nhãn **"Roadmap / Đang phát triển"**.
@@ -469,12 +501,13 @@ Mọi khung hình gắn nhãn **"Roadmap / Đang phát triển"**.
 | JSONB + projection index, ledger, schema riêng cho BMS | Multi-schema cho mọi module, hot-column materialised |
 | Seata AT + TCC | AT cho chính kernel, bảng fence TCC, Seata DB/Raft store |
 | Keycloak, quyền DocType, SoD | Điều kiện quyền theo dòng |
-| Tier 0, Tier 2 Wasm | Tier 1 Isolated JVM (hot-swap), đếm lệnh Wasm |
+| Tier 0, Tier 2 Wasm | Đếm lệnh Wasm |
 | Rust CDC + LSN | Giao thức streaming, Apache Doris, NOC dashboards |
 | MCP + che PII | Agent tự hành, pgvector RAG, OAuth cho MCP |
 | Video 19: HRM (nhân sự, tiền lương), bút toán dồn tích qua `GeneralLedger` | Thuế TNCN, phần doanh nghiệp đóng bảo hiểm, chi trả lương, job lương nền cuối tháng, nhân viên tự xem phiếu lương |
 | Video 20: STMS (Timefold), lập lại kế hoạch, copilot điều phối | LLM thật cho copilot, bản đồ và giao thông thật, dự báo tải (Tier 1), app tài xế |
 | Video 21: SAML SSO, SCIM 2.0 theo tenant | Single Logout, SCIM Bulk/ETag, bộ lọc SCIM đầy đủ |
+| Video 22: Tier 1 lát mỏng (hot-swap, canary theo pod, tự rollback), luật giá Drools là dữ liệu, plugin Wasm kế thừa giá, AI đề xuất phát hành có người duyệt | Chữ ký Sigstore/SBOM, OCI registry, canary theo % request, quyền theo dòng cho cảnh báo, nới quyền AI theo mức tin cậy |
 | (chưa có) | Audit hash-chain, mã hoá trường |
 
 ---
