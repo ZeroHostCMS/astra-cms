@@ -51,6 +51,7 @@ orders() {
   req POST /api/doc/CustomerOrder "$body"
   if [[ $CODE != 201 ]]; then line fail "create $CODE $(jq -c '.errors? // .' <<<"$BODY" 2>/dev/null | head -c 160)"; return; fi
   local name fee by; name=$(jq -r .name <<<"$BODY"); fee=$(jq -r .data.shipping_fee <<<"$BODY"); by=$(jq -r .data.priced_by <<<"$BODY")
+  local pod_priced="$POD"   # the order is priced on create; the submit below may land on the other pod
   req POST "/api/doc/CustomerOrder/$name/submit"
   if [[ $CODE != 200 ]]; then line fail "submit $name $CODE"; return; fi
   recent+=("$(jq -r .data.waybill <<<"$BODY")")
@@ -62,6 +63,7 @@ orders() {
     [[ $CODE == 200 ]] && booked="  · $w $(jq -r '.data.booked_by // .data.carrier_status' <<<"$BODY")"
     POD="$pod_submit"
   fi
+  POD="$pod_priced"
   line ok "$name $customer $zone fee=$fee [$by]$booked"
 }
 
