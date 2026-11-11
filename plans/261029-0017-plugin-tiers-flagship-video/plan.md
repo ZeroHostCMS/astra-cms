@@ -3,6 +3,7 @@
 Status: plan (sửa lần 2, 2026-11-10) · Branch đề xuất: `feat/plugin-tiers-demo` cắt từ `main`
 Nguồn ý tưởng: slide `Global_Future.pdf` trang 1 (ba lớp: Lõi · Tích hợp thị trường · Tự tiến hoá)
 Dựa trên: [Platform feature demos](../261021-1723-astra-platform-feature-demos/plan.md), quy trình video v01–v21 trong `docs/video/`
+Guide chi tiết (kiến trúc, sample code, cách chạy, quy trình AI): [guide.md](guide.md)
 
 ## Outcome
 Một video flagship ~7 phút và 3 clip ngắn (một clip mỗi tier) minh hoạ ba lớp của slide bằng **code chạy thật** trên cụm k3d,
